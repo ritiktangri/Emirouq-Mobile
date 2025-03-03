@@ -1,0 +1,103 @@
+{
+  "expo": {
+    "name": "tradelizer-mobile",
+    "slug": "tradelizer-mobile",
+    "version": "1.0.0",
+    "backgroundColor": "#12121C",
+    "scheme": "tradelizer-mobile",
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/splash/logo-dark.png"
+    },
+    "plugins": [
+      [
+        "expo-router",
+        {
+          "origin": "http://example.com/"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "AsyncStorage_db_size_in_MB": "500"
+          }
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#00000",
+          "image": "./assets/splash/logo-dark.png",
+          "dark": {
+            "image": "./assets/splash/logo-dark.png",
+            "backgroundColor": "#000000"
+          },
+          "resizeMode": "cover"
+        }
+      ],
+      ["expo-font"],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "tsconfigPaths": true
+    },
+    "orientation": "portrait",
+    "icon": "./assets/splash/logo-dark.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash/logo-dark.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#12121C"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tradelizer",
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+          }
+        ]
+      }
+    },
+    "android": {
+      "softwareKeyboardLayoutMode": "pan",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/splash/logo-dark.png",
+        "backgroundColor": "#00000"
+      },
+      "package": "com.tradelizer",
+      "permissions": ["android.permission.RECORD_AUDIO", "android.permission.RECORD_AUDIO"]
+    },
+    "newArchEnabled": true,
+    "extra": {
+      "router": {
+        "origin": "http://example.com/"
+      },
+      "eas": {
+        "projectId": "0c91df0d-b3c8-49ae-967d-4ed8bad41ffc"
+      }
+    },
+    "owner": "axelblaze",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/0c91df0d-b3c8-49ae-967d-4ed8bad41ffc"
+    }
+  }
+}

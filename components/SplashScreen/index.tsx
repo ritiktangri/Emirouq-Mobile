@@ -1,0 +1,19 @@
+import { StatusBar } from 'expo-status-bar';
+import React from 'react';
+import { View, Image, ImageBackground } from 'react-native';
+import { logo } from '~/image';
+
+const SplashScreen = () => {
+  return (
+    <View className="flex-1 flex-col">
+      <StatusBar style="light" />
+      <ImageBackground
+        className="flex-1 flex-col justify-center"
+        source={require('../../assets/splash/splash-background-image.png')}>
+        <Image source={logo} className="h-[20%] w-full" resizeMode="contain" />
+      </ImageBackground>
+    </View>
+  );
+};
+
+export default SplashScreen;
