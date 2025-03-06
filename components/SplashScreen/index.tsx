@@ -10,7 +10,11 @@ const SplashScreen = () => {
       <ImageBackground
         className="flex-1 flex-col justify-center"
         source={require('../../assets/splash/splash-background-image.png')}>
-        <Image source={logo} className="h-[20%] w-full" resizeMode="contain" />
+        <Image
+          source={require('../../assets/logo/Emi-logo.png')}
+          className="h-[20%] w-full"
+          resizeMode="contain"
+        />
       </ImageBackground>
     </View>
   );

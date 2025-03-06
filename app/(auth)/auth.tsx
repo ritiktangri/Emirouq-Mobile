@@ -1,9 +1,9 @@
 import React from 'react';
 
-import Login from '~/components/Auth/Login';
+import Auth from '~/components/Auth/Auth';
 
 const Page = () => {
-  return <Login />;
+  return <Auth />;
 };
 
 export default Page;

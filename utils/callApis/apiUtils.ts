@@ -6,8 +6,8 @@ import Axios from 'axios';
 import { getStorageAsync } from '~/hooks/useStorageState';
 export const socketHostname = () => 'wss://trade-utils-test.upforks.com';
 export const hostname = () => {
-  const hostUrl = 'https://api-test.tradelizer.com';
-  // const hostUrl = 'http://127.0.0.1:4001';
+  // const hostUrl = 'https://api-test.tradelizer.com';
+  const hostUrl = 'http://127.0.0.1:4001';
   return hostUrl;
 };
 const hostUrl = hostname();

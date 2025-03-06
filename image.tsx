@@ -4,7 +4,7 @@ const login_background_light = require('./assets/login/login-background.png');
 const login_form_background = require('./assets/login/login-form-background.png');
 const pwd_background = require('./assets/auth/password-background.png');
 const logo = require('./assets/splash/logo-dark.png');
-const light_logo = require('./assets/logo/light_logo.png');
+const light_logo = require('./assets/logo/Emi-logo.png');
 const splash_background = require('./assets/splash/splash-background-image.png');
 const background_logo = require('./assets/logo/white_logo.png');
 
