@@ -22,7 +22,8 @@ import { logo } from '~/image';
 import { useTheme } from '~/context/ThemeContext';
 
 const VerifyOtp = () => {
-  const { email } = useLocalSearchParams();
+  const { email, phone } = useLocalSearchParams();
+
   const { isDarkTheme } = useTheme();
   const [codes, setCodes] = useState(['', '', '', ''] as any);
   const { verify, forgotLoading, forgotPassword, verifyOtpLoading } = useAuth();
@@ -55,7 +56,7 @@ const VerifyOtp = () => {
   };
 
   const handleVerifyOtp = () => {
-    const encode = `${email}:${codes?.join('')}`;
+    const encode = `${email ? email : phone}:${codes?.join('')}`;
     verify(
       {
         pathParams: {
@@ -64,15 +65,19 @@ const VerifyOtp = () => {
       },
       (payload: any) => {
         //  toast.success('Otp has been verified successfully');
-        router.push(routes?.auth?.update_password as Href);
-        router.setParams({ email });
+        router.push(routes?.auth?.auth as Href);
+        if (email) {
+          router.setParams({ email });
+        } else {
+          router.setParams({ phone: phone });
+        }
       }
     );
   };
 
   return (
-    <ImageBackground className="flex-1 flex-col" source={isDarkTheme ? pwd_background : ''}>
-      <SafeAreaView edges={['top', 'left', 'right']} className="flex-1 flex-col">
+    <ImageBackground className="flex-1 flex-col" source={isDarkTheme ? '' : ''}>
+      <SafeAreaView edges={['top', 'left', 'right']} className="flex-1 flex-col bg-white">
         <View className="flex-row justify-end px-8 pt-4">
           <Image source={logo} className="h-[70px] w-[70px]" resizeMode="contain" />
         </View>
@@ -87,8 +92,8 @@ const VerifyOtp = () => {
               backgroundColor: theme.colors.transparent,
               textColor: isDarkTheme ? 'white' : '',
               borderColor: theme.colors.gray,
-              errorColor: theme.colors.white,
-              focusColor: theme.colors.white,
+              errorColor: theme.colors.red,
+              focusColor: theme.colors.black,
             }}
           />
 
@@ -101,9 +106,9 @@ const VerifyOtp = () => {
 
           <TouchableOpacity
             onPress={resendOtp}
-            className="gap 2 flex flex-row items-center self-center">
+            className="flex w-full flex-row items-center gap-2 self-center rounded-md border border-black">
             <Text
-              className="my-4 text-center font-semibold"
+              className="my-4 w-full text-center font-semibold"
               style={{
                 color: isDarkTheme ? theme.colors.white : 'black',
               }}>
@@ -114,7 +119,7 @@ const VerifyOtp = () => {
             <Text className="my-4 text-center  font-poppinsMedium text-lg text-tertiary dark:text-[#c7c5c58B]">
               Don't want to reset your password?{' '}
             </Text>
-            <Link href={routes.auth.login as Href} asChild>
+            <Link href={routes.auth.auth as Href} asChild>
               <TouchableOpacity>
                 <Text className="font-poppinsMedium font-medium dark:text-white">Sign In</Text>
               </TouchableOpacity>

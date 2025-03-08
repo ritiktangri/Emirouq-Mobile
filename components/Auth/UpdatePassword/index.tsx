@@ -57,7 +57,7 @@ const Page = () => {
           },
         },
         () => {
-          router.replace('/(auth)/login');
+          router.replace('/(auth)/auth');
         }
       );
     }

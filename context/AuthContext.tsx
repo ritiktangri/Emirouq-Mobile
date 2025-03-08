@@ -199,9 +199,10 @@ const AuthProvider = ({ children }: any) => {
   };
   const handleSignUp = ({ body }: SignUpInterface, successCb: any, errorCallback: any) => {
     setSignInLoading(true);
+    console.log('body', body);
     register({ body })
       .then(async () => {
-        router.push(routes.auth.login as any);
+        router.push(routes.auth.verifyOtp as any);
         // toast.success('An email has been sent to your email address');
         successCb && successCb();
       })

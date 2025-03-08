@@ -27,8 +27,6 @@ import Signup from './sign-up';
 import Login from './login';
 
 const LoginComponent = () => {
-  const [isChecked, setChecked] = useState(false);
-  const { login } = useAuth();
   const [checkinType, setCheckinType] = useState('email');
   const { isDarkTheme } = useTheme();
   const colorScheme = useColorScheme();

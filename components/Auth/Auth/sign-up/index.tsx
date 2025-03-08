@@ -1,35 +1,84 @@
 import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import DynamicButton from '~/components/DynamicButton';
 import Input from '~/components/UI/Input';
+import { useAuth } from '~/context/AuthContext';
 
 const Signup = ({ checkinType }: any) => {
+  const { signUp } = useAuth();
+  const router = useRouter();
   const [agreed, setAgreed] = useState(false);
   const [secureTextEntry, setSecureTextEntry] = useState(false);
   const [form, setForm] = useState({
-    name: '',
-    email: '',
+    firstName: 'Gurpreet',
+    lastName: 'Singh',
+    email: 'Gurpreets0207@gmail.com',
     phone: '',
-    password: '',
-    confirmPassword: '',
+    password: '12345678',
+    confirmPassword: '12345678',
   });
   const onChangeText = (key: string, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
   const scrollViewRef = useRef<ScrollView>(null);
 
+  const handleSubmit = () => {
+    const body: any = {
+      firstName: form.firstName,
+      lastName: form.lastName,
+      password: form.password,
+      confirmPassword: form.confirmPassword,
+    };
+    if (checkinType === 'email') {
+      body.email = form.email;
+    } else {
+      body.phone = form.phone;
+    }
+    signUp(
+      { body },
+      () => {
+        if (checkinType === 'email') {
+          router.setParams({ email: form.email });
+        } else {
+          router.setParams({ phone: form.phone });
+        }
+      },
+      (err: any) => {
+        console.log('err', err.data.error.message);
+      }
+    );
+  };
+
   return (
     <View className="mt-8 space-y-6">
       <Input
-        value={form.name}
+        value={form.firstName}
         inputStyle={{
           backgroundColor: 'white',
           borderColor: 'lightgrey',
         }}
-        onChangeText={(value: any) => onChangeText('email', value)}
-        title="Full Name"
-        placeholder="Enter your full name"
+        onChangeText={(value: any) => onChangeText('firstName', value)}
+        title="First Name"
+        placeholder="Enter your first name"
+        className=" w-full py-4 dark:text-white"
+        autoCapitalize="none"
+        spellCheck={false}
+        autoCorrect={false}
+        onFocus={() => {
+          scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+        }}
+      />
+      <Input
+        value={form.lastName}
+        inputStyle={{
+          backgroundColor: 'white',
+          borderColor: 'lightgrey',
+        }}
+        onChangeText={(value: any) => onChangeText('lastName', value)}
+        title="Last Name"
+        placeholder="Enter your last name"
         className=" w-full py-4 dark:text-white"
         autoCapitalize="none"
         spellCheck={false}
@@ -45,7 +94,7 @@ const Signup = ({ checkinType }: any) => {
             backgroundColor: 'white',
             borderColor: 'lightgrey',
           }}
-          // onChangeText={(value: any) => onChangeText('email', value)}
+          onChangeText={(value: any) => onChangeText('email', value)}
           title="Email"
           placeholder="Enter your email"
           className=" w-full py-4 dark:text-white"
@@ -64,7 +113,7 @@ const Signup = ({ checkinType }: any) => {
             backgroundColor: 'white',
             borderColor: 'lightgrey',
           }}
-          // onChangeText={(value: any) => onChangeText('email', value)}
+          onChangeText={(value: any) => onChangeText('phone', value)}
           title="Phone Number"
           placeholder="Enter your phone number"
           className=" w-full py-4 dark:text-white"
@@ -121,7 +170,7 @@ const Signup = ({ checkinType }: any) => {
           backgroundColor: 'white',
           borderColor: 'lightgrey',
         }}
-        onChangeText={(value: any) => onChangeText('password', value)}
+        onChangeText={(value: any) => onChangeText('confirmPassword', value)}
         secureTextEntry={!secureTextEntry}
         title="Confirm Password"
         placeholder="Enter your password"
@@ -133,7 +182,7 @@ const Signup = ({ checkinType }: any) => {
       <TouchableOpacity className="mt-4 flex-row items-start" onPress={() => setAgreed(!agreed)}>
         <View
           className={`mr-3 h-5 w-5 items-center justify-center rounded border-2 ${agreed ? 'bg-primary-600 border-primary-600' : 'border-gray-300'}`}>
-          {agreed && <View className="h-3 w-3 rounded-sm bg-white" />}
+          {agreed && <View className="h-3 w-3 rounded-sm bg-black" />}
         </View>
         <Text className="flex-1 font-['Inter-Regular'] text-sm text-gray-600">
           I agree to the{' '}
@@ -145,7 +194,7 @@ const Signup = ({ checkinType }: any) => {
       <DynamicButton
         className="mt-4 rounded-xl"
         titleClassName="!text-white !font-poppinsMedium !text-lg"
-        onPress={() => {}}
+        onPress={handleSubmit}
         title="Create Account"
         // isLoading={signInLoading}
       />
