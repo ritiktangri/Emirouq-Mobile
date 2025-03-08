@@ -1,22 +1,45 @@
 import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import DynamicButton from '~/components/DynamicButton';
 import Input from '~/components/UI/Input';
+import { useAuth } from '~/context/AuthContext';
 
 const Login = ({ checkinType }: any) => {
   const [agreed, setAgreed] = useState(false);
+  const { login } = useAuth();
+  const { router }: any = useRouter();
   const [secureTextEntry, setSecureTextEntry] = useState(false);
   const [form, setForm] = useState({
-    email: '',
+    email: 'Gurpreets0207@gmail.com',
     phone: '',
-    password: '',
+    password: '12345678',
   });
   const onChangeText = (key: string, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
   const scrollViewRef = useRef<ScrollView>(null);
 
+  const handleLogin = () => {
+    const body: any = {
+      password: form.password,
+    };
+    if (checkinType === 'email') {
+      body.email = form.email;
+    } else {
+      body.phoneNumber = form.phone;
+    }
+    login(
+      { ...body },
+      () => {
+        console.log('success');
+      },
+      (err: any) => {
+        console.log('err', err.data.error.message);
+      }
+    );
+  };
   return (
     <View className="mt-8 space-y-6">
       {checkinType === 'email' ? (
@@ -45,7 +68,7 @@ const Login = ({ checkinType }: any) => {
             backgroundColor: 'white',
             borderColor: 'lightgrey',
           }}
-          // onChangeText={(value: any) => onChangeText('email', value)}
+          onChangeText={(value: any) => onChangeText('email', value)}
           title="Phone Number"
           placeholder="Enter your phone number"
           className=" w-full py-4 dark:text-white"
@@ -96,7 +119,7 @@ const Login = ({ checkinType }: any) => {
       <DynamicButton
         className="mt-4 rounded-xl"
         titleClassName="!text-white !font-poppinsMedium !text-lg"
-        // onPress={handleLogin}
+        onPress={handleLogin}
         title="Sign In"
         // isLoading={signInLoading}
       />

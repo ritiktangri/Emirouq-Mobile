@@ -138,15 +138,16 @@ const AuthProvider = ({ children }: any) => {
     setLoading(true);
     getCurrentUser()
       .then(async (response: any) => {
+        console.log('responsess', response);
         setUser({ ...response.data });
-        getActiveAccount(response?.data);
-        if (
-          response?.data?.limits?.plan !== 'free' &&
-          response?.data?.stripe?.subscriptionStatus === 'active'
-        ) {
-          setSubscriptionActive(true);
-        } else {
-        }
+        // getActiveAccount(response?.data);
+        // if (
+        //   response?.data?.limits?.plan !== 'free' &&
+        //   response?.data?.stripe?.subscriptionStatus === 'active'
+        // ) {
+        //   setSubscriptionActive(true);
+        // } else {
+        // }
         cb && cb();
         // since animation of logo is 2 seconds, we are setting loading to false after 2 seconds
         setTimeout(() => {
@@ -168,7 +169,8 @@ const AuthProvider = ({ children }: any) => {
     setSignInLoading(true);
     login(params)
       .then(async (response: any) => {
-        await setStorageItemAsync(storageTokenKeyName, response?.data?.accessToken);
+        console.log('response', response);
+        await setStorageItemAsync(storageTokenKeyName, response?.accessToken);
         // toast.success(
         //   <Text as="b">
         //     Welcome back,{' '}
