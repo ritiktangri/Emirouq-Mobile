@@ -35,7 +35,7 @@ const SelectPicker = ({
           items={data}
           disabled={isEdit}
           fixAndroidTouchableBug
-          placeholder={{ label: placeholder, color: '#3872F9' }}
+          placeholder={{ label: placeholder, color: '#FF5722' }}
           darkTheme={colorScheme === 'dark' ? true : false}
           style={{
             inputIOS: {

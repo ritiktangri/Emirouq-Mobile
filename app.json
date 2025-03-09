@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "tradelizer-mobile",
-    "slug": "tradelizer-mobile",
+    "name": "emirouq-mobile",
+    "slug": "emirouq-mobile",
     "version": "1.0.0",
     "backgroundColor": "#12121C",
-    "scheme": "tradelizer-mobile",
+    "scheme": "emirouq-mobile",
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/splash/logo-dark.png"
+      "favicon": "./assets/logo/Emi-logo.png"
     },
     "plugins": [
       [
@@ -29,9 +29,9 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#00000",
-          "image": "./assets/splash/logo-dark.png",
+          "image": "./assets/logo/Emi-logo.png",
           "dark": {
-            "image": "./assets/splash/logo-dark.png",
+            "image": "./assets/logo/Emi-logo.png",
             "backgroundColor": "#000000"
           },
           "resizeMode": "cover"
@@ -50,17 +50,18 @@
       "tsconfigPaths": true
     },
     "orientation": "portrait",
-    "icon": "./assets/splash/logo-dark.png",
+    "icon": "./assets/logo/Emi-logo.png",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splash/logo-dark.png",
+      "image": "./assets/logo/Emi-logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#12121C"
+      "backgroundColor": "#fffff"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
+      "googleServicesFile": "./GoogleService-Info.plist",
       "supportsTablet": true,
-      "bundleIdentifier": "com.tradelizer",
+      "bundleIdentifier": "com.emirouq",
       "privacyManifests": {
         "NSPrivacyAccessedAPITypes": [
           {
@@ -77,10 +78,10 @@
     "android": {
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/splash/logo-dark.png",
-        "backgroundColor": "#00000"
+        "foregroundImage": "./assets/logo/Emi-logo.png",
+        "backgroundColor": "#fffff"
       },
-      "package": "com.tradelizer",
+      "package": "com.emirouq",
       "permissions": ["android.permission.RECORD_AUDIO", "android.permission.RECORD_AUDIO"]
     },
     "newArchEnabled": true,

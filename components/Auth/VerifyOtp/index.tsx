@@ -56,7 +56,9 @@ const VerifyOtp = () => {
   };
 
   const handleVerifyOtp = () => {
+    console.log('phone', phone);
     const encode = `${email ? email : phone}:${codes?.join('')}`;
+    console.log('encode', encode);
     verify(
       {
         pathParams: {

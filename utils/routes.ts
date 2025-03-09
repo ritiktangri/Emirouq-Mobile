@@ -23,11 +23,11 @@ export const routes = {
     drawer: '/(drawer)',
     tabs: {
       tabs: '/(drawer)/(tabs)',
-      portfolio: '/(drawer)/(tabs)/portfolio',
-      trades: '/(drawer)/(tabs)/trades',
-      singleTrade: (id: string) => `/(drawer)/(tabs)/trades/${id}`,
-      analytics: '/(drawer)/(tabs)/analytics',
-      settings: '/(drawer)/(tabs)/settings',
+      home: '/(drawer)/(tabs)/home',
+      sell: '/(drawer)/(tabs)/sell',
+      // singleTrade: (id: string) => `/(drawer)/(tabs)/trades/${id}`,
+      chat: '/(drawer)/(tabs)/chat',
+      profile: '/(drawer)/(tabs)/profile',
     },
   },
 };

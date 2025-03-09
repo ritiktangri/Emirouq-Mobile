@@ -15,7 +15,7 @@ const Signup = ({ checkinType }: any) => {
     firstName: 'Gurpreet',
     lastName: 'Singh',
     email: 'Gurpreets0207@gmail.com',
-    phone: '',
+    phoneNumber: '7528095192',
     password: '12345678',
     confirmPassword: '12345678',
   });
@@ -34,7 +34,7 @@ const Signup = ({ checkinType }: any) => {
     if (checkinType === 'email') {
       body.email = form.email;
     } else {
-      body.phone = form.phone;
+      body.phoneNumber = form.phoneNumber;
     }
     signUp(
       { body },
@@ -42,7 +42,7 @@ const Signup = ({ checkinType }: any) => {
         if (checkinType === 'email') {
           router.setParams({ email: form.email });
         } else {
-          router.setParams({ phone: form.phone });
+          router.setParams({ phone: form.phoneNumber });
         }
       },
       (err: any) => {
@@ -108,12 +108,12 @@ const Signup = ({ checkinType }: any) => {
         />
       ) : (
         <Input
-          value={form.phone}
+          value={form.phoneNumber}
           inputStyle={{
             backgroundColor: 'white',
             borderColor: 'lightgrey',
           }}
-          onChangeText={(value: any) => onChangeText('phone', value)}
+          onChangeText={(value: any) => onChangeText('phoneNumber', value)}
           title="Phone Number"
           placeholder="Enter your phone number"
           className=" w-full py-4 dark:text-white"

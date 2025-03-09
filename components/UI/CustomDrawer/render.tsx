@@ -63,7 +63,7 @@ const Render = ({
               onSelectTheme(value);
             }}
             value={isDarkTheme}
-            trackColor={{ false: '#767577', true: '#3872F9' }}
+            trackColor={{ false: '#767577', true: '#FF5722' }}
             ios_backgroundColor="#3e3e3e"
           />
         ) : null}

@@ -3,10 +3,10 @@ const DefaultTheme = [
     name: 'DarkBlue',
     dark: true,
     colors: {
-      primary: '#0A84FF',
+      primary: '#FF5722',
       background: '#000',
       text: '#fff',
-      border: '#0A84FF',
+      border: '#FF5722',
       placeholder: '#BDBDBDCC',
     },
   },

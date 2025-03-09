@@ -23,13 +23,10 @@ import { auth } from '../endpoints';
 import { ApiEndpoint } from '../types';
 
 // Example login function with typed parameters
-export async function login({ email = '', password = '' }: LoginParams) {
+export async function login(params: LoginParams) {
   return callApi({
     uriEndPoint: { ...auth.login.v1 } as ApiEndpoint,
-    body: {
-      email,
-      password,
-    },
+    body: params,
   });
 }
 export async function register({ body }: SignUpInterface) {

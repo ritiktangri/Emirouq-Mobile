@@ -13,7 +13,7 @@ const Login = ({ checkinType }: any) => {
   const [secureTextEntry, setSecureTextEntry] = useState(false);
   const [form, setForm] = useState({
     email: 'Gurpreets0207@gmail.com',
-    phone: '',
+    phoneNumber: '',
     password: '12345678',
   });
   const onChangeText = (key: string, value: string) => {
@@ -28,10 +28,11 @@ const Login = ({ checkinType }: any) => {
     if (checkinType === 'email') {
       body.email = form.email;
     } else {
-      body.phoneNumber = form.phone;
+      body.phoneNumber = form.phoneNumber;
     }
+    console.log('body', body);
     login(
-      { ...body },
+      body,
       () => {
         console.log('success');
       },
@@ -49,7 +50,7 @@ const Login = ({ checkinType }: any) => {
             backgroundColor: 'white',
             borderColor: 'lightgrey',
           }}
-          // onChangeText={(value: any) => onChangeText('email', value)}
+          onChangeText={(value: any) => onChangeText('email', value)}
           title="Email"
           placeholder="Enter your email"
           className=" w-full py-4 dark:text-white"
@@ -63,12 +64,12 @@ const Login = ({ checkinType }: any) => {
         />
       ) : (
         <Input
-          value={form.phone}
+          value={form.phoneNumber}
           inputStyle={{
             backgroundColor: 'white',
             borderColor: 'lightgrey',
           }}
-          onChangeText={(value: any) => onChangeText('email', value)}
+          onChangeText={(value: any) => onChangeText('phoneNumber', value)}
           title="Phone Number"
           placeholder="Enter your phone number"
           className=" w-full py-4 dark:text-white"

@@ -1,3 +1,4 @@
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, useColorScheme } from 'react-native';
 
@@ -13,22 +14,35 @@ import {
 } from '~/svgs/bottombar';
 
 export const getIconsByScreenName = (theme: string, screenName: string, active: boolean) => {
+  console.log('active', active);
   const iconSource: any = {
-    portfolio: active ? <ActiveHomeSVG active={true} /> : <InActiveHomeSVG />,
-    trades: active ? <ActiveTradeSVG active={true} /> : <InActiveTradeSVG />,
-    analytics: active ? <ActiveAnalyticsSVG active={true} /> : <InActiveAnalyticsSVG />,
-    diary: active ? <ActiveDiarySVG active={true} /> : <InActiveDiarySVG />,
+    home: (
+      <AntDesign
+        name="home"
+        size={24}
+        className={active ? '!text-primary' : ''}
+        // color={active ? 'text-primary' : 'black'}
+      />
+    ),
+    search: <Ionicons name="search-outline" size={24} className={active ? '!text-primary' : ''} />,
+    post: (
+      <Ionicons name="add-circle-outline" size={24} className={active ? '!text-primary' : ''} />
+    ),
+    chat: (
+      <Ionicons name="chatbubbles-outline" size={24} className={active ? '!text-primary' : ''} />
+    ),
+    profile: <AntDesign name="user" size={24} className={active ? '!text-primary' : ''} />,
   };
-  const lightIconSource: any = {
-    portfolio: active ? <ActiveHomeSVG active={true} /> : <ActiveHomeSVG />,
-    trades: active ? <ActiveTradeSVG active={true} /> : <ActiveTradeSVG />,
-    analytics: active ? <ActiveAnalyticsSVG active={true} /> : <ActiveAnalyticsSVG />,
-    diary: active ? <ActiveDiarySVG active={true} /> : <ActiveDiarySVG />,
-  };
+  // const lightIconSource: any = {
+  //   home: active ? <ActiveHomeSVG active={true} /> : <ActiveHomeSVG />,
+  //   sell: active ? <ActiveTradeSVG active={true} /> : <ActiveTradeSVG />,
+  //   chat: active ? <ActiveAnalyticsSVG active={true} /> : <ActiveAnalyticsSVG />,
+  //   profile: active ? <ActiveDiarySVG active={true} /> : <ActiveDiarySVG />,
+  // };
 
   if (!iconSource) return null;
 
-  return <>{theme === 'light' ? lightIconSource[screenName] : iconSource[screenName]}</>;
+  return <>{iconSource[screenName]}</>;
 };
 
 const styles = StyleSheet.create({

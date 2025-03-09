@@ -1,6 +1,3 @@
-/* eslint-disable import/order */
-import Checkbox from 'expo-checkbox';
-import { Href, Link } from 'expo-router';
 import React, { useState, useRef } from 'react';
 import {
   View,
@@ -18,13 +15,15 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DefaultText as Text } from '~/components/common/DefaultText';
 import Input from '../../UI/Input';
-import { light_logo, login_background, login_form_background, logo } from '~/image';
-import { useAuth } from '~/context/AuthContext';
-import { Ionicons } from '@expo/vector-icons';
-
+import { light_logo, login_background, logo } from '~/image';
 import { useTheme } from '~/context/ThemeContext';
 import Signup from './sign-up';
 import Login from './login';
+// import {
+//   GoogleOneTapSignIn,
+//   statusCodes,
+//   type OneTapUser,
+// } from '@react-native-google-signin/google-signin';
 
 const LoginComponent = () => {
   const [checkinType, setCheckinType] = useState('email');
@@ -36,21 +35,10 @@ const LoginComponent = () => {
     email: 'gurpreet@gmail.com',
     password: '123456',
   });
-  const [secureTextEntry, setSecureTextEntry] = useState(false);
-  const onChangeText = (key: string, value: string) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  };
-  // const handleLogin = () => {
-  //   const params = {
-  //     email: form.email,
-  //     password: form.password,
-  //   };
-  //   login(
-  //     params,
-  //     () => {},
-  //     () => {}
-  //   );
-  // };
+  // GoogleOneTapSignIn.configure({
+  //   webClientId: 'autoDetect',
+  // });
+
   const scrollViewRef = useRef<ScrollView>(null);
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

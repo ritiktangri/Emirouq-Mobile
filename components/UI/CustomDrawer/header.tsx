@@ -15,7 +15,7 @@ const Header = ({ closeDrawer }: any) => {
   return (
     <SafeAreaView className=" rounded-2xl ">
       <LinearGradient
-        colors={colorScheme === 'dark' ? ['#4F5C7DCF', '#2D3443'] : ['#6b96fa', '#3872F9']}
+        colors={colorScheme === 'dark' ? ['#4F5C7DCF', '#2D3443'] : ['#6b96fa', '#FF5722']}
         style={{
           borderRadius: 10,
         }}>

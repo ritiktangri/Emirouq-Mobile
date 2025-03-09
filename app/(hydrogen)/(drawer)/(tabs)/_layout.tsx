@@ -14,9 +14,9 @@ export default function TabLayout() {
   return (
     <QueryProvider>
       <EChartsProvider>
-        <SafeAreaView className={cn('flex-1 bg-white dark:bg-black')}>
+        <SafeAreaView className={cn('flex-1 bg-[#FF5722] ')}>
           <Tabs
-            initialRouteName="portfolio"
+            initialRouteName="home"
             screenOptions={{
               headerShown: true,
               header: () => {
@@ -38,7 +38,7 @@ export default function TabLayout() {
             }}>
             {/* Your Tabs.Screen components here */}
             <Tabs.Screen
-              name="portfolio"
+              name="home"
               options={{
                 tabBarLabel: (props) => (
                   <Text
@@ -46,14 +46,14 @@ export default function TabLayout() {
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
                       props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
                     )}>
-                    Portfolio
+                    Home
                   </Text>
                 ),
-                tabBarIcon: (props) => getIconsByScreenName(theme, 'portfolio', props.focused),
+                tabBarIcon: (props) => getIconsByScreenName(theme, 'home', props.focused),
               }}
             />
             <Tabs.Screen
-              name="trades"
+              name="search"
               options={{
                 tabBarLabel: (props) => (
                   <Text
@@ -61,14 +61,14 @@ export default function TabLayout() {
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
                       props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
                     )}>
-                    Trades
+                    Search
                   </Text>
                 ),
-                tabBarIcon: (props) => getIconsByScreenName(theme, 'trades', props.focused),
+                tabBarIcon: (props) => getIconsByScreenName(theme, 'search', props.focused),
               }}
             />
             <Tabs.Screen
-              name="analytics"
+              name="post"
               options={{
                 tabBarLabel: (props) => (
                   <Text
@@ -76,14 +76,29 @@ export default function TabLayout() {
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
                       props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
                     )}>
-                    Analytics
+                    Post
                   </Text>
                 ),
-                tabBarIcon: (props) => getIconsByScreenName(theme, 'analytics', props.focused),
+                tabBarIcon: (props) => getIconsByScreenName(theme, 'post', props.focused),
               }}
             />
             <Tabs.Screen
-              name="diary"
+              name="chat"
+              options={{
+                tabBarLabel: (props) => (
+                  <Text
+                    className={cn(
+                      'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
+                      props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
+                    )}>
+                    Chat
+                  </Text>
+                ),
+                tabBarIcon: (props) => getIconsByScreenName(theme, 'chat', props.focused),
+              }}
+            />
+            <Tabs.Screen
+              name="profile"
               options={{
                 tabBarLabel: (props) => (
                   <Text
@@ -91,10 +106,10 @@ export default function TabLayout() {
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
                       props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white '
                     )}>
-                    Diary
+                    Profile
                   </Text>
                 ),
-                tabBarIcon: (props) => getIconsByScreenName(theme, 'diary', props.focused),
+                tabBarIcon: (props) => getIconsByScreenName(theme, 'profile', props.focused),
               }}
             />
           </Tabs>

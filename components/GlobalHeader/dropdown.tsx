@@ -168,7 +168,7 @@ const Dropdown: React.FC<DropdownProps> = ({ options, placeholder }) => {
                     activeAccount?.activeAccountIds?.length !==
                     accountList?.activeAccountIds?.length
                   ) {
-                    router.push(routes.drawer.tabs.portfolio as Href);
+                    router.push(routes.drawer.tabs.home as Href);
                   }
                 }}
                 className="rounded-md bg-primary px-5 py-2">

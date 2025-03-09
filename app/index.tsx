@@ -33,7 +33,7 @@ const App = () => {
   }
   // if user is logged in, redirect to portfolio page
   if (user?.uuid) {
-    return <Redirect href={routes.drawer.tabs.portfolio as Href} />;
+    return <Redirect href={routes.drawer.tabs.home as Href} />;
   }
 };
 

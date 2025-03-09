@@ -169,7 +169,6 @@ const AuthProvider = ({ children }: any) => {
     setSignInLoading(true);
     login(params)
       .then(async (response: any) => {
-        console.log('response', response);
         await setStorageItemAsync(storageTokenKeyName, response?.accessToken);
         // toast.success(
         //   <Text as="b">
@@ -178,7 +177,7 @@ const AuthProvider = ({ children }: any) => {
         //   </Text>
         // );
         getUser(() => {
-          router.replace(routes.drawer.tabs.portfolio as any);
+          router.replace(routes.drawer.tabs.home as any);
           setSignInLoading(false);
         });
       })
@@ -197,7 +196,7 @@ const AuthProvider = ({ children }: any) => {
       removeStorageItemAsync(storageTokenKeyName),
       removeStorageItemAsync('activeAccount'),
     ] as any);
-    router.push(routes.auth.login as any);
+    router.push(routes.auth.auth as any);
   };
   const handleSignUp = ({ body }: SignUpInterface, successCb: any, errorCallback: any) => {
     setSignInLoading(true);
