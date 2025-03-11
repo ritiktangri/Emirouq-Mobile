@@ -14,105 +14,107 @@ export default function TabLayout() {
   return (
     <QueryProvider>
       <EChartsProvider>
-        <SafeAreaView className={cn('flex-1 bg-[#FF5722] ')}>
-          <Tabs
-            initialRouteName="home"
-            screenOptions={{
-              headerShown: true,
-              header: () => {
-                return <GlobalHeader />;
-              },
-              sceneStyle: {
-                backgroundColor: 'transparent',
-                borderBottomLeftRadius: 20,
-                borderBottomRightRadius: 20,
-              },
-              tabBarStyle: {
-                backgroundColor: theme === 'dark' ? 'black' : 'white',
-                borderColor: theme === 'dark' ? 'black' : 'white',
-                borderTopWidth: 0.2,
-                paddingTop: 8,
-                minHeight: Platform.OS === 'ios' ? 0 : 80,
-                maxHeight: 75,
-              },
-            }}>
-            {/* Your Tabs.Screen components here */}
-            <Tabs.Screen
-              name="home"
-              options={{
-                tabBarLabel: (props) => (
-                  <Text
-                    className={cn(
-                      'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
-                      props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
-                    )}>
-                    Home
-                  </Text>
-                ),
-                tabBarIcon: (props) => getIconsByScreenName(theme, 'home', props.focused),
-              }}
-            />
-            <Tabs.Screen
-              name="search"
-              options={{
-                tabBarLabel: (props) => (
-                  <Text
-                    className={cn(
-                      'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
-                      props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
-                    )}>
-                    Search
-                  </Text>
-                ),
-                tabBarIcon: (props) => getIconsByScreenName(theme, 'search', props.focused),
-              }}
-            />
-            <Tabs.Screen
-              name="post"
-              options={{
-                tabBarLabel: (props) => (
-                  <Text
-                    className={cn(
-                      'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
-                      props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
-                    )}>
-                    Post
-                  </Text>
-                ),
-                tabBarIcon: (props) => getIconsByScreenName(theme, 'post', props.focused),
-              }}
-            />
-            <Tabs.Screen
-              name="chat"
-              options={{
-                tabBarLabel: (props) => (
-                  <Text
-                    className={cn(
-                      'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
-                      props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
-                    )}>
-                    Chat
-                  </Text>
-                ),
-                tabBarIcon: (props) => getIconsByScreenName(theme, 'chat', props.focused),
-              }}
-            />
-            <Tabs.Screen
-              name="profile"
-              options={{
-                tabBarLabel: (props) => (
-                  <Text
-                    className={cn(
-                      'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
-                      props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white '
-                    )}>
-                    Profile
-                  </Text>
-                ),
-                tabBarIcon: (props) => getIconsByScreenName(theme, 'profile', props.focused),
-              }}
-            />
-          </Tabs>
+        <SafeAreaView edges={['top']} className={cn('flex-1 bg-[#FF5722] ')}>
+          <SafeAreaView edges={['bottom']} className={cn('flex-1 bg-white ')}>
+            <Tabs
+              initialRouteName="home"
+              screenOptions={{
+                headerShown: true,
+                header: (route) => {
+                  return <GlobalHeader route={route} />;
+                },
+                sceneStyle: {
+                  backgroundColor: 'transparent',
+                  borderBottomLeftRadius: 20,
+                  borderBottomRightRadius: 20,
+                },
+                tabBarStyle: {
+                  backgroundColor: theme === 'dark' ? 'black' : 'white',
+                  borderColor: theme === 'dark' ? 'black' : 'white',
+                  borderTopWidth: 0.2,
+                  paddingTop: 12,
+                  minHeight: Platform.OS === 'ios' ? 0 : 80,
+                  maxHeight: 75,
+                },
+              }}>
+              {/* Your Tabs.Screen components here */}
+              <Tabs.Screen
+                name="home"
+                options={{
+                  tabBarLabel: (props) => (
+                    <Text
+                      className={cn(
+                        'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
+                        props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
+                      )}>
+                      Home
+                    </Text>
+                  ),
+                  tabBarIcon: (props) => getIconsByScreenName(theme, 'home', props.focused),
+                }}
+              />
+              <Tabs.Screen
+                name="search"
+                options={{
+                  tabBarLabel: (props) => (
+                    <Text
+                      className={cn(
+                        'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
+                        props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
+                      )}>
+                      Search
+                    </Text>
+                  ),
+                  tabBarIcon: (props) => getIconsByScreenName(theme, 'search', props.focused),
+                }}
+              />
+              <Tabs.Screen
+                name="post"
+                options={{
+                  tabBarLabel: (props) => (
+                    <Text
+                      className={cn(
+                        'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
+                        props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
+                      )}>
+                      Post
+                    </Text>
+                  ),
+                  tabBarIcon: (props) => getIconsByScreenName(theme, 'post', props.focused),
+                }}
+              />
+              <Tabs.Screen
+                name="chat"
+                options={{
+                  tabBarLabel: (props) => (
+                    <Text
+                      className={cn(
+                        'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
+                        props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
+                      )}>
+                      Chat
+                    </Text>
+                  ),
+                  tabBarIcon: (props) => getIconsByScreenName(theme, 'chat', props.focused),
+                }}
+              />
+              <Tabs.Screen
+                name="profile"
+                options={{
+                  tabBarLabel: (props) => (
+                    <Text
+                      className={cn(
+                        'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
+                        props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white '
+                      )}>
+                      Profile
+                    </Text>
+                  ),
+                  tabBarIcon: (props) => getIconsByScreenName(theme, 'profile', props.focused),
+                }}
+              />
+            </Tabs>
+          </SafeAreaView>
         </SafeAreaView>
       </EChartsProvider>
     </QueryProvider>

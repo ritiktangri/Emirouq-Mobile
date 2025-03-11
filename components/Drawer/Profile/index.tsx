@@ -61,7 +61,6 @@ const Profile = () => {
   }, [userData, profileImage]);
   return (
     <SafeAreaView className="flex-1 bg-white px-4 dark:bg-[#282E36]">
-      <CustomHeader />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={{ flex: 1 }}
@@ -73,9 +72,7 @@ const Profile = () => {
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View className="gap-y-2">
               <View className="mb-6 mt-3">
-                <Text className="mb-1 text-2xl font-semibold dark:text-white">
-                  Profile Information
-                </Text>
+                <Text className="mb-1 text-2xl font-semibold text-white">Profile Information</Text>
                 <Text className="text-tertiary">Update your photo and personal details here</Text>
               </View>
               <View className="flex-col items-center gap-y-2">
@@ -108,77 +105,6 @@ const Profile = () => {
                   Change photo
                 </Text>
               </View>
-
-              <DefaultTextInput
-                title="First name*"
-                value={userData?.firstName}
-                onChangeText={(text: any) => setUserData({ ...userData, firstName: text })}
-                className="w-full rounded-lg border-[1px] border-gray-400 p-4 dark:border-2 dark:border-gray-600 dark:bg-dashboard_card dark:text-white"
-                placeholder="Enter First Name"
-                placeholderTextColor={theme.colors.dashboard_card_text}
-              />
-              <DefaultTextInput
-                title="Last name*"
-                value={userData?.lastName}
-                onChangeText={(text: any) => setUserData({ ...userData, lastName: text })}
-                className="w-full rounded-lg border-[1px] border-gray-400 p-4 dark:border-2 dark:border-gray-600 dark:bg-dashboard_card dark:text-white"
-                placeholder="Enter Last Name"
-                placeholderTextColor={theme.colors.dashboard_card_text}
-              />
-              <DefaultTextInput
-                title="Email*"
-                value={userData?.email}
-                onChangeText={(text: any) => setUserData({ ...userData, email: text })}
-                className="w-full rounded-lg border-[1px] border-gray-400 p-4 dark:border-2 dark:border-gray-600 dark:bg-dashboard_card dark:text-white"
-                placeholder="Enter Email"
-                placeholderTextColor={theme.colors.dashboard_card_text}
-                inputMode="email"
-                keyboardType="email-address"
-                textContentType="emailAddress"
-              />
-
-              <DefaultTextInput
-                title="User Handle*"
-                value={userData?.userHandle}
-                onChangeText={(text: any) => setUserData({ ...userData, userHandle: text })}
-                className="w-full rounded-lg border-[1px] border-gray-400 p-4 dark:border-2 dark:border-gray-600 dark:bg-dashboard_card dark:text-white"
-                placeholder="Enter User Handle"
-                placeholderTextColor={theme.colors.dashboard_card_text}
-              />
-              {/* <View>
-                <Text className="mb-1.5 ml-0.5 mt-3 font-interMedium text-base text-white">
-                  Your photo
-                </Text>
-                <Text className="mb-1.5 ml-0.5 text-tertiary">
-                  This will be displayed on your profile
-                </Text>
-                <TouchableOpacity
-                  onPress={pickImage}
-                  className="flex-col gap-2 rounded-lg border-[0.4px] p-4 dark:border-none dark:bg-[#1A212A]">
-                  <Image
-                    source={require('../../../assets/drawer/upload-light.png')}
-                    className="h-[50px] w-[100%]"
-                    resizeMode="contain"
-                  />
-                  <Text className="text-center font-semibold text-white">Select File</Text>
-                  <Text className="text-center text-xs text-gray-400">
-                    Click browse to upload through your device
-                  </Text>
-                </TouchableOpacity>
-              </View> */}
-              <TouchableOpacity
-                className=" mt-5 flex-row items-center justify-center gap-x-2 rounded-lg bg-primary p-3"
-                onPress={() => {
-                  onUpdateProfile();
-                }}>
-                {btnLoading ? <ActivityIndicator color={'#fff'} /> : <></>}
-                <Text
-                  dark="text-white"
-                  light="text-white"
-                  className="text-center font-poppinsMedium ">
-                  Save
-                </Text>
-              </TouchableOpacity>
             </View>
           </TouchableWithoutFeedback>
         </ScrollView>
