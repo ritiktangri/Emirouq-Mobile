@@ -10,7 +10,6 @@ const category = {
       uri: `${prefix}/:id`,
     },
   },
-  // in this api, we are fetching only categories data
   getCategories: {
     v1: {
       ...defaults.methods.GET,
@@ -18,12 +17,11 @@ const category = {
       uri: `${prefix}`,
     },
   },
-  // in this api, we are fetching categories with tags  as well
-  getCategoryWithTags: {
+  getSubCategories: {
     v1: {
       ...defaults.methods.GET,
       ...defaults.versions.v1,
-      uri: `${prefix}/tags`,
+      uri: `${prefix}/subCategory/:id`,
     },
   },
   createCategory: {

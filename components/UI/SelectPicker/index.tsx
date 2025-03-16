@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { useColorScheme, View } from 'react-native';
+import { View } from 'react-native';
 import { DefaultText as Text } from '~/components/common/DefaultText';
 import RNPickerSelect from 'react-native-picker-select';
 import { useTheme } from '~/context/ThemeContext';
@@ -27,7 +27,7 @@ const SelectPicker = ({
       <View className="rounded-lg">
         <RNPickerSelect
           onValueChange={(value: any) => {
-            setData(value);
+            setData && setData(value);
             onSelect && onSelect(value);
           }}
           ref={pickerRef}
@@ -35,17 +35,16 @@ const SelectPicker = ({
           items={data}
           disabled={isEdit}
           fixAndroidTouchableBug
-          placeholder={{ label: placeholder, color: '#FF5722' }}
+          placeholder={{ label: placeholder, color: '#949494' }}
           darkTheme={colorScheme === 'dark' ? true : false}
           style={{
             inputIOS: {
-              borderRadius: 10,
-              marginTop: 0,
-              paddingVertical: 11,
-              paddingHorizontal: 4,
               paddingLeft: 12,
-              fontWeight: '400',
-              color: colorScheme === 'dark' ? 'white' : 'black',
+              borderWidth: 1,
+              borderColor: '#e5e7eb',
+              backgroundColor: 'transparent',
+              paddingVertical: 13,
+              borderRadius: 8,
               ...iosInputStyle,
             },
             inputAndroid: {

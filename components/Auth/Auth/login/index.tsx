@@ -8,7 +8,7 @@ import { useAuth } from '~/context/AuthContext';
 
 const Login = ({ checkinType }: any) => {
   const [agreed, setAgreed] = useState(false);
-  const { login } = useAuth();
+  const { login, signInLoading } = useAuth();
   const { router }: any = useRouter();
   const [secureTextEntry, setSecureTextEntry] = useState(false);
   const [form, setForm] = useState({
@@ -122,7 +122,7 @@ const Login = ({ checkinType }: any) => {
         titleClassName="!text-white !font-poppinsMedium !text-lg"
         onPress={handleLogin}
         title="Sign In"
-        // isLoading={signInLoading}
+        isLoading={signInLoading}
       />
       <View className="my-6 flex-row items-center">
         <View className="h-px flex-1 bg-gray-200" />

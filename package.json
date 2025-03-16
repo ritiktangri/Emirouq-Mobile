@@ -15,6 +15,7 @@
     "@animatereactnative/accordion": "^0.1.5",
     "@expo/react-native-action-sheet": "^4.1.0",
     "@expo/vector-icons": "^14.0.2",
+    "@hookform/resolvers": "^4.1.3",
     "@lexical/react": "^0.23.1",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/datetimepicker": "8.2.0",
@@ -55,6 +56,7 @@
     "querystring": "^0.2.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
+    "react-hook-form": "^7.54.2",
     "react-native": "0.76.7",
     "react-native-animatable": "^1.4.0",
     "react-native-animated-pagination-dots": "^0.1.73",
@@ -78,7 +80,8 @@
     "react-native-webview": "13.12.5",
     "reanimated-color-picker": "^3.0.6",
     "socket.io-client": "^4.8.1",
-    "tailwind-merge": "^3.0.1"
+    "tailwind-merge": "^3.0.1",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

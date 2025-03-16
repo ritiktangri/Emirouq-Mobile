@@ -77,7 +77,7 @@ export default function TabLayout() {
                         'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
                         props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
                       )}>
-                      Post
+                      Post Ad
                     </Text>
                   ),
                   tabBarIcon: (props) => getIconsByScreenName(theme, 'post', props.focused),
