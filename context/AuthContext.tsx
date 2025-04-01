@@ -180,6 +180,7 @@ const AuthProvider = ({ children }: any) => {
           router.replace(routes.drawer.tabs.home as any);
           setSignInLoading(false);
         });
+        cb && cb();
       })
       .catch((err: any) => {
         // toast.error(err?.message || 'Something went wrong');
@@ -291,6 +292,7 @@ const AuthProvider = ({ children }: any) => {
       body,
     })
       .then((res: any) => {
+        console.log('updated profile-->', res);
         setUser({
           ...user,
           firstName: res?.data?.firstName,
@@ -298,13 +300,16 @@ const AuthProvider = ({ children }: any) => {
           email: res?.data?.email,
           userHandle: res?.data?.userHandle,
           profileImage: res?.data?.profileImage,
-          timeZone: res?.data?.timeZone,
+          bio: res?.data?.bio,
+          phoneNumber: res?.data?.phoneNumber,
+          location: res?.data?.location,
         });
         // toast.success('Updated successfully');
         cb && cb();
         setBtnLoading(false);
       })
       .catch((err: any) => {
+        console.log('err', err);
         // toast.error(err?.message);
         errCb && errCb(err);
         setBtnLoading(false);

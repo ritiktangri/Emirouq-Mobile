@@ -1,0 +1,397 @@
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, Pressable, Alert } from 'react-native';
+import { Controller, useForm } from 'react-hook-form';
+import * as ImagePicker from 'expo-image-picker';
+import { z } from 'zod';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { AntDesign, Entypo } from '@expo/vector-icons';
+import { Image as ExpoImage } from 'expo-image';
+import { useAuth } from '~/context/AuthContext';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useCategory } from '~/context/CategoryContext';
+import CustomDropdown from '~/components/UI/CustomDropdown';
+import { useTheme } from '~/context/ThemeContext';
+
+const profileSchema = z.object({
+  firstName: z.string().min(2, 'First name must be at least 2 characters'),
+  lastName: z.string().min(2, 'Last name must be at least 2 characters'),
+  phoneNumber: z.string().min(8, 'Phone must be at least 8 characters'),
+  userHandle: z.string().min(3, 'Username must be at least 3 characters'),
+  email: z.string().email('Invalid email address'),
+  location: z.string().min(2, 'Location is required'),
+  bio: z.string().max(150, 'Bio must be less than 150 characters').optional(),
+  interests: z.array(z.string()).min(1, 'Select at least one interest'),
+});
+
+type ProfileFormData = z.infer<typeof profileSchema>;
+
+const SetupProfile = () => {
+  const [profileImage, setProfileImage] = useState<any>(null);
+  const { categories }: any = useCategory();
+  const { showToast }: any = useTheme();
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+    setValue,
+  } = useForm<ProfileFormData>({ resolver: zodResolver(profileSchema) });
+
+  const { user, updateProfile } = useAuth();
+
+  useEffect(() => {
+    if (user?.uuid) {
+      setValue('firstName', user?.firstName);
+      setValue('lastName', user?.lastName);
+      setValue('userHandle', user?.userHandle || '');
+      setValue('email', user?.email || '');
+      setValue('phoneNumber', user?.phoneNumber || '');
+      setValue('bio', user?.bio);
+    }
+  }, [user]);
+
+  const locations = [
+    'New York, NY',
+    'Los Angeles, CA',
+    'Chicago, IL',
+    'Houston, TX',
+    'Phoenix, AZ',
+    'Philadelphia, PA',
+  ];
+
+  const pickImage = async (source: 'camera' | 'gallery') => {
+    if (source === 'camera') {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Please allow camera access in settings.');
+        return;
+      }
+    } else {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Please allow gallery access in settings.');
+        return;
+      }
+    }
+
+    let result: any;
+    let config: any = {
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+      base64: true,
+    };
+
+    try {
+      if (source === 'camera') {
+        result = await ImagePicker.launchCameraAsync({
+          ...config,
+          cameraType: ImagePicker.CameraType.back,
+        });
+      } else {
+        result = await ImagePicker.launchImageLibraryAsync(config);
+      }
+
+      if (!result.canceled) {
+        setProfileImage(result.assets[0]);
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong while opening the camera.');
+      console.error(error);
+    }
+    if (!result.canceled) {
+      console.log('result.assets[0].uri', result.assets[0].uri);
+      setProfileImage(result?.assets?.[0]);
+    }
+  };
+  console.log('profileImage?.file?.base64', profileImage);
+  const onSubmit = (data: any) => {
+    console.log('Form data:', data);
+    // const formData = new FormData();
+    // formData.append('firstName', data?.firstName);
+    // formData.append('lastName', data?.lastName);
+    // formData.append('userHandle', data?.userHandle);
+    // formData.append('location', data?.location);
+    // formData.append('bio', data?.bio);
+    // formData.append('countryCode', '+971');
+    // formData.append('userInterest', JSON.stringify(data?.interests));
+    // formData.append('profileImage', profileImage.file);
+
+    // if (user?.isEmail) {
+    //   formData.append('phoneNumber', data?.phoneNumber);
+    // } else {
+    //   formData.append('email', data?.email);
+    // }
+    // Handle form submission
+    updateProfile(
+      {
+        body: {
+          ...(data?.firstName !== user?.firstName && { firstName: data?.firstName }),
+          ...(data?.lastName !== user?.lastName && { lastName: data?.lastName }),
+          ...(data?.userHandle !== user?.userHandle && { userHandle: data?.userHandle }),
+          ...(data?.location !== user?.location && { location: data?.location }),
+          ...(data?.bio !== user?.bio && { bio: data?.bio }),
+          ...(data?.countryCode !== user?.countryCode && { countryCode: data?.countryCode }),
+          ...(data?.interests && { userInterest: JSON.stringify(data?.interests) }),
+          ...(profileImage?.base64 && {
+            profileImage: {
+              base64: `data:${profileImage?.mimeType};base64,${profileImage?.base64}`,
+              fileName: profileImage?.fileName,
+            },
+          }),
+        },
+      },
+      () => {
+        console.log('done');
+        showToast('Profile Updated!');
+      },
+      () => {
+        console.log('errrrr');
+      }
+    );
+  };
+
+  const selectedInterests = watch('interests') || [];
+
+  const toggleInterest = (interest: string) => {
+    const currentInterests = selectedInterests;
+    const newInterests = currentInterests.includes(interest)
+      ? currentInterests.filter((i) => i !== interest)
+      : [...currentInterests, interest];
+    setValue('interests', newInterests, { shouldValidate: true });
+  };
+  return (
+    <KeyboardAwareScrollView
+      showsVerticalScrollIndicator={false}
+      className="flex-1 bg-white px-4 py-6">
+      <Text className="mb-6 text-center text-xl font-semibold text-gray-800">
+        Set up your profile to start buying & selling securely!
+      </Text>
+
+      <View className="mb-8 items-center">
+        <Pressable
+          className="mb-3 h-[120px] w-[120px] items-center justify-center rounded-full bg-gray-100"
+          onPress={() => pickImage('gallery')}>
+          {profileImage ? (
+            <ExpoImage
+              className="h-full w-full rounded-full"
+              source={{ uri: profileImage?.uri }}
+              contentFit="fill"
+              placeholder={{ blurhash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj' }}
+              transition={1000}
+              style={{
+                height: '100%',
+                width: '100%',
+                borderRadius: '50%',
+              }}
+            />
+          ) : (
+            <AntDesign name="camerao" size={32} color="gray" />
+          )}
+        </Pressable>
+        <Text className="mb-4 text-base text-gray-800">Add Profile Picture</Text>
+
+        <View className="flex-row gap-3">
+          <Pressable
+            className="rounded-full border border-gray-200 px-4 py-2"
+            onPress={() => pickImage('camera')}>
+            <Text className="text-sm text-gray-600">Take Photo</Text>
+          </Pressable>
+          <Pressable
+            className="rounded-full border border-gray-200 px-4 py-2"
+            onPress={() => pickImage('gallery')}>
+            <Text className="text-sm text-gray-600">Gallery</Text>
+          </Pressable>
+        </View>
+      </View>
+
+      <View className="flex-col gap-2">
+        <View className="">
+          <Text className="mb-2 text-base font-semibold text-gray-800">First Name *</Text>
+          <Controller
+            control={control}
+            name="firstName"
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                className="w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
+                onChangeText={onChange}
+                value={value}
+                placeholder="Enter your full name"
+              />
+            )}
+          />
+          {errors.firstName && (
+            <Text className="mt-1 text-sm text-red-500">{errors.firstName.message}</Text>
+          )}
+        </View>
+        <View className="">
+          <Text className="mb-2 text-base font-semibold text-gray-800">Last Name</Text>
+          <Controller
+            control={control}
+            name="lastName"
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                className="w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
+                onChangeText={onChange}
+                value={value}
+                placeholder="Enter your full name"
+              />
+            )}
+          />
+          {errors.lastName && (
+            <Text className="mt-1 text-sm text-red-500">{errors.lastName.message}</Text>
+          )}
+        </View>
+
+        <View>
+          <Text className="mb-2 text-base font-semibold text-gray-800">Username</Text>
+          <Controller
+            control={control}
+            name="userHandle"
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                className="w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
+                onChangeText={onChange}
+                value={value}
+                placeholder="Choose a unique username"
+              />
+            )}
+          />
+          {errors.userHandle && (
+            <Text className="mt-1 text-sm text-red-500">{errors.userHandle.message}</Text>
+          )}
+        </View>
+
+        <View>
+          <Text className="mb-2 text-base font-semibold text-gray-800">Email Address</Text>
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                className="w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
+                onChangeText={!user?.isEmail ? onChange : () => {}}
+                value={value}
+                placeholder="Enter your email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            )}
+          />
+          {errors.email && (
+            <Text className="mt-1 text-sm text-red-500">{errors.email.message}</Text>
+          )}
+        </View>
+
+        <View>
+          <Text className="mb-2 text-base font-semibold text-gray-800">Phone Number</Text>
+          <View className="flex-row gap-2">
+            <View className="w-16 items-center justify-center rounded-lg border border-gray-200 px-4 py-4">
+              <Text>+1</Text>
+            </View>
+            <Controller
+              control={control}
+              name="phoneNumber"
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  className="flex-1 rounded-lg border border-gray-200 bg-white px-4 py-4"
+                  onChangeText={user?.isEmail ? onChange : () => {}}
+                  value={value}
+                  placeholder="Enter phone number"
+                  keyboardType="phone-pad"
+                />
+              )}
+            />
+          </View>
+          {errors.phoneNumber && (
+            <Text className="mt-1 text-sm text-red-500">{errors.phoneNumber.message}</Text>
+          )}
+        </View>
+
+        <View>
+          <Text className="mb-2 text-base font-semibold text-gray-800">Location</Text>
+          <Controller
+            control={control}
+            name="location"
+            render={({ field: { onChange, value } }) => (
+              <CustomDropdown
+                value={value}
+                data={locations}
+                onChange={onChange}
+                placeholder="Select location"
+              />
+            )}
+          />
+          {errors.location && (
+            <Text className="mt-1 text-sm text-red-500">{errors.location.message}</Text>
+          )}
+        </View>
+
+        <View>
+          <Text className="mb-2 text-base font-semibold text-gray-800">Bio (Optional)</Text>
+          <Controller
+            control={control}
+            name="bio"
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                className="h-24 w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
+                onChangeText={onChange}
+                value={value}
+                placeholder="Tell us about yourself"
+                multiline
+                numberOfLines={4}
+                maxLength={150}
+                textAlignVertical="top"
+              />
+            )}
+          />
+          <Text className="mt-1 text-right text-xs text-gray-500">
+            {watch('bio')?.length || 0}/150
+          </Text>
+          {errors.bio && <Text className="mt-1 text-sm text-red-500">{errors.bio.message}</Text>}
+        </View>
+        <View>
+          <Text className="mb-2 text-base font-semibold text-gray-800">
+            Select Your Interests *
+          </Text>
+          <Text className="mb-3 text-sm text-gray-500">Choose categories that interest you</Text>
+
+          <View className="flex-row flex-wrap gap-2">
+            {(categories || [])?.map((interest: any) => {
+              const isSelected = selectedInterests.includes(interest?.uuid);
+              return (
+                <Pressable
+                  key={interest?.uuid}
+                  onPress={() => toggleInterest(interest?.uuid)}
+                  className={`flex-row items-center rounded-full border px-4 py-2 ${
+                    isSelected ? 'border-primary bg-primary' : 'border-gray-200 bg-white'
+                  }`}>
+                  <Text className={`text-sm ${isSelected ? 'text-white' : 'text-gray-700'}`}>
+                    {interest?.title}
+                  </Text>
+                  {isSelected && (
+                    <View className="ml-2">
+                      <Entypo name="cross" size={14} color="white" />
+                    </View>
+                  )}
+                </Pressable>
+              );
+            })}
+          </View>
+          {errors.interests && (
+            <Text className="mt-2 text-sm text-red-500">{errors.interests.message}</Text>
+          )}
+        </View>
+
+        <Pressable
+          className="mt-6 w-full items-center rounded-lg bg-primary py-4"
+          onPress={handleSubmit(onSubmit)}>
+          <Text className="text-base font-semibold text-white">Complete Profile</Text>
+        </Pressable>
+      </View>
+    </KeyboardAwareScrollView>
+  );
+};
+
+export default SetupProfile;

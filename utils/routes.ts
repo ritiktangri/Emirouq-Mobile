@@ -24,10 +24,13 @@ export const routes = {
     tabs: {
       tabs: '/(drawer)/(tabs)',
       home: '/(drawer)/(tabs)/home',
-      sell: '/(drawer)/(tabs)/sell',
-      // singleTrade: (id: string) => `/(drawer)/(tabs)/trades/${id}`,
+      // sell: '/(drawer)/(tabs)/sell',
       chat: '/(drawer)/(tabs)/chat',
       profile: '/(drawer)/(tabs)/profile',
+      create_profile:'/(drawer)/(tabs)/profile/create-profile',
+      post:'/(drawer)/(tabs)/post',
+      preview_post:'/(drawer)/(tabs)/post/preview-post',
+      success_view:'/(drawer)/(tabs)/post/success-view',
     },
   },
 };

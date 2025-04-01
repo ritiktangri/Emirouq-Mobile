@@ -83,11 +83,11 @@ const PostProvider = ({ children }: any) => {
         // toast.success('Category created successfully');
         setBtnLoading(false);
         // getCategories();
-        cb() && cb();
+        cb && cb();
       })
       .catch((err: any) => {
         // toast.error(err.message);
-        errCb() && errCb(err);
+        errCb && errCb(err);
         setBtnLoading(false);
       })
       .finally(() => {

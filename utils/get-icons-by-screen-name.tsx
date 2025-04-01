@@ -14,7 +14,6 @@ import {
 } from '~/svgs/bottombar';
 
 export const getIconsByScreenName = (theme: string, screenName: string, active: boolean) => {
-  console.log('active', active);
   const iconSource: any = {
     home: (
       <AntDesign

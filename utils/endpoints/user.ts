@@ -19,7 +19,7 @@ const user = {
     v1: {
       ...defaults.methods.PUT,
       ...defaults.versions.v1,
-      uri: '/user/profile',
+      uri: '/user/updateProfile',
     },
   },
   resetPassword: {

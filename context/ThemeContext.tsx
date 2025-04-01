@@ -1,6 +1,7 @@
 /* eslint-disable import/order */
-import { createContext, useContext, useEffect, useState, useMemo } from 'react';
+import { createContext, useContext, useEffect, useState, useMemo, useRef } from 'react';
 import { Appearance, Platform } from 'react-native';
+import Toast from '~/components/UI/Toast';
 import { getStorageItemAsync, setStorageItemAsync } from '~/hooks/useStorageState';
 import DarkTheme from '~/theme/DarkTheme';
 import DefaultTheme from '~/theme/DefaultTheme';
@@ -20,6 +21,7 @@ const ThemeProvider = ({ children }: any) => {
   const colorScheme = Appearance.getColorScheme();
   const [isDarkTheme, setIsDarkTheme] = useState(colorScheme === 'dark');
   const [colorIndex, setColorIndex] = useState(0);
+  const toastRef: any = useRef(null);
   const onSelectTheme = (value: any) => {
     setIsDarkTheme(value);
     Appearance.setColorScheme(!value ? 'light' : 'dark');
@@ -29,6 +31,10 @@ const ThemeProvider = ({ children }: any) => {
   const onSelectColor = (index: any) => {
     setStorageItemAsync('colorIndex', index?.toString());
     setColorIndex(+index);
+  };
+
+  const showToast = (message: string, type: string) => {
+    toastRef.current.toast(message, type);
   };
 
   useEffect(() => {
@@ -54,11 +60,17 @@ const ThemeProvider = ({ children }: any) => {
       colorsName,
       onSelectColor,
       colorScheme: isDarkTheme ? 'dark' : 'light',
+      showToast,
     }),
-    [isDarkTheme, colorIndex, onSelectTheme, onSelectColor, colorsName]
+    [isDarkTheme, colorIndex, onSelectTheme, onSelectColor, colorsName, showToast]
   );
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>
+      <Toast ref={toastRef} />
+      {children}
+    </ThemeContext.Provider>
+  );
 };
 
 export { ThemeContext, ThemeProvider };

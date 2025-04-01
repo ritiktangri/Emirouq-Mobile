@@ -1,11 +1,11 @@
 /* eslint-disable import/order */
 import { Stack } from 'expo-router';
-import { DashboardProvider } from '~/context/DashboardContext';
+import { CategoryProvider } from '~/context/CategoryContext';
 import { TagsProviders } from '~/context/TagsContext';
 
 const _layout = () => {
   return (
-    <DashboardProvider>
+    <CategoryProvider>
       <TagsProviders>
         <Stack
           screenOptions={{
@@ -13,7 +13,7 @@ const _layout = () => {
           }}
         />
       </TagsProviders>
-    </DashboardProvider>
+    </CategoryProvider>
   );
 };
 

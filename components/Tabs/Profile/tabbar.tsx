@@ -21,7 +21,7 @@ const TABS = [
 
 export default function TabLayout({ activeTab, setActiveTab }: any) {
   return (
-    <View className="rounded-md bg-white p-1">
+    <View className="rounded-md border-b-[0.4px] border-gray-300 bg-white p-1">
       <View className="">
         <View className="flex-row">
           {TABS.map((tab, index) => {

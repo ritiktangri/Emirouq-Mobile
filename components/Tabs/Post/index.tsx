@@ -3,7 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as ImagePicker from 'expo-image-picker';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { AntDesign, EvilIcons, Feather, MaterialIcons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CustomDropdown from '~/components/UI/CustomDropdown';
@@ -11,6 +11,10 @@ import SelectPicker from '~/components/UI/SelectPicker';
 import { Image as ExpoImage } from 'expo-image';
 import { useCategory } from '~/context/CategoryContext';
 import { usePosts } from '~/context/PostContext';
+import { useAuth } from '~/context/AuthContext';
+import { useRouter } from 'expo-router';
+import { routes } from '~/utils/routes';
+import { useTheme } from '~/context/ThemeContext';
 
 const schema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -48,13 +52,24 @@ const AddPost = () => {
       condition: 'new',
     },
   });
-
+  const router: any = useRouter();
   const { categories, getSubCategoryList, subCategories }: any = useCategory();
   const { createPost, btnLoading }: any = usePosts();
+  const { user }: any = useAuth();
+  const { showToast }: any = useTheme();
   const [properties, setProperties] = useState([]);
+
   const selectedCategory = watch('category');
   const selectedSubCategory = watch('subCategory');
 
+  useLayoutEffect(() => {
+    if (!user?._id) {
+      //navigate to login
+    } else if (user?._id && !user?.userHandle) {
+      router.push(routes.drawer.tabs.create_profile);
+      //navigate to create profile
+    }
+  }, [user]);
   useEffect(() => {
     if (selectedCategory) {
       getSubCategoryList(selectedCategory);
@@ -65,10 +80,12 @@ const AddPost = () => {
 
   const onSubmit = (data: any) => {
     delete data?.category;
-    console.log({ ...data, properties });
-    createPost({ ...data, properties, images }, () => {
-      console.log('success');
-    });
+    const body = { ...data, properties };
+    console.log('hi body', body);
+    router.push(routes.drawer.tabs.preview_post, { params: { data: JSON.stringify(body) } });
+    // createPost({ ...data, properties, images }, () => {
+    //   showToast('Post added successfully!', 'success');
+    // });
   };
 
   const pickImages = async () => {
@@ -108,7 +125,7 @@ const AddPost = () => {
           <View className="mt-4 flex-row flex-wrap gap-2">
             {images.map((uri: any, index) =>
               uri?.uri ? (
-                <View className="relative h-[75px] w-[75px] rounded-full">
+                <View key={index} className="relative h-[75px] w-[75px] rounded-full">
                   <ExpoImage
                     source={{ uri: uri?.uri }}
                     contentFit="fill"
@@ -359,9 +376,12 @@ const AddPost = () => {
         </Pressable>
 
         <Pressable
-          className="flex-1 items-center rounded-lg bg-primary py-4"
-          onPress={handleSubmit(onSubmit)}>
-          {btnLoading ? <ActivityIndicator size="small" /> : <></>}
+          className="flex-1 flex-row items-center justify-center gap-1 rounded-lg bg-primary py-4"
+          // onPress={handleSubmit(onSubmit)}>
+          onPress={() => {
+            router.push(routes.drawer.tabs.preview_post);
+          }}>
+          {btnLoading ? <ActivityIndicator size="small" color={'white'} /> : <></>}
           <Text className="text-base font-semibold text-white">Continue</Text>
         </Pressable>
       </View>

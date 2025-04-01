@@ -5,6 +5,7 @@ import { Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native
 import DynamicButton from '~/components/DynamicButton';
 import Input from '~/components/UI/Input';
 import { useAuth } from '~/context/AuthContext';
+import { useTheme } from '~/context/ThemeContext';
 
 const Login = ({ checkinType }: any) => {
   const [agreed, setAgreed] = useState(false);
@@ -16,6 +17,7 @@ const Login = ({ checkinType }: any) => {
     phoneNumber: '',
     password: '12345678',
   });
+  const { showToast }: any = useTheme();
   const onChangeText = (key: string, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
@@ -30,11 +32,10 @@ const Login = ({ checkinType }: any) => {
     } else {
       body.phoneNumber = form.phoneNumber;
     }
-    console.log('body', body);
     login(
       body,
       () => {
-        console.log('success');
+        showToast('Login Successful!', 'success');
       },
       (err: any) => {
         console.log('err', err.data.error.message);
