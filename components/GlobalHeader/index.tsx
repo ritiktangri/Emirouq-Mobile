@@ -18,7 +18,7 @@ const GlobalHeader = ({ route }: any) => {
   };
   return (
     <View className={cn('flex-row justify-between gap-4 rounded-b-xl p-5 md:p-4', 'bg-primary')}>
-      {route.route.name === 'home' ? (
+      {!headerTitle ? (
         <View className="h-1 w-4" />
       ) : (
         <Entypo name="chevron-left" size={24} color="white" onPress={handleGoBack} />
