@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '~/components/common/Text';
 import { arabic, english, light_logo } from '~/image';
 import { useLocale } from '~/context/LocaleContext';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { routes } from '~/utils/routes';
 import { Href, useRouter } from 'expo-router';
 import { useAuth } from '~/context/AuthContext';

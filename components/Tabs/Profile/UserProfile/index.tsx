@@ -1,21 +1,29 @@
+/* eslint-disable import/order */
 import {
   View,
-  Text,
   TouchableOpacity,
   Switch,
   ScrollView,
   TouchableWithoutFeedback,
   Keyboard,
+  Image,
 } from 'react-native';
 import React, { useState } from 'react';
 import { useAuth } from '~/context/AuthContext';
 import { Image as ExpoImage } from 'expo-image';
 import { AntDesign, EvilIcons, Feather, FontAwesome, Fontisto, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { useLocale } from '~/context/LocaleContext';
+import { arabic, english } from '~/image';
+import { i18n } from '~/utils/i18n';
+import { Text } from '~/components/common/Text';
+import { Href, useRouter } from 'expo-router';
+import { routes } from '~/utils/routes';
 
 const UserProfile = () => {
   const { user } = useAuth();
-  const [userData, setUserData] = useState(user);
+  const { locale } = useLocale();
+  const router = useRouter();
   const [profileImage, setProfileImage] = useState<any>({
     uri:
       user?.profileImage ||
@@ -123,6 +131,30 @@ const UserProfile = () => {
           {/* ACCOUNT SETTINGS */}
           <View className="my-2 rounded-lg bg-white p-2">
             <Text className="text-lg font-semibold">Account Settings</Text>
+            <TouchableOpacity
+              onPress={() => {
+                router.push({
+                  pathname: routes.tabs.profile['select-language'],
+                  params: {
+                    headerTitle: 'profile.language',
+                  },
+                } as Href);
+              }}
+              className="my-3 flex-row items-center justify-between">
+              <View className="flex-row  items-center gap-x-2">
+                <Image
+                  source={locale === 'ar' ? arabic : english}
+                  className="h-8 w-8 rounded-full"
+                />
+                <Text className="font-poppinsMedium">{i18n.t('profile.language')}</Text>
+              </View>
+              <View className="flex-row items-center gap-x-2">
+                <Text className="font-poppinsMedium">
+                  {locale === 'ar' ? 'العربية' : 'English'}
+                </Text>
+                <Ionicons name="chevron-forward-outline" size={20} color="gray" />
+              </View>
+            </TouchableOpacity>
             <View className="my-3 flex-row items-center justify-between">
               <View className="flex-row  items-center gap-x-2">
                 <AntDesign name="mobile1" size={20} color="gray" />

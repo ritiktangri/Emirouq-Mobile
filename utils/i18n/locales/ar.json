@@ -1,0 +1,17 @@
+{
+  "hello": "مرحباً %{name}!",
+  "tab": {
+    "home": "الرئيسية",
+    "search": "بحث",
+    "post": "إعلان",
+    "chat": "محادثة",
+    "profile": "مظهر جانبي"
+  },
+  "profile": {
+    "language": "لغة",
+    "selectLanguage": {
+      "title": "اللغة المحددة",
+      "description": "اختر لغتك المفضلة للتطبيق."
+    }
+  }
+}

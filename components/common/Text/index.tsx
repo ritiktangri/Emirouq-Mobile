@@ -2,6 +2,7 @@ import { VariantProps, cva } from 'class-variance-authority';
 import { cssInterop } from 'nativewind';
 import * as React from 'react';
 import { Text as RNtext } from 'react-native';
+import { useLocale } from '~/context/LocaleContext';
 import { cn } from '~/utils/helper';
 
 cssInterop(RNtext, { className: 'style' });
@@ -32,8 +33,8 @@ const textVariants = cva('text-foreground', {
     },
   },
   defaultVariants: {
-    variant: 'body',
-    color: 'primary',
+    variant: 'callout',
+    color: 'black',
   },
 });
 
@@ -46,8 +47,18 @@ function Text({
   ...props
 }: React.ComponentPropsWithoutRef<typeof RNtext> & VariantProps<typeof textVariants>) {
   const textClassName = React.useContext(TextClassContext);
+  const { locale } = useLocale();
   return (
-    <RNtext className={cn(textVariants({ variant, color }), textClassName, className)} {...props} />
+    <RNtext
+      allowFontScaling={false}
+      className={cn(
+        textVariants({ variant, color }),
+        textClassName,
+        className,
+        locale === 'ar' ? 'text-right' : 'text-left'
+      )}
+      {...props}
+    />
   );
 }
 

@@ -66,7 +66,7 @@ const AddPost = () => {
     if (!user?._id) {
       //navigate to login
     } else if (user?._id && !user?.userHandle) {
-      router.push(routes.drawer.tabs.create_profile);
+      router.push(routes.tabs.create_profile);
       //navigate to create profile
     }
   }, [user]);
@@ -81,8 +81,7 @@ const AddPost = () => {
   const onSubmit = (data: any) => {
     delete data?.category;
     const body = { ...data, properties };
-    console.log('hi body', body);
-    router.push(routes.drawer.tabs.preview_post, { params: { data: JSON.stringify(body) } });
+    router.push(routes.tabs.preview_post, { params: { data: JSON.stringify(body) } });
     // createPost({ ...data, properties, images }, () => {
     //   showToast('Post added successfully!', 'success');
     // });
@@ -379,7 +378,7 @@ const AddPost = () => {
           className="flex-1 flex-row items-center justify-center gap-1 rounded-lg bg-primary py-4"
           // onPress={handleSubmit(onSubmit)}>
           onPress={() => {
-            router.push(routes.drawer.tabs.preview_post);
+            router.push(routes.tabs.preview_post);
           }}>
           {btnLoading ? <ActivityIndicator size="small" color={'white'} /> : <></>}
           <Text className="text-base font-semibold text-white">Continue</Text>

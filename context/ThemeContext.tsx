@@ -11,6 +11,7 @@ const defaultProvider = {
   setIsDarkTheme: () => {},
   colors: DefaultTheme?.[0]?.colors,
   onSelectTheme: (payload: any) => {},
+  showToast: (message: string, type: string) => {},
 };
 const ThemeContext = createContext(defaultProvider);
 export const useTheme = () => useContext(ThemeContext);

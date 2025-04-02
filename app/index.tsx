@@ -14,7 +14,7 @@ const App = () => {
   if (loading) {
     return <SplashScreen />;
   }
-  if (locale) {
+  if (!locale) {
     return <Redirect href={routes['select-language'] as Href} />;
   }
   // if user is not logged in, redirect to login page

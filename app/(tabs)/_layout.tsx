@@ -48,7 +48,7 @@ export default function TabLayout() {
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
                       props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
                     )}
-                    style={{ textAlign: locale === 'sa' ? 'right' : 'left' }}>
+                    style={{ textAlign: locale === 'ar' ? 'right' : 'left' }}>
                     {i18n.t('tab.home')}
                   </Text>
                 ),
@@ -64,7 +64,7 @@ export default function TabLayout() {
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
                       props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
                     )}
-                    style={{ textAlign: locale === 'sa' ? 'right' : 'left' }}>
+                    style={{ textAlign: locale === 'ar' ? 'right' : 'left' }}>
                     {i18n.t('tab.search')}
                   </Text>
                 ),
@@ -80,8 +80,8 @@ export default function TabLayout() {
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
                       props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
                     )}
-                    style={{ textAlign: locale === 'sa' ? 'right' : 'left' }}>
-                    {i18n.t('tab.postAd')}
+                    style={{ textAlign: locale === 'ar' ? 'right' : 'left' }}>
+                    {i18n.t('tab.post')}
                   </Text>
                 ),
                 tabBarIcon: (props) => getIconsByScreenName(theme, 'post', props.focused),
@@ -96,7 +96,7 @@ export default function TabLayout() {
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
                       props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
                     )}
-                    style={{ textAlign: locale === 'sa' ? 'right' : 'left' }}>
+                    style={{ textAlign: locale === 'ar' ? 'right' : 'left' }}>
                     {i18n.t('tab.chat')}
                   </Text>
                 ),
@@ -112,7 +112,7 @@ export default function TabLayout() {
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
                       props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
                     )}
-                    style={{ textAlign: locale === 'sa' ? 'right' : 'left' }}>
+                    style={{ textAlign: locale === 'ar' ? 'right' : 'left' }}>
                     {i18n.t('tab.profile')}
                   </Text>
                 ),

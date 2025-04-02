@@ -3,8 +3,15 @@
   "tab": {
     "home": "Home",
     "search": "Search",
-    "postAd": "Post Ad",
+    "post": "Post Ad",
     "chat": "Chat",
     "profile": "Profile"
+  },
+  "profile": {
+    "language": "Language",
+    "selectLanguage": {
+      "title": "Selected Language",
+      "description": "Choose your preferred language for the app."
+    }
   }
 }
