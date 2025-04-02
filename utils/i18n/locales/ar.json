@@ -9,6 +9,11 @@
   },
   "profile": {
     "language": "لغة",
+    "personalInformation": "معلومات شخصية",
+    "phone": "هاتف",
+    "email": "البريد الإلكتروني",
+    "location": "موقع",
+    "accountSettings": "إعدادات الحساب",
     "selectLanguage": {
       "title": "اللغة المحددة",
       "description": "اختر لغتك المفضلة للتطبيق."

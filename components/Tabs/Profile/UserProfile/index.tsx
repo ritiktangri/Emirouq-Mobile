@@ -1,6 +1,5 @@
 /* eslint-disable import/order */
 import {
-  View,
   TouchableOpacity,
   Switch,
   ScrollView,
@@ -19,6 +18,7 @@ import { i18n } from '~/utils/i18n';
 import { Text } from '~/components/common/Text';
 import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
+import { View } from '~/components/common/View';
 
 const UserProfile = () => {
   const { user } = useAuth();
@@ -77,7 +77,7 @@ const UserProfile = () => {
               className="relative bottom-8 left-6 rounded-full bg-primary p-1"
             />
 
-            <View className="flex flex-col gap-y-2">
+            <View className="flex flex-col items-center gap-y-2">
               <Text className="text-center text-lg font-semibold">{`${user?.firstName} ${user?.lastName || ''}`}</Text>
               <Text className="text-center text-gray-600">{user?.email}</Text>
               <View className="flex-row items-center justify-center ">
@@ -103,26 +103,26 @@ const UserProfile = () => {
           </View>
           {/* PERSONAL INFORMATION */}
           <View className="mt-2 rounded-lg bg-white px-3 py-3 ">
-            <Text className="text-lg font-semibold">Personal Information</Text>
+            <Text className="text-xl font-semibold">{i18n.t('profile.personalInformation')}</Text>
             <View className="flex  justify-start">
-              <View className="flex-row items-center gap-x-2 ">
+              <View direction={locale} className="">
                 <AntDesign name="mobile1" size={24} color="gray" />
                 <View className="w-full flex-col border-b-[0.2px] border-gray-300 py-2">
-                  <Text className="text-gray-600">Phone</Text>
-                  <Text className="">{user?.phoneNumber || 'N/A'}</Text>
+                  <Text className="text-gray-600">{i18n.t('profile.phone')}</Text>
+                  <Text className="">{user?.phoneNumber || '--'}</Text>
                 </View>
               </View>
-              <View className="flex-row items-center gap-x-2">
+              <View direction={locale} className="">
                 <Fontisto name="email" size={24} color="gray" />
                 <View className="w-full flex-col border-b-[0.2px] border-gray-300 py-2">
-                  <Text className="text-gray-600">Email</Text>
+                  <Text className="text-gray-600">{i18n.t('profile.email')}</Text>
                   <Text className="">{user?.email}</Text>
                 </View>
               </View>
-              <View className="flex-row items-center gap-x-2">
+              <View direction={locale} className="">
                 <EvilIcons name="location" size={24} color="gray" />
                 <View className="flex-col py-2">
-                  <Text className="text-gray-600">Location</Text>
+                  <Text className="text-gray-600">{i18n.t('profile.location')}</Text>
                   <Text className="">San Francisco, CA</Text>
                 </View>
               </View>
@@ -130,7 +130,7 @@ const UserProfile = () => {
           </View>
           {/* ACCOUNT SETTINGS */}
           <View className="my-2 rounded-lg bg-white p-2">
-            <Text className="text-lg font-semibold">Account Settings</Text>
+            <Text className="text-lg font-semibold">{i18n.t('profile.accountSettings')}</Text>
             <TouchableOpacity
               onPress={() => {
                 router.push({
@@ -140,22 +140,29 @@ const UserProfile = () => {
                   },
                 } as Href);
               }}
-              className="my-3 flex-row items-center justify-between">
-              <View className="flex-row  items-center gap-x-2">
-                <Image
-                  source={locale === 'ar' ? arabic : english}
-                  className="h-8 w-8 rounded-full"
-                />
-                <Text className="font-poppinsMedium">{i18n.t('profile.language')}</Text>
-              </View>
-              <View className="flex-row items-center gap-x-2">
-                <Text className="font-poppinsMedium">
-                  {locale === 'ar' ? 'العربية' : 'English'}
-                </Text>
-                <Ionicons name="chevron-forward-outline" size={20} color="gray" />
+              className="my-3 ">
+              <View direction={locale}>
+                <View direction={locale} className="flex-1">
+                  <Image
+                    source={locale === 'ar' ? arabic : english}
+                    className="h-8 w-8 rounded-full"
+                  />
+                  <Text className="font-poppinsMedium">{i18n.t('profile.language')}</Text>
+                </View>
+
+                <View direction={locale} className="">
+                  <Text className="font-poppinsMedium">
+                    {locale === 'ar' ? 'العربية' : 'English'}
+                  </Text>
+                  <Ionicons
+                    name={locale === 'ar' ? 'chevron-back-outline' : 'chevron-forward-outline'}
+                    size={20}
+                    color="gray"
+                  />
+                </View>
               </View>
             </TouchableOpacity>
-            <View className="my-3 flex-row items-center justify-between">
+            {/* <View className="my-3 flex-row items-center justify-between">
               <View className="flex-row  items-center gap-x-2">
                 <AntDesign name="mobile1" size={20} color="gray" />
                 <Text className="">Show Contact Details</Text>
@@ -175,13 +182,13 @@ const UserProfile = () => {
                 <Text className="">Two Factor Authentication</Text>
               </View>
               <Switch value={true} />
-            </View>
+            </View> */}
           </View>
           <TouchableOpacity
             onPress={logout}
             className="my-2 flex-row items-center justify-center gap-x-3 rounded-xl border-2 border-red-500 py-2">
-            <AntDesign name="delete" size={20} color="red" />
-            <Text className="font-semibold text-red-500">Delete Account</Text>
+            <Ionicons name="log-out" size={20} color="red" />
+            <Text className="font-semibold text-red-500">Log out</Text>
           </TouchableOpacity>
         </View>
       </TouchableWithoutFeedback>
