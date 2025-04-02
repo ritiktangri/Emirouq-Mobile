@@ -29,6 +29,10 @@ const stats_active = require('./assets/drawer/stats_active.png');
 const stats_inactive = require('./assets/drawer/stats_inactive.png');
 const executions_active = require('./assets/drawer/executions_active.png');
 const executions_inactive = require('./assets/drawer/executions_inactive.png');
+
+//select language
+const arabic = require('./assets/select-language/sa.png');
+const english = require('./assets/select-language/en.png');
 export {
   //login
   splash_background,
@@ -55,4 +59,7 @@ export {
   stats_inactive,
   executions_active,
   executions_inactive,
+  //select language
+  arabic,
+  english,
 };

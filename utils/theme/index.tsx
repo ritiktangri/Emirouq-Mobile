@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native';
 const theme = {
   colors: {
     btn_primary: '#3872FA',
-    primary: '#0A84FF',
+    primary: '#FF5722',
     commission: '#9c041b',
     bank: '#049F80',
     dashboard_card: '#131B24',
