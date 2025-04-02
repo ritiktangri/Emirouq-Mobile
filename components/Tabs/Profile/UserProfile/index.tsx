@@ -188,7 +188,7 @@ const UserProfile = () => {
             onPress={logout}
             className="my-2 flex-row items-center justify-center gap-x-3 rounded-xl border-2 border-red-500 py-2">
             <Ionicons name="log-out" size={20} color="red" />
-            <Text className="font-semibold text-red-500">Log out</Text>
+            <Text className="font-semibold text-red-500">{i18n.t('profile.logout')}</Text>
           </TouchableOpacity>
         </View>
       </TouchableWithoutFeedback>

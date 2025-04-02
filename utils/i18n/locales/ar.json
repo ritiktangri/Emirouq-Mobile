@@ -14,6 +14,7 @@
     "email": "البريد الإلكتروني",
     "location": "موقع",
     "accountSettings": "إعدادات الحساب",
+    "logout": "تسجيل الخروج",
     "selectLanguage": {
       "title": "اللغة المحددة",
       "description": "اختر لغتك المفضلة للتطبيق."
