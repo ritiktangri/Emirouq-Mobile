@@ -41,17 +41,17 @@ function InitialLayout() {
     ...FontAwesome.font,
   });
   const { locale } = useLocale();
-  useEffect(() => {
-    if (locale === 'sa' && !I18nManager.isRTL) {
-      I18nManager.forceRTL(true);
-      // You might need to reload the app here for changes to fully take effect.
-      // Consider using `Updates.reloadAsync()` from 'expo-updates' if in managed workflow.
-      // Otherwise, prompt the user to restart the app.
-    } else if (locale !== 'sa' && I18nManager.isRTL) {
-      I18nManager.forceRTL(false);
-      // Similarly, consider reloading the app here.
-    }
-  }, [locale]);
+  // useEffect(() => {
+  //   if (locale === 'sa' && !I18nManager.isRTL) {
+  //     I18nManager.forceRTL(true);
+  //     // You might need to reload the app here for changes to fully take effect.
+  //     // Consider using `Updates.reloadAsync()` from 'expo-updates' if in managed workflow.
+  //     // Otherwise, prompt the user to restart the app.
+  //   } else if (locale !== 'sa' && I18nManager.isRTL) {
+  //     I18nManager.forceRTL(false);
+  //     // Similarly, consider reloading the app here.
+  //   }
+  // }, [locale]);
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
