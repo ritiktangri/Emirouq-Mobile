@@ -13,7 +13,3 @@ export const i18n = new I18n({
 i18n.defaultLocale = deviceLanguage;
 
 i18n.locale = deviceLanguage;
-
-export function changeLanguage(lang: string) {
-  i18n.locale = lang;
-}

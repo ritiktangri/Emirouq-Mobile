@@ -1,17 +1,26 @@
+/* eslint-disable import/order */
 import { StatusBar } from 'expo-status-bar';
-import { Image, Text, useColorScheme, View } from 'react-native';
+import { Text, TouchableOpacity, useColorScheme, View } from 'react-native';
 import Dashboard from '~/components/Tabs/Dashboard';
 import { cn } from '~/utils/helper.utils';
-import { getLocales } from 'expo-localization';
+import { useLocale } from '~/context/LocaleContext';
+import { i18n } from '~/utils/i18n';
 
 export default function Page() {
   const colorScheme: any = useColorScheme();
+  const { changeLanguage, locale } = useLocale();
+
   return (
-    <View className={cn('flex-1 bg-white dark:bg-black')}>
+    <View className={cn('flex-1 bg-white dark:bg-black', locale === 'sa' && 'rtl-container')}>
       <StatusBar style={colorScheme === 'light' ? 'dark' : 'light'} />
-      <View className="z-1 absolute left-0 right-0 top-0 mt-10 flex h-full w-full items-center"></View>
       <View className="z-2 flex-1">
         <Dashboard />
+        <Text style={{ textAlign: locale === 'sa' ? 'right' : 'left' }}>
+          {i18n.t('hello', { name: 'Toy' })}
+        </Text>
+        <TouchableOpacity onPress={() => changeLanguage(locale === 'sa' ? 'en' : 'sa')}>
+          <Text style={{}}>Change Language</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

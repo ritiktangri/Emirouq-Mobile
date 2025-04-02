@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import '../global.css';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Slot } from 'expo-router';
-import { LogBox } from 'react-native';
+import { I18nManager, LogBox } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider as CustomThemeProvider } from '~/context/ThemeContext';
@@ -16,6 +16,7 @@ import { Host } from 'react-native-portalize';
 import { PaperProvider } from 'react-native-paper';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { DarkTheme, ThemeProvider } from '@react-navigation/native';
+import { LocaleProvider, useLocale } from '~/context/LocaleContext';
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: 'index',
@@ -39,6 +40,18 @@ function InitialLayout() {
     'Inter-Medium': interMedium,
     ...FontAwesome.font,
   });
+  const { locale } = useLocale();
+  useEffect(() => {
+    if (locale === 'sa' && !I18nManager.isRTL) {
+      I18nManager.forceRTL(true);
+      // You might need to reload the app here for changes to fully take effect.
+      // Consider using `Updates.reloadAsync()` from 'expo-updates' if in managed workflow.
+      // Otherwise, prompt the user to restart the app.
+    } else if (locale !== 'sa' && I18nManager.isRTL) {
+      I18nManager.forceRTL(false);
+      // Similarly, consider reloading the app here.
+    }
+  }, [locale]);
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
@@ -73,9 +86,11 @@ export default function RootLayoutNav() {
             <ActionSheetProvider>
               <SafeAreaProvider>
                 <AuthProvider>
-                  <PaperProvider>
-                    <InitialLayout />
-                  </PaperProvider>
+                  <LocaleProvider>
+                    <PaperProvider>
+                      <InitialLayout />
+                    </PaperProvider>
+                  </LocaleProvider>
                 </AuthProvider>
               </SafeAreaProvider>
             </ActionSheetProvider>
