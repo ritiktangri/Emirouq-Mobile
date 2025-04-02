@@ -30,4 +30,5 @@ export const routes = {
     preview_post: '/(drawer)/(tabs)/post/preview-post',
     success_view: '/(drawer)/(tabs)/post/success-view',
   },
+  'select-language': '/select-language',
 };

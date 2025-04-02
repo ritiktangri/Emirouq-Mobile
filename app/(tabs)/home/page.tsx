@@ -9,7 +9,7 @@ import { i18n } from '~/utils/i18n';
 
 export default function Page() {
   const colorScheme: any = useColorScheme();
-  const { changeLanguage, locale } = useLocale();
+  const { changeLocale, locale } = useLocale();
 
   return (
     <View className={cn('flex-1 bg-white dark:bg-black', locale === 'sa' && 'rtl-container')}>
@@ -19,7 +19,7 @@ export default function Page() {
         <Text style={{ textAlign: locale === 'sa' ? 'right' : 'left' }}>
           {i18n.t('hello', { name: 'Toy' })}
         </Text>
-        <TouchableOpacity onPress={() => changeLanguage(locale === 'sa' ? 'en' : 'sa')}>
+        <TouchableOpacity onPress={() => changeLocale(locale === 'sa' ? 'en' : 'sa')}>
           <Text style={{}}>Change Language</Text>
         </TouchableOpacity>
       </View>

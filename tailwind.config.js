@@ -22,7 +22,7 @@ module.exports = {
         text: '#fff',
         border: '#0A84FF',
         placeholder: '#BDBDBDCC',
-        tertiary: '#94969C',
+        tertiary: '#666666',
         drawer: '#282E36',
         bottom_tab_active: '#00B9E7',
         dashboard_card: '#131B24',
