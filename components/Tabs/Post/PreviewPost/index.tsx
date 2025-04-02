@@ -171,7 +171,7 @@ const PreviewPost = () => {
             </Pressable>
             <Pressable
               className="flex-1 items-center rounded-lg bg-gray-100 py-4"
-              onPress={() => router.push(routes.drawer.tabs.success_view as Href)}>
+              onPress={() => router.push(routes.tabs.success_view as Href)}>
               <Text className="text-base font-semibold text-gray-700">Save as Draft</Text>
             </Pressable>
             <Pressable

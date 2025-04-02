@@ -14,7 +14,6 @@ interface VerifyInterface {
   };
 }
 import { useRouter } from 'expo-router';
-import { io } from 'socket.io-client';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { socketHostname } from '~/utils/callApis/apiUtils';
 import { routes } from '~/utils/routes';
@@ -331,25 +330,7 @@ const AuthProvider = ({ children }: any) => {
         setBtnLoading(false);
       });
   };
-  useEffect(() => {
-    if (user?.uuid) {
-      const socket: any = io(socketHostname(), {
-        transports: ['websocket', 'polling'],
-        secure: true,
-        forceNew: true,
-      });
 
-      socket?.on('connect', () => {
-        setSocketIo(socket);
-      });
-
-      socket?.emit('join_room', user?.uuid);
-
-      return () => {
-        socket.disconnect();
-      };
-    }
-  }, [user]);
   const getUnSeenCount = async () => {
     const res: any = await unSeenCountService();
     setUnseenCount(res?.data);
