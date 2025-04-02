@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 
 import React from 'react';
 

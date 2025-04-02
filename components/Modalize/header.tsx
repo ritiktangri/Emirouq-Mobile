@@ -4,7 +4,7 @@ import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Input from '../UI/Input';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 import { useTheme } from '~/context/ThemeContext';
 import { cn } from '~/utils/helper';
 

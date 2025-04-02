@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Dialog, Portal } from 'react-native-paper';
 
-import { DefaultText as Text } from '../DefaultText';
+import { Text } from '../Text';
 import theme from '~/utils/theme';
 const ConfirmationModal = ({
   icon,

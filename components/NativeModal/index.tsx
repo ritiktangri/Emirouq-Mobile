@@ -3,7 +3,7 @@ import { View, StyleSheet, StyleProp, ViewStyle, TouchableOpacity } from 'react-
 import Modal, { ModalProps } from 'react-native-modal';
 import { useRouter } from 'expo-router'; // Assuming you are using Expo Router
 import { height, width } from '~/constants/Colors';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 
 export const theme = {
   colors: {

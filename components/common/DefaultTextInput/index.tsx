@@ -1,6 +1,6 @@
 import React, { memo, useRef } from 'react';
 import { TextInput as DefaultTextInput, TextInputProps, View } from 'react-native';
-import { DefaultText } from '../DefaultText';
+import { Text } from '../Text';
 
 type InputProps = TextInputProps & {
   className?: string;
@@ -24,14 +24,7 @@ const TextInput = ({
 
   return (
     <View className={containerClassName}>
-      {title && (
-        <DefaultText
-          light="text-black"
-          dark="text-white"
-          className="mb-1.5 font-interMedium text-base ">
-          {title}
-        </DefaultText>
-      )}
+      {title && <Text className="mb-1.5 font-interMedium text-base ">{title}</Text>}
       <View className="flex-row items-center gap-2">
         {prefix ? prefix : <></>}
         <DefaultTextInput

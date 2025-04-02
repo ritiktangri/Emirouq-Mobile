@@ -32,17 +32,17 @@ export function OTPInput({ codes, refs, errorMessages, onChangeCode, config }: O
       width: 75,
       borderRadius: 8,
       textAlign: 'center',
-      backgroundColor: config.backgroundColor,
-      color: config.textColor,
-      borderColor: config.borderColor,
+      backgroundColor: config?.backgroundColor,
+      color: config?.textColor,
+      borderColor: config?.borderColor,
       borderWidth: 2,
     },
     errorInput: {
-      borderColor: config.errorColor,
-      color: config.errorColor,
+      borderColor: config?.errorColor,
+      color: config?.errorColor,
     },
     focusedInput: {
-      borderColor: config.focusColor,
+      borderColor: config?.focusColor,
     },
   });
 

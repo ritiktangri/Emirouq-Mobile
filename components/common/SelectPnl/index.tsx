@@ -14,7 +14,7 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 
 import { height } from '~/constants/Colors';
 import { cn } from '~/utils/helper';

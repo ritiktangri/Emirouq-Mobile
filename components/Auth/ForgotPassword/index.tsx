@@ -2,7 +2,7 @@ import { Href, Link, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { View, ImageBackground, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 import AuthHeader from '../../UI/AuthHeader';
 import Input from '../../UI/Input';
 

@@ -4,7 +4,7 @@ import React from 'react';
 import { useTheme } from '~/context/ThemeContext';
 import { Entypo } from '@expo/vector-icons';
 
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 
 const Select = ({
   data,

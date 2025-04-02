@@ -13,7 +13,7 @@ import {
   useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 import Input from '../../UI/Input';
 import { light_logo, login_background, logo } from '~/image';
 import { useTheme } from '~/context/ThemeContext';

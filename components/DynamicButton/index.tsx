@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Href, Link, useRouter } from 'expo-router';
 import { useTheme } from '~/context/ThemeContext';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 
 interface DynamicButtonProps {
   href?: Href;

@@ -4,8 +4,8 @@ import { View } from 'react-native';
 import { cn } from '~/utils/helper';
 
 import { useRouter } from 'expo-router';
-import { DefaultText } from '../common/DefaultText';
 import { Entypo } from '@expo/vector-icons';
+import { Text } from '../common/Text';
 
 const GlobalHeader = ({ route }: any) => {
   const router: any = useRouter();
@@ -23,9 +23,9 @@ const GlobalHeader = ({ route }: any) => {
       ) : (
         <Entypo name="chevron-left" size={24} color="white" onPress={handleGoBack} />
       )}
-      <DefaultText className="text-center text-2xl font-semibold text-white">
+      <Text className="text-center text-2xl font-semibold text-white">
         {`${route.route.name.charAt(0).toUpperCase()}${route.route.name.slice(1)}`}
-      </DefaultText>
+      </Text>
       <View className="h-1 w-4" />
     </View>
   );

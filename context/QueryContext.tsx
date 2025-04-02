@@ -1,9 +1,6 @@
 /* eslint-disable import/order */
-import { createContext, useContext, useState, useMemo, useEffect, useCallback } from 'react';
-import DefaultTheme from '~/theme/DefaultTheme';
+import { createContext, useContext, useState, useMemo, useEffect } from 'react';
 import { useAuth } from './AuthContext';
-import { DefaultText as Text } from '~/components/common/DefaultText';
-import dayjs from 'dayjs';
 type QueryContextType = {
   globalQueries: any;
   setGlobalQueries: (newQueries: any) => void;
@@ -54,17 +51,6 @@ const QueryProvider = ({ children }: any) => {
     setGlobalQueries({});
   };
 
-  const selectedDateText = useMemo(() => {
-    return (
-      <Text className={`font-poppinsMedium text-xs text-gray-400 dark:text-dashboard_card_text `}>
-        {globalQueries?.startDate && globalQueries?.endDate
-          ? `From ${dayjs(globalQueries?.startDate).format('DD MMM, YYYY')} to ${dayjs(globalQueries?.endDate).format('DD MMM, YYYY')}`
-          : globalQueries?.startDate
-            ? `From ${dayjs(globalQueries?.startDate).format('DD MMM, YYYY')}`
-            : '(All Dates)'}
-      </Text>
-    );
-  }, [globalQueries.startDate, globalQueries.endDate]);
   const value: any = useMemo(
     () => ({
       globalQueries,
@@ -72,9 +58,8 @@ const QueryProvider = ({ children }: any) => {
       setQuery,
       clearQuery,
       clearAllQueries,
-      selectedDateText,
     }),
-    [globalQueries, setGlobalQueries, setQuery, clearQuery, clearAllQueries, selectedDateText]
+    [globalQueries, setGlobalQueries, setQuery, clearQuery, clearAllQueries]
   );
 
   return <QueryContext.Provider value={value}>{children}</QueryContext.Provider>;

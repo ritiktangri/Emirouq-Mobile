@@ -3,7 +3,7 @@ import { View, TouchableOpacity, useColorScheme } from 'react-native';
 import React from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '~/context/AuthContext';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 import { BackIconSVG } from '~/svgs/drawer';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getInitials } from '~/utils/helper.utils';

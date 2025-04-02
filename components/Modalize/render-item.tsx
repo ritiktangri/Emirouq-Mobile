@@ -2,7 +2,7 @@
 import { View, TouchableOpacity, useColorScheme } from 'react-native';
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 import { useTheme } from '~/context/ThemeContext';
 import { cn } from '~/utils/helper';
 

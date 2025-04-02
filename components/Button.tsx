@@ -1,7 +1,7 @@
 /* eslint-disable import/order */
 import { forwardRef } from 'react';
 import { TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 
 type ButtonProps = {
   title: string;

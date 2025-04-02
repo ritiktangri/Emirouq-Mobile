@@ -1,7 +1,7 @@
 /* eslint-disable import/order */
 import React, { act, useEffect, useState } from 'react';
 import { View, Modal, TouchableWithoutFeedback, StyleSheet, TouchableOpacity } from 'react-native';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 
 import { Ionicons } from '@expo/vector-icons';
 import Animated from 'react-native-reanimated';

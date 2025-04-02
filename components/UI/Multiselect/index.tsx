@@ -4,7 +4,7 @@ import { MultiSelect } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useTheme } from '~/context/ThemeContext';
 import { Entypo } from '@expo/vector-icons';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 
 const MultiSelectComponent = ({
   selected,

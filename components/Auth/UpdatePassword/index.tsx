@@ -9,7 +9,7 @@ import { useAuth } from '~/context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { encode } from 'js-base64';
 import { Href, Link, useGlobalSearchParams, useLocalSearchParams, useRouter } from 'expo-router';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 import { routes } from '~/utils/routes';
 import { useTheme } from '~/context/ThemeContext';
 

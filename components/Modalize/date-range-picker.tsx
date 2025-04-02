@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 
 const DateRangePicker = () => {
   const [selectedDateRange, setSelectedDateRange] = useState('2024-12-27 ~ 2024-12-27');

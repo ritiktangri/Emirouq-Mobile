@@ -3,7 +3,7 @@ import React from 'react';
 import { useTheme } from '~/context/ThemeContext';
 import { MaterialIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 
 const CustomDatePicker = ({ mode, date, setDate, title, className }: any) => {
   const { colors } = useTheme();

@@ -8,7 +8,7 @@ import {
   Keyboard,
   Button,
 } from 'react-native';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 import React, { useCallback, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '~/context/AuthContext';

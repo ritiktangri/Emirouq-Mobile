@@ -1,6 +1,6 @@
 import { Link, Stack } from 'expo-router';
 import React from 'react';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 import { Container } from '~/components/Container';
 
 export default function NotFoundScreen() {

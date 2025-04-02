@@ -4,7 +4,7 @@ import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { light_logo, logo } from '~/image';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 import { useTheme } from '~/context/ThemeContext';
 
 const AuthHeader = () => {

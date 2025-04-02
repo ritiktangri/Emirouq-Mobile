@@ -2,7 +2,7 @@
 import { TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import React, { useRef } from 'react';
 import { useTheme } from '~/context/ThemeContext'; // Import useTheme
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 
 interface InputProps {
   className?: string;

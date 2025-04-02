@@ -2,7 +2,7 @@ import { View, TouchableOpacity, Linking } from 'react-native';
 import React from 'react';
 import { AntDesign, FontAwesome, FontAwesome6 } from '@expo/vector-icons';
 import { TwitterSVG } from '~/svgs/drawer';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 const Footer = () => {
   return (
     <View className=" mt-auto ">

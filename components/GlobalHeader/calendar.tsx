@@ -21,7 +21,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Portal } from 'react-native-portalize';
 import theme from '~/utils/theme';
 import { useQuery } from '~/context/QueryContext';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 import { cn } from '~/utils/helper';
 
 // Configure locale for react-native-calendars (optional)

@@ -4,7 +4,7 @@ import { Platform, useColorScheme } from 'react-native';
 import GlobalHeader from '~/components/GlobalHeader';
 import { QueryProvider } from '~/context/QueryContext';
 import { getIconsByScreenName } from '~/utils/get-icons-by-screen-name';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { cn } from '~/utils/helper';
 import { i18n } from '~/utils/i18n';

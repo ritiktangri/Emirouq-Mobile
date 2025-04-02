@@ -8,7 +8,7 @@ import { OTPInput } from '~/components/UI/OtpInput';
 import { useAuth } from '~/context/AuthContext';
 import { routes } from '~/utils/routes';
 import DynamicButton from '~/components/DynamicButton';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 import { logo } from '~/image';
 import { useTheme } from '~/context/ThemeContext';
 

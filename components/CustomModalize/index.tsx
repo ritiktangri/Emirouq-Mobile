@@ -1,6 +1,6 @@
 import React, { useEffect, useState, forwardRef } from 'react';
 import { TouchableOpacity, View } from 'react-native';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 import { Modalize as Modal } from 'react-native-modalize';
 import { Portal } from 'react-native-portalize';
 import { Ionicons } from '@expo/vector-icons';

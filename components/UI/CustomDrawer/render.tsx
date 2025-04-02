@@ -4,7 +4,7 @@ import React from 'react';
 import { View, TouchableOpacity, InteractionManager, Switch, useColorScheme } from 'react-native';
 import { useAuth } from '~/context/AuthContext';
 import { removeStorageItemAsync } from '~/hooks/useStorageState';
-import { DefaultText as Text } from '~/components/common/DefaultText';
+import { Text } from '~/components/common/Text';
 import { useTheme } from '~/context/ThemeContext';
 
 const Render = ({
