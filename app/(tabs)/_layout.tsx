@@ -7,9 +7,12 @@ import { getIconsByScreenName } from '~/utils/get-icons-by-screen-name';
 import { DefaultText as Text } from '~/components/common/DefaultText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { cn } from '~/utils/helper';
+import { i18n } from '~/utils/i18n';
+import { useLocale } from '~/context/LocaleContext';
 
 export default function TabLayout() {
   const theme: any = useColorScheme();
+  const { locale } = useLocale();
   return (
     <QueryProvider>
       <SafeAreaView edges={['top']} className={cn('flex-1 bg-[#FF5722] ')}>
@@ -44,8 +47,9 @@ export default function TabLayout() {
                     className={cn(
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
                       props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
-                    )}>
-                    Home
+                    )}
+                    style={{ textAlign: locale === 'sa' ? 'right' : 'left' }}>
+                    {i18n.t('tab.home')}
                   </Text>
                 ),
                 tabBarIcon: (props) => getIconsByScreenName(theme, 'home', props.focused),
@@ -59,8 +63,9 @@ export default function TabLayout() {
                     className={cn(
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
                       props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
-                    )}>
-                    Search
+                    )}
+                    style={{ textAlign: locale === 'sa' ? 'right' : 'left' }}>
+                    {i18n.t('tab.search')}
                   </Text>
                 ),
                 tabBarIcon: (props) => getIconsByScreenName(theme, 'search', props.focused),
@@ -74,8 +79,9 @@ export default function TabLayout() {
                     className={cn(
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
                       props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
-                    )}>
-                    Post Ad
+                    )}
+                    style={{ textAlign: locale === 'sa' ? 'right' : 'left' }}>
+                    {i18n.t('tab.postAd')}
                   </Text>
                 ),
                 tabBarIcon: (props) => getIconsByScreenName(theme, 'post', props.focused),
@@ -89,8 +95,9 @@ export default function TabLayout() {
                     className={cn(
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
                       props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
-                    )}>
-                    Chat
+                    )}
+                    style={{ textAlign: locale === 'sa' ? 'right' : 'left' }}>
+                    {i18n.t('tab.chat')}
                   </Text>
                 ),
                 tabBarIcon: (props) => getIconsByScreenName(theme, 'chat', props.focused),
@@ -103,9 +110,10 @@ export default function TabLayout() {
                   <Text
                     className={cn(
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
-                      props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white '
-                    )}>
-                    Profile
+                      props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
+                    )}
+                    style={{ textAlign: locale === 'sa' ? 'right' : 'left' }}>
+                    {i18n.t('tab.profile')}
                   </Text>
                 ),
                 tabBarIcon: (props) => getIconsByScreenName(theme, 'profile', props.focused),
