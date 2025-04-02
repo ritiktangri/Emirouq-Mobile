@@ -11,6 +11,7 @@
       "favicon": "./assets/logo/Emi-logo.png"
     },
     "plugins": [
+      ["expo-localization"],
       [
         "expo-router",
         {
@@ -37,9 +38,7 @@
           "resizeMode": "cover"
         }
       ],
-      [
-        "expo-font"
-      ],
+      ["expo-font"],
       [
         "expo-image-picker",
         {
@@ -60,10 +59,15 @@
       "resizeMode": "contain",
       "backgroundColor": "#fffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
+    "locales": {
+      "en": "./utils/i18n/locales/en.json",
+      "ar": "./utils/i18n/locales/ar.json"
+    },
     "ios": {
+      "infoPlist": {
+        "CFBundleAllowMixedLocalizations": true
+      },
       "googleServicesFile": "./GoogleService-Info.plist",
       "supportsTablet": true,
       "bundleIdentifier": "com.emirouq",
@@ -71,27 +75,19 @@
         "NSPrivacyAccessedAPITypes": [
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
-            "NSPrivacyAccessedAPITypeReasons": [
-              "CA92.1"
-            ]
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
           },
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
-            "NSPrivacyAccessedAPITypeReasons": [
-              "CA92.1"
-            ]
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
           },
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
-            "NSPrivacyAccessedAPITypeReasons": [
-              "CA92.1"
-            ]
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
           },
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
-            "NSPrivacyAccessedAPITypeReasons": [
-              "CA92.1"
-            ]
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
           }
         ]
       }
@@ -103,13 +99,11 @@
         "backgroundColor": "#fffff"
       },
       "package": "com.emirouq",
-      "permissions": [
-        "android.permission.RECORD_AUDIO",
-        "android.permission.RECORD_AUDIO"
-      ]
+      "permissions": ["android.permission.RECORD_AUDIO", "android.permission.RECORD_AUDIO"]
     },
     "newArchEnabled": true,
     "extra": {
+      "supportsRTL": true,
       "router": {
         "origin": "http://example.com/"
       },
