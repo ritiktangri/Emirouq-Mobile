@@ -2,7 +2,8 @@
 import { StatusBar } from 'expo-status-bar';
 import { Text, TouchableOpacity, useColorScheme, View } from 'react-native';
 import Dashboard from '~/components/Tabs/Dashboard';
-import { cn } from '~/utils/helper.utils';
+import { cn } from '~/utils/helper';
+
 import { useLocale } from '~/context/LocaleContext';
 import { i18n } from '~/utils/i18n';
 

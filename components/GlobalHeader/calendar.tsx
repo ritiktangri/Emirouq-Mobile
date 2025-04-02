@@ -22,7 +22,7 @@ import { Portal } from 'react-native-portalize';
 import theme from '~/utils/theme';
 import { useQuery } from '~/context/QueryContext';
 import { DefaultText as Text } from '~/components/common/DefaultText';
-import { cn } from '~/utils/helper.utils';
+import { cn } from '~/utils/helper';
 
 // Configure locale for react-native-calendars (optional)
 LocaleConfig.locales['en'] = {

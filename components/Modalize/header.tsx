@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Input from '../UI/Input';
 import { DefaultText as Text } from '~/components/common/DefaultText';
 import { useTheme } from '~/context/ThemeContext';
-import { cn } from '~/utils/helper.utils';
+import { cn } from '~/utils/helper';
 
 const Header = ({ isSearch, title, setSearch, onClose }: any) => {
   return (

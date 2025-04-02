@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import { DefaultText as Text } from '~/components/common/DefaultText';
-import { cn } from './helper.utils';
+import { cn } from './helper';
 
 export const getTagsByTitle = (type: string, className: any) => {
   switch (type) {

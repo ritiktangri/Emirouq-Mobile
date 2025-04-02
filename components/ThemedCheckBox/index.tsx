@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { DefaultText as Text } from '~/components/common/DefaultText';
 
 import { useTheme } from '~/context/ThemeContext';
-import { cn } from '~/utils/helper.utils';
+import { cn } from '~/utils/helper';
 
 const ThemedCheckbox = ({ disabled = false, label, value, onValueChange }: any) => {
   const {

@@ -17,7 +17,7 @@ import Animated, {
 import { DefaultText as Text } from '~/components/common/DefaultText';
 
 import { height } from '~/constants/Colors';
-import { cn } from '~/utils/helper.utils';
+import { cn } from '~/utils/helper';
 
 export const SelectPnl = ({
   options,

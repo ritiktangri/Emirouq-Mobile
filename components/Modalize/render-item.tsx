@@ -4,7 +4,7 @@ import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { DefaultText as Text } from '~/components/common/DefaultText';
 import { useTheme } from '~/context/ThemeContext';
-import { cn } from '~/utils/helper.utils';
+import { cn } from '~/utils/helper';
 
 export default function RenderItem({ item, expandedId, toggleSection, handleSelect }: any) {
   return (

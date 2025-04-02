@@ -1,13 +1,6 @@
 /* eslint-disable import/order */
 import React, { act, useEffect, useState } from 'react';
-import {
-  View,
-  Modal,
-  TouchableWithoutFeedback,
-  Pressable,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Modal, TouchableWithoutFeedback, StyleSheet, TouchableOpacity } from 'react-native';
 import { DefaultText as Text } from '~/components/common/DefaultText';
 
 import { Ionicons } from '@expo/vector-icons';
@@ -22,7 +15,7 @@ import { setStorageItemAsync } from '~/hooks/useStorageState';
 import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import { useTheme } from '~/context/ThemeContext';
-import { cn } from '~/utils/helper.utils';
+import { cn } from '~/utils/helper';
 
 const Dropdown: React.FC<DropdownProps> = ({ options, placeholder }) => {
   const { isVisible, dropdownPosition, buttonLayout, buttonRef, toggleDropdown } = useDropdown();
@@ -168,7 +161,7 @@ const Dropdown: React.FC<DropdownProps> = ({ options, placeholder }) => {
                     activeAccount?.activeAccountIds?.length !==
                     accountList?.activeAccountIds?.length
                   ) {
-                    router.push(routes.drawer.tabs.home as Href);
+                    router.push(routes.tabs.home as Href);
                   }
                 }}
                 className="rounded-md bg-primary px-5 py-2">

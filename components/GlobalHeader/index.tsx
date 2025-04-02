@@ -1,7 +1,8 @@
 /* eslint-disable import/order */
 import React from 'react';
 import { View } from 'react-native';
-import { cn } from '~/utils/helper.utils';
+import { cn } from '~/utils/helper';
+
 import { useRouter } from 'expo-router';
 import { DefaultText } from '../common/DefaultText';
 import { Entypo } from '@expo/vector-icons';

@@ -6,7 +6,7 @@ import { Portal } from 'react-native-portalize';
 import RenderItem from './render-item';
 import Header from './header';
 import { useTheme } from '~/context/ThemeContext';
-import { cn } from '~/utils/helper.utils';
+import { cn } from '~/utils/helper';
 
 interface Item {
   id: string;

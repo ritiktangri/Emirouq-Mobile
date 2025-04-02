@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native';
 import AddPost from '~/components/Tabs/Post';
-import { cn } from '~/utils/helper.utils';
+import { cn } from '~/utils/helper';
 
 export default function Page() {
   return (
