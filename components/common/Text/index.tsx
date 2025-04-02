@@ -55,7 +55,7 @@ function Text({
         textVariants({ variant, color }),
         textClassName,
         className,
-        locale === 'ar' ? 'text-right' : 'text-left'
+        locale ? (locale === 'ar' ? 'text-right' : 'text-left') : 'text-center'
       )}
       {...props}
     />

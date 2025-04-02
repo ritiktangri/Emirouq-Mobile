@@ -1,8 +1,7 @@
 /* eslint-disable import/order */
 import React, { useState, useCallback } from 'react';
-import { View, Image, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { Image, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text } from '~/components/common/Text';
 import { arabic, english, light_logo } from '~/image';
 import { useLocale } from '~/context/LocaleContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -11,6 +10,8 @@ import { Href, useRouter } from 'expo-router';
 import { useAuth } from '~/context/AuthContext';
 import { useTheme } from '~/context/ThemeContext';
 import theme from '~/utils/theme';
+import { View } from '../common/View';
+import { Text } from '../common/Text';
 
 const SelectLanguage = () => {
   const { showToast }: any = useTheme();
@@ -30,9 +31,9 @@ const SelectLanguage = () => {
     <SafeAreaView
       edges={['top', 'left', 'right']}
       className="flex-1  items-center justify-center bg-white">
-      <View className="mt-10">
+      <View className="mt-10 ">
         <Image source={light_logo} className="h-[80px] " resizeMode="contain" />
-        <Text className="my-2 text-center font-poppinsMedium text-xl font-semibold dark:text-white">
+        <Text className="my-2 text-center font-poppinsMedium text-xl font-semibold ">
           Welcome To Emirouq!
         </Text>
         <Text className="my-1 text-center font-poppinsBold text-2xl  text-tertiary">مرحبًا!</Text>
@@ -54,7 +55,7 @@ const SelectLanguage = () => {
           },
           {
             name: 'Arabic',
-            code: 'sa',
+            code: 'ar',
             image: arabic,
             isChecked: false,
           },
@@ -103,7 +104,7 @@ const SelectLanguage = () => {
           className="mt-7 flex-row items-center justify-center rounded-lg bg-primary p-4">
           <Text className="text-center font-poppinsBold text-base text-white ">Continue</Text>
         </TouchableOpacity>
-        <View className="gap-2">
+        <View className="flex items-center justify-center gap-2">
           <Text variant="callout" color="tertiary" className="text-center font-normal">
             You can change your language later in settings
           </Text>

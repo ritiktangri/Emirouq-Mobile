@@ -181,20 +181,18 @@ const AddPost = () => {
           control={control}
           name="category"
           render={({ field: { onChange, value } }) => (
-            <View>
-              <SelectPicker
-                value={value}
-                data={categories?.map((ite: any) => {
-                  return {
-                    label: ite?.title,
-                    value: ite?.uuid,
-                    key: ite?.uuid,
-                  };
-                })}
-                placeholder={i18n.t('post.categoryPlaceholder')}
-                onSelect={onChange}
-              />
-            </View>
+            <SelectPicker
+              value={value}
+              data={categories?.map((ite: any) => {
+                return {
+                  label: ite?.title,
+                  value: ite?.uuid,
+                  key: ite?.uuid,
+                };
+              })}
+              placeholder={i18n.t('post.categoryPlaceholder')}
+              onSelect={onChange}
+            />
           )}
         />
         {errors.category && (
