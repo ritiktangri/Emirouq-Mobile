@@ -1,7 +1,11 @@
 /* eslint-disable import/order */
 import { createContext, useContext, useState, useMemo, useEffect, useCallback } from 'react';
 import { i18n } from '~/utils/i18n';
-const defaultProvider = {};
+const defaultProvider = {
+  locale: 'en',
+  setLocale: () => {},
+  changeLanguage: () => {},
+};
 const LocaleContext = createContext(defaultProvider as any);
 export const useLocale = () => useContext(LocaleContext);
 
