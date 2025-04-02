@@ -1,10 +1,11 @@
-import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator } from 'react-native';
+/* eslint-disable import/order */
+import { TextInput, Pressable, ActivityIndicator } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useLayoutEffect, useState } from 'react';
-import { AntDesign, EvilIcons, Feather, MaterialIcons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CustomDropdown from '~/components/UI/CustomDropdown';
 import SelectPicker from '~/components/UI/SelectPicker';
@@ -15,6 +16,10 @@ import { useAuth } from '~/context/AuthContext';
 import { useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import { useTheme } from '~/context/ThemeContext';
+import { View } from '~/components/common/View';
+import { Text } from '~/components/common/Text';
+import { useLocale } from '~/context/LocaleContext';
+import { i18n } from '~/utils/i18n';
 
 const schema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -53,6 +58,7 @@ const AddPost = () => {
     },
   });
   const router: any = useRouter();
+  const { locale } = useLocale();
   const { categories, getSubCategoryList, subCategories }: any = useCategory();
   const { createPost, btnLoading }: any = usePosts();
   const { user }: any = useAuth();
@@ -115,9 +121,11 @@ const AddPost = () => {
           className="items-center justify-center rounded-xl border-2 border-dashed border-gray-200 p-6"
           onPress={pickImages}>
           <Feather name="camera" size={24} className="text-primary" />
-          <Text className="mb-4 mt-3 text-base text-gray-600">Upload up to 8 images</Text>
+          <Text className="mb-4 mt-3 text-base text-gray-600">{i18n.t('post.uploadText')}</Text>
           <Pressable className="rounded-full border border-primary bg-white px-6 py-3">
-            <Text className="text-base font-semibold text-primary">Choose Files</Text>
+            <Text className="text-base font-semibold text-primary">
+              {i18n.t('post.chooseFile')}
+            </Text>
           </Pressable>
         </Pressable>
         {images.length > 0 && (
@@ -150,7 +158,7 @@ const AddPost = () => {
       </View>
 
       <View className="mb-6">
-        <Text className="mb-2 text-base font-semibold text-gray-800">Title</Text>
+        <Text className="mb-2 text-base font-semibold text-gray-800">{i18n.t('post.title')}</Text>
         <Controller
           control={control}
           name="title"
@@ -159,14 +167,16 @@ const AddPost = () => {
               className="rounded-lg border border-gray-200 bg-white p-4"
               onChangeText={onChange}
               value={value}
-              placeholder="What are you selling?"
+              placeholder={i18n.t('post.titlePlaceholder')}
             />
           )}
         />
         {errors.title && <Text className="mt-1 text-sm text-red-500">{errors.title.message}</Text>}
       </View>
       <View className="mb-6">
-        <Text className="mb-2 text-base font-semibold text-gray-800">Category</Text>
+        <Text className="mb-2 text-base font-semibold text-gray-800">
+          {i18n.t('post.category')}
+        </Text>
         <Controller
           control={control}
           name="category"
@@ -181,7 +191,7 @@ const AddPost = () => {
                     key: ite?.uuid,
                   };
                 })}
-                placeholder="Select category"
+                placeholder={i18n.t('post.categoryPlaceholder')}
                 onSelect={onChange}
               />
             </View>
@@ -193,7 +203,9 @@ const AddPost = () => {
       </View>
       {selectedCategory ? (
         <View className="mb-6">
-          <Text className="mb-2 text-base font-semibold text-gray-800">Sub Category</Text>
+          <Text className="mb-2 text-base font-semibold text-gray-800">
+            {i18n.t('post.subCategory')}
+          </Text>
           <Controller
             control={control}
             name="subCategory"
@@ -209,7 +221,7 @@ const AddPost = () => {
                       properties: ite?.properties,
                     };
                   })}
-                  placeholder="Select subcategory"
+                  placeholder={i18n.t('post.subCategoryPlaceholder')}
                   onSelect={(e: any) => {
                     const selectedItem = subCategories.find(
                       (item: any) => item.uuid === selectedSubCategory
@@ -236,7 +248,9 @@ const AddPost = () => {
       ) : null}
 
       <View className="mb-6">
-        <Text className="mb-2 text-base font-semibold text-gray-800">Condition</Text>
+        <Text className="mb-2 text-base font-semibold text-gray-800">
+          {i18n.t('post.condition')}
+        </Text>
         <Controller
           control={control}
           name="condition"
@@ -251,7 +265,7 @@ const AddPost = () => {
                   className={`text-base font-semibold ${
                     value === 'new' ? 'text-white' : 'text-gray-600'
                   }`}>
-                  New
+                  {i18n.t('post.new')}
                 </Text>
               </Pressable>
               <Pressable
@@ -263,7 +277,7 @@ const AddPost = () => {
                   className={`text-base font-semibold ${
                     value === 'used' ? 'text-white' : 'text-gray-600'
                   }`}>
-                  Used
+                  {i18n.t('post.used')}
                 </Text>
               </Pressable>
             </View>
@@ -272,7 +286,7 @@ const AddPost = () => {
       </View>
 
       <View className="mb-6">
-        <Text className="mb-2 text-base font-semibold text-gray-800">Price</Text>
+        <Text className="mb-2 text-base font-semibold text-gray-800">{i18n.t('post.price')}</Text>
         <Controller
           control={control}
           name="price"
@@ -290,7 +304,9 @@ const AddPost = () => {
       </View>
 
       <View className="mb-6">
-        <Text className="mb-2 text-base font-semibold text-gray-800">Description</Text>
+        <Text className="mb-2 text-base font-semibold text-gray-800">
+          {i18n.t('post.description')}
+        </Text>
         <Controller
           control={control}
           name="description"
@@ -299,7 +315,7 @@ const AddPost = () => {
               className="h-32 rounded-lg border border-gray-200 bg-white p-3 text-base"
               onChangeText={onChange}
               value={value}
-              placeholder="Describe your item..."
+              placeholder={i18n.t('post.descriptionPlaceholder')}
               multiline
               numberOfLines={4}
               textAlignVertical="top"
@@ -311,7 +327,9 @@ const AddPost = () => {
         )}
       </View>
       <View className="mb-6">
-        <Text className="mb-2 text-base font-semibold text-gray-800">Location</Text>
+        <Text className="mb-2 text-base font-semibold text-gray-800">
+          {i18n.t('post.location')}
+        </Text>
         <Controller
           control={control}
           name="location"
@@ -320,7 +338,7 @@ const AddPost = () => {
               value={value}
               data={locations}
               onChange={onChange}
-              placeholder="Select location"
+              placeholder={i18n.t('post.locationPlaceholder')}
             />
           )}
         />
@@ -330,7 +348,9 @@ const AddPost = () => {
       </View>
 
       <View className="mb-6">
-        <Text className="mb-2 text-base font-semibold text-gray-800">Time Period</Text>
+        <Text className="mb-2 text-base font-semibold text-gray-800">
+          {i18n.t('post.timePeriod')}
+        </Text>
         <Controller
           control={control}
           name="timePeriod"
@@ -343,7 +363,7 @@ const AddPost = () => {
                   value: ite,
                 };
               })}
-              placeholder="Select category"
+              placeholder={`${i18n.t('post.timePeriodPlaceholder')}`}
               onSelect={onChange}
             />
           )}
@@ -371,7 +391,7 @@ const AddPost = () => {
         <Pressable
           className="flex-1 items-center rounded-lg bg-gray-100 py-4"
           onPress={() => console.log('Save draft')}>
-          <Text className="text-base font-semibold text-gray-700">Save Draft</Text>
+          <Text className="text-base font-semibold text-gray-700">{i18n.t('post.saveDraft')}</Text>
         </Pressable>
 
         <Pressable
@@ -381,7 +401,7 @@ const AddPost = () => {
             router.push(routes.tabs.preview_post);
           }}>
           {btnLoading ? <ActivityIndicator size="small" color={'white'} /> : <></>}
-          <Text className="text-base font-semibold text-white">Continue</Text>
+          <Text className="text-base font-semibold text-white">{i18n.t('post.continue')}</Text>
         </Pressable>
       </View>
     </KeyboardAwareScrollView>

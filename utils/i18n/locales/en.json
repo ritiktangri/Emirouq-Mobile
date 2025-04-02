@@ -19,5 +19,45 @@
       "title": "Selected Language",
       "description": "Choose your preferred language for the app."
     }
+  },
+
+  "post": {
+    "uploadText": "Upload up to 8 images",
+    "uploadImage": "Upload Image",
+    "chooseFile": "Choose File",
+    "title": "Title",
+    "category": "Category",
+    "new": "New",
+    "used": "Used",
+    "subCategory": "Sub Category",
+    "subCategoryPlaceholder": "Select Sub Category",
+    "categoryPlaceholder": "Select Category",
+    "conditionPlaceholder": "Select Condition",
+    "descriptionPlaceholder": "Describe your item",
+    "titlePlaceholder": "What are you selling?",
+    "condition": "Condition",
+    "price": "Price",
+    "description": "Description",
+    "location": "Location",
+    "locationPlaceholder": "Select Location",
+    "timePeriod": "Time Period",
+    "timePeriodPlaceholder": "Select Time Period",
+    "brand": "Brand",
+    "brandPlaceholder": "Select Brand",
+    "model": "Model",
+    "modelPlaceholder": "Select Model",
+    "operatingSystem": "Operating System",
+    "operatingSystemPlaceholder": "Select Operating System",
+    "screenSize": "Screen Size",
+    "screenSizePlaceholder": "Select Screen Size",
+    "storage": "Storage",
+    "storagePlaceholder": "Select Storage",
+    "networkType": "Network Type",
+    "networkTypePlaceholder": "Select Network Type",
+    "sellerContactInfo": "Seller Contact Info",
+    "sellerContactInfoPlaceholder": "Select Seller Contact Info",
+
+    "saveDraft": "Save Draft",
+    "continue": "Continue"
   }
 }
