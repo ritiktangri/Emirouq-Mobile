@@ -176,7 +176,7 @@ const AuthProvider = ({ children }: any) => {
         //   </Text>
         // );
         getUser(() => {
-          router.replace(routes.drawer.tabs.home as any);
+          router.replace(routes.tabs.home as any);
           setSignInLoading(false);
         });
         cb && cb();

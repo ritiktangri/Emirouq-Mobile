@@ -19,18 +19,15 @@ export const routes = {
     tags: '/(hydrogen)/(tags)',
     add_trade: '/(hydrogen)/(add-trade)',
   },
-  drawer: {
-    drawer: '/(drawer)',
-    tabs: {
-      tabs: '/(drawer)/(tabs)',
-      home: '/(drawer)/(tabs)/home',
-      // sell: '/(drawer)/(tabs)/sell',
-      chat: '/(drawer)/(tabs)/chat',
-      profile: '/(drawer)/(tabs)/profile',
-      create_profile:'/(drawer)/(tabs)/profile/create-profile',
-      post:'/(drawer)/(tabs)/post',
-      preview_post:'/(drawer)/(tabs)/post/preview-post',
-      success_view:'/(drawer)/(tabs)/post/success-view',
-    },
+  tabs: {
+    tabs: '/(drawer)/(tabs)',
+    home: '/(tabs)/home',
+    // sell: '/(drawer)/(tabs)/sell',
+    chat: '/(drawer)/(tabs)/chat',
+    profile: '/(drawer)/(tabs)/profile',
+    create_profile: '/(drawer)/(tabs)/profile/create-profile',
+    post: '/(drawer)/(tabs)/post',
+    preview_post: '/(drawer)/(tabs)/post/preview-post',
+    success_view: '/(drawer)/(tabs)/post/success-view',
   },
 };

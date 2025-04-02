@@ -1,7 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { View, Image, ImageBackground } from 'react-native';
-import { logo } from '~/image';
 
 const SplashScreen = () => {
   return (
