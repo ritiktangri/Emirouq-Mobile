@@ -5,9 +5,8 @@ import GlobalHeader from '~/components/GlobalHeader';
 import { QueryProvider } from '~/context/QueryContext';
 import { getIconsByScreenName } from '~/utils/get-icons-by-screen-name';
 import { DefaultText as Text } from '~/components/common/DefaultText';
-import { EChartsProvider } from '~/context/ChartContext';
-import { cn } from '~/utils/helper.utils';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { cn } from '~/utils/helper';
 
 export default function TabLayout() {
   const theme: any = useColorScheme();

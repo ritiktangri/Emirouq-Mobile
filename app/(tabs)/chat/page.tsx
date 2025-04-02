@@ -1,5 +1,5 @@
 import { Image, Text, View } from 'react-native';
-import { cn } from '~/utils/helper.utils';
+import { cn } from '~/utils/helper';
 
 export default function Page() {
   // const colorScheme: any = useColorScheme();
