@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '~/components/common/Text';
 import { arabic, english, light_logo } from '~/image';
 import { useLocale } from '~/context/LocaleContext';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { routes } from '~/utils/routes';
 import { Href, useRouter } from 'expo-router';
 import { useAuth } from '~/context/AuthContext';
@@ -83,8 +83,8 @@ const SelectLanguage = () => {
                   {item.name}
                 </Text>
               </View>
-              <Ionicons
-                name={select === item.code ? 'checkmark-circle' : 'ellipse-outline'}
+              <MaterialCommunityIcons
+                name={select === item.code ? 'circle-slice-8' : 'circle-outline'}
                 size={24}
                 color={theme.colors.primary}
                 className="ml-4"
