@@ -138,7 +138,6 @@ const AuthProvider = ({ children }: any) => {
     setLoading(true);
     getCurrentUser()
       .then(async (response: any) => {
-        console.log('responsess', response);
         setUser({ ...response.data });
         // getActiveAccount(response?.data);
         // if (
@@ -201,7 +200,6 @@ const AuthProvider = ({ children }: any) => {
   };
   const handleSignUp = ({ body }: SignUpInterface, successCb: any, errorCallback: any) => {
     setSignInLoading(true);
-    console.log('body', body);
     register({ body })
       .then(async () => {
         router.push(routes.auth.verifyOtp as any);

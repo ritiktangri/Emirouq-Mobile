@@ -1,17 +1,6 @@
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, useColorScheme } from 'react-native';
-
-import {
-  ActiveAnalyticsSVG,
-  ActiveDiarySVG,
-  ActiveHomeSVG,
-  ActiveTradeSVG,
-  InActiveAnalyticsSVG,
-  InActiveDiarySVG,
-  InActiveHomeSVG,
-  InActiveTradeSVG,
-} from '~/svgs/bottombar';
+import { StyleSheet } from 'react-native';
 
 export const getIconsByScreenName = (theme: string, screenName: string, active: boolean) => {
   const iconSource: any = {

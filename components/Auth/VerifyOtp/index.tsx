@@ -1,17 +1,8 @@
 /* eslint-disable import/order */
 import React, { RefObject, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  View,
-  ImageBackground,
-  TouchableOpacity,
-  TextInput,
-  ActivityIndicator,
-  Image,
-} from 'react-native';
-import AuthHeader from '../../UI/AuthHeader';
+import { View, ImageBackground, TouchableOpacity, TextInput, Image } from 'react-native';
 import theme from '~/utils/theme';
-import { pwd_background } from '~/image';
 import { Href, Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { OTPInput } from '~/components/UI/OtpInput';
 import { useAuth } from '~/context/AuthContext';
@@ -26,7 +17,7 @@ const VerifyOtp = () => {
 
   const { isDarkTheme } = useTheme();
   const [codes, setCodes] = useState(['', '', '', ''] as any);
-  const { verify, forgotLoading, forgotPassword, verifyOtpLoading } = useAuth();
+  const { verify, forgotPassword, verifyOtpLoading } = useAuth();
   const router = useRouter();
   const [errorMessages, setErrorMessages] = useState<string[] | undefined>(undefined);
   const refs = [
@@ -56,9 +47,7 @@ const VerifyOtp = () => {
   };
 
   const handleVerifyOtp = () => {
-    console.log('phone', phone);
     const encode = `${email ? email : phone}:${codes?.join('')}`;
-    console.log('encode', encode);
     verify(
       {
         pathParams: {

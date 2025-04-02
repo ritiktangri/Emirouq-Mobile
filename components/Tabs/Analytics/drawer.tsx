@@ -19,8 +19,6 @@ const FilterDrawer = (props: any) => {
 
   const onPress = useCallback(
     (id: any) => {
-      console.time('drawer');
-      console.timeEnd('drawer');
       router.setParams({ route: id });
       navigation.closeDrawer();
 

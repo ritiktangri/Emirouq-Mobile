@@ -55,7 +55,6 @@ const PostProvider = ({ children }: any) => {
 
   const createPost = useCallback(async (body: any, cb: any, errCb: any) => {
     setBtnLoading(true);
-    console.log('body', body);
     const formData: any = new FormData();
     formData.append('title', body?.title);
     formData.append('description', body?.description);
@@ -79,7 +78,6 @@ const PostProvider = ({ children }: any) => {
       },
     })
       .then((res) => {
-        console.log('resssss-add', res);
         // toast.success('Category created successfully');
         setBtnLoading(false);
         // getCategories();

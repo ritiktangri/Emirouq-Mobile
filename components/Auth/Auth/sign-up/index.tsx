@@ -45,9 +45,7 @@ const Signup = ({ checkinType }: any) => {
           router.setParams({ phone: form.phoneNumber });
         }
       },
-      (err: any) => {
-        console.log('err', err.data.error.message);
-      }
+      () => {}
     );
   };
 

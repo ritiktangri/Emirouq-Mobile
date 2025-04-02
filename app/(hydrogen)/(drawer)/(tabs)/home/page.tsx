@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Image, Text, useColorScheme, View } from 'react-native';
 import Dashboard from '~/components/Tabs/Dashboard';
 import { cn } from '~/utils/helper.utils';
+import { getLocales } from 'expo-localization';
 
 export default function Page() {
   const colorScheme: any = useColorScheme();
