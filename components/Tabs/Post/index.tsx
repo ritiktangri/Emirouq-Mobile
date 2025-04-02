@@ -113,279 +113,283 @@ const AddPost = () => {
     );
   };
   return (
-    <KeyboardAwareScrollView
-      showsVerticalScrollIndicator={false}
-      className="flex-1 bg-white px-4 py-6">
-      <View className="mb-8">
-        <Pressable
-          className="items-center justify-center rounded-xl border-2 border-dashed border-gray-200 p-6"
-          onPress={pickImages}>
-          <Feather name="camera" size={24} className="text-primary" />
-          <Text className="mb-4 mt-3 text-base text-gray-600">{i18n.t('post.uploadText')}</Text>
-          <Pressable className="rounded-full border border-primary bg-white px-6 py-3">
-            <Text className="text-base font-semibold text-primary">
-              {i18n.t('post.chooseFile')}
-            </Text>
+    <View className="flex-1 bg-white px-4 py-6">
+      <KeyboardAwareScrollView showsVerticalScrollIndicator={false} className="flex-1">
+        <View className="mb-8">
+          <Pressable
+            className="items-center justify-center rounded-xl border-2 border-dashed border-gray-200 p-6"
+            onPress={pickImages}>
+            <Feather name="camera" size={24} className="text-primary" />
+            <Text className="mb-4 mt-3 text-base text-gray-600">{i18n.t('post.uploadText')}</Text>
+            <Pressable className="rounded-full border border-primary bg-white px-6 py-3">
+              <Text className="text-base font-semibold text-primary">
+                {i18n.t('post.chooseFile')}
+              </Text>
+            </Pressable>
           </Pressable>
-        </Pressable>
-        {images.length > 0 && (
-          <View className="mt-4 flex-row flex-wrap gap-2">
-            {images.map((uri: any, index) =>
-              uri?.uri ? (
-                <View key={index} className="relative h-[75px] w-[75px] rounded-full">
-                  <ExpoImage
-                    source={{ uri: uri?.uri }}
-                    contentFit="fill"
-                    placeholder={{ blurhash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj' }}
-                    transition={1000}
-                    style={{
-                      height: '100%',
-                      width: '100%',
-                      borderRadius: 10,
-                    }}
-                  />
-                </View>
-              ) : (
-                <View
-                  key={index}
-                  className="h-20 w-20 items-center justify-center rounded-lg bg-gray-100">
-                  <Text>Image {index + 1}</Text>
-                </View>
-              )
-            )}
-          </View>
-        )}
-      </View>
+          {images.length > 0 && (
+            <View className="mt-4 flex-row flex-wrap gap-2">
+              {images.map((uri: any, index) =>
+                uri?.uri ? (
+                  <View key={index} className="relative h-[75px] w-[75px] rounded-full">
+                    <ExpoImage
+                      source={{ uri: uri?.uri }}
+                      contentFit="fill"
+                      placeholder={{ blurhash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj' }}
+                      transition={1000}
+                      style={{
+                        height: '100%',
+                        width: '100%',
+                        borderRadius: 10,
+                      }}
+                    />
+                  </View>
+                ) : (
+                  <View
+                    key={index}
+                    className="h-20 w-20 items-center justify-center rounded-lg bg-gray-100">
+                    <Text>Image {index + 1}</Text>
+                  </View>
+                )
+              )}
+            </View>
+          )}
+        </View>
 
-      <View className="mb-6">
-        <Text className="mb-2 text-base font-semibold text-gray-800">{i18n.t('post.title')}</Text>
-        <Controller
-          control={control}
-          name="title"
-          render={({ field: { onChange, value } }) => (
-            <TextInput
-              className="rounded-lg border border-gray-200 bg-white p-4"
-              onChangeText={onChange}
-              value={value}
-              placeholder={i18n.t('post.titlePlaceholder')}
-            />
+        <View className="mb-6">
+          <Text className="mb-2 text-base font-semibold text-gray-800">{i18n.t('post.title')}</Text>
+          <Controller
+            control={control}
+            name="title"
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                className="rounded-lg border border-gray-200 bg-white p-4"
+                onChangeText={onChange}
+                value={value}
+                placeholder={i18n.t('post.titlePlaceholder')}
+              />
+            )}
+          />
+          {errors.title && (
+            <Text className="mt-1 text-sm text-red-500">{errors.title.message}</Text>
           )}
-        />
-        {errors.title && <Text className="mt-1 text-sm text-red-500">{errors.title.message}</Text>}
-      </View>
-      <View className="mb-6">
-        <Text className="mb-2 text-base font-semibold text-gray-800">
-          {i18n.t('post.category')}
-        </Text>
-        <Controller
-          control={control}
-          name="category"
-          render={({ field: { onChange, value } }) => (
-            <SelectPicker
-              value={value}
-              data={categories?.map((ite: any) => {
-                return {
-                  label: ite?.title,
-                  value: ite?.uuid,
-                  key: ite?.uuid,
-                };
-              })}
-              placeholder={i18n.t('post.categoryPlaceholder')}
-              onSelect={onChange}
-            />
-          )}
-        />
-        {errors.category && (
-          <Text className="mt-1 text-sm text-red-500">{errors.category.message}</Text>
-        )}
-      </View>
-      {selectedCategory ? (
+        </View>
         <View className="mb-6">
           <Text className="mb-2 text-base font-semibold text-gray-800">
-            {i18n.t('post.subCategory')}
+            {i18n.t('post.category')}
           </Text>
           <Controller
             control={control}
-            name="subCategory"
+            name="category"
             render={({ field: { onChange, value } }) => (
-              <View>
-                <SelectPicker
-                  value={value}
-                  data={subCategories?.map((ite: any) => {
-                    return {
-                      label: ite?.title,
-                      value: ite?.uuid,
-                      key: ite?.uuid,
-                      properties: ite?.properties,
-                    };
-                  })}
-                  placeholder={i18n.t('post.subCategoryPlaceholder')}
-                  onSelect={(e: any) => {
-                    const selectedItem = subCategories.find(
-                      (item: any) => item.uuid === selectedSubCategory
-                    );
-                    if (selectedItem && setProperties) {
-                      setProperties(
-                        selectedItem?.properties?.map((ite: any) => {
-                          return { name: ite, value: '' };
-                        })
-                      );
-                    } else {
-                      setProperties([]);
-                    }
-                    onChange(e);
-                  }}
-                />
-              </View>
+              <SelectPicker
+                value={value}
+                data={categories?.map((ite: any) => {
+                  return {
+                    label: ite?.title,
+                    value: ite?.uuid,
+                    key: ite?.uuid,
+                  };
+                })}
+                placeholder={i18n.t('post.categoryPlaceholder')}
+                onSelect={onChange}
+              />
             )}
           />
           {errors.category && (
             <Text className="mt-1 text-sm text-red-500">{errors.category.message}</Text>
           )}
         </View>
-      ) : null}
-
-      <View className="mb-6">
-        <Text className="mb-2 text-base font-semibold text-gray-800">
-          {i18n.t('post.condition')}
-        </Text>
-        <Controller
-          control={control}
-          name="condition"
-          render={({ field: { onChange, value } }) => (
-            <View className="flex-row gap-4">
-              <Pressable
-                className={`flex-1 items-center rounded-lg py-3 ${
-                  value === 'new' ? 'bg-primary' : 'bg-gray-100'
-                }`}
-                onPress={() => onChange('new')}>
-                <Text
-                  className={`text-base font-semibold ${
-                    value === 'new' ? 'text-white' : 'text-gray-600'
-                  }`}>
-                  {i18n.t('post.new')}
-                </Text>
-              </Pressable>
-              <Pressable
-                className={`flex-1 items-center rounded-lg py-3 ${
-                  value === 'used' ? 'bg-primary' : 'bg-gray-100'
-                }`}
-                onPress={() => onChange('used')}>
-                <Text
-                  className={`text-base font-semibold ${
-                    value === 'used' ? 'text-white' : 'text-gray-600'
-                  }`}>
-                  {i18n.t('post.used')}
-                </Text>
-              </Pressable>
-            </View>
-          )}
-        />
-      </View>
-
-      <View className="mb-6">
-        <Text className="mb-2 text-base font-semibold text-gray-800">{i18n.t('post.price')}</Text>
-        <Controller
-          control={control}
-          name="price"
-          render={({ field: { onChange, value } }) => (
-            <TextInput
-              className="rounded-lg border border-gray-200 bg-white p-4"
-              onChangeText={onChange}
-              value={value}
-              placeholder="0.00"
-              keyboardType="decimal-pad"
+        {selectedCategory ? (
+          <View className="mb-6">
+            <Text className="mb-2 text-base font-semibold text-gray-800">
+              {i18n.t('post.subCategory')}
+            </Text>
+            <Controller
+              control={control}
+              name="subCategory"
+              render={({ field: { onChange, value } }) => (
+                <View>
+                  <SelectPicker
+                    value={value}
+                    data={subCategories?.map((ite: any) => {
+                      return {
+                        label: ite?.title,
+                        value: ite?.uuid,
+                        key: ite?.uuid,
+                        properties: ite?.properties,
+                      };
+                    })}
+                    placeholder={i18n.t('post.subCategoryPlaceholder')}
+                    onSelect={(e: any) => {
+                      const selectedItem = subCategories.find(
+                        (item: any) => item.uuid === selectedSubCategory
+                      );
+                      if (selectedItem && setProperties) {
+                        setProperties(
+                          selectedItem?.properties?.map((ite: any) => {
+                            return { name: ite, value: '' };
+                          })
+                        );
+                      } else {
+                        setProperties([]);
+                      }
+                      onChange(e);
+                    }}
+                  />
+                </View>
+              )}
             />
-          )}
-        />
-        {errors.price && <Text className="mt-1 text-sm text-red-500">{errors.price.message}</Text>}
-      </View>
+            {errors.category && (
+              <Text className="mt-1 text-sm text-red-500">{errors.category.message}</Text>
+            )}
+          </View>
+        ) : null}
 
-      <View className="mb-6">
-        <Text className="mb-2 text-base font-semibold text-gray-800">
-          {i18n.t('post.description')}
-        </Text>
-        <Controller
-          control={control}
-          name="description"
-          render={({ field: { onChange, value } }) => (
-            <TextInput
-              className="h-32 rounded-lg border border-gray-200 bg-white p-3 text-base"
-              onChangeText={onChange}
-              value={value}
-              placeholder={i18n.t('post.descriptionPlaceholder')}
-              multiline
-              numberOfLines={4}
-              textAlignVertical="top"
-            />
-          )}
-        />
-        {errors.description && (
-          <Text className="mt-1 text-sm text-red-500">{errors.description.message}</Text>
-        )}
-      </View>
-      <View className="mb-6">
-        <Text className="mb-2 text-base font-semibold text-gray-800">
-          {i18n.t('post.location')}
-        </Text>
-        <Controller
-          control={control}
-          name="location"
-          render={({ field: { onChange, value } }) => (
-            <CustomDropdown
-              value={value}
-              data={locations}
-              onChange={onChange}
-              placeholder={i18n.t('post.locationPlaceholder')}
-            />
-          )}
-        />
-        {errors.location && (
-          <Text className="mt-1 text-sm text-red-500">{errors.location.message}</Text>
-        )}
-      </View>
-
-      <View className="mb-6">
-        <Text className="mb-2 text-base font-semibold text-gray-800">
-          {i18n.t('post.timePeriod')}
-        </Text>
-        <Controller
-          control={control}
-          name="timePeriod"
-          render={({ field: { onChange, value } }) => (
-            <SelectPicker
-              value={value}
-              data={timePeriods?.map((ite: any) => {
-                return {
-                  label: ite,
-                  value: ite,
-                };
-              })}
-              placeholder={`${i18n.t('post.timePeriodPlaceholder')}`}
-              onSelect={onChange}
-            />
-          )}
-        />
-        {errors.timePeriod && (
-          <Text className="mt-1 text-sm text-red-500">{errors.timePeriod.message}</Text>
-        )}
-      </View>
-      {properties.length > 0 && (
         <View className="mb-6">
-          {properties.map((prop: any, index) => (
-            <View key={index} className="mb-4">
-              <Text className="mb-2 text-base font-semibold text-gray-800">{prop.name}</Text>
+          <Text className="mb-2 text-base font-semibold text-gray-800">
+            {i18n.t('post.condition')}
+          </Text>
+          <Controller
+            control={control}
+            name="condition"
+            render={({ field: { onChange, value } }) => (
+              <View className="flex-row gap-4">
+                <Pressable
+                  className={`flex-1 items-center rounded-lg py-3 ${
+                    value === 'new' ? 'bg-primary' : 'bg-gray-100'
+                  }`}
+                  onPress={() => onChange('new')}>
+                  <Text
+                    className={`text-base font-semibold ${
+                      value === 'new' ? 'text-white' : 'text-gray-600'
+                    }`}>
+                    {i18n.t('post.new')}
+                  </Text>
+                </Pressable>
+                <Pressable
+                  className={`flex-1 items-center rounded-lg py-3 ${
+                    value === 'used' ? 'bg-primary' : 'bg-gray-100'
+                  }`}
+                  onPress={() => onChange('used')}>
+                  <Text
+                    className={`text-base font-semibold ${
+                      value === 'used' ? 'text-white' : 'text-gray-600'
+                    }`}>
+                    {i18n.t('post.used')}
+                  </Text>
+                </Pressable>
+              </View>
+            )}
+          />
+        </View>
+
+        <View className="mb-6">
+          <Text className="mb-2 text-base font-semibold text-gray-800">{i18n.t('post.price')}</Text>
+          <Controller
+            control={control}
+            name="price"
+            render={({ field: { onChange, value } }) => (
               <TextInput
                 className="rounded-lg border border-gray-200 bg-white p-4"
-                onChangeText={(text) => handlePropertyChange(prop.name, text)}
-                value={prop.value}
-                placeholder={`Enter ${prop.name}`}
+                onChangeText={onChange}
+                value={value}
+                placeholder="0.00"
+                keyboardType="decimal-pad"
               />
-            </View>
-          ))}
+            )}
+          />
+          {errors.price && (
+            <Text className="mt-1 text-sm text-red-500">{errors.price.message}</Text>
+          )}
         </View>
-      )}
-      <View className="mb-8 flex-row gap-4">
+
+        <View className="mb-6">
+          <Text className="mb-2 text-base font-semibold text-gray-800">
+            {i18n.t('post.description')}
+          </Text>
+          <Controller
+            control={control}
+            name="description"
+            render={({ field: { onChange, value } }) => (
+              <TextInput
+                className="h-32 rounded-lg border border-gray-200 bg-white p-3 text-base"
+                onChangeText={onChange}
+                value={value}
+                placeholder={i18n.t('post.descriptionPlaceholder')}
+                multiline
+                numberOfLines={4}
+                textAlignVertical="top"
+              />
+            )}
+          />
+          {errors.description && (
+            <Text className="mt-1 text-sm text-red-500">{errors.description.message}</Text>
+          )}
+        </View>
+        <View className="mb-6">
+          <Text className="mb-2 text-base font-semibold text-gray-800">
+            {i18n.t('post.location')}
+          </Text>
+          <Controller
+            control={control}
+            name="location"
+            render={({ field: { onChange, value } }) => (
+              <CustomDropdown
+                value={value}
+                data={locations}
+                onChange={onChange}
+                placeholder={i18n.t('post.locationPlaceholder')}
+              />
+            )}
+          />
+          {errors.location && (
+            <Text className="mt-1 text-sm text-red-500">{errors.location.message}</Text>
+          )}
+        </View>
+
+        <View className="mb-6">
+          <Text className="mb-2 text-base font-semibold text-gray-800">
+            {i18n.t('post.timePeriod')}
+          </Text>
+          <Controller
+            control={control}
+            name="timePeriod"
+            render={({ field: { onChange, value } }) => (
+              <SelectPicker
+                value={value}
+                data={timePeriods?.map((ite: any) => {
+                  return {
+                    label: ite,
+                    value: ite,
+                  };
+                })}
+                placeholder={`${i18n.t('post.timePeriodPlaceholder')}`}
+                onSelect={onChange}
+              />
+            )}
+          />
+          {errors.timePeriod && (
+            <Text className="mt-1 text-sm text-red-500">{errors.timePeriod.message}</Text>
+          )}
+        </View>
+        {properties.length > 0 && (
+          <View className="mb-6">
+            {properties.map((prop: any, index) => (
+              <View key={index} className="mb-4">
+                <Text className="mb-2 text-base font-semibold text-gray-800">{prop.name}</Text>
+                <TextInput
+                  className="rounded-lg border border-gray-200 bg-white p-4"
+                  onChangeText={(text) => handlePropertyChange(prop.name, text)}
+                  value={prop.value}
+                  placeholder={`Enter ${prop.name}`}
+                />
+              </View>
+            ))}
+          </View>
+        )}
+      </KeyboardAwareScrollView>
+      <View className=" flex-row gap-4">
         <Pressable
           className="flex-1 items-center rounded-lg bg-gray-100 py-4"
           onPress={() => console.log('Save draft')}>
@@ -396,13 +400,22 @@ const AddPost = () => {
           className="flex-1 flex-row items-center justify-center gap-1 rounded-lg bg-primary py-4"
           // onPress={handleSubmit(onSubmit)}>
           onPress={() => {
-            router.push(routes.tabs.preview_post);
+            router.push({
+              pathname: routes.tabs.preview_post,
+              params: {
+                headerTitle: 'post.previewAd',
+                data: JSON.stringify({
+                  ...watch(),
+                  properties,
+                }),
+              },
+            });
           }}>
           {btnLoading ? <ActivityIndicator size="small" color={'white'} /> : <></>}
           <Text className="text-base font-semibold text-white">{i18n.t('post.continue')}</Text>
         </Pressable>
       </View>
-    </KeyboardAwareScrollView>
+    </View>
   );
 };
 
