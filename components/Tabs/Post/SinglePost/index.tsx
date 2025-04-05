@@ -188,9 +188,9 @@ const SinglePost = () => {
       </View>
 
       {/* Chat Button */}
-      <TouchableOpacity className="mx-4 mb-2 flex-row items-center justify-center rounded-lg bg-red-500 py-3">
+      <TouchableOpacity className="mx-4 mb-2 flex-row items-center justify-center gap-2 rounded-lg bg-primary py-3">
         <Feather name="message-circle" size={20} color="white" />
-        <Text className="ml-2 text-white">Chat with Seller</Text>
+        <Text className=" font-poppinsMedium text-lg text-white">Chat with Seller</Text>
       </TouchableOpacity>
     </View>
   );
