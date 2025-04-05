@@ -1,16 +1,21 @@
+/* eslint-disable import/order */
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Pressable, Alert } from 'react-native';
+import { TextInput, Pressable, Alert } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker';
 import { z } from 'zod';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { AntDesign, Entypo } from '@expo/vector-icons';
+import { Entypo, FontAwesome } from '@expo/vector-icons';
 import { Image as ExpoImage } from 'expo-image';
 import { useAuth } from '~/context/AuthContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCategory } from '~/context/CategoryContext';
 import CustomDropdown from '~/components/UI/CustomDropdown';
 import { useTheme } from '~/context/ThemeContext';
+import { i18n } from '~/utils/i18n';
+import { useLocale } from '~/context/LocaleContext';
+import { Text } from '~/components/common/Text';
+import { View } from '~/components/common/View';
 
 const profileSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
@@ -27,6 +32,7 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 
 const SetupProfile = () => {
   const [profileImage, setProfileImage] = useState<any>(null);
+  const { locale } = useLocale();
   const { categories }: any = useCategory();
   const { showToast }: any = useTheme();
   const {
@@ -162,53 +168,63 @@ const SetupProfile = () => {
     setValue('interests', newInterests, { shouldValidate: true });
   };
   return (
-    <KeyboardAwareScrollView
-      showsVerticalScrollIndicator={false}
-      className="flex-1 bg-white px-4 py-6">
-      <Text className="mb-6 text-center text-xl font-semibold text-gray-800">
-        Set up your profile to start buying & selling securely!
-      </Text>
-
-      <View className="mb-8 items-center">
-        <Pressable
-          className="mb-3 h-[120px] w-[120px] items-center justify-center rounded-full bg-gray-100"
-          onPress={() => pickImage('gallery')}>
-          {profileImage ? (
-            <ExpoImage
-              className="h-full w-full rounded-full"
-              source={{ uri: profileImage?.uri }}
-              contentFit="fill"
-              placeholder={{ blurhash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj' }}
-              transition={1000}
-              style={{
-                height: '100%',
-                width: '100%',
-                borderRadius: '50%',
-              }}
-            />
-          ) : (
-            <AntDesign name="camerao" size={32} color="gray" />
-          )}
-        </Pressable>
-        <Text className="mb-4 text-base text-gray-800">Add Profile Picture</Text>
-
-        <View className="flex-row gap-3">
+    <View className="flex-1 bg-white px-4 py-6">
+      <KeyboardAwareScrollView showsVerticalScrollIndicator={false} className="flex flex-col gap-3">
+        <Text className="mb-2 text-center text-2xl font-semibold text-gray-800">
+          {i18n.t('createProfile.welcome')}
+        </Text>
+        <Text className="text-center text-lg  text-gray-800">{i18n.t('createProfile.title')}</Text>
+        <View className="mb-8 items-center">
           <Pressable
-            className="rounded-full border border-gray-200 px-4 py-2"
-            onPress={() => pickImage('camera')}>
-            <Text className="text-sm text-gray-600">Take Photo</Text>
-          </Pressable>
-          <Pressable
-            className="rounded-full border border-gray-200 px-4 py-2"
+            className="my-3 h-[120px] w-[120px] items-center justify-center rounded-full border-2 border-dashed border-gray-200 "
             onPress={() => pickImage('gallery')}>
-            <Text className="text-sm text-gray-600">Gallery</Text>
+            {profileImage ? (
+              <ExpoImage
+                className="h-full w-full rounded-full"
+                source={{ uri: profileImage?.uri }}
+                contentFit="fill"
+                placeholder={{ blurhash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj' }}
+                transition={1000}
+                style={{
+                  height: '100%',
+                  width: '100%',
+                  borderRadius: '50%',
+                }}
+              />
+            ) : (
+              <>
+                <View className="absolute bottom-0 right-0 h-10 w-10 items-center justify-center rounded-full bg-primary">
+                  <Entypo name="camera" size={20} className="!text-white" />
+                </View>
+                <FontAwesome name="user-o" size={40} color="gray" />
+              </>
+            )}
           </Pressable>
-        </View>
-      </View>
+          <Text className="mb-4 font-poppinsMedium text-base text-gray-800">
+            {i18n.t('createProfile.addProfilePicture')}
+          </Text>
 
-      <View className="flex-col gap-2">
+          <View className="flex-row gap-3">
+            <Pressable
+              className="flex flex-row items-center gap-2 rounded-lg border border-gray-300 px-4 py-2"
+              onPress={() => pickImage('camera')}>
+              <Entypo name="camera" size={20} className="!text-black" />
+
+              <Text className=" text-gray-600">{i18n.t('createProfile.camera')}</Text>
+            </Pressable>
+            <Pressable
+              className="flex flex-row items-center gap-2 rounded-lg border border-gray-300 px-4 py-2"
+              onPress={() => pickImage('gallery')}>
+              <FontAwesome name="image" size={20} className="!text-black" />
+
+              <Text className=" text-gray-600">{i18n.t('createProfile.gallery')}</Text>
+            </Pressable>
+          </View>
+        </View>
         <View className="">
-          <Text className="mb-2 text-base font-semibold text-gray-800">First Name *</Text>
+          <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
+            {i18n.t('createProfile.firstName')} *
+          </Text>
           <Controller
             control={control}
             name="firstName"
@@ -226,7 +242,9 @@ const SetupProfile = () => {
           )}
         </View>
         <View className="">
-          <Text className="mb-2 text-base font-semibold text-gray-800">Last Name</Text>
+          <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
+            {i18n.t('createProfile.lastName')} *
+          </Text>
           <Controller
             control={control}
             name="lastName"
@@ -245,7 +263,9 @@ const SetupProfile = () => {
         </View>
 
         <View>
-          <Text className="mb-2 text-base font-semibold text-gray-800">Username</Text>
+          <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
+            {i18n.t('createProfile.userName')} *
+          </Text>
           <Controller
             control={control}
             name="userHandle"
@@ -264,7 +284,9 @@ const SetupProfile = () => {
         </View>
 
         <View>
-          <Text className="mb-2 text-base font-semibold text-gray-800">Email Address</Text>
+          <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
+            {i18n.t('createProfile.emailAddress')} *
+          </Text>
           <Controller
             control={control}
             name="email"
@@ -285,7 +307,9 @@ const SetupProfile = () => {
         </View>
 
         <View>
-          <Text className="mb-2 text-base font-semibold text-gray-800">Phone Number</Text>
+          <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
+            {i18n.t('createProfile.phoneNumber')} *
+          </Text>
           <View className="flex-row gap-2">
             <View className="w-16 items-center justify-center rounded-lg border border-gray-200 px-4 py-4">
               <Text>+1</Text>
@@ -310,7 +334,9 @@ const SetupProfile = () => {
         </View>
 
         <View>
-          <Text className="mb-2 text-base font-semibold text-gray-800">Location</Text>
+          <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
+            {i18n.t('createProfile.location')} *
+          </Text>
           <Controller
             control={control}
             name="location"
@@ -329,7 +355,9 @@ const SetupProfile = () => {
         </View>
 
         <View>
-          <Text className="mb-2 text-base font-semibold text-gray-800">Bio (Optional)</Text>
+          <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
+            {i18n.t('createProfile.bio')} *
+          </Text>
           <Controller
             control={control}
             name="bio"
@@ -352,10 +380,12 @@ const SetupProfile = () => {
           {errors.bio && <Text className="mt-1 text-sm text-red-500">{errors.bio.message}</Text>}
         </View>
         <View>
-          <Text className="mb-2 text-base font-semibold text-gray-800">
-            Select Your Interests *
+          <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
+            {i18n.t('createProfile.selectInterests')} *
           </Text>
-          <Text className="mb-3 text-sm text-gray-500">Choose categories that interest you</Text>
+          <Text placement={locale} className="mb-3 text-sm text-gray-500">
+            {i18n.t('createProfile.chooseCategoryTitle')}
+          </Text>
 
           <View className="flex-row flex-wrap gap-2">
             {(categories || [])?.map((interest: any) => {
@@ -383,14 +413,16 @@ const SetupProfile = () => {
             <Text className="mt-2 text-sm text-red-500">{errors.interests.message}</Text>
           )}
         </View>
+      </KeyboardAwareScrollView>
 
-        <Pressable
-          className="mt-6 w-full items-center rounded-lg bg-primary py-4"
-          onPress={handleSubmit(onSubmit)}>
-          <Text className="text-base font-semibold text-white">Complete Profile</Text>
-        </Pressable>
-      </View>
-    </KeyboardAwareScrollView>
+      <Pressable
+        className="mt-6 w-full items-center rounded-lg bg-primary py-4"
+        onPress={handleSubmit(onSubmit)}>
+        <Text className="text-base font-semibold text-white">
+          {i18n.t('createProfile.btnText')}
+        </Text>
+      </Pressable>
+    </View>
   );
 };
 

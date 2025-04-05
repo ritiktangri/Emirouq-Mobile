@@ -4,7 +4,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as ImagePicker from 'expo-image-picker';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { Feather } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CustomDropdown from '~/components/UI/CustomDropdown';
@@ -12,7 +12,7 @@ import SelectPicker from '~/components/UI/SelectPicker';
 import { Image as ExpoImage } from 'expo-image';
 import { useCategory } from '~/context/CategoryContext';
 import { useAuth } from '~/context/AuthContext';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import { useTheme } from '~/context/ThemeContext';
 import { View } from '~/components/common/View';
@@ -105,14 +105,19 @@ const AddPost = () => {
   const { showToast }: any = useTheme();
   const selectedCategory = watch('category');
   const selectedSubCategory = watch('subCategory');
-  useLayoutEffect(() => {
-    if (!user?._id) {
-      //navigate to login
-    } else if (user?._id && !user?.userHandle) {
-      router.push(routes.tabs.create_profile);
-      //navigate to create profile
-    }
-  }, [user]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (user?._id && user?.userHandle) {
+        router.push({
+          pathname: routes.tabs.create_profile,
+          params: {
+            headerTitle: 'createProfile.heading',
+          },
+        });
+      }
+    }, [user])
+  );
   useEffect(() => {
     if (selectedCategory) {
       getSubCategoryList(selectedCategory);

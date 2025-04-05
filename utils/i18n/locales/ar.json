@@ -87,5 +87,24 @@
     "inReview": "قيد المراجعة",
     "trackStatus": "تتبع الحالة",
     "returnToHome": "العودة إلى الصفحة الرئيسية"
+  },
+
+  "createProfile": {
+    "heading": "إنشاء الشخصي",
+    "welcome": "!مرحبًا بك",
+    "title": "قم بإعداد ملفك الشخصي لبدء الشراء والبيع",
+    "addProfilePicture": "إضافة صورة شخصية",
+    "camera": "التقط صورة",
+    "gallery": "معرض الصور",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "userName": "اسم المستخدم",
+    "emailAddress": "عنوان البريد الإلكتروني",
+    "phoneNumber": "رقم الهاتف",
+    "location": "موقع",
+    "bio": "السيرة الذاتية (اختياري)",
+    "selectInterests": "*حدد اهتماماتك",
+    "chooseCategoryTitle": "اختر الفئات التي تهمك.",
+    "btnText": "إكمال الملف الشخصي"
   }
 }

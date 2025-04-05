@@ -87,5 +87,23 @@
     "inReview": "In Review",
     "trackStatus": "Track Status",
     "returnToHome": "Return to Home"
+  },
+  "createProfile": {
+    "heading": "Create Profile",
+    "welcome": "Welcome!",
+    "title": "Set up your profile to start buying and selling",
+    "addProfilePicture": "Add Profile Picture",
+    "camera": "Take Photo",
+    "gallery": "Gallery",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "userName": "Username",
+    "emailAddress": "Email Address",
+    "phoneNumber": "Phone Number",
+    "location": "Location",
+    "bio": "Bio (Optional)",
+    "selectInterests": "Select Your Interests *",
+    "chooseCategoryTitle": "Choose categories that interest you.",
+    "btnText": "Complete Profile"
   }
 }
