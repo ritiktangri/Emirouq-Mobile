@@ -4,19 +4,19 @@ import {
   SafeAreaView,
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   FlatList,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Feather } from '@expo/vector-icons';
+import { Entypo, Ionicons } from '@expo/vector-icons';
 import { faker } from '@faker-js/faker';
 import { cn } from '~/utils/helper';
 import Header from './header';
 import { useGlobalSearchParams } from 'expo-router';
 import Product from './product';
+import DefaultTextInput from '~/components/common/DefaultTextInput';
 
 const ChatScreen = () => {
   const params = useGlobalSearchParams();
@@ -100,22 +100,25 @@ const ChatScreen = () => {
           />
 
           <View
-            className="flex-row items-center gap-2 border-t border-gray-200 px-4 py-4"
+            className="flex-row items-center  border-t border-gray-200 px-4 py-4"
             style={{ paddingBottom: Math.max(insets.bottom, 8) }}>
-            <TextInput
-              className="mr-2 max-h-24 flex-1 rounded-full bg-white px-4 py-2 text-base"
+            <TouchableOpacity>
+              <Entypo name="attachment" size={24} color="black" />
+            </TouchableOpacity>
+            <DefaultTextInput
+              className="w-full rounded-2xl bg-[#F0F0F0] px-3 py-4"
+              containerClassName="mr-2 max-h-24 flex-1 text-black rounded-full bg-white px-4 py-2 text-base"
               placeholder="Type a message..."
               value={newMessage}
               onChangeText={setNewMessage}
               multiline
               returnKeyType="send"
               onSubmitEditing={sendMessage}
-              blurOnSubmit={false}
             />
             <TouchableOpacity
-              className="h-12 w-12 items-center justify-center rounded-full bg-blue-500"
+              className="h-12 w-12 items-center justify-center rounded-full "
               onPress={sendMessage}>
-              <Feather name="send" size={24} color="white" />
+              <Ionicons name="send" size={30} className="!text-primary" />
             </TouchableOpacity>
           </View>
         </View>
