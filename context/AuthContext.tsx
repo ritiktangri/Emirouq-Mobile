@@ -306,8 +306,6 @@ const AuthProvider = ({ children }: any) => {
         setBtnLoading(false);
       })
       .catch((err: any) => {
-        console.log('err', err);
-        // toast.error(err?.message);
         errCb && errCb(err);
         setBtnLoading(false);
       })

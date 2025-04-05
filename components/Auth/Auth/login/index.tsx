@@ -38,7 +38,7 @@ const Login = ({ checkinType }: any) => {
         showToast('Login Successful!', 'success');
       },
       (err: any) => {
-        console.log('err', err.data.error.message);
+        showToast(err?.message, 'error');
       }
     );
   };

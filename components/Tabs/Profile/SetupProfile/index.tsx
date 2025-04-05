@@ -1,11 +1,11 @@
 /* eslint-disable import/order */
 import React, { useEffect, useState } from 'react';
-import { TextInput, Pressable, Alert } from 'react-native';
+import { Pressable, Alert, TouchableOpacity } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker';
 import { z } from 'zod';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Entypo, FontAwesome } from '@expo/vector-icons';
+import { Entypo, Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { Image as ExpoImage } from 'expo-image';
 import { useAuth } from '~/context/AuthContext';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,6 +16,7 @@ import { i18n } from '~/utils/i18n';
 import { useLocale } from '~/context/LocaleContext';
 import { Text } from '~/components/common/Text';
 import { View } from '~/components/common/View';
+import DefaultTextInput from '~/components/common/DefaultTextInput';
 
 const profileSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
@@ -42,7 +43,7 @@ const SetupProfile = () => {
     formState: { errors },
     setValue,
   } = useForm<ProfileFormData>({ resolver: zodResolver(profileSchema) });
-
+  console.log(errors);
   const { user, updateProfile } = useAuth();
 
   useEffect(() => {
@@ -81,7 +82,7 @@ const SetupProfile = () => {
     }
 
     let result: any;
-    let config: any = {
+    const config: any = {
       mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [1, 1],
@@ -104,32 +105,12 @@ const SetupProfile = () => {
       }
     } catch (error) {
       Alert.alert('Error', 'Something went wrong while opening the camera.');
-      console.error(error);
     }
     if (!result.canceled) {
-      console.log('result.assets[0].uri', result.assets[0].uri);
       setProfileImage(result?.assets?.[0]);
     }
   };
-  console.log('profileImage?.file?.base64', profileImage);
   const onSubmit = (data: any) => {
-    console.log('Form data:', data);
-    // const formData = new FormData();
-    // formData.append('firstName', data?.firstName);
-    // formData.append('lastName', data?.lastName);
-    // formData.append('userHandle', data?.userHandle);
-    // formData.append('location', data?.location);
-    // formData.append('bio', data?.bio);
-    // formData.append('countryCode', '+971');
-    // formData.append('userInterest', JSON.stringify(data?.interests));
-    // formData.append('profileImage', profileImage.file);
-
-    // if (user?.isEmail) {
-    //   formData.append('phoneNumber', data?.phoneNumber);
-    // } else {
-    //   formData.append('email', data?.email);
-    // }
-    // Handle form submission
     updateProfile(
       {
         body: {
@@ -150,10 +131,10 @@ const SetupProfile = () => {
       },
       () => {
         console.log('done');
-        showToast('Profile Updated!');
+        showToast('Profile Updated!', 'success');
       },
-      () => {
-        console.log('errrrr');
+      (err: any) => {
+        showToast(err?.message, 'error');
       }
     );
   };
@@ -229,11 +210,13 @@ const SetupProfile = () => {
             control={control}
             name="firstName"
             render={({ field: { onChange, value } }) => (
-              <TextInput
-                className="w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
+              <DefaultTextInput
+                className="w-full"
+                prefix={<Ionicons name="person-outline" size={20} color="gray" />}
+                containerClassName="w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
                 onChangeText={onChange}
                 value={value}
-                placeholder="Enter your full name"
+                placeholder={i18n.t('createProfile.firstNamePlaceholder')}
               />
             )}
           />
@@ -249,11 +232,13 @@ const SetupProfile = () => {
             control={control}
             name="lastName"
             render={({ field: { onChange, value } }) => (
-              <TextInput
-                className="w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
+              <DefaultTextInput
+                className="w-full"
+                prefix={<Ionicons name="person-outline" size={20} color="gray" />}
+                containerClassName="w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
                 onChangeText={onChange}
                 value={value}
-                placeholder="Enter your full name"
+                placeholder={i18n.t('createProfile.lastNamePlaceholder')}
               />
             )}
           />
@@ -270,11 +255,13 @@ const SetupProfile = () => {
             control={control}
             name="userHandle"
             render={({ field: { onChange, value } }) => (
-              <TextInput
-                className="w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
+              <DefaultTextInput
+                className="w-full"
+                prefix={<Ionicons name="at" size={20} color="gray" />}
+                containerClassName="w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
                 onChangeText={onChange}
                 value={value}
-                placeholder="Choose a unique username"
+                placeholder={i18n.t('createProfile.userNamePlaceholder')}
               />
             )}
           />
@@ -291,11 +278,14 @@ const SetupProfile = () => {
             control={control}
             name="email"
             render={({ field: { onChange, value } }) => (
-              <TextInput
-                className="w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
+              <DefaultTextInput
+                className="w-full"
+                editable={false}
+                prefix={<Feather name="mail" size={20} color="gray" />}
+                containerClassName="w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
                 onChangeText={!user?.isEmail ? onChange : () => {}}
                 value={value}
-                placeholder="Enter your email"
+                placeholder={i18n.t('createProfile.emailPlaceholder')}
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
@@ -318,11 +308,12 @@ const SetupProfile = () => {
               control={control}
               name="phoneNumber"
               render={({ field: { onChange, value } }) => (
-                <TextInput
-                  className="flex-1 rounded-lg border border-gray-200 bg-white px-4 py-4"
+                <DefaultTextInput
+                  className="w-full"
+                  containerClassName="w-full flex-1 rounded-lg border border-gray-200 bg-white px-4 py-4"
                   onChangeText={user?.isEmail ? onChange : () => {}}
                   value={value}
-                  placeholder="Enter phone number"
+                  placeholder={i18n.t('createProfile.phoneNumberPlaceholder')}
                   keyboardType="phone-pad"
                 />
               )}
@@ -333,7 +324,7 @@ const SetupProfile = () => {
           )}
         </View>
 
-        <View>
+        <View className="mb-2">
           <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
             {i18n.t('createProfile.location')} *
           </Text>
@@ -345,7 +336,7 @@ const SetupProfile = () => {
                 value={value}
                 data={locations}
                 onChange={onChange}
-                placeholder="Select location"
+                placeholder={i18n.t('createProfile.locationPlaceholder')}
               />
             )}
           />
@@ -362,11 +353,12 @@ const SetupProfile = () => {
             control={control}
             name="bio"
             render={({ field: { onChange, value } }) => (
-              <TextInput
-                className="h-24 w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
+              <DefaultTextInput
+                className="w-full"
+                containerClassName="h-24 w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
                 onChangeText={onChange}
                 value={value}
-                placeholder="Tell us about yourself"
+                placeholder={i18n.t('createProfile.bioPlaceholder')}
                 multiline
                 numberOfLines={4}
                 maxLength={150}
@@ -415,13 +407,13 @@ const SetupProfile = () => {
         </View>
       </KeyboardAwareScrollView>
 
-      <Pressable
+      <TouchableOpacity
         className="mt-6 w-full items-center rounded-lg bg-primary py-4"
         onPress={handleSubmit(onSubmit)}>
         <Text className="text-base font-semibold text-white">
           {i18n.t('createProfile.btnText')}
         </Text>
-      </Pressable>
+      </TouchableOpacity>
     </View>
   );
 };

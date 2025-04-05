@@ -146,15 +146,15 @@ export const callApi = (
         resolve(response?.data);
       })
       .catch((err) => {
-        if (!err.response) {
+        if (!err?.response?.data?.error) {
           reject(err);
           return;
         }
         if (err?.response?.status === 401) {
-          reject(err.response);
+          reject(err?.response?.data?.error);
         }
         if (err?.response) {
-          reject(err.response);
+          reject(err?.response?.data?.error);
         }
       });
   });
