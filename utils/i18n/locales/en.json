@@ -58,7 +58,8 @@
     "sellerContactInfoPlaceholder": "Select Seller Contact Info",
     "saveDraft": "Save Draft",
     "continue": "Continue",
-    "previewAd": "Preview Your Ad"
+    "previewAd": "Preview Your Ad",
+    "editAd": "Edit Your Ad"
   },
   "previewAd": {
     "info": "This is how your ad will appear to buyers.",

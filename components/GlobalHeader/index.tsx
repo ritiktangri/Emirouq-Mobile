@@ -10,7 +10,7 @@ import { i18n } from '~/utils/i18n';
 
 const GlobalHeader = ({ route }: any) => {
   const router: any = useRouter();
-  const { headerTitle } = useGlobalSearchParams();
+  const { headerTitle, title } = useGlobalSearchParams();
   const handleGoBack = () => {
     if (router.canGoBack()) {
       router.back();
@@ -19,13 +19,13 @@ const GlobalHeader = ({ route }: any) => {
 
   return (
     <View className={cn('flex-row justify-between gap-4 rounded-b-xl p-5 md:p-4', 'bg-primary')}>
-      {!headerTitle ? (
-        <View className="h-1 w-4" />
-      ) : (
+      {headerTitle || title ? (
         <Entypo name="chevron-left" size={24} color="white" onPress={handleGoBack} />
+      ) : (
+        <View className="h-1 w-4" />
       )}
       <Text className="text-center text-2xl font-semibold capitalize text-white">
-        {headerTitle ? i18n.t(headerTitle) : i18n.t(`tab.${route?.route?.name}`)}
+        {title ? title : headerTitle ? i18n.t(headerTitle) : i18n.t(`tab.${route?.route?.name}`)}
       </Text>
       <View className="h-1 w-4" />
     </View>

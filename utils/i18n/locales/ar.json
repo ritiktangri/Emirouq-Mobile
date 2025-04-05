@@ -57,7 +57,8 @@
     "sellerContactInfoPlaceholder": "اختر معلومات الاتصال بالبائع",
     "saveDraft": "حفظ المسودة",
     "continue": "استمر",
-    "previewAd": "معاينة إعلانك"
+    "previewAd": "معاينة إعلانك",
+    "editAd": "تعديل إعلانك"
   },
   "previewAd": {
     "info": "هذه هي الطريقة التي سيظهر بها إعلانك للمشترين.",
