@@ -71,7 +71,7 @@ const PreviewPost = () => {
           </Text>
         </View>
         <View className="p-4">
-          <View className="mb-4 h-64 overflow-hidden rounded-lg">
+          <View className="mb-4 h-64  rounded-lg">
             <Swiper
               showsButtons
               dotStyle={{
@@ -91,14 +91,11 @@ const PreviewPost = () => {
               {data?.images?.map((image: any, index: any) => (
                 <Image
                   key={index}
-                  thumbnailSource={{
-                    uri: image?.uri,
-                  }}
                   source={{
                     uri: image?.uri,
                   }}
-                  style={{ width: width - 32, height: 256 }}
                   resizeMode="cover"
+                  className="h-full w-full rounded-full"
                 />
               ))}
             </Swiper>
