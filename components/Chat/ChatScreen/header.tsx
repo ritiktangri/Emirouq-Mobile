@@ -4,9 +4,8 @@ import React from 'react';
 import { Href, router } from 'expo-router';
 import { routes } from '~/utils/routes';
 import { Ionicons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
 import { cn } from '~/utils/helper';
-const blurhash = 'LEHV6nWB2yk8pyo0adR*.7kCMdnj';
+import Image from '~/components/common/Image';
 
 const Header = ({ data }: any) => {
   return (
@@ -26,17 +25,7 @@ const Header = ({ data }: any) => {
               <></>
             )}
           </View>
-          <Image
-            source={data?.avatar}
-            contentFit="fill"
-            placeholder={{ blurhash }}
-            transition={1000}
-            style={{
-              width: '100%',
-              height: '100%',
-              borderRadius: 100,
-            }}
-          />
+          <Image source={data?.avatar} contentFit="fill" expoImage />
         </View>
         <View>
           <Text className="text-lg font-semibold text-black">{data?.name}</Text>

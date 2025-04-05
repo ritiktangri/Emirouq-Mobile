@@ -1,14 +1,13 @@
 /* eslint-disable import/order */
 import { TouchableOpacity } from 'react-native';
 import React from 'react';
-import { Image } from 'expo-image';
 import { toCurrency } from '~/utils/helper';
 import { View } from '../common/View';
 import { Text } from '../common/Text';
 import { Ionicons } from '@expo/vector-icons';
 import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
-const blurhash = 'LEHV6nWB2yk8pyo0adR*.7kCMdnj';
+import Image from '../common/Image';
 
 const Render = ({ item }: any) => {
   const router = useRouter();
@@ -22,17 +21,7 @@ const Render = ({ item }: any) => {
       }}
       className="flex-row items-center gap-2 border-b border-gray-200 px-4 py-4">
       <View className=" h-16 w-16 rounded-full bg-black">
-        <Image
-          source={item?.avatar}
-          contentFit="fill"
-          placeholder={{ blurhash }}
-          transition={1000}
-          style={{
-            width: '100%',
-            height: '100%',
-            borderRadius: 100,
-          }}
-        />
+        <Image expoImage source={item?.avatar} contentFit="fill" />
       </View>
       <View className="flex-1">
         <View className="flex-row items-center justify-between">
@@ -41,17 +30,7 @@ const Render = ({ item }: any) => {
         </View>
         <View className="mx-5 flex-row items-center gap-2">
           <View className=" h-16 w-16 rounded-lg ">
-            <Image
-              source={item?.productImage}
-              contentFit="fill"
-              placeholder={{ blurhash }}
-              transition={1000}
-              style={{
-                width: '100%',
-                height: '100%',
-                borderRadius: 100,
-              }}
-            />
+            <Image expoImage source={item?.productImage} contentFit="fill" />
           </View>
 
           <View>
