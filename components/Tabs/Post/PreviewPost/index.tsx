@@ -18,18 +18,48 @@ import { Text } from '~/components/common/Text';
 import { useLocale } from '~/context/LocaleContext';
 import { usePosts } from '~/context/PostContext';
 import Image from '~/components/common/Image';
+import { useTheme } from '~/context/ThemeContext';
 const PreviewPost = () => {
   const params: any = useGlobalSearchParams();
   const data = params?.data ? JSON.parse(params?.data) : {};
   const router: any = useRouter();
+  const { showToast } = useTheme();
   const [selectFeature, setSelectFeature] = useState('');
-  const { btnLoading } = usePosts();
+  const { createPost } = usePosts();
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [draftLoading, setDraftLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const { width } = Dimensions.get('screen');
   const { locale } = useLocale();
   if (!params?.data) {
     return;
   }
+  const onSubmit = async (isDraft = false) => {
+    if (isDraft) {
+      setDraftLoading(true);
+    } else {
+      setSaveLoading(true);
+    }
+    createPost(
+      { ...data, isDraft },
+      () => {
+        if (!isDraft) {
+          showToast('Ad created successfully', 'success');
+          router.push(routes.success as Href);
+        } else {
+          showToast('Ad saved as draft successfully', 'success');
+          router.push(routes.tabs.home as Href);
+        }
+        setDraftLoading(false);
+        setSaveLoading(false);
+      },
+      (err: any) => {
+        showToast(err?.message, 'error');
+        setDraftLoading(false);
+        setSaveLoading(false);
+      }
+    );
+  };
 
   return (
     <View className="flex-1">
@@ -205,19 +235,22 @@ const PreviewPost = () => {
           {/*Action buttons */}
           <View className="mt-4 flex flex-col gap-y-3">
             <Pressable
-              className="flex-1 flex-row items-center justify-center gap-1 rounded-lg bg-primary py-4"
-              // onPress={handleSubmit(onSubmit)}>
+              className="flex-1 flex-row items-center justify-center gap-1 gap-2 rounded-lg bg-primary py-4"
               onPress={() => {
-                // router.push(routes.drawer.tabs.preview_post);
+                onSubmit(false);
               }}>
-              {btnLoading ? <ActivityIndicator size="small" color={'white'} /> : <></>}
+              {saveLoading ? <ActivityIndicator size="small" color="white" /> : <></>}
               <Text className="text-base font-semibold text-white">
                 {i18n.t('previewAd.confirm')}
               </Text>
             </Pressable>
             <Pressable
-              className="flex-1 items-center rounded-lg bg-gray-100 py-4"
-              onPress={() => router.push(routes.success as Href)}>
+              onPress={() => {
+                onSubmit(true);
+              }}
+              className="flex-1 flex-row items-center justify-center gap-1 gap-2 rounded-lg bg-white py-4">
+              {draftLoading ? <ActivityIndicator size="small" color="black" /> : <></>}
+
               <Text className="text-base font-semibold text-gray-700">
                 {i18n.t('previewAd.saveDraft')}
               </Text>

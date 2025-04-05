@@ -34,6 +34,7 @@ import {
   setStorageItemAsync,
 } from '~/hooks/useStorageState';
 import { createAccountService, updateAccountService } from '~/utils/services/account';
+import { io } from 'socket.io-client';
 
 const storageTokenKeyName = 'accessToken';
 
@@ -438,6 +439,26 @@ const AuthProvider = ({ children }: any) => {
     },
     [isSubscriptionInActive, loading, user]
   );
+
+  useEffect(() => {
+    if (user?.uuid) {
+      const socket: any = io(socketHostname(), {
+        transports: ['websocket', 'polling'],
+        secure: true,
+        forceNew: true,
+      });
+
+      socket?.on('connect', () => {
+        setSocketIo(socket);
+      });
+
+      socket?.emit('join_room', user?.uuid);
+
+      return () => {
+        socket.disconnect();
+      };
+    }
+  }, [user]);
   const values = {
     user,
     loading,

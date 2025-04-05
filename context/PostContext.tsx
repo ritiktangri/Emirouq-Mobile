@@ -9,6 +9,7 @@ const defaultProvider = {
   setPosts: () => {},
   loading: '',
   btnLoading: false,
+  createPost: (a: any, b: any, c: any) => {},
 };
 const PostContext = createContext(defaultProvider);
 export const usePosts = () => useContext(PostContext);
@@ -57,6 +58,7 @@ const PostProvider = ({ children }: any) => {
     formData.append('condition', body?.condition);
     formData.append('location', body?.location);
     formData.append('timePeriod', body?.timePeriod);
+    body?.isDraft && formData.append('isDraft', body?.isDraft);
     formData.append('properties', JSON.stringify(body?.properties));
     for (const imageAsset of body?.images) {
       formData.append('file', {
@@ -73,13 +75,10 @@ const PostProvider = ({ children }: any) => {
       },
     })
       .then((res) => {
-        // toast.success('Category created successfully');
         setBtnLoading(false);
-        // getCategories();
         cb && cb();
       })
       .catch((err: any) => {
-        // toast.error(err.message);
         errCb && errCb(err);
         setBtnLoading(false);
       })

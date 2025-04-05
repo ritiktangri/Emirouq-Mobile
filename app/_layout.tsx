@@ -17,6 +17,7 @@ import { PaperProvider } from 'react-native-paper';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { LocaleProvider, useLocale } from '~/context/LocaleContext';
+import SocketEventScreen from '~/components/SocketEventScreen';
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: 'index',
@@ -88,6 +89,7 @@ export default function RootLayoutNav() {
                 <AuthProvider>
                   <LocaleProvider>
                     <PaperProvider>
+                      <SocketEventScreen />
                       <InitialLayout />
                     </PaperProvider>
                   </LocaleProvider>
