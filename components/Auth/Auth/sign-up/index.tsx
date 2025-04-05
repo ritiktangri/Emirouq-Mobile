@@ -5,16 +5,18 @@ import { Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native
 import DynamicButton from '~/components/DynamicButton';
 import Input from '~/components/UI/Input';
 import { useAuth } from '~/context/AuthContext';
+import { useTheme } from '~/context/ThemeContext';
 
 const Signup = ({ checkinType }: any) => {
   const { signUp } = useAuth();
   const router = useRouter();
+  const { showToast } = useTheme();
   const [agreed, setAgreed] = useState(false);
   const [secureTextEntry, setSecureTextEntry] = useState(false);
   const [form, setForm] = useState({
-    firstName: 'Gurpreet',
-    lastName: 'Singh',
-    email: 'Gurpreets0207@gmail.com',
+    firstName: 'Areeb',
+    lastName: 'Safvi',
+    email: 'masafvi48@gmail.com',
     phoneNumber: '7528095192',
     password: '12345678',
     confirmPassword: '12345678',
@@ -25,6 +27,7 @@ const Signup = ({ checkinType }: any) => {
   const scrollViewRef = useRef<ScrollView>(null);
 
   const handleSubmit = () => {
+    console.log(1);
     const body: any = {
       firstName: form.firstName,
       lastName: form.lastName,
@@ -36,16 +39,21 @@ const Signup = ({ checkinType }: any) => {
     } else {
       body.phoneNumber = form.phoneNumber;
     }
+
     signUp(
       { body },
       () => {
+        console.log(checkinType);
         if (checkinType === 'email') {
           router.setParams({ email: form.email });
         } else {
           router.setParams({ phone: form.phoneNumber });
         }
       },
-      () => {}
+      (err: any) => {
+        console.log(err);
+        showToast(err?.message, 'error');
+      }
     );
   };
 

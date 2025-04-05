@@ -201,16 +201,17 @@ const AuthProvider = ({ children }: any) => {
     setSignInLoading(true);
     register({ body })
       .then(async () => {
+        setSignInLoading(false);
         router.push(routes.auth.verifyOtp as any);
         // toast.success('An email has been sent to your email address');
         successCb && successCb();
       })
       .catch((err: any) => {
+        setSignInLoading(false);
+        console.log(err);
         if (errorCallback) errorCallback(err);
       })
-      .finally(() => {
-        setSignInLoading(false);
-      });
+      .finally(() => {});
   };
   const verify = ({ pathParams }: VerifyInterface, cb: any, errorCallback: any) => {
     setVerifyOtpLoading(true);
