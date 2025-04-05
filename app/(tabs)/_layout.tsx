@@ -9,10 +9,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { cn } from '~/utils/helper';
 import { i18n } from '~/utils/i18n';
 import { useLocale } from '~/context/LocaleContext';
-
 export default function TabLayout() {
   const theme: any = useColorScheme();
   const { locale } = useLocale();
+
   return (
     <QueryProvider>
       <SafeAreaView edges={['top']} className={cn('flex-1 bg-primary ')}>

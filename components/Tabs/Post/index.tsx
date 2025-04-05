@@ -4,12 +4,11 @@ import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as ImagePicker from 'expo-image-picker';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Feather } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CustomDropdown from '~/components/UI/CustomDropdown';
 import SelectPicker from '~/components/UI/SelectPicker';
-import { Image as ExpoImage } from 'expo-image';
 import { useCategory } from '~/context/CategoryContext';
 import { useAuth } from '~/context/AuthContext';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -194,23 +193,19 @@ const AddPost = () => {
             <View className="mt-4 flex-row flex-wrap gap-2">
               {watch('images')?.map((uri: any, index: number) => (
                 <View key={index} className="relative h-[75px] w-[75px] rounded-full">
-                  <View>
-                    <Feather
-                      name="x"
-                      size={16}
-                      className="absolute right-0 top-0 z-10 rounded-full bg-gray-200 p-1 text-gray-600"
-                      onPress={() => {
-                        const images = watch('images')?.filter(
-                          (item: any) => item?.uri !== uri?.uri
-                        );
-                        setValue('images', images);
-                      }}
-                    />
-                  </View>
+                  <Feather
+                    name="x"
+                    size={16}
+                    className="absolute right-0 top-0 z-10 rounded-full bg-gray-200 p-1 text-gray-600"
+                    onPress={() => {
+                      const images = watch('images')?.filter((item: any) => item?.uri !== uri?.uri);
+                      setValue('images', images);
+                    }}
+                  />
 
                   <Image
-                    source={uri?.uri}
-                    contentFit="fill"
+                    source={{ uri: uri?.uri }}
+                    resizeMode="cover"
                     style={{
                       width: 75,
                       height: 75,

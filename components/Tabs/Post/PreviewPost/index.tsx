@@ -91,9 +91,14 @@ const PreviewPost = () => {
               {data?.images?.map((image: any, index: any) => (
                 <Image
                   key={index}
-                  source={image?.uri}
+                  thumbnailSource={{
+                    uri: image?.uri,
+                  }}
+                  source={{
+                    uri: image?.uri,
+                  }}
                   style={{ width: width - 32, height: 256 }}
-                  contentFit="cover"
+                  resizeMode="cover"
                 />
               ))}
             </Swiper>
