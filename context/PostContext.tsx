@@ -1,19 +1,14 @@
 /* eslint-disable import/order */
-import { createContext, useContext, useState, useMemo, useEffect, useCallback } from 'react';
-import { cumulativeStatsService, getSingleTradeService, getTrades } from '~/utils/services/trade';
-import { useQuery } from './QueryContext';
-import { getColumns } from '~/components/Tabs/Trades/Table/columns';
-import { width } from '~/constants/Colors';
-import { useTheme } from './ThemeContext';
-import { useAuth } from './AuthContext';
-import { getStorageAsync } from '~/hooks/useStorageState';
-import { getCategories, getSubCategories } from '~/utils/services/category';
+import { createContext, useContext, useState, useMemo, useCallback } from 'react';
+
+import { getCategories } from '~/utils/services/category';
 import { createPostService } from '~/utils/services/post';
 
 const defaultProvider = {
   posts: {},
   setPosts: () => {},
   loading: '',
+  btnLoading: false,
 };
 const PostContext = createContext(defaultProvider);
 export const usePosts = () => useContext(PostContext);

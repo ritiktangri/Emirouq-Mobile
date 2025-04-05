@@ -1,5 +1,11 @@
 /* eslint-disable import/order */
-import { ScrollView, Dimensions, TouchableOpacity, Pressable } from 'react-native';
+import {
+  ScrollView,
+  Dimensions,
+  TouchableOpacity,
+  Pressable,
+  ActivityIndicator,
+} from 'react-native';
 import React, { useState } from 'react';
 import { Href, useGlobalSearchParams, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
@@ -11,11 +17,13 @@ import { i18n } from '~/utils/i18n';
 import { View } from '~/components/common/View';
 import { Text } from '~/components/common/Text';
 import { useLocale } from '~/context/LocaleContext';
+import { usePosts } from '~/context/PostContext';
 const PreviewPost = () => {
   const params: any = useGlobalSearchParams();
   const data = params?.data ? JSON.parse(params?.data) : {};
   const router: any = useRouter();
   const [selectFeature, setSelectFeature] = useState('');
+  const { btnLoading } = usePosts();
   const [isExpanded, setIsExpanded] = useState(false);
   const { width } = Dimensions.get('screen');
   const { locale } = useLocale();
@@ -202,7 +210,7 @@ const PreviewPost = () => {
               onPress={() => {
                 // router.push(routes.drawer.tabs.preview_post);
               }}>
-              {/* {btnLoading ? <ActivityIndicator size="small" color={'white'} /> : <></>} */}
+              {btnLoading ? <ActivityIndicator size="small" color={'white'} /> : <></>}
               <Text className="text-base font-semibold text-white">
                 {i18n.t('previewAd.confirm')}
               </Text>
