@@ -13,6 +13,10 @@ const viewVariants = cva('bg-transparent', {
     direction: {
       en: 'flex-row items-center gap-2',
       ar: 'flex-row-reverse items-center gap-2',
+      row: 'flex-row items-center gap-2',
+      column: 'flex-col items-center gap-2',
+      'row-reverse': 'flex-row-reverse items-center gap-2',
+      'column-reverse': 'flex-col-reverse items-center gap-2',
     },
     variant: {
       primary: 'bg-primary-foreground',
@@ -66,7 +70,10 @@ function View({
   shadow,
   direction, // Add direction to props
   ...props
-}: ViewProps & VariantProps<typeof viewVariants> & { direction?: 'en' | 'ar' }) {
+}: ViewProps &
+  VariantProps<typeof viewVariants> & {
+    direction?: 'en' | 'ar' | 'row' | 'column' | 'row-reverse' | 'column-reverse';
+  }) {
   // Ensure direction is properly typed
   const viewClassName = React.useContext(ViewClassContext);
 

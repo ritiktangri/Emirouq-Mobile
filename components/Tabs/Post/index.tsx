@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import { TextInput, Pressable, ActivityIndicator } from 'react-native';
+import { TextInput, Pressable } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,7 +11,6 @@ import CustomDropdown from '~/components/UI/CustomDropdown';
 import SelectPicker from '~/components/UI/SelectPicker';
 import { Image as ExpoImage } from 'expo-image';
 import { useCategory } from '~/context/CategoryContext';
-import { usePosts } from '~/context/PostContext';
 import { useAuth } from '~/context/AuthContext';
 import { useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
@@ -30,6 +29,27 @@ const schema = z.object({
   description: z.string().min(10, 'Description must be at least 10 characters'),
   location: z.string().min(1, 'Location is required'),
   timePeriod: z.string().min(1, 'Time period is required'),
+  images: z.array(
+    z.object({
+      uri: z.string(),
+      assetId: z.string(),
+      fileName: z.string(),
+      fileSize: z.number(),
+      mimeType: z.string(),
+      width: z.number(),
+      height: z.number(),
+      type: z.string(),
+      duration: z.string().nullable(),
+      exif: z.string().nullable(),
+      pairedVideoAsset: z.string().nullable(),
+    })
+  ),
+  properties: z.array(
+    z.object({
+      name: z.string(),
+      value: z.string(),
+    })
+  ),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -48,26 +68,94 @@ const timePeriods = ['7 days', '14 days', '30 days', '60 days', '90 days'];
 const AddPost = () => {
   const {
     control,
-    handleSubmit,
     formState: { errors },
     watch,
+    setValue,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       condition: 'new',
+      title: 'Nike Air Max 270 - Limited Edition Sneakers',
+      category: '5ebdc8fa-dca3-4943-bbf1-a8a0019f2163',
+      subCategory: 'd01fdc77-174f-449a-b28d-ad9ed4e99638',
+      price: '3500.33',
+      description:
+        'Brand new Nike Air Max 2023 sneakers in pristine condition. Never worn, comes in original box with all tags attached. Limited 256GB storage. Unlocked for all carriers. Price is firm. No trades please',
+      location: 'New York, NY',
+      timePeriod: '7 days',
+      images: [
+        {
+          assetId: '9F983DBA-EC35-42B8-8773-B597CF782EDD/L0/001',
+          duration: null,
+          exif: null,
+          fileName: 'IMG_0003.jpg',
+          fileSize: 2050012,
+          height: 2002,
+          mimeType: 'image/jpeg',
+          pairedVideoAsset: null,
+          type: 'image',
+          uri: 'file:///Users/areeb/Library/Developer/CoreSimulator/Devices/682A5298-2FA4-48A8-8028-4FC69C9846AA/data/Containers/Data/Application/11592AA3-5A7C-481E-B7B7-9620B346B121/Library/Caches/ExponentExperienceData/@anonymous/emirouq-mobile-cb2a80bf-99e6-4bae-903e-23471cc3e5af/ImagePicker/A7216E9E-9F1C-48FD-90F6-C8F56886C215.jpg',
+          width: 3000,
+        },
+        {
+          assetId: 'ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED/L0/001',
+          duration: null,
+          exif: null,
+          fileName: 'IMG_0005.jpg',
+          fileSize: 1500185,
+          height: 2002,
+          mimeType: 'image/jpeg',
+          pairedVideoAsset: null,
+          type: 'image',
+          uri: 'file:///Users/areeb/Library/Developer/CoreSimulator/Devices/682A5298-2FA4-48A8-8028-4FC69C9846AA/data/Containers/Data/Application/11592AA3-5A7C-481E-B7B7-9620B346B121/Library/Caches/ExponentExperienceData/@anonymous/emirouq-mobile-cb2a80bf-99e6-4bae-903e-23471cc3e5af/ImagePicker/7B4A2CE8-EE03-4812-ACBD-A961205105AB.jpg',
+          width: 3000,
+        },
+        {
+          assetId: '99D53A1F-FEEF-40E1-8BB3-7DD55A43C8B7/L0/001',
+          duration: null,
+          exif: null,
+          fileName: 'IMG_0004.jpg',
+          fileSize: 1003277,
+          height: 2500,
+          mimeType: 'image/jpeg',
+          pairedVideoAsset: null,
+          type: 'image',
+          uri: 'file:///Users/areeb/Library/Developer/CoreSimulator/Devices/682A5298-2FA4-48A8-8028-4FC69C9846AA/data/Containers/Data/Application/11592AA3-5A7C-481E-B7B7-9620B346B121/Library/Caches/ExponentExperienceData/@anonymous/emirouq-mobile-cb2a80bf-99e6-4bae-903e-23471cc3e5af/ImagePicker/97309F2A-5EAE-4EC7-82D0-B683ADBBA03B.jpg',
+          width: 1668,
+        },
+        {
+          assetId: 'CC95F08C-88C3-4012-9D6D-64A413D254B3/L0/001',
+          duration: null,
+          exif: null,
+          fileName: 'IMG_0111.jpg',
+          fileSize: 4081439,
+          height: 3024,
+          mimeType: 'image/jpeg',
+          pairedVideoAsset: null,
+          type: 'image',
+          uri: 'file:///Users/areeb/Library/Developer/CoreSimulator/Devices/682A5298-2FA4-48A8-8028-4FC69C9846AA/data/Containers/Data/Application/11592AA3-5A7C-481E-B7B7-9620B346B121/Library/Caches/ExponentExperienceData/@anonymous/emirouq-mobile-cb2a80bf-99e6-4bae-903e-23471cc3e5af/ImagePicker/31B5524B-1CBA-4EBC-8936-1EF2621B7F9C.jpg',
+          width: 4032,
+        },
+      ],
+      properties: [
+        { name: 'Brand', value: '1' },
+        { name: 'Model', value: '1' },
+        { name: 'Condition', value: '1' },
+        { name: 'Operating System', value: '1' },
+        { name: 'Screen Size', value: '1' },
+        { name: 'Storage', value: '1' },
+        { name: 'Network Type', value: '1' },
+        { name: 'Seller Contact Info', value: '1' },
+      ],
     },
   });
   const router: any = useRouter();
   const { locale } = useLocale();
   const { categories, getSubCategoryList, subCategories }: any = useCategory();
-  const { createPost, btnLoading }: any = usePosts();
   const { user }: any = useAuth();
   const { showToast }: any = useTheme();
-  const [properties, setProperties] = useState([]);
-
   const selectedCategory = watch('category');
   const selectedSubCategory = watch('subCategory');
-
   useLayoutEffect(() => {
     if (!user?._id) {
       //navigate to login
@@ -81,36 +169,57 @@ const AddPost = () => {
       getSubCategoryList(selectedCategory);
     }
   }, [selectedCategory]);
-
-  const [images, setImages] = useState<string[]>([]);
-
-  const onSubmit = (data: any) => {
-    delete data?.category;
-    const body = { ...data, properties };
-    router.push(routes.tabs.preview_post, { params: { data: JSON.stringify(body) } });
-    // createPost({ ...data, properties, images }, () => {
-    //   showToast('Post added successfully!', 'success');
-    // });
-  };
-
   const pickImages = async () => {
-    let result: any = await ImagePicker.launchImageLibraryAsync({
+    const result: any = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images', 'videos'],
       aspect: [4, 3],
       quality: 0.8,
-      base64: true,
+      base64: false,
       allowsMultipleSelection: true,
     });
 
-    if (!result.canceled) {
-      setImages(result.assets.map((asset: any) => asset));
+    if (result.canceled) return;
+    //if image already exists in the array, then do not add it
+    const assetIds = result?.assets?.map((item: any) => item?.assetId);
+    const isIncluded = watch('images')?.some((item: any) => assetIds?.includes(item?.assetId));
+    if (isIncluded) {
+      const filterImages = watch('images')?.filter(
+        (item: any) => !assetIds?.includes(item?.assetId)
+      );
+      setValue('images', [...filterImages, ...result?.assets]);
+    } else {
+      setValue('images', [
+        ...watch('images'),
+        ...result?.assets?.map((item: any) => {
+          return {
+            uri: item.uri,
+            assetId: item.assetId,
+            fileName: item.fileName,
+            fileSize: item.fileSize,
+            mimeType: item.mimeType,
+            width: item.width,
+            height: item.height,
+            type: item.type,
+            duration: item.duration,
+            exif: item.exif,
+            pairedVideoAsset: item.pairedVideoAsset,
+          };
+        }),
+      ]);
     }
   };
 
   const handlePropertyChange = (name: string, text: string) => {
-    setProperties((prevProperties: any) =>
-      prevProperties.map((prop: any) => (prop.name === name ? { ...prop, value: text } : prop))
-    );
+    // setProperties((prevProperties: any) =>
+    //   prevProperties.map((prop: any) => (prop.name === name ? { ...prop, value: text } : prop))
+    // );
+    const updatedProperties = watch('properties').map((prop: any) => {
+      if (prop.name === name) {
+        return { ...prop, value: text };
+      }
+      return prop;
+    });
+    setValue('properties', updatedProperties);
   };
   return (
     <View className="flex-1 bg-white px-4 py-6">
@@ -121,43 +230,52 @@ const AddPost = () => {
             onPress={pickImages}>
             <Feather name="camera" size={24} className="text-primary" />
             <Text className="mb-4 mt-3 text-base text-gray-600">{i18n.t('post.uploadText')}</Text>
-            <Pressable className="rounded-full border border-primary bg-white px-6 py-3">
+            <View className="rounded-full border border-primary bg-white px-6 py-3">
               <Text className="text-base font-semibold text-primary">
                 {i18n.t('post.chooseFile')}
               </Text>
-            </Pressable>
+            </View>
           </Pressable>
-          {images.length > 0 && (
+          {watch('images')?.length > 0 ? (
             <View className="mt-4 flex-row flex-wrap gap-2">
-              {images.map((uri: any, index) =>
-                uri?.uri ? (
-                  <View key={index} className="relative h-[75px] w-[75px] rounded-full">
-                    <ExpoImage
-                      source={{ uri: uri?.uri }}
-                      contentFit="fill"
-                      placeholder={{ blurhash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj' }}
-                      transition={1000}
-                      style={{
-                        height: '100%',
-                        width: '100%',
-                        borderRadius: 10,
+              {watch('images')?.map((uri: any, index: number) => (
+                <View key={index} className="relative h-[75px] w-[75px] rounded-full">
+                  <View>
+                    <Feather
+                      name="x"
+                      size={16}
+                      className="absolute right-0 top-0 z-10 rounded-full bg-gray-200 p-1 text-gray-600"
+                      onPress={() => {
+                        const images = watch('images')?.filter(
+                          (item: any) => item?.uri !== uri?.uri
+                        );
+                        setValue('images', images);
                       }}
                     />
                   </View>
-                ) : (
-                  <View
-                    key={index}
-                    className="h-20 w-20 items-center justify-center rounded-lg bg-gray-100">
-                    <Text>Image {index + 1}</Text>
-                  </View>
-                )
-              )}
+                  <ExpoImage
+                    source={{ uri: uri?.uri }}
+                    contentFit="fill"
+                    placeholder={{ blurhash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj' }}
+                    transition={1000}
+                    style={{
+                      height: '100%',
+                      width: '100%',
+                      borderRadius: 10,
+                    }}
+                  />
+                </View>
+              ))}
             </View>
+          ) : (
+            <></>
           )}
         </View>
 
         <View className="mb-6">
-          <Text className="mb-2 text-base font-semibold text-gray-800">{i18n.t('post.title')}</Text>
+          <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
+            {i18n.t('post.title')}
+          </Text>
           <Controller
             control={control}
             name="title"
@@ -175,7 +293,7 @@ const AddPost = () => {
           )}
         </View>
         <View className="mb-6">
-          <Text className="mb-2 text-base font-semibold text-gray-800">
+          <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
             {i18n.t('post.category')}
           </Text>
           <Controller
@@ -200,9 +318,9 @@ const AddPost = () => {
             <Text className="mt-1 text-sm text-red-500">{errors.category.message}</Text>
           )}
         </View>
-        {selectedCategory ? (
+        {selectedCategory && subCategories?.length ? (
           <View className="mb-6">
-            <Text className="mb-2 text-base font-semibold text-gray-800">
+            <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
               {i18n.t('post.subCategory')}
             </Text>
             <Controller
@@ -225,14 +343,15 @@ const AddPost = () => {
                       const selectedItem = subCategories.find(
                         (item: any) => item.uuid === selectedSubCategory
                       );
-                      if (selectedItem && setProperties) {
-                        setProperties(
+                      if (selectedItem) {
+                        setValue(
+                          'properties',
                           selectedItem?.properties?.map((ite: any) => {
                             return { name: ite, value: '' };
                           })
                         );
                       } else {
-                        setProperties([]);
+                        setValue('properties', []);
                       }
                       onChange(e);
                     }}
@@ -247,7 +366,7 @@ const AddPost = () => {
         ) : null}
 
         <View className="mb-6">
-          <Text className="mb-2 text-base font-semibold text-gray-800">
+          <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
             {i18n.t('post.condition')}
           </Text>
           <Controller
@@ -256,26 +375,26 @@ const AddPost = () => {
             render={({ field: { onChange, value } }) => (
               <View className="flex-row gap-4">
                 <Pressable
-                  className={`flex-1 items-center rounded-lg py-3 ${
-                    value === 'new' ? 'bg-primary' : 'bg-gray-100'
+                  className={`flex-1 items-center rounded-xl py-3 ${
+                    value === 'new'
+                      ? 'border-[1px] border-primary bg-btn_bg'
+                      : 'border-[1px] border-gray-200 bg-white'
                   }`}
                   onPress={() => onChange('new')}>
                   <Text
-                    className={`text-base font-semibold ${
-                      value === 'new' ? 'text-white' : 'text-gray-600'
-                    }`}>
+                    className={`font-poppinsSemiBold text-lg ${value === 'new' ? 'text-primary' : 'text-gray-600'}`}>
                     {i18n.t('post.new')}
                   </Text>
                 </Pressable>
                 <Pressable
                   className={`flex-1 items-center rounded-lg py-3 ${
-                    value === 'used' ? 'bg-primary' : 'bg-gray-100'
+                    value === 'used'
+                      ? 'border-[1px] border-primary bg-btn_bg'
+                      : 'border-[1px] border-gray-200 bg-white'
                   }`}
                   onPress={() => onChange('used')}>
                   <Text
-                    className={`text-base font-semibold ${
-                      value === 'used' ? 'text-white' : 'text-gray-600'
-                    }`}>
+                    className={`font-poppinsSemiBold text-lg ${value === 'used' ? 'text-primary' : 'text-gray-600'}`}>
                     {i18n.t('post.used')}
                   </Text>
                 </Pressable>
@@ -285,7 +404,9 @@ const AddPost = () => {
         </View>
 
         <View className="mb-6">
-          <Text className="mb-2 text-base font-semibold text-gray-800">{i18n.t('post.price')}</Text>
+          <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
+            {i18n.t('post.price')}
+          </Text>
           <Controller
             control={control}
             name="price"
@@ -296,6 +417,7 @@ const AddPost = () => {
                 value={value}
                 placeholder="0.00"
                 keyboardType="decimal-pad"
+                textAlign="right"
               />
             )}
           />
@@ -305,7 +427,7 @@ const AddPost = () => {
         </View>
 
         <View className="mb-6">
-          <Text className="mb-2 text-base font-semibold text-gray-800">
+          <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
             {i18n.t('post.description')}
           </Text>
           <Controller
@@ -328,7 +450,7 @@ const AddPost = () => {
           )}
         </View>
         <View className="mb-6">
-          <Text className="mb-2 text-base font-semibold text-gray-800">
+          <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
             {i18n.t('post.location')}
           </Text>
           <Controller
@@ -349,7 +471,7 @@ const AddPost = () => {
         </View>
 
         <View className="mb-6">
-          <Text className="mb-2 text-base font-semibold text-gray-800">
+          <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
             {i18n.t('post.timePeriod')}
           </Text>
           <Controller
@@ -373,9 +495,9 @@ const AddPost = () => {
             <Text className="mt-1 text-sm text-red-500">{errors.timePeriod.message}</Text>
           )}
         </View>
-        {properties.length > 0 && (
+        {watch('properties')?.length > 0 && (
           <View className="mb-6">
-            {properties.map((prop: any, index) => (
+            {watch('properties')?.map((prop: any, index: number) => (
               <View key={index} className="mb-4">
                 <Text className="mb-2 text-base font-semibold text-gray-800">{prop.name}</Text>
                 <TextInput
@@ -391,14 +513,13 @@ const AddPost = () => {
       </KeyboardAwareScrollView>
       <View className=" flex-row gap-4">
         <Pressable
-          className="flex-1 items-center rounded-lg bg-gray-100 py-4"
+          className="flex-1 items-center rounded-lg border-[1px] border-gray-300 bg-white py-4"
           onPress={() => console.log('Save draft')}>
           <Text className="text-base font-semibold text-gray-700">{i18n.t('post.saveDraft')}</Text>
         </Pressable>
 
         <Pressable
           className="flex-1 flex-row items-center justify-center gap-1 rounded-lg bg-primary py-4"
-          // onPress={handleSubmit(onSubmit)}>
           onPress={() => {
             router.push({
               pathname: routes.tabs.preview_post,
@@ -406,12 +527,15 @@ const AddPost = () => {
                 headerTitle: 'post.previewAd',
                 data: JSON.stringify({
                   ...watch(),
-                  properties,
+                  categoryName: categories?.find((item: any) => item?.uuid === watch('category'))
+                    ?.title,
+                  subCategoryName: subCategories?.find(
+                    (item: any) => item?.uuid === watch('subCategory')
+                  )?.title,
                 }),
               },
             });
           }}>
-          {btnLoading ? <ActivityIndicator size="small" color={'white'} /> : <></>}
           <Text className="text-base font-semibold text-white">{i18n.t('post.continue')}</Text>
         </Pressable>
       </View>

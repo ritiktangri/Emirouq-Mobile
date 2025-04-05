@@ -18,6 +18,8 @@ module.exports = {
     extend: {
       colors: {
         primary: '#FF5722',
+        btn_bg: '#EFF6FF',
+        bottom_inactive: '#6B7280',
         background: '#000',
         text: '#fff',
         border: '#0A84FF',
@@ -41,6 +43,7 @@ module.exports = {
         trade_table_header: '#2F4257',
         trade_table_column: '#1B2531',
         default_light_bg: '#f5f5f5',
+        boostAd_bg: '#FAF5FF',
       },
       fontFamily: {
         interMedium: ['Inter-Medium'],

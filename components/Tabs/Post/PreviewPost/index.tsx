@@ -1,54 +1,40 @@
-import { View, Text, ScrollView, Dimensions, TouchableOpacity, Pressable } from 'react-native';
+/* eslint-disable import/order */
+import { ScrollView, Dimensions, TouchableOpacity, Pressable } from 'react-native';
 import React, { useState } from 'react';
-import { Href, router, useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
+import { Href, router, useGlobalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 import Swiper from 'react-native-swiper';
-import { AntDesign, FontAwesome } from '@expo/vector-icons';
+import { AntDesign, Entypo, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { routes } from '~/utils/routes';
+import { toCurrency } from '~/utils/helper';
+import { i18n } from '~/utils/i18n';
+import { View } from '~/components/common/View';
+import { Text } from '~/components/common/Text';
+import { useLocale } from '~/context/LocaleContext';
 const PreviewPost = () => {
-  const { params } = useLocalSearchParams();
+  const params: any = useGlobalSearchParams();
+  const data = params?.data ? JSON.parse(params?.data) : {};
+  const [selectFeature, setSelectFeature] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
   const { width } = Dimensions.get('screen');
-  let body = {
-    condition: 'new',
-    description:
-      'Hi there ay description Hi there ay description Hi there ay description Hi there ay description Hi there ay description Hi there ay description Hi there ay description Hi there ay description Hi there ay description Hi there ay description Hi there ay description Hi there ay description Hi there ay description Hi there ay description',
-    location: 'New York, NY',
-    price: '5095',
-    properties: [
-      { name: 'Brand', value: 'SD', placeholder: 'Enter Brand' },
-      { name: 'Model', value: 'SD', placeholder: 'Enter Model' },
-      { name: 'Condition', value: 'SD', placeholder: 'Enter Condition' },
-      { name: 'Operating System', value: 'SD', placeholder: 'Enter Operating System' },
-      { name: 'Screen Size', value: 'S', placeholder: 'Enter Screen Size' },
-      { name: 'Storage', value: 'SD', placeholder: 'Enter Storage' },
-      { name: 'Network Type', value: 'SD', placeholder: 'Enter Network Type' },
-      { name: 'Seller Contact Info', value: 'SD', placeholder: 'Enter Seller Contact Info' },
-    ],
-    subCategory: 'd01fdc77-174f-449a-b28d-ad9ed4e99638',
-    timePeriod: '7 days',
-    title: 'Nothing',
-  };
-  const ProductDetails = ({ productData }: any) => {
-    const [images, setImages] = useState([
-      'https://media.istockphoto.com/id/1436061606/photo/flying-colorful-womens-sneaker-isolated-on-white-background-fashionable-stylish-sports-shoe.jpg?s=612x612&w=0&k=20&c=2KKjX9tXo0ibmBaPlflnJNdtZ-J77wrprVStaPL2Gj4=',
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8kCtzxFOS1QKoATEkQ91V6hBieEa4ZTKbITFh9cBCGTGO0xc2f68muywyosC9SkfcWrI&usqp=CAU',
-      'https://worldbalance.com.ph/cdn/shop/files/WBBEATRIXLGRAY-BLUE_14.jpg?v=1737085372&width=1080',
-    ]);
+  const { locale } = useLocale();
+  if (!params?.data) {
+    return;
+  }
 
-    return (
+  return (
+    <View className="flex-1">
       <ScrollView className="flex-1 bg-white">
         <View className="bg-blue-50 p-3">
           <Text className="flex-row items-center text-sm text-blue-500">
             <AntDesign name="infocirlceo" size={12} color="gray" />
-            This is how your ad will appear to buyers
+            {i18n.t('previewAd.info')}
           </Text>
         </View>
         <View className="p-4">
-          {/* Image Swiper */}
           <View className="mb-4 h-64 overflow-hidden rounded-lg">
             <Swiper
-              showsButtons={true}
+              showsButtons
               dotStyle={{
                 backgroundColor: 'rgba(0,0,0,.2)',
                 width: 8,
@@ -63,67 +49,78 @@ const PreviewPost = () => {
                 borderRadius: 5,
                 margin: 3,
               }}>
-              {images.map((image: any, index: any) => (
+              {data?.images?.map((image: any, index: any) => (
                 <Image
                   key={index}
-                  source={{ uri: image }}
+                  source={{ uri: image?.uri }}
                   style={{ width: width - 32, height: 256 }}
-                  resizeMode="cover"
+                  contentFit="cover"
                 />
               ))}
             </Swiper>
           </View>
 
           {/* Title and Price */}
-          <Text className="mb-2 text-2xl font-bold">${Number(productData.price)?.toFixed(2)}</Text>
-          <Text className="mb-4 text-xl font-semibold">{productData.title}</Text>
+          <Text className="mb-2 text-4xl font-bold">{toCurrency(data?.price)}</Text>
+          <Text className="mb-4 text-2xl font-semibold">{data?.title}</Text>
 
           {/* Location and Condition */}
-          <View className="mb-4 flex-row items-center gap-x-2">
-            <Text className="text-gray-600">{`${productData.condition?.charAt(0)?.toUpperCase()}${productData.condition.slice(1)}`}</Text>
+          <View direction="row" className="mb-4  flex-wrap gap-x-2">
+            <Text className="text-gray-600">{data?.categoryName}</Text>
             <View className="h-1 w-1 rounded-full bg-gray-400" />
-            <Text className="text-gray-600">{productData.category || 'N/A'}</Text>
+            <Text className="text-gray-600">{data?.subCategoryName}</Text>
+            <Text className="text-gray-600">{data?.location}</Text>
             <View className="h-1 w-1 rounded-full bg-gray-400" />
-            <Text className="text-gray-600">{productData.location}</Text>
-            <View className="h-1 w-1 rounded-full bg-gray-400" />
-            <Text className="text-gray-600">{productData.timePeriod}</Text>
+            <Text className="text-gray-600">{data?.timePeriod}</Text>
           </View>
-
           {/* Description */}
           <View className="rounded-md bg-gray-50 p-2">
-            <Text className="mb-2 text-lg">Description</Text>
+            <Text placement={locale} className="mb-2 text-lg">
+              {i18n.t('previewAd.description')}
+            </Text>
             <Text className="mb-3 text-gray-700">
-              {productData.description?.length > 80 && !isExpanded
-                ? `${productData.description.slice(0, 80)}...`
-                : productData.description}
+              {data?.description?.length > 80 && !isExpanded
+                ? `${data?.description?.slice(0, 80)}...`
+                : data?.description}
             </Text>
             <Text
+              placement={locale}
               className="text-primary"
               onPress={() => {
                 setIsExpanded(!isExpanded);
               }}>
-              {productData.description?.length > 80 && !isExpanded
-                ? 'Read More'
-                : productData.description?.length > 80
-                  ? 'Read Less'
+              {data?.description?.length > 80 && !isExpanded
+                ? i18n.t('previewAd.readMore')
+                : data?.description?.length > 80
+                  ? i18n.t('previewAd.showLess')
                   : ''}
             </Text>
           </View>
 
           {/* Properties */}
-          {/* <Text className="mb-2 text-lg font-semibold">Properties:</Text>
-          {productData.properties.map((property: any, index: any) => (
-            <View key={index} className="mb-2 flex-row justify-between">
-              <Text className="text-gray-600">{property.name}:</Text>
-              <Text className="text-gray-800">{property.value}</Text>
-            </View>
-          ))} */}
+          <Text placement={locale} className="mb-2 mt-3 text-lg font-semibold">
+            {i18n.t('previewAd.properties')}
+          </Text>
+          {data?.properties.map((property: any, index: any) =>
+            property?.value ? (
+              <View direction="row" key={index} className="mb-2  ">
+                <Text className="flex-1 text-gray-600">{property.name}:</Text>
+                <Text className="text-gray-800">{property.value}</Text>
+              </View>
+            ) : (
+              <></>
+            )
+          )}
 
-          {/* Sub Category and Time Period
-          <View className="mt-4">
-            <Text className="text-gray-600">Sub Category: {productData.subCategory}</Text>
-            <Text className="text-gray-600">Time Period: {productData.timePeriod}</Text>
-          </View> */}
+          {/* Sub Category and Time Period*/}
+          {data?.timePeriod ? (
+            <View className="flex flex-row items-center gap-x-2 rounded-md bg-gray-50">
+              <Text className="flex-1 text-gray-600">Time Period: </Text>
+              <Text className="text-gray-800">{data?.timePeriod}</Text>
+            </View>
+          ) : (
+            <></>
+          )}
 
           {/* Add any other details if needed */}
           <View className="mt-4 w-full flex-row items-center rounded-md bg-gray-50 p-3">
@@ -134,7 +131,7 @@ const PreviewPost = () => {
                   uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJv0Qn3rCm5JYUXMpQlekZ1n0NjVcCF5hrkA&s',
                 }}
                 className="h-full w-full"
-                resizeMode="cover"
+                contentFit="cover"
               />
             </View>
 
@@ -157,6 +154,44 @@ const PreviewPost = () => {
               </TouchableOpacity>
             </View>
           </View>
+          <View className="bg-boostAd_bg mt-2 gap-3 p-4">
+            <Text placement={locale} className="text-lg font-medium text-black">
+              {i18n.t('previewAd.boostAdHeading')}
+            </Text>
+            <TouchableOpacity className="" onPress={() => setSelectFeature('featured')}>
+              <View direction={locale}>
+                <FontAwesome
+                  name={selectFeature === 'featured' ? 'circle' : 'circle-thin'}
+                  size={20}
+                  className={selectFeature === 'featured' ? '!text-primary' : '!text-black'}
+                />
+                <View direction={locale} className="gap-2">
+                  <Text className="font- ml-2 font-interMedium text-base text-black">
+                    {i18n.t('previewAd.featuredAd')}
+                  </Text>
+                  <Text>-</Text>
+                  <Text className="font-poppinsMedium">{toCurrency(5.99)}</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity className="" onPress={() => setSelectFeature('premium')}>
+              <View direction={locale}>
+                <FontAwesome
+                  name={selectFeature === 'premium' ? 'circle' : 'circle-thin'}
+                  size={20}
+                  className={selectFeature === 'premium' ? '!text-primary' : '!text-black'}
+                />
+
+                <View direction={locale} className="gap-2">
+                  <Text className="font- ml-2 font-interMedium text-base text-black">
+                    {i18n.t('previewAd.premiumPlacement')}
+                  </Text>
+                  <Text>-</Text>
+                  <Text className="font-poppinsMedium">{toCurrency(9.99)}</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </View>
 
           {/*Action buttons */}
           <View className="mt-4 flex flex-col gap-y-3">
@@ -167,26 +202,27 @@ const PreviewPost = () => {
                 // router.push(routes.drawer.tabs.preview_post);
               }}>
               {/* {btnLoading ? <ActivityIndicator size="small" color={'white'} /> : <></>} */}
-              <Text className="text-base font-semibold text-white">Confirm & Submit</Text>
+              <Text className="text-base font-semibold text-white">
+                {i18n.t('previewAd.confirm')}
+              </Text>
             </Pressable>
             <Pressable
               className="flex-1 items-center rounded-lg bg-gray-100 py-4"
               onPress={() => router.push(routes.tabs.success_view as Href)}>
-              <Text className="text-base font-semibold text-gray-700">Save as Draft</Text>
+              <Text className="text-base font-semibold text-gray-700">
+                {i18n.t('previewAd.saveDraft')}
+              </Text>
             </Pressable>
             <Pressable
               className="flex-1 items-center rounded-lg border-[1px] border-primary py-4"
               onPress={() => router.back()}>
-              <Text className="text-base font-semibold text-primary">Edit</Text>
+              <Text className="text-base font-semibold text-primary">
+                {i18n.t('previewAd.edit')}
+              </Text>
             </Pressable>
           </View>
         </View>
       </ScrollView>
-    );
-  };
-  return (
-    <View className="flex-1">
-      <ProductDetails productData={body} />
     </View>
   );
 };

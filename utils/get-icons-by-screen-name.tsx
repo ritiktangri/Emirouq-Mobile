@@ -1,57 +1,47 @@
-import { AntDesign, Ionicons } from '@expo/vector-icons';
+import {
+  AntDesign,
+  Feather,
+  FontAwesome,
+  FontAwesome5,
+  Ionicons,
+  SimpleLineIcons,
+} from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet } from 'react-native';
 
 export const getIconsByScreenName = (theme: string, screenName: string, active: boolean) => {
   const iconSource: any = {
     home: (
-      <AntDesign
-        name="home"
+      <Ionicons
+        name="home-outline"
         size={24}
-        className={active ? '!text-primary' : ''}
-        // color={active ? 'text-primary' : 'black'}
+        className={active ? '!text-primary' : '!text-bottom_inactive'}
       />
     ),
-    search: <Ionicons name="search-outline" size={24} className={active ? '!text-primary' : ''} />,
-    post: (
-      <Ionicons name="add-circle-outline" size={24} className={active ? '!text-primary' : ''} />
+    search: (
+      <Ionicons
+        name="search"
+        size={24}
+        className={active ? '!text-primary' : '!text-bottom_inactive'}
+      />
     ),
+    post: <Ionicons name="add-circle-sharp" size={30} className="!text-primary" />,
     chat: (
-      <Ionicons name="chatbubbles-outline" size={24} className={active ? '!text-primary' : ''} />
+      <Ionicons
+        name="chatbubble-outline"
+        size={24}
+        className={active ? '!text-primary' : '!text-bottom_inactive'}
+      />
     ),
-    profile: <AntDesign name="user" size={24} className={active ? '!text-primary' : ''} />,
+    profile: (
+      <FontAwesome
+        name="user-o"
+        size={24}
+        className={active ? '!text-primary' : '!text-bottom_inactive'}
+      />
+    ),
   };
-  // const lightIconSource: any = {
-  //   home: active ? <ActiveHomeSVG active={true} /> : <ActiveHomeSVG />,
-  //   sell: active ? <ActiveTradeSVG active={true} /> : <ActiveTradeSVG />,
-  //   chat: active ? <ActiveAnalyticsSVG active={true} /> : <ActiveAnalyticsSVG />,
-  //   profile: active ? <ActiveDiarySVG active={true} /> : <ActiveDiarySVG />,
-  // };
 
   if (!iconSource) return null;
 
   return <>{iconSource[screenName]}</>;
 };
-
-const styles = StyleSheet.create({
-  icon: {
-    width: 22,
-    height: 22,
-  },
-  activeIcon: {
-    width: 22,
-    height: 22,
-  },
-  iconContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  activeIconContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 14,
-    backgroundColor: '#0A84FF',
-    borderRadius: 8,
-  },
-});

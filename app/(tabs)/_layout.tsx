@@ -46,7 +46,7 @@ export default function TabLayout() {
                   <Text
                     className={cn(
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
-                      props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
+                      props.focused ? 'text-primary' : 'text-bottom_inactive '
                     )}
                     style={{ textAlign: locale === 'ar' ? 'right' : 'left' }}>
                     {i18n.t('tab.home')}
@@ -62,7 +62,7 @@ export default function TabLayout() {
                   <Text
                     className={cn(
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
-                      props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
+                      props.focused ? 'text-primary' : 'text-bottom_inactive '
                     )}
                     style={{ textAlign: locale === 'ar' ? 'right' : 'left' }}>
                     {i18n.t('tab.search')}
@@ -78,7 +78,7 @@ export default function TabLayout() {
                   <Text
                     className={cn(
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
-                      props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
+                      props.focused ? 'text-primary' : 'text-bottom_inactive '
                     )}
                     style={{ textAlign: locale === 'ar' ? 'right' : 'left' }}>
                     {i18n.t('tab.post')}
@@ -94,7 +94,7 @@ export default function TabLayout() {
                   <Text
                     className={cn(
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
-                      props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
+                      props.focused ? 'text-primary' : 'text-bottom_inactive '
                     )}
                     style={{ textAlign: locale === 'ar' ? 'right' : 'left' }}>
                     {i18n.t('tab.chat')}
@@ -110,7 +110,7 @@ export default function TabLayout() {
                   <Text
                     className={cn(
                       'mt-1 text-center font-poppinsSemiBold text-sm capitalize md:ml-3 md:mt-0 ',
-                      props.focused ? 'text-primary' : 'text-[#6e7077] dark:text-white'
+                      props.focused ? 'text-primary' : 'text-bottom_inactive '
                     )}
                     style={{ textAlign: locale === 'ar' ? 'right' : 'left' }}>
                     {i18n.t('tab.profile')}

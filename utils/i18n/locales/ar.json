@@ -58,5 +58,19 @@
     "saveDraft": "حفظ المسودة",
     "continue": "استمر",
     "previewAd": "معاينة إعلانك"
+  },
+
+  "previewAd": {
+    "info": "هذه هي الطريقة التي سيظهر بها إعلانك للمشترين.",
+    "description": "وصف",
+    "readMore": "اقرأ أكثر",
+    "showLess": "عرض أقل",
+    "properties": "خصائص",
+    "boostAdHeading": "تعزيز إعلانك",
+    "featuredAd": "إعلان مميز",
+    "premiumPlacement": "موضع متميز",
+    "confirm": "تأكيد ونشر",
+    "saveDraft": "حفظ كمسودة",
+    "edit": "تعديل"
   }
 }

@@ -56,9 +56,21 @@
     "networkTypePlaceholder": "Select Network Type",
     "sellerContactInfo": "Seller Contact Info",
     "sellerContactInfoPlaceholder": "Select Seller Contact Info",
-
     "saveDraft": "Save Draft",
     "continue": "Continue",
     "previewAd": "Preview Your Ad"
+  },
+  "previewAd": {
+    "info": "This is how your ad will appear to buyers.",
+    "description": "Description",
+    "readMore": "Read More",
+    "showLess": "Show Less",
+    "properties": "Properties",
+    "boostAdHeading": "Boost Your Ad",
+    "featuredAd": "Featured Ad",
+    "premiumPlacement": "Premium Placement",
+    "confirm": "Confirm & Post",
+    "saveDraft": "Save as Draft",
+    "edit": "Edit"
   }
 }

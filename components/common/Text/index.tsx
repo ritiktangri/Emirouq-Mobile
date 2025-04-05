@@ -9,6 +9,13 @@ cssInterop(RNtext, { className: 'style' });
 
 const textVariants = cva('text-foreground', {
   variants: {
+    placement: {
+      en: 'text-left',
+      ar: 'text-right',
+      'text-center': 'text-center',
+      'text-right': 'text-right',
+      'text-left': 'text-left',
+    },
     variant: {
       largeTitle: 'text-4xl',
       title1: 'text-2xl',
@@ -44,18 +51,18 @@ function Text({
   className,
   variant,
   color,
+  placement,
   ...props
 }: React.ComponentPropsWithoutRef<typeof RNtext> & VariantProps<typeof textVariants>) {
   const textClassName = React.useContext(TextClassContext);
-  const { locale } = useLocale();
   return (
     <RNtext
       allowFontScaling={false}
       className={cn(
-        textVariants({ variant, color }),
+        textVariants({ variant, color, placement }),
         textClassName,
-        className,
-        locale ? (locale === 'ar' ? 'text-right' : 'text-left') : 'text-center'
+        className
+        // locale ? (locale === 'ar' ? 'text-right' : 'text-left') : 'text-center'
       )}
       {...props}
     />
