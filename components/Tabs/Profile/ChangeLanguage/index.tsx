@@ -29,7 +29,7 @@ const ChangeLanguage = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F8FA' }}>
       <View style={{ padding: 16 }}>
-        <Text className="py-2 text-lg font-bold text-black">
+        <Text placement={locale} className="py-2 text-lg font-bold text-black">
           {i18n.t('profile.selectLanguage.title')}
         </Text>
         <TouchableOpacity className="mb-2  rounded-lg bg-gray-200 p-4">
@@ -45,7 +45,7 @@ const ChangeLanguage = () => {
         </TouchableOpacity>
 
         {/* All Languages */}
-        <Text className="my-4  text-lg text-black">
+        <Text placement={locale} className="my-4  text-lg text-black">
           {i18n.t('profile.selectLanguage.description')}
         </Text>
 

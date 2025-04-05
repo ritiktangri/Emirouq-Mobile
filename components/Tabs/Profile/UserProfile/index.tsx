@@ -108,29 +108,43 @@ const UserProfile = () => {
               <View direction={locale} className="">
                 <AntDesign name="mobile1" size={24} color="gray" />
                 <View className="w-full flex-col border-b-[0.2px] border-gray-300 py-2">
-                  <Text className="text-gray-600">{i18n.t('profile.phone')}</Text>
-                  <Text className="">{user?.phoneNumber || '--'}</Text>
+                  <Text placement={locale} className="text-gray-600">
+                    {i18n.t('profile.phone')}
+                  </Text>
+                  <Text placement={locale} className="">
+                    {user?.phoneNumber || '--'}
+                  </Text>
                 </View>
               </View>
               <View direction={locale} className="">
                 <Fontisto name="email" size={24} color="gray" />
                 <View className="w-full flex-col border-b-[0.2px] border-gray-300 py-2">
-                  <Text className="text-gray-600">{i18n.t('profile.email')}</Text>
-                  <Text className="">{user?.email}</Text>
+                  <Text placement={locale} className="text-gray-600">
+                    {i18n.t('profile.email')}
+                  </Text>
+                  <Text placement={locale} className="">
+                    {user?.email}
+                  </Text>
                 </View>
               </View>
               <View direction={locale} className="">
                 <EvilIcons name="location" size={24} color="gray" />
                 <View className="flex-col py-2">
-                  <Text className="text-gray-600">{i18n.t('profile.location')}</Text>
-                  <Text className="">San Francisco, CA</Text>
+                  <Text placement={locale} className="text-gray-600">
+                    {i18n.t('profile.location')}
+                  </Text>
+                  <Text placement={locale} className="">
+                    San Francisco, CA
+                  </Text>
                 </View>
               </View>
             </View>
           </View>
           {/* ACCOUNT SETTINGS */}
           <View className="my-2 rounded-lg bg-white p-2">
-            <Text className="text-lg font-semibold">{i18n.t('profile.accountSettings')}</Text>
+            <Text placement={locale} className="text-lg font-semibold">
+              {i18n.t('profile.accountSettings')}
+            </Text>
             <TouchableOpacity
               onPress={() => {
                 router.push({
