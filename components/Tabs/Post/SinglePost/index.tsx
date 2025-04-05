@@ -2,27 +2,34 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, TouchableOpacity } from 'react-native';
 import { Feather, FontAwesome } from '@expo/vector-icons';
-import { useGlobalSearchParams } from 'expo-router';
+import { Href, router, useGlobalSearchParams } from 'expo-router';
 import { View } from '~/components/common/View';
 import { Text } from '~/components/common/Text';
 import Image from '~/components/common/Image';
 import { getRelativeTime, toCurrency } from '~/utils/helper';
 import { i18n } from '~/utils/i18n';
+import { routes } from '~/utils/routes';
+import { useAuth } from '~/context/AuthContext';
 
 const SinglePost = () => {
   const params: any = useGlobalSearchParams();
   const [data, setData] = useState({} as any);
-
+  const [selectedImage, setSelectedImage] = useState({
+    uri: data?.file?.[0],
+    index: 1,
+  });
+  const { user } = useAuth();
   useEffect(() => {
     if (params?.data) {
       const parsedData = JSON.parse(params?.data);
       setData(parsedData);
+      setSelectedImage({
+        uri: parsedData?.file?.[0],
+        index: 1,
+      });
     }
   }, [params?.data]);
-  const [selectedImage, setSelectedImage] = useState({
-    uri: data?.file?.[0],
-    index: 0,
-  });
+
   return (
     <View className="flex-1 bg-white">
       <View className="flex-1">
@@ -188,10 +195,16 @@ const SinglePost = () => {
       </View>
 
       {/* Chat Button */}
-      <TouchableOpacity className="mx-4 mb-2 flex-row items-center justify-center gap-2 rounded-lg bg-primary py-3">
-        <Feather name="message-circle" size={20} color="white" />
-        <Text className=" font-poppinsMedium text-lg text-white">Chat with Seller</Text>
-      </TouchableOpacity>
+      {user?.uuid !== data?.userId ? (
+        <TouchableOpacity
+          onPress={() => router.push(routes.tabs.chat as Href)}
+          className="mx-4 mb-2 flex-row items-center justify-center gap-2 rounded-lg bg-primary py-3">
+          <Feather name="message-circle" size={20} color="white" />
+          <Text className=" font-poppinsMedium text-lg text-white">Chat with Seller</Text>
+        </TouchableOpacity>
+      ) : (
+        <></>
+      )}
     </View>
   );
 };
