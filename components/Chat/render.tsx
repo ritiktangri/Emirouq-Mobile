@@ -29,7 +29,7 @@ const Render = ({ item }: any) => {
           <Text className="text-sm text-gray-500">{item?.time}</Text>
         </View>
         <View className="mx-5 flex-row items-center gap-2">
-          <View className=" h-16 w-16 rounded-lg ">
+          <View className=" h-16 w-16 rounded-full  ">
             <Image expoImage source={item?.productImage} contentFit="fill" />
           </View>
 

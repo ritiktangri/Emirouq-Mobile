@@ -19,6 +19,8 @@ import { View } from '~/components/common/View';
 import { Text } from '~/components/common/Text';
 import { useLocale } from '~/context/LocaleContext';
 import { i18n } from '~/utils/i18n';
+import Image from '~/components/common/Image';
+import { width } from '~/constants/Colors';
 
 const schema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -83,60 +85,7 @@ const AddPost = () => {
         'Brand new Nike Air Max 2023 sneakers in pristine condition. Never worn, comes in original box with all tags attached. Limited 256GB storage. Unlocked for all carriers. Price is firm. No trades please',
       location: 'New York, NY',
       timePeriod: '7 days',
-      images: [
-        {
-          assetId: '9F983DBA-EC35-42B8-8773-B597CF782EDD/L0/001',
-          duration: null,
-          exif: null,
-          fileName: 'IMG_0003.jpg',
-          fileSize: 2050012,
-          height: 2002,
-          mimeType: 'image/jpeg',
-          pairedVideoAsset: null,
-          type: 'image',
-          uri: 'file:///Users/areeb/Library/Developer/CoreSimulator/Devices/682A5298-2FA4-48A8-8028-4FC69C9846AA/data/Containers/Data/Application/11592AA3-5A7C-481E-B7B7-9620B346B121/Library/Caches/ExponentExperienceData/@anonymous/emirouq-mobile-cb2a80bf-99e6-4bae-903e-23471cc3e5af/ImagePicker/A7216E9E-9F1C-48FD-90F6-C8F56886C215.jpg',
-          width: 3000,
-        },
-        {
-          assetId: 'ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED/L0/001',
-          duration: null,
-          exif: null,
-          fileName: 'IMG_0005.jpg',
-          fileSize: 1500185,
-          height: 2002,
-          mimeType: 'image/jpeg',
-          pairedVideoAsset: null,
-          type: 'image',
-          uri: 'file:///Users/areeb/Library/Developer/CoreSimulator/Devices/682A5298-2FA4-48A8-8028-4FC69C9846AA/data/Containers/Data/Application/11592AA3-5A7C-481E-B7B7-9620B346B121/Library/Caches/ExponentExperienceData/@anonymous/emirouq-mobile-cb2a80bf-99e6-4bae-903e-23471cc3e5af/ImagePicker/7B4A2CE8-EE03-4812-ACBD-A961205105AB.jpg',
-          width: 3000,
-        },
-        {
-          assetId: '99D53A1F-FEEF-40E1-8BB3-7DD55A43C8B7/L0/001',
-          duration: null,
-          exif: null,
-          fileName: 'IMG_0004.jpg',
-          fileSize: 1003277,
-          height: 2500,
-          mimeType: 'image/jpeg',
-          pairedVideoAsset: null,
-          type: 'image',
-          uri: 'file:///Users/areeb/Library/Developer/CoreSimulator/Devices/682A5298-2FA4-48A8-8028-4FC69C9846AA/data/Containers/Data/Application/11592AA3-5A7C-481E-B7B7-9620B346B121/Library/Caches/ExponentExperienceData/@anonymous/emirouq-mobile-cb2a80bf-99e6-4bae-903e-23471cc3e5af/ImagePicker/97309F2A-5EAE-4EC7-82D0-B683ADBBA03B.jpg',
-          width: 1668,
-        },
-        {
-          assetId: 'CC95F08C-88C3-4012-9D6D-64A413D254B3/L0/001',
-          duration: null,
-          exif: null,
-          fileName: 'IMG_0111.jpg',
-          fileSize: 4081439,
-          height: 3024,
-          mimeType: 'image/jpeg',
-          pairedVideoAsset: null,
-          type: 'image',
-          uri: 'file:///Users/areeb/Library/Developer/CoreSimulator/Devices/682A5298-2FA4-48A8-8028-4FC69C9846AA/data/Containers/Data/Application/11592AA3-5A7C-481E-B7B7-9620B346B121/Library/Caches/ExponentExperienceData/@anonymous/emirouq-mobile-cb2a80bf-99e6-4bae-903e-23471cc3e5af/ImagePicker/31B5524B-1CBA-4EBC-8936-1EF2621B7F9C.jpg',
-          width: 4032,
-        },
-      ],
+      images: [],
       properties: [
         { name: 'Brand', value: '1' },
         { name: 'Model', value: '1' },
@@ -253,14 +202,14 @@ const AddPost = () => {
                       }}
                     />
                   </View>
-                  <ExpoImage
-                    source={{ uri: uri?.uri }}
+
+                  <Image
+                    expoImage
+                    source={uri?.uri}
                     contentFit="fill"
-                    placeholder={{ blurhash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj' }}
-                    transition={1000}
                     style={{
-                      height: '100%',
-                      width: '100%',
+                      width: 75,
+                      height: 75,
                       borderRadius: 10,
                     }}
                   />

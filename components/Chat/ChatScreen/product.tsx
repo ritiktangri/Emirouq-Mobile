@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 const Product = ({ data }: any) => {
   return (
-    <View className="flex flex-row items-center gap-4 border-b-2 border-b-blue-700 px-4 ">
+    <View className="flex flex-row items-center gap-4 border-b border-b-gray-700 px-4 py-2">
       <View className="h-20 w-20 overflow-hidden rounded-full">
         <Image source={data?.productImage} contentFit="fill" expoImage />
       </View>

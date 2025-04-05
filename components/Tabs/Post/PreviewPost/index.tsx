@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import React, { useState } from 'react';
 import { Href, useGlobalSearchParams, useRouter } from 'expo-router';
-import { Image } from 'expo-image';
 import Swiper from 'react-native-swiper';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { routes } from '~/utils/routes';
@@ -18,6 +17,7 @@ import { View } from '~/components/common/View';
 import { Text } from '~/components/common/Text';
 import { useLocale } from '~/context/LocaleContext';
 import { usePosts } from '~/context/PostContext';
+import Image from '~/components/common/Image';
 const PreviewPost = () => {
   const params: any = useGlobalSearchParams();
   const data = params?.data ? JSON.parse(params?.data) : {};
@@ -60,8 +60,9 @@ const PreviewPost = () => {
               }}>
               {data?.images?.map((image: any, index: any) => (
                 <Image
+                  expoImage
                   key={index}
-                  source={{ uri: image?.uri }}
+                  source={image?.uri}
                   style={{ width: width - 32, height: 256 }}
                   contentFit="cover"
                 />

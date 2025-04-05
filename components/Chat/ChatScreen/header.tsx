@@ -9,7 +9,7 @@ import Image from '~/components/common/Image';
 
 const Header = ({ data }: any) => {
   return (
-    <View className="flex flex-row items-center gap-5 p-4">
+    <View className="flex flex-row items-center gap-5 border-b border-gray-200 p-4 ">
       <TouchableOpacity
         onPress={() => {
           router.push(routes.tabs.chat as Href);
