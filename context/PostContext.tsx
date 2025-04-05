@@ -1,7 +1,7 @@
 /* eslint-disable import/order */
 import { createContext, useContext, useState, useMemo, useCallback, useEffect } from 'react';
 
-import { createPostService, getPostService } from '~/utils/services/post';
+import { createPostService, getPostService, getSinglePostService } from '~/utils/services/post';
 
 const defaultProvider = {
   posts: [] as any,
@@ -12,7 +12,7 @@ const defaultProvider = {
   keyword: '',
   setKeyword: (a: any) => {},
   total: 0,
-  singlePost: {},
+  singlePost: {} as any,
   setSinglePost: (a: any) => {},
   singlePostLoading: false,
   getAdsList: (a: any, b: any, c: any, d: any, e: any, f: any) => {},
@@ -22,6 +22,7 @@ const defaultProvider = {
   setStart: (a: any) => {},
   status: '',
   setStatus: (a: any) => {},
+  getSinglePost: (a: any, b: any) => {},
 };
 const PostContext = createContext(defaultProvider);
 export const usePosts = () => useContext(PostContext);
@@ -92,6 +93,19 @@ const PostProvider = ({ children }: any) => {
     setLoading(false);
     onRefresh || (keyword && setKeyword(''));
   };
+  const getSinglePost = async (id: string, cb: any) => {
+    setSinglePostLoading(true);
+    getSinglePostService({ pathParams: { id } })
+      .then((res: any) => {
+        setSinglePost(res?.data);
+        setSinglePostLoading(false);
+        cb && cb(res?.data);
+      })
+      .catch(() => {
+        setSinglePostLoading(false);
+      })
+      .finally(() => {});
+  };
 
   const value: any = useMemo(
     () => ({
@@ -111,6 +125,7 @@ const PostProvider = ({ children }: any) => {
       start,
       setStatus,
       status,
+      getSinglePost,
     }),
     [
       setPosts,
@@ -129,6 +144,7 @@ const PostProvider = ({ children }: any) => {
       start,
       setStatus,
       status,
+      getSinglePost,
     ]
   );
 

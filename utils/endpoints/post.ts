@@ -17,6 +17,13 @@ const post = {
       uri: `${prefix}/list`,
     },
   },
+  getSinglePost: {
+    v1: {
+      ...defaults.methods.GET,
+      ...defaults.versions.v1,
+      uri: `${prefix}/:id`,
+    },
+  },
 };
 
 export default post;

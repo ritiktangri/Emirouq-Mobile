@@ -53,9 +53,11 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     top: 0,
+    borderRadius: 10,
   },
   container: {
     backgroundColor: '#e1e4e8',
+    borderRadius: 10,
   },
 });
 

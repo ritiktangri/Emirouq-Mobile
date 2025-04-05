@@ -10,26 +10,32 @@ import { getRelativeTime, toCurrency } from '~/utils/helper';
 import { i18n } from '~/utils/i18n';
 import { routes } from '~/utils/routes';
 import { useAuth } from '~/context/AuthContext';
+import { usePosts } from '~/context/PostContext';
+import dayjs from 'dayjs';
 
 const SinglePost = () => {
   const params: any = useGlobalSearchParams();
-  const [data, setData] = useState({} as any);
   const [selectedImage, setSelectedImage] = useState({
-    uri: data?.file?.[0],
+    uri: '',
     index: 1,
-  });
+  } as any);
   const { user } = useAuth();
+  const { getSinglePost, singlePost, singlePostLoading } = usePosts();
   useEffect(() => {
     if (params?.data) {
       const parsedData = JSON.parse(params?.data);
-      setData(parsedData);
-      setSelectedImage({
-        uri: parsedData?.file?.[0],
-        index: 1,
+      getSinglePost(parsedData?.uuid, (res: any) => {
+        setSelectedImage({
+          uri: res?.file?.[0],
+          index: 1,
+        });
       });
     }
   }, [params?.data]);
 
+  if (singlePostLoading) {
+    return <View className="flex-1 items-center justify-center bg-white" />;
+  }
   return (
     <View className="flex-1 bg-white">
       <View className="flex-1">
@@ -53,12 +59,12 @@ const SinglePost = () => {
 
           <View className="absolute right-4 top-10 rounded-full bg-gray-800 px-3 py-1">
             <Text className="text-white">
-              {selectedImage?.index}/{data?.file?.length}
+              {selectedImage?.index}/{singlePost?.file?.length}
             </Text>
           </View>
 
           <View className="flex flex-row flex-wrap items-center gap-2 px-3 py-2">
-            {data?.file?.map((uri: any, index: any) => (
+            {/* {singlePost?.file?.map((uri: any, index: any) => (
               <TouchableOpacity
                 key={index}
                 className=""
@@ -83,13 +89,15 @@ const SinglePost = () => {
                   }}
                 />
               </TouchableOpacity>
-            ))}
+            ))} */}
           </View>
 
           {/* Product Details */}
           <View className="p-4">
-            <Text className="mb-2 text-2xl font-bold">{data?.title}</Text>
-            <Text className="text-2xl font-semibold text-red-600">{toCurrency(data?.price)}</Text>
+            <Text className="mb-2 text-2xl font-bold">{singlePost?.title}</Text>
+            <Text className="text-2xl font-semibold text-red-600">
+              {toCurrency(singlePost?.price)}
+            </Text>
             {/* <View className="mt-1 flex-row items-center">
             <Feather name="map-pin" size={16} color="gray" />
             <Text className="ml-1 text-gray-600">New York, NY</Text>
@@ -97,28 +105,39 @@ const SinglePost = () => {
           </View>
 
           {/* Seller Info */}
-          <View className="flex-row items-center px-4 py-2">
-            <Image
-              source={{
-                uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd8a7286f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60',
-              }}
-              style={{ width: 40, height: 40, borderRadius: 20, marginRight: 8 }}
-            />
-            <View className="flex-1">
-              <View className="flex-row items-center">
-                <Text className="mr-1 font-bold">John Smith</Text>
-                <FontAwesome name="check-circle" size={16} color="#e3350d" />
+
+          {user?.uuid !== singlePost?.userId ? (
+            <View className="flex-row items-center px-4 py-2">
+              <Image
+                source={{
+                  uri:
+                    singlePost?.user?.profileImage ||
+                    'https://static.vecteezy.com/system/resources/previews/000/439/863/non_2x/vector-users-icon.jpg',
+                }}
+                style={{ width: 60, height: 60, borderRadius: 10 }}
+              />
+              <View className="flex-1 ">
+                <View className="flex-row items-center">
+                  <Text className="mr-1 font-bold">
+                    {singlePost?.user?.firstName} {singlePost?.user?.lastName}
+                  </Text>
+                  <FontAwesome name="check-circle" size={16} color="#e3350d" />
+                </View>
+                <View className="flex-row items-center">
+                  <FontAwesome name="star" size={12} color="gold" />
+                  <Text className="ml-1 text-gray-600">4.9 (234 reviews)</Text>
+                </View>
+                <Text className="text-gray-600">
+                  Member since {dayjs(singlePost?.user?.createdAt)?.format('YYYY')}
+                </Text>
               </View>
-              <View className="flex-row items-center">
-                <FontAwesome name="star" size={12} color="gold" />
-                <Text className="ml-1 text-gray-600">4.9 (234 reviews)</Text>
-              </View>
-              <Text className="text-gray-600">Member since 2021</Text>
+              <TouchableOpacity>
+                <Text className="text-primary">View Profile {'>'}</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity>
-              <Text className="text-red-500">View Profile {'>'}</Text>
-            </TouchableOpacity>
-          </View>
+          ) : (
+            <></>
+          )}
 
           {/* Interaction Buttons */}
           <View className="mt-2 flex-row justify-around">
@@ -139,25 +158,25 @@ const SinglePost = () => {
           {/* Description */}
           <View className="p-4">
             <Text className="text-lg font-semibold">{i18n.t('post.description')}</Text>
-            <Text className="mt-1 text-gray-700">{data?.description}</Text>
+            <Text className="mt-1 text-gray-700">{singlePost?.description}</Text>
             <View className="mt-2">
               <View className="flex-row justify-between border-b border-gray-300 py-1">
                 <Text className="text-gray-600">{i18n.t('post.condition')}</Text>
-                <Text className="text-gray-800">{data?.condition}</Text>
+                <Text className="text-gray-800">{singlePost?.condition}</Text>
               </View>
               <View className="flex-row justify-between border-b border-gray-300 py-1">
                 <Text className="text-gray-600">{i18n.t('post.category')}</Text>
-                <Text className="text-gray-800">{data?.category?.title}</Text>
+                <Text className="text-gray-800">{singlePost?.category?.title}</Text>
               </View>
               {/* <View className="flex-row justify-between border-b border-gray-300 py-1">
                 <Text className="text-gray-600">Brand</Text>
                 <Text className="text-gray-800">
-                  {data?.brand?.title}
+                  {singlePost?.brand?.title}
                 </Text>
               </View> */}
               <View className="flex-row justify-between py-1">
                 <Text className="text-gray-600">Posted</Text>
-                <Text className="text-gray-800">{getRelativeTime(data?.createdAt)}</Text>
+                <Text className="text-gray-800">{getRelativeTime(singlePost?.createdAt)}</Text>
               </View>
             </View>
           </View>
@@ -185,7 +204,7 @@ const SinglePost = () => {
             </View>
 
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {data?.file?.map((uri: any, index: any) => (
+              {/* {singlePost?.file?.map((uri: any, index: any) => (
                 <TouchableOpacity key={index} className="mr-4">
                   <Image
                     thumbnailSource={{
@@ -204,14 +223,14 @@ const SinglePost = () => {
                   <Text className="mt-1 text-gray-800">iPhone 14 Pro Max</Text>
                   <Text className="text-gray-600">$1,099</Text>
                 </TouchableOpacity>
-              ))}
+              ))} */}
             </ScrollView>
           </View>
         </ScrollView>
       </View>
 
       {/* Chat Button */}
-      {user?.uuid !== data?.userId ? (
+      {user?.uuid !== singlePost?.userId ? (
         <TouchableOpacity
           onPress={() => router.push(routes.tabs.chat as Href)}
           className="mx-4 mb-2 flex-row items-center justify-center gap-2 rounded-lg bg-primary py-3">

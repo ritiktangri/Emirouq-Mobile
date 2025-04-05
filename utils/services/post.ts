@@ -18,3 +18,9 @@ export async function getPostService({ query, signal }: any) {
     ...(signal ? { signal } : {}),
   });
 }
+export async function getSinglePostService({ pathParams }: any) {
+  return callApi({
+    uriEndPoint: { ...post.getSinglePost.v1 } as ApiEndpoint,
+    pathParams,
+  });
+}
