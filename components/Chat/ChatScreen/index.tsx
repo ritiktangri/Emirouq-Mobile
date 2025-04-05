@@ -15,7 +15,8 @@ import { Feather } from '@expo/vector-icons';
 import { faker } from '@faker-js/faker';
 import { cn } from '~/utils/helper';
 import Header from './header';
-import { useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
+import { useGlobalSearchParams } from 'expo-router';
+import Product from './product';
 
 const ChatScreen = () => {
   const params = useGlobalSearchParams();
@@ -68,6 +69,7 @@ const ChatScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <Header data={params} />
+      <Product data={params} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         className="flex-1"
