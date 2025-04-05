@@ -15,6 +15,7 @@
     "@animatereactnative/accordion": "^0.1.5",
     "@expo/react-native-action-sheet": "^4.1.0",
     "@expo/vector-icons": "^14.0.2",
+    "@faker-js/faker": "^9.6.0",
     "@hookform/resolvers": "^4.1.3",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/datetimepicker": "8.2.0",

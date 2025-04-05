@@ -9,6 +9,7 @@ import Render from './render';
 const messageData = [
   {
     name: 'Sarah Miller',
+    status: 'online',
     time: '10:32 AM',
     product: 'Vintage Leather Sofa',
     price: '899',
@@ -20,6 +21,7 @@ const messageData = [
   },
   {
     name: 'John Cooper',
+    status: 'offline',
     time: 'Yesterday',
     product: 'MacBook Pro 2023',
     price: '1299',
@@ -30,6 +32,7 @@ const messageData = [
   },
   {
     name: 'Emma Wilson',
+    status: 'online',
     time: 'Yesterday',
     product: 'Dining Table Set',
     price: '450',
@@ -41,6 +44,7 @@ const messageData = [
   },
   {
     name: 'David Chen',
+    status: 'offline',
     time: 'Wed',
     product: 'Mountain Bike',
     price: '599',
@@ -52,6 +56,7 @@ const messageData = [
   {
     name: 'Lisa Anderson',
     time: 'Tue',
+    status: 'online',
     product: 'iPhone 13 Pro',
     price: '699',
     message: 'Perfect condition, barely used',

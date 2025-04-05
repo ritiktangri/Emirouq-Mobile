@@ -6,11 +6,21 @@ import { toCurrency } from '~/utils/helper';
 import { View } from '../common/View';
 import { Text } from '../common/Text';
 import { Ionicons } from '@expo/vector-icons';
+import { Href, useRouter } from 'expo-router';
+import { routes } from '~/utils/routes';
 const blurhash = 'LEHV6nWB2yk8pyo0adR*.7kCMdnj';
 
 const Render = ({ item }: any) => {
+  const router = useRouter();
   return (
-    <TouchableOpacity className="flex-row items-center gap-2 border-b border-gray-200 px-4 py-4">
+    <TouchableOpacity
+      onPress={() => {
+        router.push({
+          pathname: routes.chatScreen,
+          params: { ...item },
+        } as Href);
+      }}
+      className="flex-row items-center gap-2 border-b border-gray-200 px-4 py-4">
       <View className=" h-16 w-16 rounded-full bg-black">
         <Image
           source={item?.avatar}

@@ -34,4 +34,5 @@ export const routes = {
   },
   'select-language': '/select-language',
   success: '/success',
+  chatScreen: '/chat-screen',
 };
