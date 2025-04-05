@@ -1,11 +1,35 @@
+/* eslint-disable import/order */
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
-import { Entypo, Ionicons } from '@expo/vector-icons';
+import React, { useCallback } from 'react'; // Import useCallback
+import { Ionicons } from '@expo/vector-icons';
 import AdsList from './AdsList';
+import { usePosts } from '~/context/PostContext';
 
 const ManageAds = () => {
-  const [selectedTab, setSelectedTab] = useState('All Ads');
-  const tabs = ['All Ads', 'Drafts', 'Active', 'Pending'];
+  const { status, setStatus } = usePosts();
+
+  const tabs = [
+    {
+      id: 1,
+      name: 'All Ads',
+      value: '',
+    },
+    {
+      id: 2,
+      name: 'Drafts',
+      value: 'draft',
+    },
+    {
+      id: 3,
+      name: 'Active',
+      value: 'active',
+    },
+    {
+      id: 4,
+      name: 'Pending',
+      value: 'pending',
+    },
+  ];
 
   const HorizontalTabs = ({ tabs, selectedTab, onTabPress }: any) => {
     return (
@@ -13,17 +37,16 @@ const ManageAds = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         className="min-h-12 flex-row p-4"
-        contentContainerStyle={{ alignItems: 'center' }} // Ensure proper alignment
-      >
-        {tabs.map((tab: any) => (
+        contentContainerStyle={{ alignItems: 'center' }}>
+        {tabs?.map((tab: any) => (
           <TouchableOpacity
-            key={tab}
-            onPress={() => onTabPress(tab)}
+            key={tab?.id}
+            onPress={() => onTabPress(tab?.value)}
             className={`mx-2 rounded-full px-4 py-2 ${
-              selectedTab === tab ? 'border border-orange-500' : 'bg-gray-200'
+              selectedTab === tab?.value ? 'border border-orange-500' : 'bg-gray-200'
             }`}>
-            <Text className={`${selectedTab === tab ? 'text-orange-500' : 'text-gray-700'}`}>
-              {tab}
+            <Text className={`${selectedTab === tab?.value ? 'text-orange-500' : 'text-gray-700'}`}>
+              {tab?.name}
             </Text>
           </TouchableOpacity>
         ))}
@@ -31,13 +54,21 @@ const ManageAds = () => {
     );
   };
 
+  // Use useCallback to memoize the setStatus function passed to HorizontalTabs
+  const handleTabPress = useCallback(
+    (tabValue: any) => {
+      setStatus(tabValue);
+    },
+    [setStatus]
+  ); // Dependency array includes setStatus
+
   return (
     <View className="flex-1 justify-center">
       <View className="">
         <HorizontalTabs
           tabs={tabs}
-          selectedTab={selectedTab}
-          onTabPress={(tab: any) => setSelectedTab(tab)}
+          selectedTab={status}
+          onTabPress={handleTabPress} // Pass the memoized function
         />
       </View>
       <View className="flex-row items-center justify-between border-b-[0.5px] border-t-[0.5px] border-gray-300 p-2">
@@ -49,7 +80,6 @@ const ManageAds = () => {
           <Ionicons name="filter-outline" size={20} color="gray" />
         </TouchableOpacity>
       </View>
-      {/*Ads List */}
       <AdsList />
     </View>
   );

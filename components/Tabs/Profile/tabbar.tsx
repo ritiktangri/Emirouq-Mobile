@@ -1,5 +1,5 @@
-import { View, TouchableOpacity, Dimensions, Text } from 'react-native';
-import Animated, { useAnimatedStyle, withSpring, useSharedValue } from 'react-native-reanimated';
+import { View, TouchableOpacity, Text } from 'react-native';
+import Animated from 'react-native-reanimated';
 
 const TABS = [
   {

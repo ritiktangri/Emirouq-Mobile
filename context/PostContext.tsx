@@ -1,15 +1,27 @@
 /* eslint-disable import/order */
-import { createContext, useContext, useState, useMemo, useCallback } from 'react';
+import { createContext, useContext, useState, useMemo, useCallback, useEffect } from 'react';
 
-import { getCategories } from '~/utils/services/category';
-import { createPostService } from '~/utils/services/post';
+import { createPostService, getPostService } from '~/utils/services/post';
 
 const defaultProvider = {
-  posts: {},
+  posts: [] as any,
   setPosts: () => {},
   loading: '',
   btnLoading: false,
   createPost: (a: any, b: any, c: any) => {},
+  keyword: '',
+  setKeyword: (a: any) => {},
+  total: 0,
+  singlePost: {},
+  setSinglePost: (a: any) => {},
+  singlePostLoading: false,
+  getAdsList: (a: any, b: any, c: any, d: any, e: any, f: any) => {},
+  setSinglePostLoading: (a: any) => {},
+  setBtnLoading: (a: any) => {},
+  start: 0,
+  setStart: (a: any) => {},
+  status: '',
+  setStatus: (a: any) => {},
 };
 const PostContext = createContext(defaultProvider);
 export const usePosts = () => useContext(PostContext);
@@ -17,37 +29,13 @@ export const usePosts = () => useContext(PostContext);
 const PostProvider = ({ children }: any) => {
   const [posts, setPosts] = useState([] as any);
   const [singlePost, setSinglePost] = useState({} as any);
+  const [start, setStart] = useState(0);
   const [total, setTotal] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
   const [keyword, setKeyword] = useState('');
-  const [postLoading, setPostLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState('');
   const [singlePostLoading, setSinglePostLoading] = useState(true);
   const [btnLoading, setBtnLoading] = useState(false);
-
-  const getCategoryList = async (
-    signal: any,
-    limit = 10,
-    start = 0,
-    keyword = '',
-    onRefresh: boolean
-  ) => {
-    setPostLoading(true);
-    const res: any = await getCategories({
-      query: { limit, start, ...(keyword && { keyword }) },
-      ...(signal && { signal }),
-    });
-    setTotal(res?.count);
-    setPosts(res?.data);
-    onRefresh || (keyword && setCurrentPage(1));
-    setPostLoading(false);
-    // if (keyword || onRefresh) {
-    //   setTrades(res?.data);
-    // } else {
-    //   setTrades((prev: any) => [...(prev || []), ...res?.data]);
-    // }
-    // setHasMoreData(res?.count > limit);
-    // setBottomLoading(false);
-  };
 
   const createPost = useCallback(async (body: any, cb: any, errCb: any) => {
     setBtnLoading(true);
@@ -58,6 +46,8 @@ const PostProvider = ({ children }: any) => {
     formData.append('condition', body?.condition);
     formData.append('location', body?.location);
     formData.append('timePeriod', body?.timePeriod);
+    formData.append('category', body?.category);
+    formData.append('subCategory', body?.subCategory);
     body?.isDraft && formData.append('isDraft', body?.isDraft);
     formData.append('properties', JSON.stringify(body?.properties));
     for (const imageAsset of body?.images) {
@@ -70,9 +60,6 @@ const PostProvider = ({ children }: any) => {
     }
     createPostService({
       body: formData,
-      pathParams: {
-        id: body?.subCategory,
-      },
     })
       .then((res) => {
         setBtnLoading(false);
@@ -86,94 +73,62 @@ const PostProvider = ({ children }: any) => {
         setBtnLoading(false);
       });
   }, []);
-  //   const getSubCategoryList = async (
-  //     id: any,
-  //     signal: any,
-  //     limit = 10,
-  //     start = 0,
-  //     keyword = '',
-  //     onRefresh: boolean
-  //   ) => {
-  //     // setCategoryLoading(true);
-  //     const res: any = await getSubCategories({
-  //       query: { limit, start, ...(keyword && { keyword }) },
-  //       ...(signal && { signal }),
-  //       pathParams: { id },
-  //     });
-  //     setTotal(res?.count);
-  //     setSubCategories(res?.data);
-  //     onRefresh || (keyword && setCurrentPage(1));
-  //     // setCategoryLoading(false);
-  //     // if (keyword || onRefresh) {
-  //     //   setTrades(res?.data);
-  //     // } else {
-  //     //   setTrades((prev: any) => [...(prev || []), ...res?.data]);
-  //     // }
-  //     // setHasMoreData(res?.count > limit);
-  //     // setBottomLoading(false);
-  //   };
 
-  //   const getSingleTrade = async (id: any) => {
-  //     setSingleCategoryLoading(true);
-  //     const res: any = await getSingleTradeService({
-  //       pathParams: { id },
-  //     });
-  //     setSingleCategory(res?.data);
-  //     setSingleCategoryLoading(false);
-  //   };
+  const getAdsList = async (
+    signal: any,
+    limit = 10,
+    start = 0,
+    keyword = '',
+    status = '',
+    onRefresh: boolean
+  ) => {
+    setLoading(true);
+    const res: any = await getPostService({
+      query: { limit, start, ...(keyword && { keyword }), status },
+      ...(signal && { signal }),
+    });
+    setTotal(res?.count);
+    setPosts(res?.data);
+    setLoading(false);
+    onRefresh || (keyword && setKeyword(''));
+  };
 
-  //   useEffect(() => {
-  //     const controller = new AbortController();
-  //     const signal = controller.signal;
-  //     getCategoryList(signal, 10, 0, keyword, false);
-  //     return () => {
-  //       controller.abort();
-  //     };
-  //   }, [globalQueries]);
   const value: any = useMemo(
     () => ({
       setPosts,
       posts,
-      postLoading,
-      getCategoryList,
+      loading,
       keyword,
       setKeyword,
-      setCurrentPage,
-      currentPage,
       total,
-      // setBottomLoading,
-      // bottomLoading,
-      // hasMoreData,
-      // setHasMoreData,
-      // handleOnEndReached,
       singlePost,
       setSinglePost,
-      //   getSingleTrade,
       singlePostLoading,
       createPost,
       btnLoading,
+      getAdsList,
+      setStart,
+      start,
+      setStatus,
+      status,
     }),
     [
       setPosts,
       posts,
-      postLoading,
-      getCategoryList,
+      loading,
       keyword,
       setKeyword,
-      setCurrentPage,
-      currentPage,
       total,
-      // setBottomLoading,
-      // bottomLoading,
-      // hasMoreData,
-      // setHasMoreData,
-      // handleOnEndReached,
       singlePost,
       setSinglePost,
-      //   getSingleTrade,
       singlePostLoading,
       createPost,
       btnLoading,
+      getAdsList,
+      setStart,
+      start,
+      setStatus,
+      status,
     ]
   );
 

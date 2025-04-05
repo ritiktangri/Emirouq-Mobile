@@ -1,12 +1,8 @@
 /* eslint-disable import/order */
-import { createContext, useContext, useState, useMemo, useEffect, useCallback } from 'react';
-import { cumulativeStatsService, getSingleTradeService, getTrades } from '~/utils/services/trade';
+import { createContext, useContext, useState, useMemo, useEffect } from 'react';
+import { getSingleTradeService } from '~/utils/services/trade';
 import { useQuery } from './QueryContext';
-import { getColumns } from '~/components/Tabs/Trades/Table/columns';
-import { width } from '~/constants/Colors';
-import { useTheme } from './ThemeContext';
-import { useAuth } from './AuthContext';
-import { getStorageAsync } from '~/hooks/useStorageState';
+
 import { getCategories, getSubCategories } from '~/utils/services/category';
 
 const defaultProvider = {

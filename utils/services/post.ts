@@ -4,12 +4,17 @@ import { callApi } from '../callApis/apiUtils';
 import post from '../endpoints/post';
 import { ApiEndpoint } from '../types';
 
-
-export async function createPostService({ body , pathParams}: any) {
+export async function createPostService({ body }: any) {
   return callApi({
     uriEndPoint: { ...post.createPost.v1 } as ApiEndpoint,
-    pathParams,
     body,
     multipart: true,
+  });
+}
+export async function getPostService({ query, signal }: any) {
+  return callApi({
+    uriEndPoint: { ...post.getPostList.v1 } as ApiEndpoint,
+    query,
+    ...(signal ? { signal } : {}),
   });
 }

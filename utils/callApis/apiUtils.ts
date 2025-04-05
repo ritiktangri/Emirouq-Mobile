@@ -62,7 +62,7 @@ export const hasErrors = (apiResponse: any) => {
  * @returns {Promise<object>} Body Data from the server.
  */
 const callAxios = async (
-  { uriEndPoint, pathParams, query, body, apiHostUrl, multipart, onUploadProgress }: any,
+  { uriEndPoint, pathParams, query, body, apiHostUrl, multipart, onUploadProgress, signal }: any,
   options?: CallApiOptions
 ) => {
   const defHeaders = await getDefaultHeaders(multipart);
@@ -82,6 +82,7 @@ const callAxios = async (
     },
     data: body || undefined,
     onUploadProgress,
+    ...(signal ? { signal } : {}),
   });
 };
 /**

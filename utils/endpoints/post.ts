@@ -7,10 +7,16 @@ const post = {
     v1: {
       ...defaults.methods.POST,
       ...defaults.versions.v1,
-      uri: `${prefix}/:id`,
+      uri: `${prefix}`,
     },
   },
- 
+  getPostList: {
+    v1: {
+      ...defaults.methods.GET,
+      ...defaults.versions.v1,
+      uri: `${prefix}/list`,
+    },
+  },
 };
 
 export default post;

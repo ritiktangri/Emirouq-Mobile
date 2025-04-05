@@ -11,16 +11,17 @@ export const getSingleCategory = async (id: string) => {
   });
 };
 
-export const getCategories = async ({query}:any) => {
+export const getCategories = async ({ query }: any) => {
   return callApi({
     uriEndPoint: { ...category.getCategories.v1 } as ApiEndpoint,
-    query
+    query,
   });
 };
-export const getSubCategories = async ({query, pathParams}:any) => {
+export const getSubCategories = async ({ query, pathParams }: any) => {
   return callApi({
     uriEndPoint: { ...category.getSubCategories.v1 } as ApiEndpoint,
-    query,pathParams
+    query,
+    pathParams,
   });
 };
 
