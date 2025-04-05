@@ -21,7 +21,7 @@ const Render = ({ item }: any) => {
       }}
       className="flex-row items-center gap-2 border-b border-gray-200 px-4 py-4">
       <View className=" h-16 w-16 rounded-full bg-black">
-        <Image expoImage source={item?.avatar} contentFit="fill" />
+        <Image source={item?.avatar} contentFit="fill" />
       </View>
       <View className="flex-1">
         <View className="flex-row items-center justify-between">
@@ -30,7 +30,7 @@ const Render = ({ item }: any) => {
         </View>
         <View className="mx-5 flex-row items-center gap-2">
           <View className=" h-16 w-16 rounded-full  ">
-            <Image expoImage source={item?.productImage} contentFit="fill" />
+            <Image source={item?.productImage} contentFit="fill" />
           </View>
 
           <View>

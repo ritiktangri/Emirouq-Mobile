@@ -16,18 +16,21 @@ const GlobalHeader = ({ route }: any) => {
       router.back();
     }
   };
-
   return (
-    <View className={cn('flex-row justify-between gap-4 rounded-b-xl p-5 md:p-4', 'bg-primary')}>
+    <View className={cn('flex-row   rounded-b-xl p-4', 'bg-primary')}>
       {headerTitle || title ? (
-        <Entypo name="chevron-left" size={24} color="white" onPress={handleGoBack} />
+        <View className=" w-[10%] ">
+          <Entypo name="chevron-left" size={24} color="white" onPress={handleGoBack} />
+        </View>
       ) : (
-        <View className="h-1 w-4" />
+        <View className=" w-[10%] " />
       )}
-      <Text className="text-center text-2xl font-semibold capitalize text-white">
-        {title ? title : headerTitle ? i18n.t(headerTitle) : i18n.t(`tab.${route?.route?.name}`)}
-      </Text>
-      <View className="h-1 w-4" />
+      <View className="w-[80%] items-center justify-center">
+        <Text className=" text-center text-xl font-semibold capitalize text-white">
+          {title ? title : headerTitle ? i18n.t(headerTitle) : i18n.t(`tab.${route?.route?.name}`)}
+        </Text>
+      </View>
+      <View className=" w-[10%] " />
     </View>
   );
 };

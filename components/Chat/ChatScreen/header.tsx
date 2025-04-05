@@ -25,7 +25,7 @@ const Header = ({ data }: any) => {
               <></>
             )}
           </View>
-          <Image source={data?.avatar} contentFit="fill" expoImage />
+          <Image source={data?.avatar} contentFit="fill" />
         </View>
         <View>
           <Text className="text-lg font-semibold text-black">{data?.name}</Text>

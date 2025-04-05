@@ -209,7 +209,6 @@ const AddPost = () => {
                   </View>
 
                   <Image
-                    expoImage
                     source={uri?.uri}
                     contentFit="fill"
                     style={{

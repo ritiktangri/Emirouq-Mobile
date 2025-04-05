@@ -36,9 +36,17 @@ const SinglePost = () => {
         <ScrollView>
           <View className="mx-auto  h-[300px] w-[100%] px-3 py-3">
             <Image
-              expoImage
-              source={selectedImage?.uri}
-              style={{ width: '100%', height: '100%', borderRadius: 10 }}
+              thumbnailSource={{
+                uri: selectedImage?.uri,
+              }}
+              source={{
+                uri: selectedImage?.uri,
+              }}
+              style={{
+                width: '100%',
+                height: '100%',
+                borderRadius: 10,
+              }}
               resizeMode="cover"
             />
           </View>
@@ -61,8 +69,12 @@ const SinglePost = () => {
                   })
                 }>
                 <Image
-                  expoImage
-                  source={uri}
+                  thumbnailSource={{
+                    uri,
+                  }}
+                  source={{
+                    uri,
+                  }}
                   resizeMode="cover"
                   style={{
                     width: 70,
@@ -176,8 +188,12 @@ const SinglePost = () => {
               {data?.file?.map((uri: any, index: any) => (
                 <TouchableOpacity key={index} className="mr-4">
                   <Image
-                    expoImage
-                    source={{ uri }}
+                    thumbnailSource={{
+                      uri,
+                    }}
+                    source={{
+                      uri,
+                    }}
                     resizeMode="cover"
                     style={{
                       width: 120,

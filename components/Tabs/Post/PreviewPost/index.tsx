@@ -90,7 +90,6 @@ const PreviewPost = () => {
               }}>
               {data?.images?.map((image: any, index: any) => (
                 <Image
-                  expoImage
                   key={index}
                   source={image?.uri}
                   style={{ width: width - 32, height: 256 }}

@@ -31,7 +31,6 @@ const Render = ({ item }: any) => {
         className="flex-row  gap-4">
         <View className=" h-[80px] w-[80px]">
           <Image
-            expoImage
             source={{ uri: item?.file?.[0] }}
             style={{
               height: '100%',

@@ -9,7 +9,7 @@ const Product = ({ data }: any) => {
   return (
     <View className="flex flex-row items-center gap-4 border-b border-b-gray-700 px-4 py-2">
       <View className="h-16 w-16 overflow-hidden rounded-full">
-        <Image source={data?.productImage} contentFit="fill" expoImage />
+        <Image source={data?.productImage} contentFit="fill" />
       </View>
       <View className="flex-1">
         <Text className="text-lg font-medium">{data?.product}</Text>
