@@ -3,7 +3,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { cn } from '~/utils/helper';
 
-import { useGlobalSearchParams, useLocalSearchParams, useRouter } from 'expo-router';
+import { useGlobalSearchParams, useRouter } from 'expo-router';
 import { Entypo } from '@expo/vector-icons';
 import { Text } from '../common/Text';
 import { i18n } from '~/utils/i18n';

@@ -19,6 +19,7 @@ module.exports = {
       colors: {
         primary: '#FF5722',
         btn_bg: '#EFF6FF',
+        textInput_bg: '#F3F4F6',
         bottom_inactive: '#6B7280',
         background: '#000',
         text: '#fff',
