@@ -35,7 +35,7 @@ const PreviewPost = () => {
     <View className="flex-1">
       <ScrollView className="flex-1 bg-white">
         <View className="bg-blue-50 p-3">
-          <Text className="flex-row items-center text-sm text-blue-500">
+          <Text placement={locale} className="flex-row items-center text-sm text-blue-500">
             <AntDesign name="infocirlceo" size={12} color="gray" />
             {i18n.t('previewAd.info')}
           </Text>
@@ -79,9 +79,8 @@ const PreviewPost = () => {
             <Text className="text-gray-600">{data?.categoryName}</Text>
             <View className="h-1 w-1 rounded-full bg-gray-400" />
             <Text className="text-gray-600">{data?.subCategoryName}</Text>
-            <Text className="text-gray-600">{data?.location}</Text>
             <View className="h-1 w-1 rounded-full bg-gray-400" />
-            <Text className="text-gray-600">{data?.timePeriod}</Text>
+            <Text className="text-gray-600">{data?.location}</Text>
           </View>
           {/* Description */}
           <View className="rounded-md bg-gray-50 p-2">
