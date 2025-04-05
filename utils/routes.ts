@@ -33,4 +33,5 @@ export const routes = {
     success_view: '/(tabs)/post/success-view',
   },
   'select-language': '/select-language',
+  success: '/success',
 };

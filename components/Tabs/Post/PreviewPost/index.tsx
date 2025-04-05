@@ -1,10 +1,10 @@
 /* eslint-disable import/order */
 import { ScrollView, Dimensions, TouchableOpacity, Pressable } from 'react-native';
 import React, { useState } from 'react';
-import { Href, router, useGlobalSearchParams } from 'expo-router';
+import { Href, useGlobalSearchParams, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import Swiper from 'react-native-swiper';
-import { AntDesign, Entypo, FontAwesome, Ionicons } from '@expo/vector-icons';
+import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { routes } from '~/utils/routes';
 import { toCurrency } from '~/utils/helper';
 import { i18n } from '~/utils/i18n';
@@ -14,6 +14,7 @@ import { useLocale } from '~/context/LocaleContext';
 const PreviewPost = () => {
   const params: any = useGlobalSearchParams();
   const data = params?.data ? JSON.parse(params?.data) : {};
+  const router: any = useRouter();
   const [selectFeature, setSelectFeature] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
   const { width } = Dimensions.get('screen');
@@ -108,7 +109,7 @@ const PreviewPost = () => {
                 <Text className="text-gray-800">{property.value}</Text>
               </View>
             ) : (
-              <></>
+              <View key={index} className=" " />
             )
           )}
 
@@ -208,7 +209,7 @@ const PreviewPost = () => {
             </Pressable>
             <Pressable
               className="flex-1 items-center rounded-lg bg-gray-100 py-4"
-              onPress={() => router.push(routes.tabs.success_view as Href)}>
+              onPress={() => router.push(routes.success as Href)}>
               <Text className="text-base font-semibold text-gray-700">
                 {i18n.t('previewAd.saveDraft')}
               </Text>

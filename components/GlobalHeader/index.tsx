@@ -16,6 +16,7 @@ const GlobalHeader = ({ route }: any) => {
       router.back();
     }
   };
+
   return (
     <View className={cn('flex-row justify-between gap-4 rounded-b-xl p-5 md:p-4', 'bg-primary')}>
       {!headerTitle ? (

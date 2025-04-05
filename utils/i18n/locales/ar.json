@@ -59,7 +59,6 @@
     "continue": "استمر",
     "previewAd": "معاينة إعلانك"
   },
-
   "previewAd": {
     "info": "هذه هي الطريقة التي سيظهر بها إعلانك للمشترين.",
     "description": "وصف",
@@ -72,5 +71,21 @@
     "confirm": "تأكيد ونشر",
     "saveDraft": "حفظ كمسودة",
     "edit": "تعديل"
+  },
+
+  "success_page": {
+    "title": "!تم النشر بنجاح",
+    "description": "تم نشر إعلانك بنجاح. يمكنك مشاهدته في ملفك الشخصي.",
+    "estimatedTime": "الوقت المقدر للموافقة",
+    "duration": "4 - 8 ساعات",
+    "filter": {
+      "submitted": "تم الإرسال",
+      "approved": "تمت الموافقة",
+      "inReview": "قيد المراجعة"
+    },
+    "currentStatus": "الحالة الحالية",
+    "inReview": "قيد المراجعة",
+    "trackStatus": "تتبع الحالة",
+    "returnToHome": "العودة إلى الصفحة الرئيسية"
   }
 }

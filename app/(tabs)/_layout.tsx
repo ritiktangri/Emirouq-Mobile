@@ -15,7 +15,7 @@ export default function TabLayout() {
   const { locale } = useLocale();
   return (
     <QueryProvider>
-      <SafeAreaView edges={['top']} className={cn('flex-1 bg-[#FF5722] ')}>
+      <SafeAreaView edges={['top']} className={cn('flex-1 bg-primary ')}>
         <SafeAreaView edges={['bottom']} className={cn('flex-1 bg-white ')}>
           <Tabs
             initialRouteName="home"

@@ -72,5 +72,20 @@
     "confirm": "Confirm & Post",
     "saveDraft": "Save as Draft",
     "edit": "Edit"
+  },
+  "success_page": {
+    "title": "Successfully posted!",
+    "description": "Your ad has been successfully posted. You can view it in your profile.",
+    "estimatedTime": "Estimated Approval Time",
+    "duration": "4 - 8 hours",
+    "filter": {
+      "submitted": "Submitted",
+      "approved": "Approved",
+      "inReview": "In Review"
+    },
+    "currentStatus": "Current Status",
+    "inReview": "In Review",
+    "trackStatus": "Track Status",
+    "returnToHome": "Return to Home"
   }
 }
