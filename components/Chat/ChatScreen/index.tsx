@@ -26,14 +26,16 @@ const ChatScreen = () => {
   const { getMessageHandler, messages } = useConversation();
 
   const sendMessage = () => {};
+
   useEffect(() => {
-    if (params?.conversationId) {
-      setLoading(true);
-      getMessageHandler(params?.conversationId, 0, 10, () => {
-        setLoading(false);
-      });
-    }
+    if (!params?.conversationId) return;
+
+    setLoading(true);
+    getMessageHandler(params?.conversationId, 0, 10, () => {
+      setLoading(false);
+    });
   }, [params?.conversationId]);
+
   const renderItem = useCallback(
     ({ item }: any) => (
       <View
@@ -51,6 +53,8 @@ const ChatScreen = () => {
     ),
     []
   );
+  if (!params?.conversationId) return;
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <Product product={params?.uuid ? params : {}} />
