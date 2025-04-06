@@ -238,6 +238,8 @@ const SinglePost = () => {
               pathname: singlePost?.conversation?.uuid ? routes.chatScreen : routes.tabs.chat,
               params: {
                 conversationId: singlePost?.conversation?.uuid,
+                uuid: singlePost?.uuid,
+                userId: singlePost?.userId,
               },
             } as Href)
           }
