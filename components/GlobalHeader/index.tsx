@@ -3,13 +3,16 @@ import React, { useMemo } from 'react';
 import { cn } from '~/utils/helper';
 
 import { useGlobalSearchParams, useRouter } from 'expo-router';
-import { Entypo } from '@expo/vector-icons';
 import { Text } from '../common/Text';
 import { i18n } from '~/utils/i18n';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View } from '../common/View';
 import Header from '../Chat/ChatScreen/header';
+import { Entypo } from '@expo/vector-icons';
 
+// title is dynamic text, but it cannot be translated
+// headerTitle is static text, and it can be translated
+// chatTitle is used to show on the chat screen
 const GlobalHeader = ({ route }: any) => {
   const router: any = useRouter();
   const {
@@ -25,9 +28,12 @@ const GlobalHeader = ({ route }: any) => {
       router.back();
     }
   };
-  const header: any = useMemo(() => {
-    if (chatTitle) {
-      return (
+
+  return (
+    <SafeAreaView
+      edges={['top']}
+      className={cn('flex-row   rounded-b-xl ', !chatTitle && 'bg-primary')}>
+      {chatTitle ? (
         <View className="w-full">
           <Header
             onPress={handleGoBack}
@@ -38,29 +44,27 @@ const GlobalHeader = ({ route }: any) => {
             }}
           />
         </View>
-      );
-    }
-    if (headerTitle) {
-      return (
-        <View className=" w-[10%] p-4">
-          <Entypo name="chevron-left" size={24} color="white" onPress={handleGoBack} />
-        </View>
-      );
-    } else {
-      return <View className=" w-[10%] " />;
-    }
-  }, [headerTitle, title, chatTitle]);
-  return (
-    <SafeAreaView
-      edges={['top']}
-      className={cn('flex-row   rounded-b-xl ', !chatTitle && 'bg-primary')}>
-      {header}
-      <View className="w-[80%] items-center justify-center p-4">
-        <Text className=" text-center text-2xl font-semibold capitalize text-white">
-          {title ? title : headerTitle ? i18n.t(headerTitle) : i18n.t(`tab.${route?.route?.name}`)}
-        </Text>
-      </View>
-      <View className=" w-[10%] " />
+      ) : (
+        <>
+          {headerTitle || title ? (
+            <View className=" w-[10%] p-4">
+              <Entypo name="chevron-left" size={24} color="white" onPress={handleGoBack} />
+            </View>
+          ) : (
+            <View className=" w-[10%] " />
+          )}
+          <View className="w-[80%] items-center justify-center bg-primary p-4">
+            <Text className=" text-center text-2xl font-semibold capitalize text-white">
+              {title
+                ? title
+                : headerTitle
+                  ? i18n.t(headerTitle)
+                  : i18n.t(`tab.${route?.route?.name}`)}
+            </Text>
+          </View>
+          <View className=" w-[10%] " />
+        </>
+      )}
     </SafeAreaView>
   );
 };

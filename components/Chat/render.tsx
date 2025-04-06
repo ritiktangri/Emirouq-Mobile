@@ -22,12 +22,12 @@ const Render = ({ item }: any) => {
             profileImage: item?.profileImage,
             userId: item?.user?.uuid,
             uuid: item?.post?.uuid,
-            chatTitle: 'true',
+            chatTitle: true,
             name: item?.post?.title,
             file: item?.post?.file?.[0],
             price: item?.post?.price,
           },
-        } as Href);
+        } as unknown as Href);
       }}
       className="flex-row items-center gap-2 border-b border-gray-200  px-3 py-4">
       {item?.profileImage ? (
