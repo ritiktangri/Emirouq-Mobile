@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, TouchableOpacity } from 'react-native';
 import { Feather, FontAwesome } from '@expo/vector-icons';
-import { Href, router, useGlobalSearchParams } from 'expo-router';
+import { Href, router, useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
 import { View } from '~/components/common/View';
 import { Text } from '~/components/common/Text';
 import Image from '~/components/common/Image';
@@ -14,7 +14,7 @@ import { usePosts } from '~/context/PostContext';
 import dayjs from 'dayjs';
 
 const SinglePost = () => {
-  const { id }: any = useGlobalSearchParams();
+  const { id }: any = useLocalSearchParams();
   const [selectedImage, setSelectedImage] = useState({
     uri: '',
     index: 1,

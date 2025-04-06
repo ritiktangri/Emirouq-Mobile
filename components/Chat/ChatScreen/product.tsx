@@ -30,7 +30,6 @@ const Product = ({ product }: any) => {
             pathname: routes.tabs.singlePost(product?.uuid),
             params: {
               title: `${product?.title}`,
-              id: product?.uuid,
             },
           } as Href)
         }
