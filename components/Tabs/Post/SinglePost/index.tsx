@@ -198,11 +198,11 @@ const SinglePost = () => {
             <Text className="text-lg font-semibold">{i18n.t('post.description')}</Text>
             <Text className="mt-1 text-gray-700">{data?.data?.description}</Text>
             <View className="mt-2">
-              <View className="flex-row justify-between border-b border-gray-300 py-1">
+              <View className="flex-row justify-between border-b border-gray-300 py-2">
                 <Text className="text-gray-600">{i18n.t('post.condition')}</Text>
                 <Text className="text-gray-800">{data?.data?.condition}</Text>
               </View>
-              <View className="flex-row justify-between border-b border-gray-300 py-1">
+              <View className="flex-row justify-between border-b border-gray-300 py-2">
                 <Text className="text-gray-600">{i18n.t('post.category')}</Text>
                 <Text className="text-gray-800">{data?.data?.category?.title}</Text>
               </View>
@@ -212,7 +212,7 @@ const SinglePost = () => {
                   {data?.data?.brand?.title}
                 </Text>
               </View> */}
-              <View className="flex-row justify-between py-1">
+              <View className="flex-row justify-between py-2">
                 <Text className="text-gray-600">Posted</Text>
                 <Text className="text-gray-800">{getRelativeTime(data?.data?.createdAt)}</Text>
               </View>

@@ -9,7 +9,7 @@ import { routes } from '~/utils/routes';
 const Product = ({ product }: any) => {
   const router = useRouter();
   return (
-    <View className="flex flex-row items-center gap-4 border-b border-b-gray-700 px-4 py-2">
+    <View className="flex flex-row items-center gap-4 border-b border-b-gray-200 px-4 py-2">
       <View className=" h-12 w-12 rounded-full  ">
         <Image
           source={{ uri: product?.file }}
@@ -18,8 +18,8 @@ const Product = ({ product }: any) => {
         />
       </View>
       <View className="flex-1">
-        <Text className="text-lg font-medium">{product?.name}</Text>
-        <Text className="font-poppinsSemiBold text-xl text-black">
+        <Text className="text-[15px] font-medium">{product?.name}</Text>
+        <Text className="font-poppinsSemiBold text-lg text-black">
           {toCurrency(product?.price)}
         </Text>
       </View>

@@ -26,7 +26,7 @@ const Header = ({ data, onPress }: any) => {
           {data?.profileImage ? (
             <Image source={data?.profileImage} resizeMode="cover" />
           ) : (
-            <View className="flex h-12  w-12 items-center justify-center rounded-full bg-primary">
+            <View className="flex h-12 w-12 items-center justify-center rounded-full bg-primary">
               <Text className=" font-poppinsMedium text-2xl text-white">
                 {getInitials(data?.fullName)}
               </Text>
@@ -34,7 +34,7 @@ const Header = ({ data, onPress }: any) => {
           )}
         </View>
         <View className="">
-          <Text className="text-2xl font-semibold text-black">{data?.fullName}</Text>
+          <Text className="text-xl font-semibold text-black">{data?.fullName}</Text>
           <View className="flex-row items-center gap-2">
             <Text
               className={cn(
@@ -43,7 +43,7 @@ const Header = ({ data, onPress }: any) => {
                     ? 'text-green-500'
                     : 'text-red-500'
                   : 'text-red-500',
-                'text-lg '
+                ''
               )}>
               {data?.status === 'online' ? 'Online' : 'Offline'}
             </Text>

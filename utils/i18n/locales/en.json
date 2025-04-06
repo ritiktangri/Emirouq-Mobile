@@ -15,10 +15,15 @@
     "location": "Location",
     "accountSettings": "Account Settings",
     "logout": "Logout",
+    "edit":"Edit",
+    "delete":"Delete",
     "selectLanguage": {
       "title": "Selected Language",
       "description": "Choose your preferred language for the app."
-    }
+    },
+    "setupProfileTitle":"Set up your profile to start buying & selling securely!",
+    "firstName":"First Name",
+    "edit_profile":"Edit Profile"
   },
 
   "post": {

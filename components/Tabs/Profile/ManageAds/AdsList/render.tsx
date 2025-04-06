@@ -5,6 +5,7 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { getRelativeTime } from '~/utils/helper';
 import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
+import { i18n } from '~/utils/i18n';
 const status: any = {
   active: 'Active',
   draft: 'Draft',
@@ -69,10 +70,10 @@ const Render = ({ item }: any) => {
             // router.setParams({ data: item });
           }}
           className="mr-2 rounded-lg border border-orange-500 px-4 py-2">
-          <Text className="text-orange-500">Edit</Text>
+          <Text className="text-orange-500">{i18n.t('profile.edit')}</Text>
         </TouchableOpacity>
         <TouchableOpacity className="rounded-lg border border-red-500 px-4 py-2">
-          <Text className="text-red-500">Delete</Text>
+          <Text className="text-red-500">{i18n.t('profile.delete')}</Text>
         </TouchableOpacity>
       </View>
     </View>

@@ -8,6 +8,17 @@ import { Ionicons } from '@expo/vector-icons';
 import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import weekday from 'dayjs/plugin/weekday';
+import isToday from 'dayjs/plugin/isToday';
+import isYesterday from 'dayjs/plugin/isYesterday';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+
+dayjs.extend(relativeTime);
+dayjs.extend(weekday);
+dayjs.extend(isToday);
+dayjs.extend(isYesterday);
+dayjs.extend(isSameOrAfter);
 
 const Render = ({ item }: any) => {
   const router = useRouter();
@@ -29,9 +40,9 @@ const Render = ({ item }: any) => {
           },
         } as unknown as Href);
       }}
-      className="flex-row items-center gap-2 border-b border-gray-200  px-3 py-4">
+      className="flex-row items-center gap-2 border-b border-gray-200  px-3 py-3">
       {item?.profileImage ? (
-        <View className=" h-16 w-16 rounded-full bg-black">
+        <View className=" h-14 w-14 rounded-full bg-black">
           <Image
             source={{ uri: item?.profileImage }}
             className="h-full w-full rounded-full" // Use a default image or placeholder if needed
@@ -39,8 +50,8 @@ const Render = ({ item }: any) => {
           />
         </View>
       ) : (
-        <View className="flex h-16  w-16 items-center justify-center rounded-full bg-primary">
-          <Text className=" font-poppinsMedium text-2xl text-white">
+        <View className="flex h-14  w-14 items-center justify-center rounded-full bg-primary">
+          <Text className=" font-poppinsMedium text-xl text-white">
             {getInitials(`${item?.user?.firstName} ${item?.user?.lastName}`)}
           </Text>
         </View>
@@ -51,12 +62,12 @@ const Render = ({ item }: any) => {
             {item?.user?.firstName} {item?.user?.lastName}
           </Text>
           <Text className="text-sm text-gray-500">
-            {dayjs.unix(item?.lastMessageTime).format('DD MMM, YYYY HH:mm A')}
+            {formatLastMessageTime(item?.lastMessageTime)}
           </Text>
         </View>
         <View className="flex-row items-center ">
           <View className="flex flex-row items-center gap-3">
-            <View className=" h-12 w-12 rounded-full  ">
+            <View className=" h-10 w-10 rounded-full  ">
               <Image
                 source={{ uri: item?.post?.file?.[0] }}
                 className="h-full w-full rounded-full"
@@ -65,10 +76,8 @@ const Render = ({ item }: any) => {
             </View>
 
             <View className="flex-1">
-              <Text className="text-lg">{item?.post?.title}</Text>
-              <Text className="font-poppinsMedium text-base text-gray-700">
-                {toCurrency(item?.post?.price)}
-              </Text>
+              <Text className="max-w-56 text-[15px] text-gray-700">{item?.post?.title}</Text>
+              <Text className="font-poppinsMedium text-base">{toCurrency(item?.post?.price)}</Text>
             </View>
             <Ionicons
               name="chevron-forward-outline"
@@ -96,3 +105,19 @@ const Render = ({ item }: any) => {
 };
 
 export default Render;
+
+const formatLastMessageTime = (unixTimestamp: number) => {
+  const messageTime = dayjs.unix(unixTimestamp);
+  const now = dayjs();
+
+  if (now.diff(messageTime, 'day') < 1) {
+    // Less than a day → "x hours ago"
+    return messageTime.fromNow(); // e.g., "2 hours ago"
+  } else if (now.diff(messageTime, 'day') < 7) {
+    // Within the week → Day of the week (e.g., "Monday")
+    return messageTime.format('dddd');
+  } else {
+    // Older → Date (e.g., "28 Mar, 2024")
+    return messageTime.format('DD MMM, YYYY');
+  }
+};

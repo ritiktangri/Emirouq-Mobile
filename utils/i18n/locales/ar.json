@@ -13,12 +13,24 @@
     "phone": "هاتف",
     "email": "البريد الإلكتروني",
     "location": "موقع",
+    "edit":"يحرر",
+    "delete":"يمسح",
     "accountSettings": "إعدادات الحساب",
     "logout": "تسجيل الخروج",
     "selectLanguage": {
       "title": "اللغة المحددة",
       "description": "اختر لغتك المفضلة للتطبيق."
-    }
+    },
+    "setupProfileTitle":"قم بإعداد ملفك الشخصي لبدء الشراء والبيع بشكل آمن!",
+    "firstName":"الاسم الأول",
+    "lastName":"اسم العائلة",
+    "username":"اسم المستخدم",
+    "phoneNumber":"رقم التليفون",
+    "bio":"ْعَنِّي",
+    "selectYourInterest":"حدد اهتمامك",
+    "completeProfile":"ملف كامل",
+    "edit_profile":"تحرير الملف الشخصي"
+
   },
   "post": {
     "uploadText": "قم بتحميل ما يصل إلى 8 صور",
