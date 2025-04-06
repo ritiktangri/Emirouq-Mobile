@@ -31,14 +31,7 @@ export default function Chat() {
   }, [params?.conversationId]);
 
   const { isLoading, data, hasNextPage, fetchNextPage, isFetchingNextPage } = useGetConversations();
-  const loadMore = () => {
-    if (hasNextPage) {
-      fetchNextPage();
-    }
-  };
-  const renderSpinner = () => {
-    return <ActivityIndicator color="#000" size="large" className="my-3" />;
-  };
+
   return (
     <View className="flex-1 bg-white">
       <View className="m-3">
@@ -56,9 +49,17 @@ export default function Chat() {
         renderItem={({ item }) => <Render item={item} />}
         ListEmptyComponent={() => <View className="flex-1 items-center justify-center"></View>}
         showsVerticalScrollIndicator={false}
-        onEndReached={loadMore}
+        onEndReached={() => {
+          if (hasNextPage) {
+            fetchNextPage();
+          }
+        }}
         onEndReachedThreshold={0.3}
-        ListFooterComponent={isFetchingNextPage ? renderSpinner : null}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <ActivityIndicator color="#000" size="small" className="my-2" />
+          ) : null
+        }
       />
     </View>
   );

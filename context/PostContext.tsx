@@ -20,9 +20,9 @@ const defaultProvider = {
   setBtnLoading: (a: any) => {},
   start: 0,
   setStart: (a: any) => {},
-  status: '',
   setStatus: (a: any) => {},
   getSinglePost: (a: any, b: any) => {},
+  status: '' as any,
 };
 const PostContext = createContext(defaultProvider);
 export const usePosts = () => useContext(PostContext);
