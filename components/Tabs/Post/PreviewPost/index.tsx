@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Pressable,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import React, { useState } from 'react';
 import { Href, useGlobalSearchParams, useRouter } from 'expo-router';
@@ -17,11 +18,11 @@ import { View } from '~/components/common/View';
 import { Text } from '~/components/common/Text';
 import { useLocale } from '~/context/LocaleContext';
 import { usePosts } from '~/context/PostContext';
-import Image from '~/components/common/Image';
 import { useTheme } from '~/context/ThemeContext';
 const PreviewPost = () => {
   const params: any = useGlobalSearchParams();
   const data = params?.data ? JSON.parse(params?.data) : {};
+  console.log(data?.images);
   const router: any = useRouter();
   const { showToast } = useTheme();
   const [selectFeature, setSelectFeature] = useState('');
@@ -71,11 +72,11 @@ const PreviewPost = () => {
           </Text>
         </View>
         <View className="p-4">
-          <View className="mb-4 h-64  rounded-lg">
+          <View className="mb-4 h-64  rounded-lg bg-gray-100">
             <Swiper
               showsButtons
               dotStyle={{
-                backgroundColor: 'rgba(0,0,0,.2)',
+                backgroundColor: 'rgba(0,0,0,0.2)',
                 width: 8,
                 height: 8,
                 borderRadius: 4,
@@ -89,14 +90,15 @@ const PreviewPost = () => {
                 margin: 3,
               }}>
               {data?.images?.map((image: any, index: any) => (
-                <Image
-                  key={index}
-                  source={{
-                    uri: image?.uri,
-                  }}
-                  resizeMode="cover"
-                  className="h-full w-full rounded-full"
-                />
+                <View key={index} className="h-full w-full">
+                  <Image
+                    source={{
+                      uri: image?.uri,
+                    }}
+                    resizeMode="cover"
+                    className="h-full w-full rounded-full"
+                  />
+                </View>
               ))}
             </Swiper>
           </View>
@@ -171,7 +173,7 @@ const PreviewPost = () => {
                   uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJv0Qn3rCm5JYUXMpQlekZ1n0NjVcCF5hrkA&s',
                 }}
                 className="h-full w-full"
-                contentFit="cover"
+                resizeMode="cover"
               />
             </View>
 
@@ -194,7 +196,7 @@ const PreviewPost = () => {
               </TouchableOpacity>
             </View>
           </View>
-          <View className="bg-boostAd_bg mt-2 gap-3 p-4">
+          <View className="mt-2 gap-3 bg-boostAd_bg p-4">
             <Text placement={locale} className="text-lg font-medium text-black">
               {i18n.t('previewAd.boostAdHeading')}
             </Text>
