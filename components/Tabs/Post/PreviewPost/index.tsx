@@ -71,11 +71,11 @@ const PreviewPost = () => {
           </Text>
         </View>
         <View className="p-4">
-          <View className="mb-4 h-64  rounded-lg bg-gray-100">
+          <View className="mb-4 h-64  rounded-lg">
             <Swiper
               showsButtons
               dotStyle={{
-                backgroundColor: 'rgba(0,0,0,0.2)',
+                backgroundColor: 'rgba(0,0,0,.2)',
                 width: 8,
                 height: 8,
                 borderRadius: 4,
@@ -89,15 +89,14 @@ const PreviewPost = () => {
                 margin: 3,
               }}>
               {data?.images?.map((image: any, index: any) => (
-                <View key={index} className="h-full w-full">
-                  <Image
-                    source={{
-                      uri: image?.uri,
-                    }}
-                    resizeMode="cover"
-                    className="h-full w-full rounded-full"
-                  />
-                </View>
+                <Image
+                  key={index}
+                  source={{
+                    uri: image?.uri,
+                  }}
+                  resizeMode="cover"
+                  className="h-full w-full rounded-lg"
+                />
               ))}
             </Swiper>
           </View>
