@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import React, { useMemo } from 'react';
+import React from 'react';
 import { cn } from '~/utils/helper';
 
 import { useGlobalSearchParams, useRouter } from 'expo-router';
@@ -8,7 +8,7 @@ import { i18n } from '~/utils/i18n';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View } from '../common/View';
 import Header from '../Chat/ChatScreen/header';
-import { Entypo, Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 // title is dynamic text, but it cannot be translated
 // headerTitle is static text, and it can be translated
