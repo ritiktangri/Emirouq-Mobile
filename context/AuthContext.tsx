@@ -76,6 +76,7 @@ export const useAuth = () => useContext(AuthContext);
 
 const AuthProvider = ({ children }: any) => {
   const [brokerData, setBrokerData] = useState([]);
+  const [onlineUsers, setOnlineUsers] = useState([]);
   const [unSeenCount, setUnseenCount] = useState(0);
   const [csvSocketData, setCsvSocketData] = useState({});
   const [activeAccount, setActiveAccount] = useState({} as any);
@@ -452,6 +453,7 @@ const AuthProvider = ({ children }: any) => {
 
       return () => {
         socket.disconnect();
+        socket.off('disconnect');
       };
     }
   }, [user]);
@@ -500,6 +502,8 @@ const AuthProvider = ({ children }: any) => {
     setIsOpen,
     isSubscriptionInActive,
     checkSubscription,
+    setOnlineUsers,
+    onlineUsers,
   };
 
   return <AuthContext.Provider value={values as any}>{children}</AuthContext.Provider>;

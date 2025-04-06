@@ -16,15 +16,15 @@ import Product from './product';
 import DefaultTextInput from '~/components/common/DefaultTextInput';
 import { useGetMessages } from '~/hooks/chats/query';
 import Header from './header';
+import { useAuth } from '~/context/AuthContext';
 
 const ChatScreen = () => {
   const params: any = useLocalSearchParams();
   const insets = useSafeAreaInsets();
+  const { socketIo, user, onlineUsers, setOnlineUsers } = useAuth();
   const [newMessage, setNewMessage] = useState('');
   const flatListRef: any = useRef(null);
-  const { isPending, isError, error, data, isFetching, isPlaceholderData }: any = useGetMessages(
-    params?.conversationId
-  );
+  const { data }: any = useGetMessages(params?.conversationId);
   const sendMessage = () => {};
 
   const renderItem = useCallback(
@@ -44,11 +44,26 @@ const ChatScreen = () => {
     ),
     []
   );
-  if (!params?.conversationId) return;
+  useEffect(() => {
+    if (socketIo?.connected && params?.conversationId && user?.uuid) {
+      socketIo.emit('conversationRoom', {
+        userId: user?.uuid,
+        conversationId: params?.conversationId,
+      });
+      socketIo.on('onlineUsers', (user: any) => {
+        setOnlineUsers(user?.users?.map((i: any) => i?.userId));
+      });
+    }
 
+    return () => {
+      socketIo?.off('message');
+    };
+  }, [socketIo, params?.conversationId, user]);
+
+  if (!params?.conversationId) return;
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-white">
-      <Header data={params} />
+      <Header data={params} online={onlineUsers?.includes(params?.userId)} />
       <Product product={params?.uuid ? params : {}} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}

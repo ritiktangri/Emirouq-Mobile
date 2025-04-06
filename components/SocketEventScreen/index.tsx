@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { useAuth } from '~/context/AuthContext';
 
 function SocketEventScreen({ children }: any) {
-  const { socketIo, user } = useAuth();
+  const { socketIo, user, setOnlineUsers } = useAuth();
   // emit heartbeat every 10 seconds
   useEffect(() => {
     let interval: any = null;
@@ -20,10 +20,16 @@ function SocketEventScreen({ children }: any) {
     };
   }, [socketIo.connected, user]);
 
-  useEffect(() => {
-    if (socketIo?.connected) {
-    }
-  }, [socketIo?.connected]);
+  // useEffect(() => {
+  //   if (socketIo?.connected && user?.uuid) {
+  //     socketIo.on('onlineUsers', (user: any) => {
+  //       console.log(user);
+  //       setOnlineUsers(
+  //         user?.users?.filter((i: any) => i?.userId !== user?.uuid)?.map((i: any) => i?.userId)
+  //       );
+  //     });
+  //   }
+  // }, [socketIo, user?.user?.uuid]);
 
   return <>{children}</>;
 }
