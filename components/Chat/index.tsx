@@ -8,15 +8,15 @@ import { useConversation } from '~/context/ConversationContext';
 import { useAuth } from '~/context/AuthContext';
 import { useGlobalSearchParams } from 'expo-router';
 import { useEffect } from 'react';
+import { useGetConversations } from '~/hooks/chats/query';
 
 export default function Chat() {
   const params = useGlobalSearchParams();
-  const { createConversationHandler, getConversationListHandler, conversationList } =
-    useConversation();
+  const { createConversationHandler } = useConversation();
   const { user } = useAuth();
   //here we check if the conversation exists, if not we create it
   //and then we get the conversation list
-  const checkConversation = async (signal: any) => {
+  const checkConversation = async () => {
     if (!params?.conversationId && params?.uuid && params?.userId) {
       await createConversationHandler({
         body: {
@@ -25,23 +25,13 @@ export default function Chat() {
         },
       });
     }
-    getConversationListHandler(
-      signal,
-      0,
-      10,
-      '',
-      () => {},
-      () => {}
-    );
   };
   useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-    checkConversation(signal);
-    return () => {
-      controller.abort();
-    };
-  }, [params, user]);
+    checkConversation();
+  }, [params?.conversationId]);
+
+  const { isPending, isError, error, data, isFetching, isPlaceholderData }: any =
+    useGetConversations(0, 10, '');
   return (
     <View className="flex-1 bg-white">
       <View className="m-3">
@@ -54,7 +44,7 @@ export default function Chat() {
       </View>
 
       <FlatList
-        data={conversationList || []}
+        data={data?.data || []}
         keyExtractor={(item) => item?.uuid?.toString()}
         renderItem={({ item }) => <Render item={item} />}
         ListEmptyComponent={() => <View className="flex-1 items-center justify-center"></View>}

@@ -15,26 +15,17 @@ import { cn } from '~/utils/helper';
 import { useLocalSearchParams } from 'expo-router';
 import Product from './product';
 import DefaultTextInput from '~/components/common/DefaultTextInput';
-import { useConversation } from '~/context/ConversationContext';
+import { useGetMessages } from '~/hooks/chats/query';
 
 const ChatScreen = () => {
   const params: any = useLocalSearchParams();
   const insets = useSafeAreaInsets();
   const [newMessage, setNewMessage] = useState('');
   const flatListRef: any = useRef(null);
-  const [loading, setLoading] = useState(true);
-  const { getMessageHandler, messages } = useConversation();
-
+  const { isPending, isError, error, data, isFetching, isPlaceholderData }: any = useGetMessages(
+    params?.conversationId
+  );
   const sendMessage = () => {};
-
-  useEffect(() => {
-    if (!params?.conversationId) return;
-
-    setLoading(true);
-    getMessageHandler(params?.conversationId, 0, 10, () => {
-      setLoading(false);
-    });
-  }, [params?.conversationId]);
 
   const renderItem = useCallback(
     ({ item }: any) => (
@@ -65,7 +56,7 @@ const ChatScreen = () => {
         <View className="flex-1">
           <FlatList
             ref={flatListRef}
-            data={messages}
+            data={data?.data || []}
             renderItem={renderItem}
             keyExtractor={(item: any) => item?.uuid?.toString()}
             inverted
