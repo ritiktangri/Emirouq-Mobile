@@ -1,11 +1,10 @@
 /* eslint-disable import/order */
 import React, { useEffect, useState } from 'react';
-import { ScrollView, TouchableOpacity } from 'react-native';
-import { Entypo, Feather, FontAwesome } from '@expo/vector-icons';
+import { Image, ScrollView, TouchableOpacity } from 'react-native';
+import { Entypo, Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { Href, router, useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
 import { View } from '~/components/common/View';
 import { Text } from '~/components/common/Text';
-import Image from '~/components/common/Image';
 import { getRelativeTime, toCurrency } from '~/utils/helper';
 import { i18n } from '~/utils/i18n';
 import { routes } from '~/utils/routes';
@@ -39,21 +38,20 @@ const SinglePost = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1">
-        <Entypo
-          name="chevron-left"
-          size={24}
-          color="black"
-          onPress={() => {
-            router.back();
-          }}
-        />
+        <View className="p-2">
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color="black"
+            onPress={() => {
+              router.back();
+            }}
+          />
+        </View>
 
-        <ScrollView>
+        <ScrollView className="mb-10">
           <View className="mx-auto  h-[300px] w-[100%] px-3 py-3">
             <Image
-              thumbnailSource={{
-                uri: selectedImage?.uri,
-              }}
               source={{
                 uri: selectedImage?.uri,
               }}
@@ -73,7 +71,7 @@ const SinglePost = () => {
           </View>
 
           <View className="flex flex-row flex-wrap items-center gap-2 px-3 py-2">
-            {/* {singlePost?.file?.map((uri: any, index: any) => (
+            {singlePost?.file?.map((uri: any, index: any) => (
               <TouchableOpacity
                 key={index}
                 className=""
@@ -84,9 +82,6 @@ const SinglePost = () => {
                   })
                 }>
                 <Image
-                  thumbnailSource={{
-                    uri,
-                  }}
                   source={{
                     uri,
                   }}
@@ -98,7 +93,7 @@ const SinglePost = () => {
                   }}
                 />
               </TouchableOpacity>
-            ))} */}
+            ))}
           </View>
 
           {/* Product Details */}
@@ -203,38 +198,41 @@ const SinglePost = () => {
             </TouchableOpacity>
           </View>
 
-          {/* Similar Products */}
-          <View className="p-4">
-            <View className="mb-2 flex-row items-center py-2 ">
-              <Text className="flex-1 font-poppinsMedium text-lg">Similar Products</Text>
-              <TouchableOpacity>
-                <Text className="font-poppinsMedium text-lg text-primary">View all {'>'}</Text>
-              </TouchableOpacity>
-            </View>
+          {removeChatButton === false ? (
+            <>
+              {/* Similar Products */}
+              <View className="p-4">
+                <View className="mb-2 flex-row items-center py-2 ">
+                  <Text className="flex-1 font-poppinsMedium text-lg">Similar Products</Text>
+                  <TouchableOpacity>
+                    <Text className="font-poppinsMedium text-lg text-primary">View all {'>'}</Text>
+                  </TouchableOpacity>
+                </View>
 
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {/* {singlePost?.file?.map((uri: any, index: any) => (
-                <TouchableOpacity key={index} className="mr-4">
-                  <Image
-                    thumbnailSource={{
-                      uri,
-                    }}
-                    source={{
-                      uri,
-                    }}
-                    resizeMode="cover"
-                    style={{
-                      width: 120,
-                      height: 120,
-                      borderRadius: 8,
-                    }}
-                  />
-                  <Text className="mt-1 text-gray-800">iPhone 14 Pro Max</Text>
-                  <Text className="text-gray-600">$1,099</Text>
-                </TouchableOpacity>
-              ))} */}
-            </ScrollView>
-          </View>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  {singlePost?.file?.map((uri: any, index: any) => (
+                    <TouchableOpacity key={index} className="mr-4">
+                      <Image
+                        source={{
+                          uri,
+                        }}
+                        resizeMode="cover"
+                        style={{
+                          width: 120,
+                          height: 120,
+                          borderRadius: 8,
+                        }}
+                      />
+                      <Text className="mt-1 text-gray-800">iPhone 14 Pro Max</Text>
+                      <Text className="text-gray-600">$1,099</Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+            </>
+          ) : (
+            <></>
+          )}
         </ScrollView>
       </View>
 
@@ -246,8 +244,11 @@ const SinglePost = () => {
               pathname: singlePost?.conversation?.uuid ? routes.chatScreen : routes.tabs.chat,
               params: {
                 conversationId: singlePost?.conversation?.uuid,
-                uuid: singlePost?.uuid,
                 userId: singlePost?.userId,
+                uuid: singlePost?.uuid,
+                title: singlePost?.title,
+                file: singlePost?.file?.[0],
+                price: singlePost?.price,
               },
             } as Href)
           }

@@ -8,12 +8,13 @@ import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 
 const Product = ({ product }: any) => {
+  console.log(product);
   const router = useRouter();
   return (
     <View className="flex flex-row items-center gap-4 border-b border-b-gray-700 px-4 py-2">
       <View className=" h-12 w-12 rounded-full  ">
         <Image
-          source={{ uri: product?.file?.[0] }}
+          source={{ uri: product?.file }}
           className="h-full w-full rounded-full"
           resizeMode="cover"
         />

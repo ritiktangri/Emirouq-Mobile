@@ -43,7 +43,7 @@
 // };
 
 // export default Image;
-import React, { useRef } from 'react';
+import React, { memo, useRef } from 'react';
 import { View, StyleSheet, Animated } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Image = ({ thumbnailSource, source, style, ...props }: any) => {
+const Image = memo(({ thumbnailSource, source, style, ...props }: any) => {
   const thumbnailAnimated = useRef(new Animated.Value(0)).current;
   const imageAnimated = useRef(new Animated.Value(0)).current;
 
@@ -98,6 +98,6 @@ const Image = ({ thumbnailSource, source, style, ...props }: any) => {
       />
     </View>
   );
-};
+});
 
 export default Image;
