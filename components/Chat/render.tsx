@@ -18,6 +18,7 @@ const Render = ({ item }: any) => {
           pathname: routes.chatScreen,
           params: {
             conversationId: item?.uuid,
+            post: JSON.stringify(item?.post),
           },
         } as Href);
       }}

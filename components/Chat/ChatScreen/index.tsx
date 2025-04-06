@@ -19,7 +19,8 @@ import DefaultTextInput from '~/components/common/DefaultTextInput';
 import { useConversation } from '~/context/ConversationContext';
 
 const ChatScreen = () => {
-  const params = useGlobalSearchParams();
+  const params: any = useGlobalSearchParams();
+
   const insets = useSafeAreaInsets();
   const [newMessage, setNewMessage] = useState('');
   const flatListRef: any = useRef(null);
@@ -55,7 +56,7 @@ const ChatScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <Header />
-      <Product />
+      <Product product={params?.post ? JSON.parse(params?.post) : {}} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         className="flex-1"

@@ -12,10 +12,9 @@ import { routes } from '~/utils/routes';
 import { useAuth } from '~/context/AuthContext';
 import { usePosts } from '~/context/PostContext';
 import dayjs from 'dayjs';
-import { round } from 'lodash';
 
 const SinglePost = () => {
-  const params: any = useGlobalSearchParams();
+  const { id }: any = useGlobalSearchParams();
   const [selectedImage, setSelectedImage] = useState({
     uri: '',
     index: 1,
@@ -23,16 +22,15 @@ const SinglePost = () => {
   const { user } = useAuth();
   const { getSinglePost, singlePost, singlePostLoading } = usePosts();
   useEffect(() => {
-    if (params?.data) {
-      const parsedData = JSON.parse(params?.data);
-      getSinglePost(parsedData?.uuid, (res: any) => {
+    if (id) {
+      getSinglePost(id, (res: any) => {
         setSelectedImage({
           uri: res?.file?.[0],
           index: 1,
         });
       });
     }
-  }, [params?.data]);
+  }, [id]);
 
   if (singlePostLoading) {
     return <View className="flex-1 items-center justify-center bg-white" />;

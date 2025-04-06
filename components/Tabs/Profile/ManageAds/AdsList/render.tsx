@@ -24,7 +24,7 @@ const Render = ({ item }: any) => {
             pathname: routes.tabs.singlePost(item?.uuid),
             params: {
               title: `${item?.title}`,
-              data: JSON.stringify(item),
+              id: item?.uuid,
             },
           } as Href);
         }}
