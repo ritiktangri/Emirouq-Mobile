@@ -16,12 +16,36 @@ import { Host } from 'react-native-portalize';
 import { PaperProvider } from 'react-native-paper';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { DarkTheme, ThemeProvider } from '@react-navigation/native';
-import { LocaleProvider, useLocale } from '~/context/LocaleContext';
+import { LocaleProvider } from '~/context/LocaleContext';
 import SocketEventScreen from '~/components/SocketEventScreen';
+import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: 'index',
 };
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: (failureCount, error) => {
+        return failureCount < 3 && error instanceof AxiosError;
+      },
+      refetchOnWindowFocus: false,
+      staleTime: 10 * 1000, // 10s
+    },
+    mutations: {
+      onError: (error) => {},
+      onSuccess: ({ message }: any) => {},
+    },
+  },
+  queryCache: new QueryCache({
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+      }
+    },
+  }),
+});
+
 LogBox.ignoreLogs([
   'TNodeChildrenRenderer: Support for defaultProps',
   'MemoizedTNodeRenderer: Support for defaultProps',
@@ -83,22 +107,24 @@ export default function RootLayoutNav() {
       {/* portalize is a library that allows you to render a component in a different part of the tree, */}
       {/* host is a component that allows you to render a component in a different part of the tree. */}
       <Host>
-        <ThemeProvider value={DarkTheme}>
-          <CustomThemeProvider>
-            <ActionSheetProvider>
-              <SafeAreaProvider>
-                <AuthProvider>
-                  <LocaleProvider>
-                    <PaperProvider>
-                      <SocketEventScreen />
-                      <InitialLayout />
-                    </PaperProvider>
-                  </LocaleProvider>
-                </AuthProvider>
-              </SafeAreaProvider>
-            </ActionSheetProvider>
-          </CustomThemeProvider>
-        </ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider value={DarkTheme}>
+            <CustomThemeProvider>
+              <ActionSheetProvider>
+                <SafeAreaProvider>
+                  <AuthProvider>
+                    <LocaleProvider>
+                      <PaperProvider>
+                        <SocketEventScreen />
+                        <InitialLayout />
+                      </PaperProvider>
+                    </LocaleProvider>
+                  </AuthProvider>
+                </SafeAreaProvider>
+              </ActionSheetProvider>
+            </CustomThemeProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
       </Host>
     </GestureHandlerRootView>
   );
