@@ -53,6 +53,7 @@ const SetupProfile = () => {
       setValue('email', user?.email || '');
       setValue('phoneNumber', user?.phoneNumber || '');
       setValue('bio', user?.bio);
+      setValue('interests', user?.userInterest);
     }
   }, [user]);
 

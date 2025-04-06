@@ -199,6 +199,14 @@ const UserProfile = () => {
             </View> */}
           </View>
           <TouchableOpacity
+            onPress={() => {
+              router.push(routes.tabs.create_profile as Href);
+            }}
+            className="my-2 flex-row items-center justify-center gap-x-3 rounded-xl border-2 border-orange-500 py-2">
+            <Feather name="edit-2" size={18} color="orange" />
+            <Text className="font-semibold text-orange-500">{i18n.t('profile.edit_profile')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
             onPress={logout}
             className="my-2 flex-row items-center justify-center gap-x-3 rounded-xl border-2 border-red-500 py-2">
             <Ionicons name="log-out" size={20} color="red" />

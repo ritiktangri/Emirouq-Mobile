@@ -14,9 +14,9 @@ const Signup = ({ checkinType }: any) => {
   const [agreed, setAgreed] = useState(false);
   const [secureTextEntry, setSecureTextEntry] = useState(false);
   const [form, setForm] = useState({
-    firstName: 'Areeb',
-    lastName: 'Safvi',
-    email: 'masafvi48@gmail.com',
+    firstName: 'Gurpreet',
+    lastName: 'Singh',
+    email: 'gurpreets0207@gmail.com',
     phoneNumber: '7528095192',
     password: '12345678',
     confirmPassword: '12345678',

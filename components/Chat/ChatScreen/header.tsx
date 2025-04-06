@@ -27,7 +27,9 @@ const Header = ({ data, online }: any) => {
             <Image source={data?.profileImage} resizeMode="cover" />
           ) : (
             <View className="flex h-12  w-12 items-center justify-center rounded-full bg-primary">
-              <Text className=" font-poppinsMedium text-2xl ">{getInitials(data?.fullName)}</Text>
+              <Text className=" font-poppinsMedium text-2xl text-white">
+                {getInitials(data?.fullName)}
+              </Text>
             </View>
           )}
         </View>
