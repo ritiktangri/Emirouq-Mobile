@@ -1,7 +1,6 @@
 /* eslint-disable import/order */
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
-  SafeAreaView,
   View,
   Text,
   TouchableOpacity,
@@ -9,13 +8,14 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Entypo, Ionicons } from '@expo/vector-icons';
 import { cn } from '~/utils/helper';
 import { useLocalSearchParams } from 'expo-router';
 import Product from './product';
 import DefaultTextInput from '~/components/common/DefaultTextInput';
 import { useGetMessages } from '~/hooks/chats/query';
+import Header from './header';
 
 const ChatScreen = () => {
   const params: any = useLocalSearchParams();
@@ -47,7 +47,8 @@ const ChatScreen = () => {
   if (!params?.conversationId) return;
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView edges={['top']} className="flex-1 bg-white">
+      <Header data={params} />
       <Product product={params?.uuid ? params : {}} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}

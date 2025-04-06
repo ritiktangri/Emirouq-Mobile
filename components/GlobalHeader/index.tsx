@@ -28,7 +28,6 @@ const GlobalHeader = ({ route }: any) => {
       router.back();
     }
   };
-
   return (
     <SafeAreaView
       edges={['top']}

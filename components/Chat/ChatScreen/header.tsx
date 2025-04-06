@@ -4,11 +4,15 @@ import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { cn, getInitials } from '~/utils/helper';
 import Image from '~/components/common/Image';
+import { router } from 'expo-router';
 
 const Header = ({ data, onPress }: any) => {
   return (
     <View className="flex flex-row items-center gap-2 border-b border-gray-200 px-3 py-2 ">
-      <TouchableOpacity onPress={onPress}>
+      <TouchableOpacity
+        onPress={() => {
+          router.back();
+        }}>
         <Ionicons name="arrow-back" size={30} color="black" />
       </TouchableOpacity>
       <View className="flex flex-1 flex-row items-center gap-3">

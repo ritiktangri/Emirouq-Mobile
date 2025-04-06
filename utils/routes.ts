@@ -30,7 +30,7 @@ export const routes = {
     create_profile: '/(tabs)/profile/create-profile',
     post: '/(tabs)/post',
     singlePost: (id: string) => `/singlePost/${id}`,
-    chatScreen: (id: string) => `/(tabs)/chat/${id}`,
+    chatScreen: (id: string) => `/chat-screen/${id}`,
     preview_post: '/(tabs)/post/preview-post',
     success_view: '/(tabs)/post/success-view',
   },
