@@ -1,7 +1,7 @@
 /* eslint-disable import/order */
-import React, { useEffect, useState } from 'react';
-import { Image, ScrollView, TouchableOpacity } from 'react-native';
-import { Entypo, Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Image, RefreshControl, ScrollView, TouchableOpacity } from 'react-native';
+import { Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { Href, router, useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
 import { View } from '~/components/common/View';
 import { Text } from '~/components/common/Text';
@@ -9,9 +9,12 @@ import { getRelativeTime, toCurrency } from '~/utils/helper';
 import { i18n } from '~/utils/i18n';
 import { routes } from '~/utils/routes';
 import { useAuth } from '~/context/AuthContext';
-import { usePosts } from '~/context/PostContext';
 import dayjs from 'dayjs';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useGetSinglePosts } from '~/hooks/post/query';
+import theme from '~/utils/theme';
+import { queryClient } from '~/app/_layout';
+import Loading from './loading';
 
 const SinglePost = () => {
   const { id }: any = useLocalSearchParams();
@@ -21,19 +24,37 @@ const SinglePost = () => {
     index: 1,
   } as any);
   const { user } = useAuth();
-  const { getSinglePost, singlePost, singlePostLoading } = usePosts();
+  const { isLoading, data, refetch }: any = useGetSinglePosts(id);
+
   useEffect(() => {
-    if (id) {
-      getSinglePost(id, (res: any) => {
-        setSelectedImage({
-          uri: res?.file?.[0],
-          index: 1,
-        });
+    if (data?.data?.file?.length > 0) {
+      setSelectedImage({
+        uri: data?.data?.file?.[0],
+        index: 1,
       });
     }
-  }, [id]);
-  if (singlePostLoading) {
-    return <View className="flex-1 items-center justify-center bg-white" />;
+  }, [data]);
+
+  const handleRefresh = useCallback(() => {
+    queryClient.removeQueries({ queryKey: ['singlePost', id] });
+    refetch();
+  }, [queryClient, refetch, id]);
+  if (isLoading) {
+    return (
+      <SafeAreaView className="flex-1 bg-white  ">
+        <View className="px-3 py-2">
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color="black"
+            onPress={() => {
+              router.back();
+            }}
+          />
+        </View>
+        <Loading />
+      </SafeAreaView>
+    );
   }
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -49,29 +70,42 @@ const SinglePost = () => {
           />
         </View>
 
-        <ScrollView className="mb-10">
-          <View className="mx-auto  h-[300px] w-[100%] px-3 py-3">
-            <Image
-              source={{
-                uri: selectedImage?.uri,
-              }}
-              style={{
-                width: '100%',
-                height: '100%',
-                borderRadius: 10,
-              }}
-              resizeMode="cover"
+        <ScrollView
+          className="mb-10"
+          refreshControl={
+            <RefreshControl
+              colors={[theme.colors.primary]}
+              refreshing={false}
+              onRefresh={handleRefresh}
+              tintColor={theme.colors.primary}
             />
+          }>
+          <View className="mx-auto  h-[300px] w-[100%] px-3 py-3">
+            {selectedImage?.uri ? (
+              <Image
+                source={{
+                  uri: selectedImage?.uri,
+                }}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: 10,
+                }}
+                resizeMode="cover"
+              />
+            ) : (
+              <></>
+            )}
           </View>
 
           <View className="absolute right-4 top-10 rounded-full bg-gray-800 px-3 py-1">
             <Text className="text-white">
-              {selectedImage?.index}/{singlePost?.file?.length}
+              {selectedImage?.index}/{data?.data?.file?.length}
             </Text>
           </View>
 
           <View className="flex flex-row flex-wrap items-center gap-2 px-3 py-2">
-            {singlePost?.file?.map((uri: any, index: any) => (
+            {data?.data?.file?.map((uri: any, index: any) => (
               <TouchableOpacity
                 key={index}
                 className=""
@@ -98,9 +132,9 @@ const SinglePost = () => {
 
           {/* Product Details */}
           <View className="p-4">
-            <Text className="mb-2 text-2xl font-bold">{singlePost?.title}</Text>
+            <Text className="mb-2 text-2xl font-bold">{data?.data?.title}</Text>
             <Text className="text-2xl font-semibold text-red-600">
-              {toCurrency(singlePost?.price)}
+              {toCurrency(data?.data?.price)}
             </Text>
             {/* <View className="mt-1 flex-row items-center">
             <Feather name="map-pin" size={16} color="gray" />
@@ -110,12 +144,12 @@ const SinglePost = () => {
 
           {/* Seller Info */}
 
-          {user?.uuid !== singlePost?.userId ? (
+          {user?.uuid !== data?.data?.userId ? (
             <View className="flex-row items-center px-4 py-2">
               <Image
                 source={{
                   uri:
-                    singlePost?.user?.profileImage ||
+                    data?.data?.user?.profileImage ||
                     'https://static.vecteezy.com/system/resources/previews/000/439/863/non_2x/vector-users-icon.jpg',
                 }}
                 style={{ width: 60, height: 60, borderRadius: 10 }}
@@ -123,7 +157,7 @@ const SinglePost = () => {
               <View className="flex-1 ">
                 <View className="flex-row items-center">
                   <Text className="mr-1 font-bold">
-                    {singlePost?.user?.firstName} {singlePost?.user?.lastName}
+                    {data?.data?.user?.firstName} {data?.data?.user?.lastName}
                   </Text>
                   <FontAwesome name="check-circle" size={16} color="#e3350d" />
                 </View>
@@ -132,7 +166,7 @@ const SinglePost = () => {
                   <Text className="ml-1 text-gray-600">4.9 (234 reviews)</Text>
                 </View>
                 <Text className="text-gray-600">
-                  Member since {dayjs(singlePost?.user?.createdAt)?.format('YYYY')}
+                  Member since {dayjs(data?.data?.user?.createdAt)?.format('YYYY')}
                 </Text>
               </View>
               <TouchableOpacity>
@@ -162,25 +196,25 @@ const SinglePost = () => {
           {/* Description */}
           <View className="p-4">
             <Text className="text-lg font-semibold">{i18n.t('post.description')}</Text>
-            <Text className="mt-1 text-gray-700">{singlePost?.description}</Text>
+            <Text className="mt-1 text-gray-700">{data?.data?.description}</Text>
             <View className="mt-2">
               <View className="flex-row justify-between border-b border-gray-300 py-1">
                 <Text className="text-gray-600">{i18n.t('post.condition')}</Text>
-                <Text className="text-gray-800">{singlePost?.condition}</Text>
+                <Text className="text-gray-800">{data?.data?.condition}</Text>
               </View>
               <View className="flex-row justify-between border-b border-gray-300 py-1">
                 <Text className="text-gray-600">{i18n.t('post.category')}</Text>
-                <Text className="text-gray-800">{singlePost?.category?.title}</Text>
+                <Text className="text-gray-800">{data?.data?.category?.title}</Text>
               </View>
               {/* <View className="flex-row justify-between border-b border-gray-300 py-1">
                 <Text className="text-gray-600">Brand</Text>
                 <Text className="text-gray-800">
-                  {singlePost?.brand?.title}
+                  {data?.data?.brand?.title}
                 </Text>
               </View> */}
               <View className="flex-row justify-between py-1">
                 <Text className="text-gray-600">Posted</Text>
-                <Text className="text-gray-800">{getRelativeTime(singlePost?.createdAt)}</Text>
+                <Text className="text-gray-800">{getRelativeTime(data?.data?.createdAt)}</Text>
               </View>
             </View>
           </View>
@@ -210,7 +244,7 @@ const SinglePost = () => {
                 </View>
 
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  {singlePost?.file?.map((uri: any, index: any) => (
+                  {data?.data?.file?.map((uri: any, index: any) => (
                     <TouchableOpacity key={index} className="mr-4">
                       <Image
                         source={{
@@ -237,23 +271,23 @@ const SinglePost = () => {
       </View>
 
       {/* Chat Button */}
-      {user?.uuid !== singlePost?.userId && removeChatButton === false ? (
+      {user?.uuid !== data?.data?.userId && removeChatButton === false ? (
         <TouchableOpacity
           onPress={() =>
             router.push({
-              pathname: singlePost?.conversation?.uuid
-                ? routes.tabs.chatScreen(singlePost?.conversation?.uuid)
+              pathname: data?.data?.conversation?.uuid
+                ? routes.tabs.chatScreen(data?.data?.conversation?.uuid)
                 : routes.tabs.chat,
               params: {
-                conversationId: singlePost?.conversation?.uuid,
-                userId: singlePost?.userId,
-                fullName: `${singlePost?.user?.firstName} ${singlePost?.user?.lastName}`,
-                profileImage: singlePost?.user?.profileImage,
-                uuid: singlePost?.uuid,
-                chatTitle: !!singlePost?.conversation?.uuid,
-                name: singlePost?.title,
-                file: singlePost?.file?.[0],
-                price: singlePost?.price,
+                conversationId: data?.data?.conversation?.uuid,
+                userId: data?.data?.userId,
+                fullName: `${data?.data?.user?.firstName} ${data?.data?.user?.lastName}`,
+                profileImage: data?.data?.user?.profileImage,
+                uuid: data?.data?.uuid,
+                chatTitle: !!data?.data?.conversation?.uuid,
+                name: data?.data?.title,
+                file: data?.data?.file?.[0],
+                price: data?.data?.price,
               },
             } as unknown as Href)
           }

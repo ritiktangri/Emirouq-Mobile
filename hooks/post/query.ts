@@ -1,6 +1,6 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
-import { getPostService } from '~/utils/services/post';
+import { getPostService, getSinglePostService } from '~/utils/services/post';
 
 export const useGetPosts = (keyword = '', status = '') =>
   useInfiniteQuery({
@@ -21,4 +21,15 @@ export const useGetPosts = (keyword = '', status = '') =>
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
+  });
+
+export const useGetSinglePosts = (id: any) =>
+  useQuery({
+    queryKey: ['singlePost', id],
+    queryFn: () =>
+      getSinglePostService({
+        pathParams: { id },
+      }),
+    refetchOnWindowFocus: false,
+    enabled: !!id,
   });
