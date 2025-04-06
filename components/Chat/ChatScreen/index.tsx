@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   SafeAreaView,
   View,
@@ -11,65 +11,51 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Entypo, Ionicons } from '@expo/vector-icons';
-import { faker } from '@faker-js/faker';
 import { cn } from '~/utils/helper';
 import Header from './header';
 import { useGlobalSearchParams } from 'expo-router';
 import Product from './product';
 import DefaultTextInput from '~/components/common/DefaultTextInput';
+import { useConversation } from '~/context/ConversationContext';
 
 const ChatScreen = () => {
   const params = useGlobalSearchParams();
   const insets = useSafeAreaInsets();
-  const [messages, setMessages] = useState([] as any);
   const [newMessage, setNewMessage] = useState('');
   const flatListRef: any = useRef(null);
+  const [loading, setLoading] = useState(true);
+  const { getMessageHandler, messages } = useConversation();
 
+  const sendMessage = () => {};
   useEffect(() => {
-    const generateInitialMessages = () => {
-      const initialMessages: any = Array.from({ length: 40 }, () => ({
-        id: faker.string.uuid(),
-        text: faker.lorem.sentence(),
-        sender: Math.random() > 0.5 ? 'user' : 'other',
-      }));
-      setMessages(initialMessages);
-    };
-
-    generateInitialMessages();
-  }, []);
-
-  const sendMessage = () => {
-    if (newMessage.trim() !== '') {
-      const newMessageObject = {
-        id: faker.string.uuid(),
-        text: newMessage,
-        sender: 'user',
-      };
-      setMessages((prevMessages: any) => [newMessageObject, ...prevMessages]);
-      setNewMessage('');
-
-      if (flatListRef.current) {
-        flatListRef.current.scrollToOffset({ offset: 0, animated: true });
-      }
+    if (params?.conversationId) {
+      setLoading(true);
+      getMessageHandler(params?.conversationId, 0, 10, () => {
+        setLoading(false);
+      });
     }
-  };
-
-  const renderItem = ({ item }: any) => (
-    <View
-      className={`mb-2 max-w-[70%] rounded-lg px-3 py-2 ${
-        item.sender === 'user' ? 'self-end bg-primary' : 'self-start bg-gray-200'
-      }`}>
-      <Text
-        className={cn(item.sender === 'user' ? 'text-right text-white' : 'text-left', 'text-base')}>
-        {item.text}
-      </Text>
-    </View>
+  }, [params?.conversationId]);
+  const renderItem = useCallback(
+    ({ item }: any) => (
+      <View
+        className={`mb-2 max-w-[70%] rounded-lg px-3 py-2 ${
+          item.sender === 'user' ? 'self-end bg-primary' : 'self-start bg-gray-200'
+        }`}>
+        <Text
+          className={cn(
+            item.sender === 'user' ? 'text-right text-white' : 'text-left',
+            'text-base'
+          )}>
+          {item.text}
+        </Text>
+      </View>
+    ),
+    []
   );
-
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <Header data={params} />
-      <Product data={params} />
+      <Header />
+      <Product />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         className="flex-1"
@@ -79,7 +65,7 @@ const ChatScreen = () => {
             ref={flatListRef}
             data={messages}
             renderItem={renderItem}
-            keyExtractor={(item: any) => item.id}
+            keyExtractor={(item: any) => item?.uuid?.toString()}
             inverted
             contentContainerStyle={{
               paddingHorizontal: 16,

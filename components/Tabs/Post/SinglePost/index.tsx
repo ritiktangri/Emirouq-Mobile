@@ -12,6 +12,7 @@ import { routes } from '~/utils/routes';
 import { useAuth } from '~/context/AuthContext';
 import { usePosts } from '~/context/PostContext';
 import dayjs from 'dayjs';
+import { round } from 'lodash';
 
 const SinglePost = () => {
   const params: any = useGlobalSearchParams();
@@ -232,7 +233,14 @@ const SinglePost = () => {
       {/* Chat Button */}
       {user?.uuid !== singlePost?.userId ? (
         <TouchableOpacity
-          onPress={() => router.push(routes.tabs.chat as Href)}
+          onPress={() =>
+            router.push({
+              pathname: singlePost?.conversation?.uuid ? routes.chatScreen : routes.tabs.chat,
+              params: {
+                conversationId: singlePost?.conversation?.uuid,
+              },
+            } as Href)
+          }
           className="mx-4 mb-2 flex-row items-center justify-center gap-2 rounded-lg bg-primary py-3">
           <Feather name="message-circle" size={20} color="white" />
           <Text className=" font-poppinsMedium text-lg text-white">Chat with Seller</Text>

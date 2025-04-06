@@ -1,13 +1,16 @@
 /* eslint-disable import/order */
 import { Stack } from 'expo-router';
+import { ConversationProvider } from '~/context/ConversationContext';
 
 const _layout = () => {
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    />
+    <ConversationProvider>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      />
+    </ConversationProvider>
   );
 };
 

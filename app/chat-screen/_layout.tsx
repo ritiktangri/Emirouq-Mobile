@@ -1,8 +1,14 @@
-import React from 'react';
 import { Stack } from 'expo-router';
+import React from 'react';
+
+import { ConversationProvider } from '~/context/ConversationContext';
 
 const _layout = () => {
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <ConversationProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </ConversationProvider>
+  );
 };
 
 export default _layout;
