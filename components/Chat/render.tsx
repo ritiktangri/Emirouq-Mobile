@@ -40,7 +40,7 @@ const Render = ({ item }: any) => {
         </View>
       ) : (
         <View className="flex h-16  w-16 items-center justify-center rounded-full bg-primary">
-          <Text className=" font-poppinsMedium text-2xl">
+          <Text className=" font-poppinsMedium text-2xl text-white">
             {getInitials(`${item?.user?.firstName} ${item?.user?.lastName}`)}
           </Text>
         </View>

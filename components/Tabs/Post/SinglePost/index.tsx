@@ -38,7 +38,7 @@ const SinglePost = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1">
-        <View className="p-2">
+        <View className="px-3 pt-2">
           <Ionicons
             name="arrow-back"
             size={24}

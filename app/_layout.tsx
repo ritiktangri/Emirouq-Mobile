@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import '../global.css';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Slot } from 'expo-router';
-import { I18nManager, LogBox } from 'react-native';
+import { I18nManager, LogBox, StatusBar } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider as CustomThemeProvider } from '~/context/ThemeContext';
@@ -79,6 +79,7 @@ function InitialLayout() {
 export default function RootLayoutNav() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
       {/* portalize is a library that allows you to render a component in a different part of the tree, */}
       {/* host is a component that allows you to render a component in a different part of the tree. */}
       <Host>
