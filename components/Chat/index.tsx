@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
 import { Ionicons } from '@expo/vector-icons';
-import { FlatList } from 'react-native';
+import { ActivityIndicator, FlatList } from 'react-native';
 import DefaultTextInput from '../common/DefaultTextInput';
 import { View } from '../common/View';
 import Render from './render';
@@ -30,8 +30,15 @@ export default function Chat() {
     checkConversation();
   }, [params?.conversationId]);
 
-  const { isPending, isError, error, data, isFetching, isPlaceholderData }: any =
-    useGetConversations(0, 10, '');
+  const { isLoading, data, hasNextPage, fetchNextPage, isFetchingNextPage } = useGetConversations();
+  const loadMore = () => {
+    if (hasNextPage) {
+      fetchNextPage();
+    }
+  };
+  const renderSpinner = () => {
+    return <ActivityIndicator color="#000" size="large" className="my-3" />;
+  };
   return (
     <View className="flex-1 bg-white">
       <View className="m-3">
@@ -44,11 +51,14 @@ export default function Chat() {
       </View>
 
       <FlatList
-        data={data?.data || []}
+        data={data?.pages.map((page: any) => page?.data).flat() || []}
         keyExtractor={(item) => item?.uuid?.toString()}
         renderItem={({ item }) => <Render item={item} />}
         ListEmptyComponent={() => <View className="flex-1 items-center justify-center"></View>}
         showsVerticalScrollIndicator={false}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.3}
+        ListFooterComponent={isFetchingNextPage ? renderSpinner : null}
       />
     </View>
   );
