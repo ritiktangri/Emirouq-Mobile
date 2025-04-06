@@ -461,12 +461,6 @@ const AddPost = () => {
       </KeyboardAwareScrollView>
       <View className=" flex-row gap-4">
         <Pressable
-          className="flex-1 items-center rounded-lg border-[1px] border-gray-300 bg-white py-4"
-          onPress={() => console.log('Save draft')}>
-          <Text className="text-base font-semibold text-gray-700">{i18n.t('post.saveDraft')}</Text>
-        </Pressable>
-
-        <Pressable
           className="flex-1 flex-row items-center justify-center gap-1 rounded-lg bg-primary py-4"
           onPress={() => {
             router.push({

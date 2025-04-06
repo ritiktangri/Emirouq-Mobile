@@ -8,7 +8,6 @@ import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 
 const Product = ({ product }: any) => {
-  console.log(product);
   const router = useRouter();
   return (
     <View className="flex flex-row items-center gap-4 border-b border-b-gray-700 px-4 py-2">

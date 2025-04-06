@@ -27,7 +27,6 @@ const Signup = ({ checkinType }: any) => {
   const scrollViewRef = useRef<ScrollView>(null);
 
   const handleSubmit = () => {
-    console.log(1);
     const body: any = {
       firstName: form.firstName,
       lastName: form.lastName,
@@ -43,7 +42,6 @@ const Signup = ({ checkinType }: any) => {
     signUp(
       { body },
       () => {
-        console.log(checkinType);
         if (checkinType === 'email') {
           router.setParams({ email: form.email });
         } else {
@@ -51,7 +49,6 @@ const Signup = ({ checkinType }: any) => {
         }
       },
       (err: any) => {
-        console.log(err);
         showToast(err?.message, 'error');
       }
     );
