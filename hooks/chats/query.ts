@@ -15,20 +15,20 @@ export const useGetMessages = (conversationId: any, start = 0, limit = 10, keywo
     enabled: !!conversationId,
   });
 
-export const useGetConversations = (start = 0, limit = 10, keyword = '') =>
+export const useGetConversations = (keyword = '') =>
   useInfiniteQuery({
-    queryKey: ['conversation', start, limit, keyword],
-    queryFn: ({ pageParam = start }) =>
+    queryKey: ['conversation', keyword],
+    queryFn: ({ pageParam }) =>
       getConversationService({
-        query: { start: pageParam, limit, keyword },
+        query: { start: pageParam, keyword },
       }),
     getNextPageParam: (lastPage: any, allPages: any) => {
-      const currentStart = allPages?.length * limit; // Calculate the start value for the next page
+      const currentStart = allPages?.length * 10;
       if (currentStart < lastPage?.totalCount) {
         return currentStart;
       } else {
         return undefined;
       }
     },
-    initialPageParam: start,
+    initialPageParam: 0,
   });

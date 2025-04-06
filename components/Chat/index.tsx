@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
 import { Ionicons } from '@expo/vector-icons';
-import { ActivityIndicator, FlatList } from 'react-native';
+import { ActivityIndicator, FlatList, RefreshControl } from 'react-native';
 import DefaultTextInput from '../common/DefaultTextInput';
 import { View } from '../common/View';
 import Render from './render';
@@ -9,6 +9,7 @@ import { useAuth } from '~/context/AuthContext';
 import { useGlobalSearchParams } from 'expo-router';
 import { useEffect } from 'react';
 import { useGetConversations } from '~/hooks/chats/query';
+import theme from '~/utils/theme';
 
 export default function Chat() {
   const params = useGlobalSearchParams();
@@ -30,7 +31,8 @@ export default function Chat() {
     checkConversation();
   }, [params?.conversationId]);
 
-  const { isLoading, data, hasNextPage, fetchNextPage, isFetchingNextPage } = useGetConversations();
+  const { isLoading, data, hasNextPage, fetchNextPage, isFetchingNextPage, refetch } =
+    useGetConversations();
 
   return (
     <View className="flex-1 bg-white">
@@ -54,6 +56,14 @@ export default function Chat() {
             fetchNextPage();
           }
         }}
+        refreshControl={
+          <RefreshControl
+            colors={[theme.colors.primary]}
+            refreshing={false}
+            onRefresh={refetch}
+            tintColor={theme.colors.primary}
+          />
+        }
         onEndReachedThreshold={0.3}
         ListFooterComponent={
           isFetchingNextPage ? (
