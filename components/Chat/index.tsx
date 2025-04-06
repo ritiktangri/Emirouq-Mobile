@@ -11,6 +11,7 @@ import { useCallback, useEffect } from 'react';
 import { useGetConversations } from '~/hooks/chats/query';
 import theme from '~/utils/theme';
 import { queryClient } from '~/app/_layout';
+import Loading from './loading';
 
 export default function Chat() {
   const params = useGlobalSearchParams();
@@ -32,7 +33,7 @@ export default function Chat() {
     checkConversation();
   }, [params?.conversationId]);
 
-  const { isLoading, data, hasNextPage, fetchNextPage, isFetchingNextPage, refetch } =
+  const { isLoading, data, hasNextPage, fetchNextPage, isFetchingNextPage, refetch }: any =
     useGetConversations();
 
   const handleRefresh = useCallback(() => {
@@ -52,7 +53,7 @@ export default function Chat() {
       </View>
 
       {isLoading ? (
-        <></>
+        <Loading />
       ) : (
         <FlatList
           data={data?.pages.map((page: any) => page?.data).flat() || []}

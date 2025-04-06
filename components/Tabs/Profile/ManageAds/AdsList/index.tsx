@@ -8,20 +8,27 @@ import { Text } from '~/components/common/Text';
 import { RefreshControl } from 'react-native-gesture-handler';
 import theme from '~/utils/theme';
 import { queryClient } from '~/app/_layout';
+import Loading from './loading';
 
 const AdsList = () => {
   const { status } = usePosts();
-  const { isLoading, data, hasNextPage, fetchNextPage, isFetchingNextPage, refetch } = useGetPosts(
-    '',
-    status
-  );
+  const { isLoading, data, hasNextPage, fetchNextPage, isFetchingNextPage, refetch }: any =
+    useGetPosts('', status);
   const handleRefresh = useCallback(() => {
     queryClient.removeQueries({ queryKey: ['posts', '', status] });
     refetch();
   }, [queryClient, refetch, status]);
 
   if (isLoading) {
-    return <View className="flex-1" />;
+    return (
+      <View className="flex-1">
+        {Array(5)
+          .fill(null)
+          .map((_, index) => (
+            <Loading key={index} />
+          ))}
+      </View>
+    );
   }
   return (
     <View className="flex-1">
