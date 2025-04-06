@@ -1,34 +1,37 @@
 /* eslint-disable import/order */
 import { View, Text, TouchableOpacity } from 'react-native';
 import React from 'react';
-import { Href, router } from 'expo-router';
-import { routes } from '~/utils/routes';
 import { Ionicons } from '@expo/vector-icons';
-import { cn } from '~/utils/helper';
+import { cn, getInitials } from '~/utils/helper';
 import Image from '~/components/common/Image';
 
-const Header = ({ data }: any) => {
+const Header = ({ data, onPress }: any) => {
   return (
-    <View className="flex flex-row items-center gap-5 border-b border-gray-200 px-3 py-2 ">
-      <TouchableOpacity
-        onPress={() => {
-          router.push(routes.tabs.chat as Href);
-        }}>
-        <Ionicons name="arrow-back" size={24} color="black" />
+    <View className="flex flex-row items-center gap-2 border-b border-gray-200 px-3 py-2 ">
+      <TouchableOpacity onPress={onPress}>
+        <Ionicons name="arrow-back" size={30} color="black" />
       </TouchableOpacity>
       <View className="flex flex-1 flex-row items-center gap-3">
         <View className=" relative h-16 w-16 rounded-full bg-black">
-          <View className="absolute -right-1 bottom-0 z-10 h-4 w-4 rounded-full bg-white">
-            {data?.status === 'online' ? (
+          {data?.status === 'online' ? (
+            <View className="absolute -right-1 bottom-0 z-10 h-4 w-4 rounded-full bg-white">
               <View className="h-2 w-2 rounded-full bg-green-500" />
-            ) : (
-              <></>
-            )}
-          </View>
-          <Image source={data?.avatar} contentFit="fill" />
+            </View>
+          ) : (
+            <></>
+          )}
+          {data?.profileImage ? (
+            <Image source={data?.profileImage} contentFit="fill" />
+          ) : (
+            <View className="flex h-16  w-16 items-center justify-center rounded-full bg-primary">
+              <Text className=" font-poppinsMedium text-2xl text-white">
+                {getInitials(data?.fullName)}
+              </Text>
+            </View>
+          )}
         </View>
-        <View>
-          <Text className="text-lg font-semibold text-black">{data?.name}</Text>
+        <View className="">
+          <Text className="text-lg font-semibold text-black">{data?.fullName}</Text>
           <View className="flex-row items-center gap-2">
             <Text
               className={cn(
@@ -37,7 +40,7 @@ const Header = ({ data }: any) => {
                     ? 'text-green-500'
                     : 'text-red-500'
                   : 'text-red-500',
-                'text-lg  '
+                'text-lg '
               )}>
               {data?.status === 'online' ? 'Online' : 'Offline'}
             </Text>

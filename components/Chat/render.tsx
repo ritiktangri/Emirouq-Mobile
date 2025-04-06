@@ -15,11 +15,15 @@ const Render = ({ item }: any) => {
     <TouchableOpacity
       onPress={() => {
         router.push({
-          pathname: routes.chatScreen,
+          pathname: routes.tabs.chatScreen(item?.uuid),
           params: {
             conversationId: item?.uuid,
+            fullName: `${item?.user?.firstName} ${item?.user?.lastName}`,
+            profileImage: item?.profileImage,
+            userId: item?.user?.uuid,
             uuid: item?.post?.uuid,
-            title: item?.post?.title,
+            chatTitle: 'true',
+            name: item?.post?.title,
             file: item?.post?.file?.[0],
             price: item?.post?.price,
           },

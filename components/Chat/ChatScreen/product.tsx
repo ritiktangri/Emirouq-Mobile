@@ -19,7 +19,7 @@ const Product = ({ product }: any) => {
         />
       </View>
       <View className="flex-1">
-        <Text className="text-lg font-medium">{product?.title}</Text>
+        <Text className="text-lg font-medium">{product?.name}</Text>
         <Text className="font-poppinsSemiBold text-xl text-black">
           {toCurrency(product?.price)}
         </Text>

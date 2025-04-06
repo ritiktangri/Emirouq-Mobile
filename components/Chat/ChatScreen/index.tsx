@@ -12,14 +12,13 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Entypo, Ionicons } from '@expo/vector-icons';
 import { cn } from '~/utils/helper';
-import Header from './header';
-import { useGlobalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import Product from './product';
 import DefaultTextInput from '~/components/common/DefaultTextInput';
 import { useConversation } from '~/context/ConversationContext';
 
 const ChatScreen = () => {
-  const params: any = useGlobalSearchParams();
+  const params: any = useLocalSearchParams();
   const insets = useSafeAreaInsets();
   const [newMessage, setNewMessage] = useState('');
   const flatListRef: any = useRef(null);
@@ -54,7 +53,6 @@ const ChatScreen = () => {
   );
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <Header />
       <Product product={params?.uuid ? params : {}} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -85,9 +83,7 @@ const ChatScreen = () => {
             }}
           />
 
-          <View
-            className="flex-row items-center  border-t border-gray-200 px-4 py-4"
-            style={{ paddingBottom: Math.max(insets.bottom, 8) }}>
+          <View className="flex-row items-center  border-t border-gray-200 px-4 py-4" style={{}}>
             <TouchableOpacity>
               <Entypo name="attachment" size={24} color="black" />
             </TouchableOpacity>
