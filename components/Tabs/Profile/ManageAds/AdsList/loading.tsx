@@ -33,7 +33,7 @@ const Loading = () => {
 
         {/* Edit/Delete Buttons Skeleton */}
         <View className="mt-4 flex-row justify-end">
-          <View className="mr-2 h-8 w-20 rounded-lg border border-orange-500 bg-gray-100/50 px-4 py-2" />
+          <View className="mr-2 h-8 w-20 rounded-lg border border-primary bg-gray-100/50 px-4 py-2" />
           <View className="h-8 w-20 rounded-lg border border-red-500 bg-gray-100/50 px-4 py-2" />
         </View>
       </View>

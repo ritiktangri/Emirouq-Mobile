@@ -29,8 +29,10 @@
     "bio":"ْعَنِّي",
     "selectYourInterest":"حدد اهتمامك",
     "completeProfile":"ملف كامل",
-    "edit_profile":"تحرير الملف الشخصي"
-
+    "edit_profile":"تحرير الملف الشخصي",
+    "welcome_to_emirouq":"مرحباً بكم في أميروك",
+    "login_or_signup":"تسجيل الدخول أو الاشتراك للبدء"
+    
   },
   "post": {
     "uploadText": "قم بتحميل ما يصل إلى 8 صور",

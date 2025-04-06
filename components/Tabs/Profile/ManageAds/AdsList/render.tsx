@@ -69,8 +69,8 @@ const Render = ({ item }: any) => {
             // router.push(routes.tabs.post as Href);
             // router.setParams({ data: item });
           }}
-          className="mr-2 rounded-lg border border-orange-500 px-4 py-2">
-          <Text className="text-orange-500">{i18n.t('profile.edit')}</Text>
+          className="mr-2 rounded-lg border border-primary px-4 py-2">
+          <Text className="text-primary">{i18n.t('profile.edit')}</Text>
         </TouchableOpacity>
         <TouchableOpacity className="rounded-lg border border-red-500 px-4 py-2">
           <Text className="text-red-500">{i18n.t('profile.delete')}</Text>

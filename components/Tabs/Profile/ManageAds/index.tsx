@@ -43,9 +43,9 @@ const ManageAds = () => {
             key={tab?.id}
             onPress={() => onTabPress(tab?.value)}
             className={`mx-2 rounded-full px-4 py-2 ${
-              selectedTab === tab?.value ? 'border border-orange-500' : 'bg-gray-200'
+              selectedTab === tab?.value ? 'border border-primary' : 'bg-gray-200'
             }`}>
-            <Text className={`${selectedTab === tab?.value ? 'text-orange-500' : 'text-gray-700'}`}>
+            <Text className={`${selectedTab === tab?.value ? 'text-primary' : 'text-gray-700'}`}>
               {tab?.name}
             </Text>
           </TouchableOpacity>

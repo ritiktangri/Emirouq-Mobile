@@ -197,7 +197,7 @@ const AuthProvider = ({ children }: any) => {
       removeStorageItemAsync(storageTokenKeyName),
       removeStorageItemAsync('activeAccount'),
     ] as any);
-    router.push(routes.auth.auth as any);
+    // router.push(routes.auth.auth as any);
   };
   const handleSignUp = ({ body }: SignUpInterface, successCb: any, errorCallback: any) => {
     setSignInLoading(true);

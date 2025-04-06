@@ -18,14 +18,14 @@ const App = () => {
     return <Redirect href={routes['select-language'] as Href} />;
   }
   // if user is not logged in, redirect to login page
-  if (!user?.uuid) {
-    // return <Redirect href={routes.auth.auth as Href} />;
-    return <Redirect href={routes.auth.auth as Href} />;
-  }
+  // if (!user?.uuid) {
+  //   // return <Redirect href={routes.auth.auth as Href} />;
+  //   return <Redirect href={routes.auth.auth as Href} />;
+  // }
   // if user is logged in, redirect to portfolio page
-  if (user?.uuid) {
-    return <Redirect href={routes.tabs.home as Href} />;
-  }
+  // if (user?.uuid) {
+  return <Redirect href={routes.tabs.home as Href} />;
+  // }
 };
 
 export default App;

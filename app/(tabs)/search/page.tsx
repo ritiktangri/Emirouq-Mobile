@@ -23,7 +23,7 @@ export default function Page() {
           <View className="mb-10 flex-row self-center rounded-full bg-gray-200 p-1">
             <TouchableOpacity
               // onPress={() => setIsMonthly(true)}
-              className={`rounded-full px-8 py-2 ${isMonthly ? 'bg-orange-500 shadow' : ''}`}
+              className={`rounded-full px-8 py-2 ${isMonthly ? 'bg-primary shadow' : ''}`}
               activeOpacity={0.7}>
               <Text className={`font-semibold ${isMonthly ? 'text-white' : 'text-gray-700'}`}>
                 Monthly
@@ -31,7 +31,7 @@ export default function Page() {
             </TouchableOpacity>
             <TouchableOpacity
               // onPress={() => setIsMonthly(false)}
-              className={`rounded-full px-8 py-2 ${!isMonthly ? 'bg-orange-500 shadow' : ''}`}
+              className={`rounded-full px-8 py-2 ${!isMonthly ? 'bg-primary shadow' : ''}`}
               activeOpacity={0.7}>
               <Text className={`font-semibold ${!isMonthly ? 'text-white' : 'text-gray-700'}`}>
                 Yearly
@@ -72,12 +72,12 @@ export default function Page() {
             </View>
 
             <TouchableOpacity
-              className="mt-4 rounded-lg border-2 border-orange-500 bg-white py-3"
+              className="mt-4 rounded-lg border-2 border-primary bg-white py-3"
               activeOpacity={0.7}
               onPress={() =>
                 console.log('Selected Plan:', isMonthly ? 'Monthly Basic' : 'Yearly Basic')
               }>
-              <Text className="text-center text-lg font-semibold text-orange-500">Select Plan</Text>
+              <Text className="text-center text-lg font-semibold text-primary">Select Plan</Text>
             </TouchableOpacity>
           </View>
           <View className="mt-6 w-full rounded-2xl border border-gray-200 bg-white p-6">

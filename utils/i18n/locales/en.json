@@ -23,7 +23,10 @@
     },
     "setupProfileTitle":"Set up your profile to start buying & selling securely!",
     "firstName":"First Name",
-    "edit_profile":"Edit Profile"
+    "edit_profile":"Edit Profile",
+    "welcome_to_emirouq":"Welcome to Emirouq!",
+    "login_or_signup": "Log in or Sign up to get started"
+    
   },
 
   "post": {

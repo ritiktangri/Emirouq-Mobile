@@ -7,9 +7,13 @@ import UserProfile from './UserProfile';
 import ManageAds from './ManageAds';
 import AdsDashboard from './AdsDashboard';
 import { usePosts } from '~/context/PostContext';
+import { useAuth } from '~/context/AuthContext';
+import { Text } from '~/components/common/Text';
+import LoggedOutView from './LoggedOutView';
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState(0);
+  const { user } = useAuth();
 
   const render: any = useMemo(() => {
     return {
@@ -34,8 +38,14 @@ const Profile = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={10}
         className="flex-1">
-        <TabLayout activeTab={activeTab} setActiveTab={setActiveTab} />
-        <View className="flex-1">{render[activeTab?.toString()]}</View>
+        {user?.uuid ? (
+          <>
+            <TabLayout activeTab={activeTab} setActiveTab={setActiveTab} />
+            <View className="flex-1">{render[activeTab?.toString()]}</View>
+          </>
+        ) : (
+          <LoggedOutView />
+        )}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

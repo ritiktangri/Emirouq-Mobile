@@ -20,11 +20,11 @@ const SelectLanguage = () => {
   const { changeLocale } = useLocale();
   const router = useRouter();
   const navigate = useCallback(() => {
-    if (!user?.uuid) {
-      router.push(routes.auth.auth as Href);
-    } else {
-      router.push(routes.tabs.home as Href);
-    }
+    // if (!user?.uuid) {
+    //   router.push(routes.auth.auth as Href);
+    // } else {
+    router.push(routes.tabs.home as Href);
+    // }
   }, [user, router, routes]);
 
   return (
