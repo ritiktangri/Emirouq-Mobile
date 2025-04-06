@@ -241,16 +241,21 @@ const SinglePost = () => {
         <TouchableOpacity
           onPress={() =>
             router.push({
-              pathname: singlePost?.conversation?.uuid ? routes.chatScreen : routes.tabs.chat,
+              pathname: singlePost?.conversation?.uuid
+                ? routes.tabs.chatScreen(singlePost?.conversation?.uuid)
+                : routes.tabs.chat,
               params: {
                 conversationId: singlePost?.conversation?.uuid,
                 userId: singlePost?.userId,
+                fullName: `${singlePost?.user?.firstName} ${singlePost?.user?.lastName}`,
+                profileImage: singlePost?.user?.profileImage,
                 uuid: singlePost?.uuid,
-                title: singlePost?.title,
+                chatTitle: !!singlePost?.conversation?.uuid,
+                name: singlePost?.title,
                 file: singlePost?.file?.[0],
                 price: singlePost?.price,
               },
-            } as Href)
+            } as unknown as Href)
           }
           className="mx-4 mb-2 flex-row items-center justify-center gap-2 rounded-lg bg-primary py-3">
           <Feather name="message-circle" size={20} color="white" />
