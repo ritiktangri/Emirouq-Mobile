@@ -1,7 +1,7 @@
 /* eslint-disable import/order */
 import React, { useEffect, useState } from 'react';
 import { ScrollView, TouchableOpacity } from 'react-native';
-import { Feather, FontAwesome } from '@expo/vector-icons';
+import { Entypo, Feather, FontAwesome } from '@expo/vector-icons';
 import { Href, router, useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
 import { View } from '~/components/common/View';
 import { Text } from '~/components/common/Text';
@@ -12,9 +12,11 @@ import { routes } from '~/utils/routes';
 import { useAuth } from '~/context/AuthContext';
 import { usePosts } from '~/context/PostContext';
 import dayjs from 'dayjs';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SinglePost = () => {
   const { id }: any = useLocalSearchParams();
+  const { removeChatButton = false } = useGlobalSearchParams();
   const [selectedImage, setSelectedImage] = useState({
     uri: '',
     index: 1,
@@ -31,13 +33,21 @@ const SinglePost = () => {
       });
     }
   }, [id]);
-
   if (singlePostLoading) {
     return <View className="flex-1 items-center justify-center bg-white" />;
   }
   return (
-    <View className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1">
+        <Entypo
+          name="chevron-left"
+          size={24}
+          color="black"
+          onPress={() => {
+            router.back();
+          }}
+        />
+
         <ScrollView>
           <View className="mx-auto  h-[300px] w-[100%] px-3 py-3">
             <Image
@@ -229,7 +239,7 @@ const SinglePost = () => {
       </View>
 
       {/* Chat Button */}
-      {user?.uuid !== singlePost?.userId ? (
+      {user?.uuid !== singlePost?.userId && removeChatButton === false ? (
         <TouchableOpacity
           onPress={() =>
             router.push({
@@ -248,7 +258,7 @@ const SinglePost = () => {
       ) : (
         <></>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 

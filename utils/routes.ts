@@ -29,7 +29,7 @@ export const routes = {
     },
     create_profile: '/(tabs)/profile/create-profile',
     post: '/(tabs)/post',
-    singlePost: (id: string) => `/(tabs)/profile/singlePost/${id}`,
+    singlePost: (id: string) => `/singlePost/${id}`,
     preview_post: '/(tabs)/post/preview-post',
     success_view: '/(tabs)/post/success-view',
   },
