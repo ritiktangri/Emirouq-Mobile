@@ -209,7 +209,6 @@ const AuthProvider = ({ children }: any) => {
       })
       .catch((err: any) => {
         setSignInLoading(false);
-        console.log(err);
         if (errorCallback) errorCallback(err);
       })
       .finally(() => {});
@@ -291,7 +290,6 @@ const AuthProvider = ({ children }: any) => {
       body,
     })
       .then((res: any) => {
-        console.log('updated profile-->', res);
         setUser({
           ...user,
           firstName: res?.data?.firstName,
@@ -419,7 +417,6 @@ const AuthProvider = ({ children }: any) => {
           user?.accounts?.filter((i: any) => i?.status === 'active')?.length &&
         isSubInActive === false
       ) {
-        console.log('You have reached the limit of accounts');
         errCb && errCb();
         return;
         // return toast.error('You have reached the limit of accounts');
@@ -432,7 +429,6 @@ const AuthProvider = ({ children }: any) => {
       ) {
         errCb && errCb();
 
-        console.log('subscription in inactive');
         return;
       }
       cb && cb();

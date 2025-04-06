@@ -22,7 +22,6 @@ import { useTheme } from '~/context/ThemeContext';
 const PreviewPost = () => {
   const params: any = useGlobalSearchParams();
   const data = params?.data ? JSON.parse(params?.data) : {};
-  console.log(data?.images);
   const router: any = useRouter();
   const { showToast } = useTheme();
   const [selectFeature, setSelectFeature] = useState('');

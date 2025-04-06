@@ -43,7 +43,6 @@ const SetupProfile = () => {
     formState: { errors },
     setValue,
   } = useForm<ProfileFormData>({ resolver: zodResolver(profileSchema) });
-  console.log(errors);
   const { user, updateProfile } = useAuth();
 
   useEffect(() => {
@@ -130,7 +129,6 @@ const SetupProfile = () => {
         },
       },
       () => {
-        console.log('done');
         showToast('Profile Updated!', 'success');
       },
       (err: any) => {

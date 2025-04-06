@@ -17,7 +17,6 @@ export default function Chat() {
   //here we check if the conversation exists, if not we create it
   //and then we get the conversation list
   const checkConversation = async (signal: any) => {
-    console.log(1);
     if (!params?.conversationId && params?.uuid && params?.userId) {
       await createConversationHandler({
         body: {
