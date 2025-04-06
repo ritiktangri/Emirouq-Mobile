@@ -1,20 +1,28 @@
 /* eslint-disable import/order */
-import { View, FlatList } from 'react-native';
-import React from 'react';
+import { View, FlatList, ActivityIndicator } from 'react-native';
+import React, { useCallback } from 'react';
 import Render from './render';
 import { useGetPosts } from '~/hooks/post/query';
-import { ActivityIndicator } from 'react-native-paper';
 import { usePosts } from '~/context/PostContext';
+import { Text } from '~/components/common/Text';
+import { RefreshControl } from 'react-native-gesture-handler';
+import theme from '~/utils/theme';
+import { queryClient } from '~/app/_layout';
 
 const AdsList = () => {
   const { status } = usePosts();
-  const { isLoading, data, hasNextPage, fetchNextPage, isFetchingNextPage } = useGetPosts(
-    0,
-    10,
+  const { isLoading, data, hasNextPage, fetchNextPage, isFetchingNextPage, refetch } = useGetPosts(
     '',
     status
   );
+  const handleRefresh = useCallback(() => {
+    queryClient.removeQueries({ queryKey: ['posts', '', status] });
+    refetch();
+  }, [queryClient, refetch, status]);
 
+  if (isLoading) {
+    return <View className="flex-1" />;
+  }
   return (
     <View className="flex-1">
       <FlatList
@@ -28,6 +36,15 @@ const AdsList = () => {
             fetchNextPage();
           }
         }}
+        refreshControl={
+          <RefreshControl
+            colors={[theme.colors.primary]}
+            refreshing={false}
+            onRefresh={handleRefresh}
+            tintColor={theme.colors.primary}
+          />
+        }
+        ListEmptyComponent={() => <Text>No Data</Text>}
         onEndReachedThreshold={0.3}
         ListFooterComponent={
           isFetchingNextPage ? (

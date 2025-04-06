@@ -1,9 +1,8 @@
 /* eslint-disable import/order */
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { cn, getInitials } from '~/utils/helper';
-import Image from '~/components/common/Image';
 import { router } from 'expo-router';
 
 const Header = ({ data, onPress }: any) => {
@@ -25,7 +24,7 @@ const Header = ({ data, onPress }: any) => {
             <></>
           )}
           {data?.profileImage ? (
-            <Image source={data?.profileImage} contentFit="fill" />
+            <Image source={data?.profileImage} resizeMode="cover" />
           ) : (
             <View className="flex h-12  w-12 items-center justify-center rounded-full bg-primary">
               <Text className=" font-poppinsMedium text-2xl text-white">

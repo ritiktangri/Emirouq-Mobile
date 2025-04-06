@@ -18,4 +18,7 @@ export const useGetPosts = (keyword = '', status = '') =>
       }
     },
     initialPageParam: 0,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });

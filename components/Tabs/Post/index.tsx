@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import { TextInput, Pressable } from 'react-native';
+import { TextInput, Pressable, Image } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,8 +18,6 @@ import { View } from '~/components/common/View';
 import { Text } from '~/components/common/Text';
 import { useLocale } from '~/context/LocaleContext';
 import { i18n } from '~/utils/i18n';
-import Image from '~/components/common/Image';
-import { width } from '~/constants/Colors';
 
 const schema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),

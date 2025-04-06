@@ -7,9 +7,10 @@ import Render from './render';
 import { useConversation } from '~/context/ConversationContext';
 import { useAuth } from '~/context/AuthContext';
 import { useGlobalSearchParams } from 'expo-router';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useGetConversations } from '~/hooks/chats/query';
 import theme from '~/utils/theme';
+import { queryClient } from '~/app/_layout';
 
 export default function Chat() {
   const params = useGlobalSearchParams();
@@ -34,6 +35,11 @@ export default function Chat() {
   const { isLoading, data, hasNextPage, fetchNextPage, isFetchingNextPage, refetch } =
     useGetConversations();
 
+  const handleRefresh = useCallback(() => {
+    queryClient.removeQueries({ queryKey: ['conversation', ''] });
+    refetch();
+  }, [queryClient, refetch]);
+
   return (
     <View className="flex-1 bg-white">
       <View className="m-3">
@@ -45,32 +51,36 @@ export default function Chat() {
         />
       </View>
 
-      <FlatList
-        data={data?.pages.map((page: any) => page?.data).flat() || []}
-        keyExtractor={(item) => item?.uuid?.toString()}
-        renderItem={({ item }) => <Render item={item} />}
-        ListEmptyComponent={() => <View className="flex-1 items-center justify-center"></View>}
-        showsVerticalScrollIndicator={false}
-        onEndReached={() => {
-          if (hasNextPage) {
-            fetchNextPage();
+      {isLoading ? (
+        <></>
+      ) : (
+        <FlatList
+          data={data?.pages.map((page: any) => page?.data).flat() || []}
+          keyExtractor={(item) => item?.uuid?.toString()}
+          renderItem={({ item }) => <Render item={item} />}
+          ListEmptyComponent={() => <View className="flex-1 items-center justify-center"></View>}
+          showsVerticalScrollIndicator={false}
+          onEndReached={() => {
+            if (hasNextPage) {
+              fetchNextPage();
+            }
+          }}
+          refreshControl={
+            <RefreshControl
+              colors={[theme.colors.primary]}
+              refreshing={false}
+              onRefresh={handleRefresh}
+              tintColor={theme.colors.primary}
+            />
           }
-        }}
-        refreshControl={
-          <RefreshControl
-            colors={[theme.colors.primary]}
-            refreshing={false}
-            onRefresh={refetch}
-            tintColor={theme.colors.primary}
-          />
-        }
-        onEndReachedThreshold={0.3}
-        ListFooterComponent={
-          isFetchingNextPage ? (
-            <ActivityIndicator color="#000" size="small" className="my-2" />
-          ) : null
-        }
-      />
+          onEndReachedThreshold={0.3}
+          ListFooterComponent={
+            isFetchingNextPage ? (
+              <ActivityIndicator color="#000" size="small" className="my-2" />
+            ) : null
+          }
+        />
+      )}
     </View>
   );
 }

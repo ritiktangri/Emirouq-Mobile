@@ -67,7 +67,7 @@ const VerifyOtp = () => {
   };
 
   return (
-    <ImageBackground className="flex-1 flex-col" source={isDarkTheme ? '' : ''}>
+    <ImageBackground className="flex-1 flex-col" source={isDarkTheme ? '' : ('' as any)}>
       <SafeAreaView edges={['top', 'left', 'right']} className="flex-1 flex-col bg-white">
         <View className="flex-row justify-end px-8 pt-4">
           <Image source={logo} className="h-[70px] w-[70px]" resizeMode="contain" />

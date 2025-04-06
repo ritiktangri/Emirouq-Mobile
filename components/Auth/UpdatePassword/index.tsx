@@ -134,7 +134,7 @@ const Page = () => {
             <Text className="my-4 text-center  font-poppinsMedium text-lg text-tertiary dark:text-[#c7c5c58B]">
               Don't want to reset your password?{' '}
             </Text>
-            <Link href={routes.auth.login as Href} asChild>
+            <Link href={routes.auth.auth as Href} asChild>
               <TouchableOpacity>
                 <Text className="font-poppinsMedium font-medium dark:text-white">Sign In</Text>
               </TouchableOpacity>

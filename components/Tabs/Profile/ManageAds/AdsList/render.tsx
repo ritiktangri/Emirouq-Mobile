@@ -1,7 +1,6 @@
 /* eslint-disable import/order */
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import React from 'react';
-import Image from '~/components/common/Image';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { getRelativeTime } from '~/utils/helper';
 import { Href, useRouter } from 'expo-router';

@@ -6,8 +6,8 @@ import { useAuth } from '~/context/AuthContext';
 import { Text } from '~/components/common/Text';
 import { BackIconSVG } from '~/svgs/drawer';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getInitials } from '~/utils/helper.utils';
 import { Image } from 'expo-image';
+import { getInitials } from '~/utils/helper';
 
 const Header = ({ closeDrawer }: any) => {
   const { user } = useAuth();
@@ -34,7 +34,7 @@ const Header = ({ closeDrawer }: any) => {
             />
           ) : (
             <View className="flex h-16  w-16 items-center justify-center rounded-full bg-primary">
-              <Text light="text-black" dark="text-white" className=" font-poppinsMedium text-2xl">
+              <Text className=" font-poppinsMedium text-2xl">
                 {getInitials(`${user?.firstName} ${user?.lastName}`)}
               </Text>
             </View>
