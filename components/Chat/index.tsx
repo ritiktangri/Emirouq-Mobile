@@ -12,6 +12,7 @@ import { useGetConversations } from '~/hooks/chats/query';
 import theme from '~/utils/theme';
 import { queryClient } from '~/app/_layout';
 import Loading from './loading';
+import LoggedOutView from './loggedOutView';
 
 export default function Chat() {
   const params = useGlobalSearchParams();
@@ -54,6 +55,8 @@ export default function Chat() {
 
       {isLoading ? (
         <Loading />
+      ) : !user?.uuid ? (
+        <LoggedOutView />
       ) : (
         <FlatList
           data={data?.pages.map((page: any) => page?.data).flat() || []}

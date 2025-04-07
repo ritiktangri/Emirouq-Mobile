@@ -8,7 +8,6 @@ import ManageAds from './ManageAds';
 import AdsDashboard from './AdsDashboard';
 import { usePosts } from '~/context/PostContext';
 import { useAuth } from '~/context/AuthContext';
-import { Text } from '~/components/common/Text';
 import LoggedOutView from './LoggedOutView';
 
 const Profile = () => {
