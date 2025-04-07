@@ -20,16 +20,16 @@ function SocketEventScreen({ children }: any) {
     };
   }, [socketIo.connected, user]);
 
-  // useEffect(() => {
-  //   if (socketIo?.connected && user?.uuid) {
-  //     socketIo.on('onlineUsers', (user: any) => {
-  //       console.log(user);
-  //       setOnlineUsers(
-  //         user?.users?.filter((i: any) => i?.userId !== user?.uuid)?.map((i: any) => i?.userId)
-  //       );
-  //     });
-  //   }
-  // }, [socketIo, user?.user?.uuid]);
+  useEffect(() => {
+    if (socketIo?.connected && user?.uuid) {
+      socketIo.emit('fetchOnlineUsers', (user: any) => {
+        // setOnlineUsers(user);
+      });
+      socketIo.on('onlineUsers', (user: any) => {
+        // setOnlineUsers(user);
+      });
+    }
+  }, [socketIo, user?.user?.uuid]);
 
   return <>{children}</>;
 }

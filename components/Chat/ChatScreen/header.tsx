@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { cn, getInitials } from '~/utils/helper';
 import { router } from 'expo-router';
 
-const Header = ({ data, online }: any) => {
+const Header = ({ data, status }: any) => {
   return (
     <View className="flex flex-row items-center gap-2 border-b border-gray-200 px-3 py-2 ">
       <TouchableOpacity
@@ -16,7 +16,7 @@ const Header = ({ data, online }: any) => {
       </TouchableOpacity>
       <View className="flex flex-1 flex-row items-center gap-3">
         <View className=" relative h-12 w-12 rounded-full ">
-          {online ? (
+          {status ? (
             <View className="absolute -right-2 bottom-0 z-10 h-4 w-4 rounded-full ">
               <View className="h-2 w-2 rounded-full bg-green-500" />
             </View>
@@ -35,7 +35,7 @@ const Header = ({ data, online }: any) => {
         </View>
         <View className="">
           <Text className="text-2xl font-semibold text-black">{data?.fullName}</Text>
-          {online ? (
+          {status ? (
             <View className="flex-row items-center gap-2">
               <Text className={cn('font-poppinsMedium text-green-500')}>Online</Text>
             </View>

@@ -452,7 +452,7 @@ const AuthProvider = ({ children }: any) => {
       socket?.emit('join_room', user?.uuid);
 
       return () => {
-        socket.disconnect();
+        console.log('disconnected');
         socket.off('disconnect');
       };
     }

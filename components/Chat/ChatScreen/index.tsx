@@ -21,7 +21,7 @@ import { useAuth } from '~/context/AuthContext';
 const ChatScreen = () => {
   const params: any = useLocalSearchParams();
   const insets = useSafeAreaInsets();
-  const { socketIo, user, onlineUsers, setOnlineUsers } = useAuth();
+  const { socketIo, user } = useAuth();
   const [newMessage, setNewMessage] = useState('');
   const flatListRef: any = useRef(null);
   const { data }: any = useGetMessages(params?.conversationId);
@@ -50,9 +50,6 @@ const ChatScreen = () => {
         userId: user?.uuid,
         conversationId: params?.conversationId,
       });
-      socketIo.on('onlineUsers', (user: any) => {
-        setOnlineUsers(user?.users?.map((i: any) => i?.userId));
-      });
     }
 
     return () => {
@@ -63,7 +60,7 @@ const ChatScreen = () => {
   if (!params?.conversationId) return;
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-white">
-      <Header data={params} online={onlineUsers?.includes(params?.userId)} />
+      <Header data={params} />
       <Product product={params?.uuid ? params : {}} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
