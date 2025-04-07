@@ -31,8 +31,14 @@
     "completeProfile":"ملف كامل",
     "edit_profile":"تحرير الملف الشخصي",
     "welcome_to_emirouq":"مرحباً بكم في أميروك",
-    "login_or_signup":"تسجيل الدخول أو الاشتراك للبدء"
-    
+    "login_or_signup":"تسجيل الدخول أو الاشتراك للبدء",
+    "profile": "مظهر جانبي",
+    "ads_dashboard":"لوحة الإعلانات",
+    "manage_ads":"إدارة الإعلانات",
+    "all_ads":"جميع الإعلانات",
+    "drafts":"المسودات",
+    "active":"نشيط",
+    "pending":"قيد الانتظار"
   },
   "post": {
     "uploadText": "قم بتحميل ما يصل إلى 8 صور",

@@ -25,8 +25,14 @@
     "firstName":"First Name",
     "edit_profile":"Edit Profile",
     "welcome_to_emirouq":"Welcome to Emirouq!",
-    "login_or_signup": "Log in or Sign up to get started"
-    
+    "login_or_signup": "Log in or Sign up to get started",
+    "profile":"Profile",
+    "ads_dashboard":"Ads Dashboard",
+    "manage_ads":"Manage Ads",
+    "all_ads":"All Ads",
+    "drafts":"Drafts",
+    "active":"Active",
+    "pending":"Pending"
   },
 
   "post": {

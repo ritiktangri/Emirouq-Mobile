@@ -4,6 +4,7 @@ import React, { useCallback } from 'react'; // Import useCallback
 import { Ionicons } from '@expo/vector-icons';
 import AdsList from './AdsList';
 import { usePosts } from '~/context/PostContext';
+import { i18n } from '~/utils/i18n';
 
 const ManageAds = () => {
   const { status, setStatus } = usePosts();
@@ -11,22 +12,22 @@ const ManageAds = () => {
   const tabs = [
     {
       id: 1,
-      name: 'All Ads',
+      name: i18n.t('profile.all_ads'),
       value: '',
     },
     {
       id: 2,
-      name: 'Drafts',
+      name: i18n.t('profile.drafts'),
       value: 'draft',
     },
     {
       id: 3,
-      name: 'Active',
+      name: i18n.t('profile.active'),
       value: 'active',
     },
     {
       id: 4,
-      name: 'Pending',
+      name: i18n.t('profile.pending'),
       value: 'pending',
     },
   ];

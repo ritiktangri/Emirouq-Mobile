@@ -1,25 +1,25 @@
 import { View, TouchableOpacity, Text } from 'react-native';
 import Animated from 'react-native-reanimated';
-
-const TABS = [
-  {
-    key: 'profile',
-    title: 'Profile',
-    component: <Text>profile</Text>,
-  },
-  {
-    key: 'dashboard',
-    title: 'Ads Dashboard',
-    component: <Text>sddashboardsd</Text>,
-  },
-  {
-    key: 'manageAds',
-    title: 'Manage Ads',
-    component: <Text>setting</Text>,
-  },
-] as const;
+import { i18n } from '~/utils/i18n';
 
 export default function TabLayout({ activeTab, setActiveTab }: any) {
+  const TABS = [
+    {
+      key: 'profile',
+      title: i18n.t('profile.profile'),
+      component: <Text>profile</Text>,
+    },
+    {
+      key: 'dashboard',
+      title: i18n.t('profile.ads_dashboard'),
+      component: <Text>sddashboardsd</Text>,
+    },
+    {
+      key: 'manageAds',
+      title: i18n.t('profile.manage_ads'),
+      component: <Text>setting</Text>,
+    },
+  ];
   return (
     <View className="rounded-md border-b-[0.4px] border-gray-300 bg-white p-1">
       <View className="">
