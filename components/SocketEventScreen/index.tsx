@@ -22,12 +22,23 @@ function SocketEventScreen({ children }: any) {
 
   useEffect(() => {
     if (socketIo?.connected && user?.uuid) {
-      socketIo.emit('fetchOnlineUsers', (user: any) => {
-        // setOnlineUsers(user);
+      // when user connects to the socket, emit onlineUserList event
+      //to fetch all online users
+      socketIo.emit('onlineUserList', (user: any) => {
+        setOnlineUsers(user);
       });
-      socketIo.on('onlineUsers', (user: any) => {
-        // setOnlineUsers(user);
+
+      //when other user open's the app, fetch online users
+      socketIo.on('fetchOnlineUsers', (user: any) => {
+        console.log(user);
+        setOnlineUsers(user);
       });
+      return () => {
+        // remove the event listener when the component unmounts
+        socketIo.off('fetchOnlineUsers');
+        socketIo.off('onlineUserList');
+        console.log('disconnected');
+      };
     }
   }, [socketIo, user?.user?.uuid]);
 
