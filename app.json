@@ -29,7 +29,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#00000",
+          "backgroundColor": "#000000",
           "image": "./assets/logo/Emi-logo.png",
           "dark": {
             "image": "./assets/logo/Emi-logo.png",
@@ -57,7 +57,7 @@
     "splash": {
       "image": "./assets/logo/Emi-logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#fffff"
+      "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": ["**/*"],
     "locales": {
@@ -96,7 +96,7 @@
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo/Emi-logo.png",
-        "backgroundColor": "#fffff"
+        "backgroundColor": "#ffffff"
       },
       "package": "com.emirouq",
       "permissions": ["android.permission.RECORD_AUDIO", "android.permission.RECORD_AUDIO"]
