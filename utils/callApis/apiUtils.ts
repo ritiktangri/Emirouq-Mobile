@@ -9,7 +9,7 @@ export const socketHostname = () => 'wss://api-v1.emirouq.ae';
 
 export const hostname = () => {
   const hostUrl = 'https://api-v1.emirouq.ae';
-  // const hostUrl = 'http://192.168.29.26:4001';
+  // const hostUrl = 'http://192.168.29.33:4001';
   return hostUrl;
 };
 const hostUrl = hostname();

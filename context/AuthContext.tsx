@@ -456,6 +456,9 @@ const AuthProvider = ({ children }: any) => {
         socket.off('disconnect');
       };
     }
+    return () => {
+      console.log('disconnected');
+    };
   }, [user]);
   const values = {
     user,

@@ -40,6 +40,9 @@ function SocketEventScreen({ children }: any) {
         console.log('disconnected');
       };
     }
+    return () => {
+      console.log('disconnected');
+    };
   }, [socketIo, user?.user?.uuid]);
 
   return <>{children}</>;
