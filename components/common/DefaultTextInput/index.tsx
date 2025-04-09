@@ -1,6 +1,8 @@
 import React, { memo, useRef } from 'react';
-import { TextInput as DefaultTextInput, TextInputProps, View } from 'react-native';
+import { TextInput as DefaultTextInput, TextInputProps } from 'react-native';
 import { Text } from '../Text';
+import { useLocale } from '~/context/LocaleContext';
+import { View } from '../View';
 
 type InputProps = TextInputProps & {
   className?: string;
@@ -21,11 +23,11 @@ const TextInput = ({
   // Access theme colors using "color"
 
   const inputRef = useRef<DefaultTextInput>(null);
-
+  const { locale } = useLocale();
   return (
     <View className={containerClassName}>
       {title && <Text className="mb-1.5 font-interMedium text-base ">{title}</Text>}
-      <View className="flex-row items-center gap-2">
+      <View direction={locale} className="">
         {prefix ? prefix : <></>}
         <DefaultTextInput
           className={className}

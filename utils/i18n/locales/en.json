@@ -7,6 +7,9 @@
     "chat": "Chat",
     "profile": "Profile"
   },
+  "home": {
+    "searchPlaceHolder": "Search products or categories"
+  },
   "profile": {
     "language": "Language",
     "personalInformation": "Personal Information",
@@ -15,24 +18,24 @@
     "location": "Location",
     "accountSettings": "Account Settings",
     "logout": "Logout",
-    "edit":"Edit",
-    "delete":"Delete",
+    "edit": "Edit",
+    "delete": "Delete",
     "selectLanguage": {
       "title": "Selected Language",
       "description": "Choose your preferred language for the app."
     },
-    "setupProfileTitle":"Set up your profile to start buying & selling securely!",
-    "firstName":"First Name",
-    "edit_profile":"Edit Profile",
-    "welcome_to_emirouq":"Welcome to Emirouq!",
+    "setupProfileTitle": "Set up your profile to start buying & selling securely!",
+    "firstName": "First Name",
+    "edit_profile": "Edit Profile",
+    "welcome_to_emirouq": "Welcome to Emirouq!",
     "login_or_signup": "Log in or Sign up to get started",
-    "profile":"Profile",
-    "ads_dashboard":"Ads Dashboard",
-    "manage_ads":"Manage Ads",
-    "all_ads":"All Ads",
-    "drafts":"Drafts",
-    "active":"Active",
-    "pending":"Pending"
+    "profile": "Profile",
+    "ads_dashboard": "Ads Dashboard",
+    "manage_ads": "Manage Ads",
+    "all_ads": "All Ads",
+    "drafts": "Drafts",
+    "active": "Active",
+    "pending": "Pending"
   },
 
   "post": {
