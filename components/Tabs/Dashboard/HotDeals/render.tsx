@@ -1,25 +1,26 @@
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import React from 'react';
+import { Feather } from '@expo/vector-icons';
 
 const Render = ({ item }: any) => {
   return (
-    <View className="m-2 w-[300px] flex-1 rounded-lg bg-white shadow-md">
-      <View className="flex-row items-center justify-between p-2">
-        <Text className="text-lg font-bold">{item?.title}</Text>
-        <Text className="text-sm text-gray-500">{item?.price}</Text>
+    <TouchableOpacity className="mr-4 w-72 overflow-hidden rounded-2xl border-[0.4px] border-gray-300 bg-white p-0 shadow-sm shadow-slate-50">
+      <Image source={{ uri: item?.file?.[0] }} className="h-44 w-full" resizeMode="cover" />
+      <View className="p-4">
+        <Text className="mb-1 text-lg font-semibold text-gray-900">{item?.title}</Text>
+        <View className="mb-2 flex-row items-center space-x-2">
+          <Text className="text-lg font-bold text-red-500">${Number(item?.price) - 10}</Text>
+          <Text className="text-base text-gray-400 line-through">${item?.price || 0}</Text>
+          <View className="rounded-md bg-red-100 px-2 py-0.5">
+            <Text className="text-xs font-semibold text-red-500">- 12%</Text>
+          </View>
+        </View>
+        <View className="flex-row items-center">
+          <Feather name="clock" size={16} color="#6b7280" />
+          <Text className="ml-1 text-sm text-gray-500">Ends in 2d</Text>
+        </View>
       </View>
-      <View className="flex-row items-center justify-between p-2">
-        <Image
-          source={{ uri: item?.category?.logo }}
-          className="h-8 w-8 rounded-full"
-          resizeMode="cover"
-        />
-        <Text className="text-sm text-gray-500">{item?.location}</Text>
-      </View>
-      <View className="p-2">
-        <Text className="text-sm text-gray-500">{item?.description}</Text>
-      </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

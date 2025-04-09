@@ -10,6 +10,12 @@ const Category = ({ data }: any) => {
       data={data}
       keyExtractor={(item) => item?.uuid?.toString()}
       renderItem={Render}
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        marginBottom: 10,
+      }}
     />
   );
 };

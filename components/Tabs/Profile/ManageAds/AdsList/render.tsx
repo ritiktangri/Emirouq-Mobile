@@ -66,8 +66,15 @@ const Render = ({ item }: any) => {
       <View className="mt-4 flex-row justify-end">
         <TouchableOpacity
           onPress={() => {
-            // router.push(routes.tabs.post as Href);
-            // router.setParams({ data: item });
+            console.log('item', item);
+            // router.push({
+            //   pathname: routes.tabs.post as Href,
+            //   params: {
+            //     data: JSON.stringify(item),
+            //   },
+            // });
+            router.push(routes.tabs.post as Href);
+            router.setParams({ data: JSON.stringify(item) });
           }}
           className="mr-2 rounded-lg border border-primary px-4 py-2">
           <Text className="text-primary">{i18n.t('profile.edit')}</Text>

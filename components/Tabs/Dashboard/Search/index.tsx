@@ -11,11 +11,11 @@ const Search = () => {
   const { locale } = useLocale();
 
   return (
-    <View direction={locale} className=" w-full ">
+    <View direction={locale} className="w-full">
       <DefaultTextInput
         prefix={<Ionicons name="search" size={20} color="#000" />}
         placeholder={i18n.t('home.searchPlaceHolder')}
-        containerClassName="bg-search_bg rounded-lg p-4 w-full"
+        containerClassName="bg-search_bg rounded-lg p-3 w-full"
         textAlign={locale === 'ar' ? 'right' : 'left'}
         placeholderTextColor={theme.colors.gray}
         className=" w-full px-4 text-lg"

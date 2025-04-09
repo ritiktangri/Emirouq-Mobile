@@ -4,20 +4,26 @@ import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as ImagePicker from 'expo-image-picker';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Feather } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CustomDropdown from '~/components/UI/CustomDropdown';
 import SelectPicker from '~/components/UI/SelectPicker';
 import { useCategory } from '~/context/CategoryContext';
 import { useAuth } from '~/context/AuthContext';
-import { useFocusEffect, useRouter } from 'expo-router';
+import {
+  useFocusEffect,
+  useGlobalSearchParams,
+  useLocalSearchParams,
+  useRouter,
+} from 'expo-router';
 import { routes } from '~/utils/routes';
 import { useTheme } from '~/context/ThemeContext';
 import { View } from '~/components/common/View';
 import { Text } from '~/components/common/Text';
 import { useLocale } from '~/context/LocaleContext';
 import { i18n } from '~/utils/i18n';
+import { useRoute } from '@react-navigation/native';
 
 const schema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -129,6 +135,16 @@ const AddPost = () => {
   const { showToast }: any = useTheme();
   const selectedCategory = watch('category');
   const selectedSubCategory = watch('subCategory');
+  const [isEdit, setIsEdit] = useState(false);
+  const { data } = useGlobalSearchParams();
+
+  // console.log('Received data:', data);
+  // useEffect(() => {
+  //   if (data?.uuid) {
+  //     setIsEdit(true);
+  //     setValue('condition', data?.condition);
+  //   }
+  // }, [data?.uuid]);
 
   useFocusEffect(
     React.useCallback(() => {

@@ -3,17 +3,15 @@ import React from 'react';
 
 const Render = ({ item }: any) => {
   return (
-    <View className="m-2 flex-1 rounded-lg bg-white shadow-md">
-      <View className="flex-1">
-        <Text className="text-center text-lg font-bold text-black">{item?.title}</Text>
-      </View>
-      <View className="flex-1">
+    <View className="items-center justify-center gap-y-2">
+      <View className="h-16 w-16 items-center justify-center rounded-full bg-blue-50">
         <Image
           source={{ uri: item?.logo }}
-          className="h-full w-full rounded-t-lg"
-          resizeMode="cover"
+          style={{ width: 28, height: 28, borderRadius: '50%' }}
+          resizeMode="contain"
         />
       </View>
+      <Text className="text-sm font-normal text-gray-700">{item?.title}</Text>
     </View>
   );
 };
