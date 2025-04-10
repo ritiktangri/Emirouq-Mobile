@@ -11,6 +11,7 @@ import { useGetCategory } from '~/hooks/category/query';
 import { useGetPosts } from '~/hooks/post/query';
 import theme from '~/utils/theme';
 import { queryClient } from '~/app/_layout';
+import FeaturedListLoading from './Featured/loading';
 
 const Dashboard = () => {
   const {
@@ -46,12 +47,12 @@ const Dashboard = () => {
         <Category data={category?.pages.map((page: any) => page?.data).flat() || []} />
       ),
       featuredPostLoading ? (
-        <></>
+        <FeaturedListLoading />
       ) : (
         <Featured data={featurePost?.pages.map((page: any) => page?.data).flat() || []} />
       ),
       hotDealPostLoading ? (
-        <></>
+        <FeaturedListLoading />
       ) : (
         <HotDeals data={hotDealPost?.pages.map((page: any) => page?.data).flat() || []} />
       ),

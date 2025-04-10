@@ -8,7 +8,15 @@
     "profile": "مظهر جانبي"
   },
   "home": {
-    "searchPlaceHolder": "ابحث عن المنتجات أو الفئات"
+    "searchPlaceHolder": "ابحث عن المنتجات أو الفئات",
+    "featured_listings":"القوائم المميزة",
+    "see_all":"رؤية الكل",
+    "hot_deals":"العروض الساخنة",
+    "view_more":"عرض المزيد",
+    "unlock_full_features":"فتح الميزات الكاملة",
+    "unlock_card_description":"أكمل ملفك الشخصي للوصول إلى جميع ميزات السوق",
+    "create_profile":"إنشاء الملف الشخصي",
+    "view_plans":"عرض الخطط"
   },
   "profile": {
     "language": "لغة",

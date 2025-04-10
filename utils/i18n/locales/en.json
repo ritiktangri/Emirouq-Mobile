@@ -8,7 +8,16 @@
     "profile": "Profile"
   },
   "home": {
-    "searchPlaceHolder": "Search products or categories"
+    "searchPlaceHolder": "Search products or categories",
+    "featured_listings":"Featured Listings",
+    "see_all":"See All",
+    "hot_deals":"Hot Deals",
+    "view_more":"View More",
+    "unlock_full_features":"Unlock Full Features",
+    "unlock_card_description":"Complete your profile to access all marketplace features",
+    "create_profile":"Create Profile",
+    "view_plans":"View Plans"
+
   },
   "profile": {
     "language": "Language",
