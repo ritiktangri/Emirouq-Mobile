@@ -33,7 +33,6 @@ import {
   removeStorageItemAsync,
   setStorageItemAsync,
 } from '~/hooks/useStorageState';
-import { createAccountService, updateAccountService } from '~/utils/services/account';
 import { io } from 'socket.io-client';
 
 const storageTokenKeyName = 'accessToken';
@@ -338,74 +337,6 @@ const AuthProvider = ({ children }: any) => {
     getUnSeenCount();
   }, []);
 
-  const addAccount = async (payload: any, cb: any, errCb: any) => {
-    createAccountService({
-      body: payload,
-    })
-      .then((res: any) => {
-        const allAccountsList = {
-          ...user,
-          accounts: [
-            ...user.accounts,
-            {
-              accountName: res?.account?.accountName,
-              uuid: res?.account?.uuid,
-              calculationMethod: res?.account?.calculationMethod,
-              status: res?.account?.status,
-            },
-          ],
-        };
-
-        setUser(allAccountsList);
-        const updatedActiveAccount = {
-          activeAccountIds: [...(activeAccount.activeAccountIds || []), res?.account?.uuid],
-          accounts: allAccountsList?.accounts || [],
-        };
-        setActiveAccount(updatedActiveAccount);
-        cb && cb();
-      })
-      .catch((err) => {
-        errCb && errCb(err);
-      })
-      .finally(() => {});
-  };
-  const updateAccount = (payload: any, cb: any, errCb: any) => {
-    updateAccountService({
-      body: payload,
-      pathParams: {
-        id: payload?.uuid,
-      },
-    })
-      .then(() => {
-        const updateAccount = {
-          accounts: user?.accounts?.map((i: any) => {
-            if (i?.uuid === payload?.uuid) {
-              return {
-                ...i,
-                accountName: payload.accountName,
-                calculationMethod: payload.calculationMethod,
-              };
-            }
-            return i;
-          }),
-        };
-        setUser({
-          ...user,
-          accounts: updateAccount.accounts,
-        });
-        const updatedActiveAccount = {
-          ...activeAccount,
-          accounts: updateAccount?.accounts,
-        };
-        setActiveAccount(updatedActiveAccount);
-        cb && cb();
-      })
-      .catch((err) => {
-        errCb && errCb(err);
-      })
-      .finally(() => {});
-  };
-
   //check subscription
   const checkSubscription = useCallback(
     (cb: any, errCb: any) => {
@@ -498,8 +429,6 @@ const AuthProvider = ({ children }: any) => {
     setUnseenCount,
     unSeenCount,
     getUnSeenCount,
-    updateAccount,
-    addAccount,
     //subscription
     isOpen,
     setIsOpen,
