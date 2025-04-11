@@ -47,7 +47,7 @@ export default function Page() {
                   <Ionicons name="checkmark-circle" size={20} color="#F97316" />
                   <Text className="ml-2 text-base text-gray-700">
                     <Text className="font-semibold text-primary">
-                      {item?.numberOfAds > 10 ? 'Unlimited' : item?.numberOfAds}{' '}
+                      {item?.numberOfAds > 1000 ? 'Unlimited' : item?.numberOfAds}{' '}
                     </Text>
                     ads{' '}
                     {item?.name !== 'Business' ? (
