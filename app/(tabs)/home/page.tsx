@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import { useColorScheme, View } from 'react-native';
+import { View } from 'react-native';
 import Dashboard from '~/components/Tabs/Dashboard';
 import { cn } from '~/utils/helper';
 

@@ -1,7 +1,7 @@
 // Import necessary types and utilities
 
 import { callApi } from '../callApis/apiUtils';
-import { stripe } from '../endpoints';
+import stripe from '../endpoints/stripe';
 import { ApiEndpoint } from '../types';
 
 export const trialPeriodCheckout = async () => {
@@ -63,5 +63,12 @@ export const linkPaymentMethod = async (paymentMethodId: string) => {
     body: {
       paymentMethodId,
     },
+  });
+};
+
+export const getPlansService = async () => {
+  // Ensure uriEndPoint conforms to the expected UriEndPoint interface/type
+  return callApi({
+    uriEndPoint: { ...stripe.getPlans.v1 } as ApiEndpoint,
   });
 };

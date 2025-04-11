@@ -19,6 +19,9 @@ const defaults = {
     v1: {
       version: '/api',
     },
+    v2: {
+      version: '/admin/api',
+    },
     weatherV25: {
       version: '/data/2.5',
     },

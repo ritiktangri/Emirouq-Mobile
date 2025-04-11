@@ -66,6 +66,13 @@ const stripe = {
       uri: prefix + '/payment-method',
     },
   },
+  getPlans: {
+    v1: {
+      ...defaults.methods.GET,
+      ...defaults.versions.v2,
+      uri: prefix + '/plan-list',
+    },
+  },
 };
 
 export default stripe;

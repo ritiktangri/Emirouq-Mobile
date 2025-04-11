@@ -12,10 +12,15 @@ function millisToTime(millis: any) {
   const seconds: any = ((millis % 60000) / 1000).toFixed(0);
   return (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 }
-function toCurrency(number: number | string, disableDecimal = false, decimalPlaces = 2) {
+function toCurrency(
+  number: number | string,
+  disableDecimal = false,
+  decimalPlaces = 2,
+  currency = 'AED'
+) {
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'USD',
+    currency,
     minimumFractionDigits: disableDecimal ? 0 : decimalPlaces,
     maximumFractionDigits: disableDecimal ? 0 : decimalPlaces,
   });
