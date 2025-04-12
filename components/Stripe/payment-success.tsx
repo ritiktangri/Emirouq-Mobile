@@ -5,11 +5,24 @@ import { useCheckSubscription } from '~/hooks/stripe/query';
 import { Href, router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { routes } from '~/utils/routes';
-
 const PaymentSuccess = () => {
   const { id } = useLocalSearchParams();
-  const { data } = useCheckSubscription(id, 100);
-  console.log(data, 'data', id);
+  const { data, isLoading }: any = useCheckSubscription(id, 100);
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <Text className="text-lg font-semibold text-gray-900">Loading...</Text>
+      </View>
+    );
+  }
+  if (data?.status !== 'active') {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <Text className="text-lg font-semibold text-gray-900">Error</Text>
+      </View>
+    );
+  }
   return (
     <View className="flex-1 bg-white p-6">
       {/* Success Icon */}
