@@ -2,6 +2,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { FlatList, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import CheckoutScreen from '~/components/Stripe/checkout';
 import { useGetPlans } from '~/hooks/stripe/query';
 import { cn, toCurrency } from '~/utils/helper';
 
@@ -76,14 +77,7 @@ export default function Page() {
                 </View>
               </View>
 
-              <TouchableOpacity
-                className="mt-4 rounded-lg border-2 border-primary bg-white py-3"
-                activeOpacity={0.7}
-                onPress={() =>
-                  console.log('Selected Plan:', isMonthly ? 'Monthly Basic' : 'Yearly Basic')
-                }>
-                <Text className="text-center text-lg font-semibold text-primary">Select Plan</Text>
-              </TouchableOpacity>
+              <CheckoutScreen id={item?.uuid} />
             </View>
           )}
         />

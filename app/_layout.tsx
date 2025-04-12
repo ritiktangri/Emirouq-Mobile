@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import '../global.css';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Slot } from 'expo-router';
-import { I18nManager, LogBox, StatusBar } from 'react-native';
+import { LogBox, StatusBar } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider as CustomThemeProvider } from '~/context/ThemeContext';
@@ -20,6 +20,8 @@ import { LocaleProvider } from '~/context/LocaleContext';
 import SocketEventScreen from '~/components/SocketEventScreen';
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { StripeProvider } from '@stripe/stripe-react-native';
+
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: 'index',
@@ -102,30 +104,32 @@ function InitialLayout() {
 
 export default function RootLayoutNav() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
-      {/* portalize is a library that allows you to render a component in a different part of the tree, */}
-      {/* host is a component that allows you to render a component in a different part of the tree. */}
-      <Host>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider value={DarkTheme}>
-            <CustomThemeProvider>
-              <ActionSheetProvider>
-                <SafeAreaProvider>
-                  <AuthProvider>
-                    <LocaleProvider>
-                      <PaperProvider>
-                        <SocketEventScreen />
-                        <InitialLayout />
-                      </PaperProvider>
-                    </LocaleProvider>
-                  </AuthProvider>
-                </SafeAreaProvider>
-              </ActionSheetProvider>
-            </CustomThemeProvider>
-          </ThemeProvider>
-        </QueryClientProvider>
-      </Host>
-    </GestureHandlerRootView>
+    <StripeProvider publishableKey="pk_test_51RCXW12eQ2oCOo2662257iWYlAxXnJRsOhf2SkadbyB69x07L9TwyiSVsq4KomNvBQHuqBMPULMatDVxHU5iSdPF00UVgHa8BQ">
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+        {/* portalize is a library that allows you to render a component in a different part of the tree, */}
+        {/* host is a component that allows you to render a component in a different part of the tree. */}
+        <Host>
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider value={DarkTheme}>
+              <CustomThemeProvider>
+                <ActionSheetProvider>
+                  <SafeAreaProvider>
+                    <AuthProvider>
+                      <LocaleProvider>
+                        <PaperProvider>
+                          <SocketEventScreen />
+                          <InitialLayout />
+                        </PaperProvider>
+                      </LocaleProvider>
+                    </AuthProvider>
+                  </SafeAreaProvider>
+                </ActionSheetProvider>
+              </CustomThemeProvider>
+            </ThemeProvider>
+          </QueryClientProvider>
+        </Host>
+      </GestureHandlerRootView>
+    </StripeProvider>
   );
 }

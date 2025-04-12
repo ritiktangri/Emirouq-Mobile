@@ -72,3 +72,11 @@ export const getPlansService = async () => {
     uriEndPoint: { ...stripe.getPlans.v1 } as ApiEndpoint,
   });
 };
+
+export const fetchPaymentSheetService = async (planId: any) => {
+  // Ensure uriEndPoint conforms to the expected UriEndPoint interface/type
+  return callApi({
+    uriEndPoint: { ...stripe.fetchPaymentSheet.v1 } as ApiEndpoint,
+    pathParams: { planId },
+  });
+};

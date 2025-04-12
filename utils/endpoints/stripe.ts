@@ -73,6 +73,13 @@ const stripe = {
       uri: prefix + '/plan-list',
     },
   },
+  fetchPaymentSheet: {
+    v1: {
+      ...defaults.methods.GET,
+      ...defaults.versions.v1,
+      uri: prefix + '/payment-sheet/:planId',
+    },
+  },
 };
 
 export default stripe;
