@@ -77,7 +77,7 @@ export default function Page() {
                 </View>
               </View>
 
-              <CheckoutScreen id={item?.uuid} />
+              <CheckoutScreen id={item?.uuid} item={item} />
             </View>
           )}
         />

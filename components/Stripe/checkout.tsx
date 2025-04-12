@@ -1,60 +1,62 @@
 /* eslint-disable import/order */
 import { useStripe } from '@stripe/stripe-react-native';
-import { useEffect, useState } from 'react';
+import React from 'react';
 import { ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
 import { Text } from '../common/Text';
-import { useFetchPaymentSheet } from '~/hooks/stripe/query';
-import { queryClient } from '~/app/_layout';
+import { useCreateSubscription } from '~/hooks/stripe/mutation';
 
-export default function CheckoutScreen({ id }: any) {
+export default function CheckoutScreen({ id, item }: any) {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
-  const [planId, setPlanId] = useState(null as any);
-  const { data, isLoading, isFetching }: any = useFetchPaymentSheet(planId);
 
-  const clear = () => {
-    //clear the query cache
-    queryClient.removeQueries({ queryKey: ['fetch-payment', planId] });
-    setPlanId(null);
-    console.log('canceled');
-  };
+  const createSubscription = useCreateSubscription();
+
   const openPaymentSheet = async () => {
     const { error } = await presentPaymentSheet();
     if (error?.code === 'Canceled') {
-      clear();
       return;
     }
     Alert.alert('Success', 'Your order is confirmed!');
-    clear();
   };
-  const initializePaymentSheet = async () => {
-    const { paymentIntent, customer } = data;
+  const initializePaymentSheet = async (clientSecret: any) => {
     const { error } = await initPaymentSheet({
       merchantDisplayName: 'Emirouq',
-      customerId: customer,
-      paymentIntentClientSecret: paymentIntent,
-      // Set `allowsDelayedPaymentMethods` to true if your business can handle payment
-      //methods that complete payment after a delay, like SEPA Debit and Sofort.
+      paymentIntentClientSecret: clientSecret,
+      returnURL: 'emirouq-mobile://payment-sheet',
       allowsDelayedPaymentMethods: true,
-      returnURL: 'emirouq-mobile://stripe-redirect',
     });
-    if (!error) {
-      console.log('Payment sheet initialized successfully');
-      openPaymentSheet();
+    if (error) {
+      return console.log('Error initializing payment sheet:', error);
     }
+    console.log('Payment sheet initialized successfully');
+    openPaymentSheet();
   };
 
-  useEffect(() => {
-    if (planId && data?.paymentIntent && !isFetching) initializePaymentSheet();
-  }, [planId, data?.data, isFetching]);
-
+  const handlePayment = async (priceId: any) => {
+    createSubscription
+      .mutateAsync({
+        body: {
+          priceId,
+        },
+      })
+      .then(async (res: any) => {
+        initializePaymentSheet(res?.clientSecret);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   return (
     <TouchableOpacity
       className="gap-32rounded-lg mt-4 flex-row items-center justify-center border-2 border-primary bg-white py-3"
       activeOpacity={0.7}
       onPress={() => {
-        setPlanId(id);
+        handlePayment(item?.priceId);
       }}>
-      {isLoading ? <ActivityIndicator size="small" className="!text-primary" /> : <></>}
+      {createSubscription?.isPending ? (
+        <ActivityIndicator size="small" className="!text-primary" />
+      ) : (
+        <></>
+      )}
       <Text className=" text-lg font-semibold text-primary">Select Plan</Text>
     </TouchableOpacity>
   );

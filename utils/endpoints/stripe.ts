@@ -80,6 +80,13 @@ const stripe = {
       uri: prefix + '/payment-sheet/:planId',
     },
   },
+  createSubscription: {
+    v1: {
+      ...defaults.methods.POST,
+      ...defaults.versions.v1,
+      uri: prefix + '/subscription',
+    },
+  },
 };
 
 export default stripe;
