@@ -87,6 +87,13 @@ const stripe = {
       uri: prefix + '/subscription',
     },
   },
+  checkSubscription: {
+    v1: {
+      ...defaults.methods.GET,
+      ...defaults.versions.v1,
+      uri: prefix + '/check-subscription/:id',
+    },
+  },
 };
 
 export default stripe;

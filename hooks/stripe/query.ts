@@ -1,6 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchPaymentSheetService, getPlansService } from '~/utils/services/stripe';
+import {
+  checkSubscription,
+  fetchPaymentSheetService,
+  getPlansService,
+} from '~/utils/services/stripe';
 
 export const useGetPlans = () =>
   useQuery({
@@ -15,4 +19,18 @@ export const useFetchPaymentSheet = (id: any) =>
     queryFn: () => fetchPaymentSheetService(id),
     refetchOnWindowFocus: false,
     enabled: !!id,
+  });
+
+export const useCheckSubscription = (id: any, refetchInterval: any) =>
+  useQuery({
+    queryKey: ['check-subscription', id],
+    queryFn: () => checkSubscription(id),
+    refetchOnWindowFocus: false,
+    enabled: !!id,
+    refetchInterval: (data: any) => {
+      if (data?.state?.data?.status === 'active') {
+        return 0;
+      }
+      return refetchInterval;
+    },
   });

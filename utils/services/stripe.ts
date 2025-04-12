@@ -80,6 +80,15 @@ export const fetchPaymentSheetService = async (planId: any) => {
     pathParams: { planId },
   });
 };
+export const checkSubscription = async (id: any) => {
+  // Ensure uriEndPoint conforms to the expected UriEndPoint interface/type
+  return callApi({
+    uriEndPoint: { ...stripe.checkSubscription.v1 } as ApiEndpoint,
+    pathParams: {
+      id,
+    },
+  });
+};
 export const createSubscription = async ({ body }: any) => {
   // Ensure uriEndPoint conforms to the expected UriEndPoint interface/type
   return callApi({

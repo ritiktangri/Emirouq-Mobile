@@ -1,23 +1,26 @@
 /* eslint-disable import/order */
 import { useStripe } from '@stripe/stripe-react-native';
 import React from 'react';
-import { ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Text } from '../common/Text';
 import { useCreateSubscription } from '~/hooks/stripe/mutation';
+import { Href, router } from 'expo-router';
+import { routes } from '~/utils/routes';
 
 export default function CheckoutScreen({ id, item }: any) {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
-
   const createSubscription = useCreateSubscription();
 
-  const openPaymentSheet = async () => {
+  const openPaymentSheet = async (subscriptionId: any) => {
     const { error } = await presentPaymentSheet();
     if (error?.code === 'Canceled') {
       return;
     }
-    Alert.alert('Success', 'Your order is confirmed!');
+    // setSubscriptionId(subscriptionId);
+    console.log('Payment sheet closed');
+    router.replace(routes.paymentSuccess(subscriptionId) as Href);
   };
-  const initializePaymentSheet = async (clientSecret: any) => {
+  const initializePaymentSheet = async (clientSecret: any, subscriptionId: any) => {
     const { error } = await initPaymentSheet({
       merchantDisplayName: 'Emirouq',
       paymentIntentClientSecret: clientSecret,
@@ -28,7 +31,7 @@ export default function CheckoutScreen({ id, item }: any) {
       return console.log('Error initializing payment sheet:', error);
     }
     console.log('Payment sheet initialized successfully');
-    openPaymentSheet();
+    openPaymentSheet(subscriptionId);
   };
 
   const handlePayment = async (priceId: any) => {
@@ -39,7 +42,7 @@ export default function CheckoutScreen({ id, item }: any) {
         },
       })
       .then(async (res: any) => {
-        initializePaymentSheet(res?.clientSecret);
+        initializePaymentSheet(res?.clientSecret, res?.subscriptionId);
       })
       .catch((err) => {
         console.log(err);

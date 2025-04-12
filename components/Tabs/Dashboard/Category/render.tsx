@@ -7,7 +7,7 @@ const Render = ({ item }: any) => {
       <View className="h-16 w-16 items-center justify-center rounded-full bg-blue-50">
         <Image
           source={{ uri: item?.logo }}
-          style={{ width: 28, height: 28, borderRadius: '50%' }}
+          style={{ width: 28, height: 28, borderRadius: 14 }}
           resizeMode="contain"
         />
       </View>
