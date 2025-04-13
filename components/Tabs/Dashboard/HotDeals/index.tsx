@@ -17,7 +17,7 @@ const HotDeals = ({ data }: any) => {
         horizontal
         data={data}
         keyExtractor={(item) => item?.uuid?.toString()}
-        renderItem={Render}
+        renderItem={({ item }) => <Render item={item} />}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: 10,

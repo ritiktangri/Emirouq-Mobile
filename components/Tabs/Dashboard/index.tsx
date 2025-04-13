@@ -20,11 +20,13 @@ const Dashboard = () => {
     refetch: categoryRefetch,
   }: any = useGetCategory();
   const {
+    isFetching: featuredPostFetching,
     loading: featuredPostLoading,
     data: featurePost,
     refetch: featurePostRefetch,
   }: any = useGetPosts('');
   const {
+    isFetching: hotDealPostFetching,
     loading: hotDealPostLoading,
     data: hotDealPost,
     refetch: hotDealRefetch,
@@ -46,12 +48,12 @@ const Dashboard = () => {
       ) : (
         <Category data={category?.pages.map((page: any) => page?.data).flat() || []} />
       ),
-      featuredPostLoading ? (
+      featuredPostLoading || featuredPostFetching ? (
         <FeaturedListLoading />
       ) : (
         <Featured data={featurePost?.pages.map((page: any) => page?.data).flat() || []} />
       ),
-      hotDealPostLoading ? (
+      hotDealPostLoading || hotDealPostFetching ? (
         <FeaturedListLoading />
       ) : (
         <HotDeals data={hotDealPost?.pages.map((page: any) => page?.data).flat() || []} />
@@ -65,6 +67,8 @@ const Dashboard = () => {
       featuredPostLoading,
       hotDealPost?.pages,
       hotDealPostLoading,
+      hotDealPostFetching,
+      featuredPostFetching,
     ]
   );
   return (

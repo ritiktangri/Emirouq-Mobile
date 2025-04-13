@@ -20,6 +20,8 @@ import { LocaleProvider } from '~/context/LocaleContext';
 import SocketEventScreen from '~/components/SocketEventScreen';
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { ClerkProvider } from '@clerk/clerk-expo';
+
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: 'index',
@@ -100,6 +102,10 @@ function InitialLayout() {
   return <Slot />;
 }
 
+const clerkPublishableKey = 'pk_test_Y29uY3JldGUtZmluY2gtMTIuY2xlcmsuYWNjb3VudHMuZGV2JA';
+if (!clerkPublishableKey) {
+  throw new Error('Missing publishable key');
+}
 export default function RootLayoutNav() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -112,14 +118,16 @@ export default function RootLayoutNav() {
             <CustomThemeProvider>
               <ActionSheetProvider>
                 <SafeAreaProvider>
-                  <AuthProvider>
-                    <LocaleProvider>
-                      <PaperProvider>
-                        <SocketEventScreen />
-                        <InitialLayout />
-                      </PaperProvider>
-                    </LocaleProvider>
-                  </AuthProvider>
+                  <ClerkProvider publishableKey={clerkPublishableKey}>
+                    <AuthProvider>
+                      <LocaleProvider>
+                        <PaperProvider>
+                          <SocketEventScreen />
+                          <InitialLayout />
+                        </PaperProvider>
+                      </LocaleProvider>
+                    </AuthProvider>
+                  </ClerkProvider>
                 </SafeAreaProvider>
               </ActionSheetProvider>
             </CustomThemeProvider>
