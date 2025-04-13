@@ -1,7 +1,6 @@
 /* eslint-disable import/order */
 import {
   TouchableOpacity,
-  Switch,
   ScrollView,
   TouchableWithoutFeedback,
   Keyboard,
@@ -22,6 +21,7 @@ import { View } from '~/components/common/View';
 
 const UserProfile = () => {
   const { user } = useAuth();
+
   const { locale } = useLocale();
   const router = useRouter();
   const [profileImage, setProfileImage] = useState<any>({

@@ -27,20 +27,20 @@ const Signup = ({ checkinType }: any) => {
   const scrollViewRef = useRef<ScrollView>(null);
 
   const handleSubmit = () => {
-    const body: any = {
-      firstName: form.firstName,
-      lastName: form.lastName,
-      password: form.password,
-      confirmPassword: form.confirmPassword,
-    };
-    if (checkinType === 'email') {
-      body.email = form.email;
-    } else {
-      body.phoneNumber = form.phoneNumber;
-    }
+    const formData: any = new FormData();
+    formData.append('firstName', form.firstName);
+    formData.append('lastName', form.lastName);
+    formData.append('password', form.password);
+    formData.append('confirmPassword', form.confirmPassword);
 
+    if (checkinType === 'email') {
+      formData.append('email', form.email);
+    } else {
+      formData.append('phoneNumber', form.phoneNumber);
+    }
+    console.log('formData', formData);
     signUp(
-      { body },
+      { body: formData },
       () => {
         if (checkinType === 'email') {
           router.setParams({ email: form.email });

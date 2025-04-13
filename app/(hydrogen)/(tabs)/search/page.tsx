@@ -1,7 +1,7 @@
 /* eslint-disable import/order */
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { FlatList, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, SafeAreaView, Text, View } from 'react-native';
 import CheckoutScreen from '~/components/Stripe/checkout';
 import { useGetPlans } from '~/hooks/stripe/query';
 import { cn, toCurrency } from '~/utils/helper';
@@ -9,6 +9,7 @@ import { cn, toCurrency } from '~/utils/helper';
 export default function Page() {
   const [isMonthly, setIsMonthly] = useState(true);
   const { data, isLoading }: any = useGetPlans();
+
   return (
     <View className={cn('flex-1 bg-default_light_bg p-3 dark:bg-black')}>
       <SafeAreaView className="flex-1 bg-gray-50">
@@ -23,7 +24,9 @@ export default function Page() {
         <FlatList
           data={data?.data}
           className="w-full"
+          showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.uuid}
+          ItemSeparatorComponent={() => <View className="my-2" />}
           renderItem={({ item }) => (
             <View className="w-full rounded-2xl border border-gray-200 bg-white p-6">
               <View className="mb-6 flex-row items-start justify-between">

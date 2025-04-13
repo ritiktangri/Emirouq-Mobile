@@ -148,7 +148,11 @@ const AddPost = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      if (user?._id && !user?.userHandle) {
+      if (!user?.uuid) {
+        router.push({
+          pathname: routes.auth.auth,
+        });
+      } else if (user?._id && !user?.userHandle) {
         router.push({
           pathname: routes.tabs.create_profile,
           params: {

@@ -17,6 +17,9 @@ import { useLocale } from '~/context/LocaleContext';
 import { Text } from '~/components/common/Text';
 import { View } from '~/components/common/View';
 import DefaultTextInput from '~/components/common/DefaultTextInput';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Header from '~/components/Chat/ChatScreen/header';
+import { useRouter } from 'expo-router';
 
 const profileSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
@@ -36,6 +39,8 @@ const SetupProfile = () => {
   const { locale } = useLocale();
   const { categories }: any = useCategory();
   const { showToast }: any = useTheme();
+  const router = useRouter();
+
   const {
     control,
     handleSubmit,
@@ -129,7 +134,7 @@ const SetupProfile = () => {
           }),
         },
       },
-      () => {
+      (res: any) => {
         showToast('Profile Updated!', 'success');
       },
       (err: any) => {
@@ -148,7 +153,17 @@ const SetupProfile = () => {
     setValue('interests', newInterests, { shouldValidate: true });
   };
   return (
-    <View className="flex-1 bg-white px-4 py-6">
+    <SafeAreaView className="flex-1 bg-white px-4 py-6">
+      <View className="">
+        <Ionicons
+          name="arrow-back"
+          size={24}
+          color="black"
+          onPress={() => {
+            router.back();
+          }}
+        />
+      </View>
       <KeyboardAwareScrollView showsVerticalScrollIndicator={false} className="flex flex-col gap-3">
         <Text className="mb-2 text-center text-2xl font-semibold text-gray-800">
           {i18n.t('createProfile.welcome')}
@@ -413,7 +428,7 @@ const SetupProfile = () => {
           {i18n.t('createProfile.btnText')}
         </Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
