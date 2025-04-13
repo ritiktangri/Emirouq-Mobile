@@ -27,7 +27,7 @@ export const routes = {
     profile: {
       'select-language': '/(hydrogen)/(tabs)/profile/select-language',
     },
-    create_profile: '/(hydrogen)/(tabs)/profile/create-profile',
+    create_profile: '/(hydrogen)/create-profile',
     post: '/(hydrogen)/(tabs)/post',
     singlePost: (id: string) => `/singlePost/${id}`,
     chatScreen: (id: string) => `/chat-screen/${id}`,

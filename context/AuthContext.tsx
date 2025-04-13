@@ -292,14 +292,7 @@ const AuthProvider = ({ children }: any) => {
       .then((res: any) => {
         setUser({
           ...user,
-          firstName: res?.data?.firstName,
-          lastName: res?.data?.lastName,
-          email: res?.data?.email,
-          userHandle: res?.data?.userHandle,
-          profileImage: res?.data?.profileImage,
-          bio: res?.data?.bio,
-          phoneNumber: res?.data?.phoneNumber,
-          location: res?.data?.location,
+          ...res?.data,
         });
         // toast.success('Updated successfully');
         cb && cb();

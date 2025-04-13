@@ -9,11 +9,13 @@ import { RefreshControl } from 'react-native-gesture-handler';
 import theme from '~/utils/theme';
 import { queryClient } from '~/app/_layout';
 import Loading from './loading';
+import { useAuth } from '~/context/AuthContext';
 
 const AdsList = () => {
   const { status } = usePosts();
+  const { user }: any = useAuth();
   const { isLoading, data, hasNextPage, fetchNextPage, isFetchingNextPage, refetch }: any =
-    useGetPosts('', status);
+    useGetPosts('', status, user?.uuid);
   const handleRefresh = useCallback(() => {
     queryClient.removeQueries({ queryKey: ['posts', '', status] });
     refetch();

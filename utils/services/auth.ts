@@ -33,6 +33,7 @@ export async function register({ body }: SignUpInterface) {
   return callApi({
     uriEndPoint: { ...auth.register.v1 } as ApiEndpoint,
     body,
+    multipart:true
   });
 }
 export async function verifyToken({ pathParams }: VerifyInterface) {

@@ -14,8 +14,7 @@ import { useTheme } from '~/context/ThemeContext';
 
 const VerifyOtp = () => {
   const { email, phone } = useLocalSearchParams();
-
-  const { isDarkTheme } = useTheme();
+  const { isDarkTheme, showToast } = useTheme();
   const [codes, setCodes] = useState(['', '', '', ''] as any);
   const { verify, forgotPassword, verifyOtpLoading } = useAuth();
   const router = useRouter();
@@ -55,7 +54,7 @@ const VerifyOtp = () => {
         },
       },
       (payload: any) => {
-        //  toast.success('Otp has been verified successfully');
+        showToast('Verified Successfully!', 'success');
         router.push(routes?.auth?.auth as Href);
         if (email) {
           router.setParams({ email });
