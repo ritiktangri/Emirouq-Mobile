@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   ImageBackground,
@@ -11,6 +11,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   useColorScheme,
+  Button,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '~/components/common/Text';
@@ -19,11 +20,21 @@ import { light_logo, login_background, logo } from '~/image';
 import { useTheme } from '~/context/ThemeContext';
 import Signup from './sign-up';
 import Login from './login';
-// import {
-//   GoogleOneTapSignIn,
-//   statusCodes,
-//   type OneTapUser,
-// } from '@react-native-google-signin/google-signin';
+import * as WebBrowser from 'expo-web-browser';
+import { useAuth, useSSO, useUser } from '@clerk/clerk-expo';
+import * as AuthSession from 'expo-auth-session';
+
+export const useWarmUpBrowser = () => {
+  useEffect(() => {
+    void WebBrowser.warmUpAsync();
+    return () => {
+      void WebBrowser.coolDownAsync();
+    };
+  }, []);
+};
+
+// Handle any pending authentication sessions
+WebBrowser.maybeCompleteAuthSession();
 
 const LoginComponent = () => {
   const [checkinType, setCheckinType] = useState('email');
@@ -35,9 +46,38 @@ const LoginComponent = () => {
     email: 'gurpreet@gmail.com',
     password: '123456',
   });
-  // GoogleOneTapSignIn.configure({
-  //   webClientId: 'autoDetect',
-  // });
+
+  const { startSSOFlow } = useSSO();
+  const { isLoaded, isSignedIn, user } = useUser();
+  const { signOut } = useAuth();
+
+  console.log('user', user?.primaryEmailAddress?.emailAddress, user?.fullName);
+
+  async function onGoogleSignIn() {
+    try {
+      // setIsLoading(true)
+
+      const { createdSessionId, setActive, signIn, signUp } = await startSSOFlow({
+        strategy: 'oauth_google',
+        // Defaults to current path
+        redirectUrl: AuthSession.makeRedirectUri(),
+      });
+
+      // If sign in was successful, set the active session
+      if (createdSessionId) {
+        console.log('createdSessionId', createdSessionId);
+        setActive!({ session: createdSessionId });
+      } else {
+        // If there is no `createdSessionId`,
+        // there are missing requirements, such as MFA
+        // Use the `signIn` or `signUp` returned from `startSSOFlow`
+        // to handle next steps
+        // setIsLoading(false)
+      }
+    } catch (error) {
+      console.log('ERRO NA ENTRADA: ', JSON.stringify(error, null, 2));
+    }
+  }
 
   const scrollViewRef = useRef<ScrollView>(null);
   return (
@@ -90,6 +130,18 @@ const LoginComponent = () => {
                       </Text>
                     </TouchableOpacity>
                   </View>
+                  <Button
+                    // icon="logo-google"
+                    title="Entrar com Google"
+                    // isLoading={isLoading}
+                    onPress={onGoogleSignIn}
+                  />
+                  <Button
+                    // icon="logo-google"
+                    title="Sign out"
+                    // isLoading={isLoading}
+                    onPress={signOut}
+                  />
                   <View
                     className={`mt-3 flex-row items-center justify-around rounded-md  bg-gray-200 p-1`}>
                     <TouchableOpacity

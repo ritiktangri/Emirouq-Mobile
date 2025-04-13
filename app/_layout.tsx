@@ -20,6 +20,7 @@ import { LocaleProvider } from '~/context/LocaleContext';
 import SocketEventScreen from '~/components/SocketEventScreen';
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { ClerkProvider } from '@clerk/clerk-expo';
 import { StripeProvider } from '@stripe/stripe-react-native';
 
 export const unstable_settings = {
@@ -102,6 +103,10 @@ function InitialLayout() {
   return <Slot />;
 }
 
+const clerkPublishableKey = 'pk_test_Y29uY3JldGUtZmluY2gtMTIuY2xlcmsuYWNjb3VudHMuZGV2JA';
+if (!clerkPublishableKey) {
+  throw new Error('Missing publishable key');
+}
 export default function RootLayoutNav() {
   return (
     <StripeProvider publishableKey="pk_test_51RCXW12eQ2oCOo2662257iWYlAxXnJRsOhf2SkadbyB69x07L9TwyiSVsq4KomNvBQHuqBMPULMatDVxHU5iSdPF00UVgHa8BQ">
@@ -115,14 +120,16 @@ export default function RootLayoutNav() {
               <CustomThemeProvider>
                 <ActionSheetProvider>
                   <SafeAreaProvider>
-                    <AuthProvider>
-                      <LocaleProvider>
-                        <PaperProvider>
-                          <SocketEventScreen />
-                          <InitialLayout />
-                        </PaperProvider>
-                      </LocaleProvider>
-                    </AuthProvider>
+                    <ClerkProvider publishableKey={clerkPublishableKey}>
+                      <AuthProvider>
+                        <LocaleProvider>
+                          <PaperProvider>
+                            <SocketEventScreen />
+                            <InitialLayout />
+                          </PaperProvider>
+                        </LocaleProvider>
+                      </AuthProvider>
+                    </ClerkProvider>
                   </SafeAreaProvider>
                 </ActionSheetProvider>
               </CustomThemeProvider>
