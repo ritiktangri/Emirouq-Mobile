@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { Href, Redirect } from 'expo-router';
 import React from 'react';
 
@@ -7,7 +8,7 @@ import { useLocale } from '~/context/LocaleContext';
 import { routes } from '~/utils/routes';
 
 const App = () => {
-  const { loading, user } = useAuth();
+  const { loading } = useAuth();
   const { locale } = useLocale();
 
   // if Rest API is loading, show splash screen

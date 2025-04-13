@@ -66,6 +66,13 @@ const auth = {
       uri: prefix + '/access/refresh',
     },
   },
+  oauthLogin: {
+    v1: {
+      ...defaults.methods.POST,
+      ...defaults.versions.v1,
+      uri: prefix + '/oauth',
+    },
+  },
 };
 
 export default auth;

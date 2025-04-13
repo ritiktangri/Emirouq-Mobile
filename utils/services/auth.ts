@@ -67,3 +67,9 @@ export async function resetPassword({ pathParams }: any) {
     pathParams,
   });
 }
+export async function oauthLogin({ body }: any) {
+  return callApi({
+    uriEndPoint: { ...auth.oauthLogin.v1 } as ApiEndpoint,
+    body,
+  });
+}

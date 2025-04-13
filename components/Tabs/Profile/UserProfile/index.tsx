@@ -18,8 +18,12 @@ import { Text } from '~/components/common/Text';
 import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import { View } from '~/components/common/View';
+import { useAuth as ClerkUseAuth, useOAuth, useUser } from '@clerk/clerk-expo';
+import { queryClient } from '~/app/_layout';
 
 const UserProfile = () => {
+  const { getToken, signOut } = ClerkUseAuth();
+
   const { user } = useAuth();
 
   const { locale } = useLocale();
@@ -207,7 +211,12 @@ const UserProfile = () => {
             <Text className="font-semibold text-primary">{i18n.t('profile.edit_profile')}</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={logout}
+            onPress={() =>
+              logout(() => {
+                signOut();
+                queryClient.clear();
+              })
+            }
             className="my-2 flex-row items-center justify-center gap-x-3 rounded-xl border-2 border-red-500 py-2">
             <Ionicons name="log-out" size={20} color="red" />
             <Text className="font-semibold text-red-500">{i18n.t('profile.logout')}</Text>

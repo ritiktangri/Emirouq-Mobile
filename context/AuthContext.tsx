@@ -188,14 +188,14 @@ const AuthProvider = ({ children }: any) => {
         if (errorCallback) errorCallback(err);
       });
   };
-
-  const handleLogout = async () => {
+  const handleLogout = async (cb: any) => {
     setUser(null);
     setActiveAccount([]);
     await Promise.all([
       removeStorageItemAsync(storageTokenKeyName),
       removeStorageItemAsync('activeAccount'),
     ] as any);
+    cb && cb();
     // router.push(routes.auth.auth as any);
   };
   const handleSignUp = ({ body }: SignUpInterface, successCb: any, errorCallback: any) => {

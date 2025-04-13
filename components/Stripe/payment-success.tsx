@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { routes } from '~/utils/routes';
 const PaymentSuccess = () => {
   const { id } = useLocalSearchParams();
-  const { data, isLoading }: any = useCheckSubscription(id, 100);
+  const { data, isLoading }: any = useCheckSubscription(id, 1000);
 
   if (isLoading) {
     return (

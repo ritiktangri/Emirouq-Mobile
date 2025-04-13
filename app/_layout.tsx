@@ -20,7 +20,7 @@ import { LocaleProvider } from '~/context/LocaleContext';
 import SocketEventScreen from '~/components/SocketEventScreen';
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { ClerkProvider } from '@clerk/clerk-expo';
+import { ClerkLoaded, ClerkProvider } from '@clerk/clerk-expo';
 import { StripeProvider } from '@stripe/stripe-react-native';
 
 export const unstable_settings = {
@@ -110,33 +110,35 @@ if (!clerkPublishableKey) {
 export default function RootLayoutNav() {
   return (
     <StripeProvider publishableKey="pk_test_51RCXW12eQ2oCOo2662257iWYlAxXnJRsOhf2SkadbyB69x07L9TwyiSVsq4KomNvBQHuqBMPULMatDVxHU5iSdPF00UVgHa8BQ">
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
-        {/* portalize is a library that allows you to render a component in a different part of the tree, */}
-        {/* host is a component that allows you to render a component in a different part of the tree. */}
-        <Host>
-          <QueryClientProvider client={queryClient}>
-            <ThemeProvider value={DarkTheme}>
-              <CustomThemeProvider>
-                <ActionSheetProvider>
-                  <SafeAreaProvider>
-                    <ClerkProvider publishableKey={clerkPublishableKey}>
-                      <AuthProvider>
-                        <LocaleProvider>
-                          <PaperProvider>
-                            <SocketEventScreen />
-                            <InitialLayout />
-                          </PaperProvider>
-                        </LocaleProvider>
-                      </AuthProvider>
-                    </ClerkProvider>
-                  </SafeAreaProvider>
-                </ActionSheetProvider>
-              </CustomThemeProvider>
-            </ThemeProvider>
-          </QueryClientProvider>
-        </Host>
-      </GestureHandlerRootView>
+      <ClerkProvider publishableKey={clerkPublishableKey}>
+        <ClerkLoaded>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+            {/* portalize is a library that allows you to render a component in a different part of the tree, */}
+            {/* host is a component that allows you to render a component in a different part of the tree. */}
+            <Host>
+              <QueryClientProvider client={queryClient}>
+                <ThemeProvider value={DarkTheme}>
+                  <CustomThemeProvider>
+                    <ActionSheetProvider>
+                      <SafeAreaProvider>
+                        <AuthProvider>
+                          <LocaleProvider>
+                            <PaperProvider>
+                              <SocketEventScreen />
+                              <InitialLayout />
+                            </PaperProvider>
+                          </LocaleProvider>
+                        </AuthProvider>
+                      </SafeAreaProvider>
+                    </ActionSheetProvider>
+                  </CustomThemeProvider>
+                </ThemeProvider>
+              </QueryClientProvider>
+            </Host>
+          </GestureHandlerRootView>
+        </ClerkLoaded>
+      </ClerkProvider>
     </StripeProvider>
   );
 }

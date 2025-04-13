@@ -1,11 +1,12 @@
-import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
-import { Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import DynamicButton from '~/components/DynamicButton';
 import Input from '~/components/UI/Input';
 import { useAuth } from '~/context/AuthContext';
 import { useTheme } from '~/context/ThemeContext';
+import SocialButtons from '../social-btn';
 
 const Signup = ({ checkinType }: any) => {
   const { signUp } = useAuth();
@@ -207,21 +208,7 @@ const Signup = ({ checkinType }: any) => {
         <View className="h-px flex-1 bg-gray-200" />
       </View>
 
-      <TouchableOpacity className="mb-4 h-12 flex-row items-center justify-center rounded-lg border border-gray-200 bg-white">
-        <AntDesign name="google" size={20} color="black" />
-        <Text className="ml-2 font-['Inter-Semibold'] text-base text-gray-800">
-          Continue with Google
-        </Text>
-      </TouchableOpacity>
-
-      {Platform.OS === 'ios' && (
-        <TouchableOpacity className="h-12 flex-row items-center justify-center rounded-lg bg-black">
-          <AntDesign name="apple1" size={20} color="white" />
-          <Text className="ml-2 font-['Inter-Semibold'] text-base text-white">
-            Continue with Apple
-          </Text>
-        </TouchableOpacity>
-      )}
+      <SocialButtons />
     </View>
   );
 };
