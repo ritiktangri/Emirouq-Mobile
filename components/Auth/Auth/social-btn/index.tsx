@@ -3,30 +3,36 @@ import { View, Text, TouchableOpacity, Platform, ActivityIndicator } from 'react
 import React, { useEffect, useState } from 'react';
 import { AntDesign } from '@expo/vector-icons';
 import { useWamUpBrowser } from '~/hooks/useWarmUpBrowser';
-import { useAuth as ClerkUseAuth, useOAuth, useUser } from '@clerk/clerk-expo';
+import { useAuth as ClerkUseAuth, useOAuth, useSSO, useUser } from '@clerk/clerk-expo';
 import { useOAuthLogin } from '~/hooks/auth/mutation';
 import { setStorageItemAsync } from '~/hooks/useStorageState';
 import { useAuth } from '~/context/AuthContext';
 import { useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import { useTheme } from '~/context/ThemeContext';
-
+import * as AuthSession from 'expo-auth-session';
 const SocialButtons = () => {
   useWamUpBrowser();
 
-  const { startOAuthFlow } = useOAuth({ strategy: 'oauth_google' });
-  const { signOut, isSignedIn, isLoaded, userId } = ClerkUseAuth();
+  const { startSSOFlow } = useSSO();
+  const { signOut } = ClerkUseAuth();
+
   const { showToast } = useTheme();
   const { getUser } = useAuth();
   const router = useRouter();
   const { user } = useUser();
   const oAuthLogin = useOAuthLogin();
-  const onPress = React.useCallback(async () => {
+  console.log(oAuthLogin?.variables?.body, 'oAuthLogin?.variables?.body?.oauthId');
+  const onPress = React.useCallback(async (strategy: any) => {
     try {
-      const { createdSessionId, signIn, signUp, setActive }: any = await startOAuthFlow();
+      const { createdSessionId, setActive } = await startSSOFlow({
+        strategy,
+        // Defaults to current path
+        redirectUrl: AuthSession.makeRedirectUri(),
+      });
 
       if (createdSessionId) {
-        setActive({ session: createdSessionId });
+        setActive!({ session: createdSessionId });
       } else {
         // Use signIn or signUp for next steps such as MFA
       }
@@ -34,15 +40,16 @@ const SocialButtons = () => {
       console.error('OAuth error', err);
     }
   }, []);
+  console.log(JSON.stringify(user), 'user');
   useEffect(() => {
-    if (userId) {
+    if (user?.firstName) {
       const payload = {
         firstName: user?.firstName,
         lastName: user?.lastName,
         fullName: user?.fullName,
         email: user?.primaryEmailAddress?.emailAddress,
         profileImage: user?.imageUrl,
-        oauthId: 'google',
+        oauthId: user?.primaryEmailAddress?.verification?.strategy,
       };
       oAuthLogin
         .mutateAsync({
@@ -60,14 +67,16 @@ const SocialButtons = () => {
           signOut();
         });
     }
-  }, [userId]);
+  }, [user?.firstName]);
 
   return (
     <View className="">
       <TouchableOpacity
-        onPress={onPress}
+        onPress={() => {
+          onPress('oauth_google');
+        }}
         className="mb-4 h-12 flex-row items-center justify-center rounded-lg border border-gray-200 bg-white">
-        {oAuthLogin.isPending ? (
+        {oAuthLogin?.isPending && oAuthLogin?.variables?.body?.oauthId === 'from_oauth_google' ? (
           <ActivityIndicator size="small" color="#000" />
         ) : (
           <AntDesign name="google" size={20} color="black" />
@@ -79,8 +88,16 @@ const SocialButtons = () => {
       </TouchableOpacity>
 
       {Platform.OS === 'ios' && (
-        <TouchableOpacity className="h-12 flex-row items-center justify-center rounded-lg bg-black">
-          <AntDesign name="apple1" size={20} color="white" />
+        <TouchableOpacity
+          onPress={() => {
+            onPress('oauth_apple');
+          }}
+          className="h-12 flex-row items-center justify-center rounded-lg bg-black">
+          {oAuthLogin?.isPending && oAuthLogin?.variables?.body?.oauthId === 'from_oauth_apple' ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <AntDesign name="apple1" size={20} color="white" />
+          )}
           <Text className="ml-2 font-['Inter-Semibold'] text-base text-white">
             Continue with Apple
           </Text>
