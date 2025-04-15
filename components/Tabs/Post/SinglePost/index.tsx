@@ -25,7 +25,6 @@ const SinglePost = () => {
   } as any);
   const { user } = useAuth();
   const { isLoading, data, refetch }: any = useGetSinglePosts(id);
-
   useEffect(() => {
     if (data?.data?.file?.length > 0) {
       setSelectedImage({
