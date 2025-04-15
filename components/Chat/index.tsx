@@ -24,17 +24,9 @@ interface Conversation {
 export default function Chat({ routes }: any) {
   const { locale } = useLocale();
   const { user } = useAuth();
-  const {
-    isLoading,
-    isFetching,
-    data,
-    hasNextPage,
-    fetchNextPage,
-    isFetchingNextPage,
-    refetch,
-  }: any = useGetConversations();
+  const { isFetching, data, hasNextPage, fetchNextPage, isFetchingNextPage, refetch }: any =
+    useGetConversations();
   const handleRefresh = useCallback(() => {
-    console.log(1);
     refetch();
   }, [refetch]);
 
@@ -56,7 +48,7 @@ export default function Chat({ routes }: any) {
         />
       </View>
 
-      {isFetching || isLoading ? (
+      {isFetching ? (
         <Loading />
       ) : (
         <FlatList

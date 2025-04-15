@@ -39,7 +39,6 @@ const Signup = ({ checkinType }: any) => {
     } else {
       formData.append('phoneNumber', form.phoneNumber);
     }
-    console.log('formData', formData);
     signUp(
       { body: formData },
       () => {

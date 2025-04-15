@@ -97,7 +97,6 @@ const ChatScreen = () => {
       socketIo?.off('conversationRoom');
     };
   }, [socketIo, params?.conversationId, user]);
-  console.log(params?.conversationId, 'params?.conversationId');
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-white">
       <Header data={params} status={onlineUsers?.includes(params?.userId)} />

@@ -30,7 +30,6 @@ function SocketEventScreen({ children }: any) {
 
       //when other user open's the app, fetch online users
       socketIo.on('fetchOnlineUsers', (user: any) => {
-        console.log(user);
         setOnlineUsers(user);
       });
       return () => {

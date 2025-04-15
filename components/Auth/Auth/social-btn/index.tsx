@@ -22,7 +22,6 @@ const SocialButtons = () => {
   const router = useRouter();
   const { user } = useUser();
   const oAuthLogin = useOAuthLogin();
-  console.log(oAuthLogin?.variables?.body, 'oAuthLogin?.variables?.body?.oauthId');
   const onPress = React.useCallback(async (strategy: any) => {
     try {
       const { createdSessionId, setActive } = await startSSOFlow({
@@ -40,7 +39,6 @@ const SocialButtons = () => {
       console.error('OAuth error', err);
     }
   }, []);
-  console.log(JSON.stringify(user), 'user');
   useEffect(() => {
     if (user?.firstName) {
       const payload = {
