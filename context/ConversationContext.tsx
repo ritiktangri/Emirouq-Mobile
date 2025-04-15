@@ -33,20 +33,13 @@ const ConversationProvider = ({ children }: any) => {
     },
     []
   );
-  const createConversationHandler = useCallback(async ({ body }: any) => {
+  const createConversationHandler = useCallback(async ({ body }: any, cb: any, errCb: any) => {
     createConversationService({ body })
       .then(() => {
-        getConversationListHandler(
-          '',
-          0,
-          10,
-          '',
-          () => {},
-          () => {}
-        );
+        cb && cb();
       })
       .catch((err: any) => {
-        console.error('Error creating conversation:', err);
+        errCb(err);
       });
   }, []);
 

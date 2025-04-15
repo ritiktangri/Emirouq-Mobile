@@ -24,7 +24,7 @@ export default function TabLayout() {
               return <GlobalHeader route={route} />;
             },
             sceneStyle: {
-              backgroundColor: 'transparent',
+              backgroundColor: '#FF5722',
               borderBottomLeftRadius: 20,
               borderBottomRightRadius: 20,
             },

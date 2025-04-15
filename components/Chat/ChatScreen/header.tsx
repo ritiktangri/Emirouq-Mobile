@@ -3,14 +3,21 @@ import { View, Text, TouchableOpacity, Image } from 'react-native';
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { cn, getInitials } from '~/utils/helper';
-import { router } from 'expo-router';
+import { Href, useRouter } from 'expo-router';
+import { routes } from '~/utils/routes';
 
 const Header = ({ data, status }: any) => {
+  const router = useRouter();
   return (
     <View className="flex flex-row items-center gap-2 border-b border-gray-200 px-3 py-2 ">
       <TouchableOpacity
         onPress={() => {
-          router.back();
+          router.setParams({
+            conversationId: undefined,
+            userId: undefined,
+            postId: undefined,
+          });
+          router.replace(routes.tabs.chat as Href);
         }}>
         <Ionicons name="arrow-back" size={30} color="black" />
       </TouchableOpacity>

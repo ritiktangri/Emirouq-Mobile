@@ -275,15 +275,15 @@ const SinglePost = () => {
         <TouchableOpacity
           onPress={() =>
             router.push({
-              pathname: data?.data?.conversation?.uuid
-                ? routes.tabs.chatScreen(data?.data?.conversation?.uuid)
-                : routes.tabs.chat,
+              pathname: routes.tabs.chatScreen(data?.data?.conversation?.uuid),
+              // : routes.tabs.chat,
               params: {
                 conversationId: data?.data?.conversation?.uuid,
                 userId: data?.data?.userId,
                 fullName: `${data?.data?.user?.firstName} ${data?.data?.user?.lastName}`,
                 profileImage: data?.data?.user?.profileImage,
                 uuid: data?.data?.uuid,
+                postId: data?.data?.uuid,
                 chatTitle: !!data?.data?.conversation?.uuid,
                 name: data?.data?.title,
                 file: data?.data?.file?.[0],

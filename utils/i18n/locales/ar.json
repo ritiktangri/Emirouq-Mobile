@@ -9,14 +9,14 @@
   },
   "home": {
     "searchPlaceHolder": "ابحث عن المنتجات أو الفئات",
-    "featured_listings":"القوائم المميزة",
-    "see_all":"رؤية الكل",
-    "hot_deals":"العروض الساخنة",
-    "view_more":"عرض المزيد",
-    "unlock_full_features":"فتح الميزات الكاملة",
-    "unlock_card_description":"أكمل ملفك الشخصي للوصول إلى جميع ميزات السوق",
-    "create_profile":"إنشاء الملف الشخصي",
-    "view_plans":"عرض الخطط"
+    "featured_listings": "القوائم المميزة",
+    "see_all": "رؤية الكل",
+    "hot_deals": "العروض الساخنة",
+    "view_more": "عرض المزيد",
+    "unlock_full_features": "فتح الميزات الكاملة",
+    "unlock_card_description": "أكمل ملفك الشخصي للوصول إلى جميع ميزات السوق",
+    "create_profile": "إنشاء الملف الشخصي",
+    "view_plans": "عرض الخطط"
   },
   "profile": {
     "language": "لغة",
@@ -145,5 +145,12 @@
     "selectInterests": "*حدد اهتماماتك",
     "chooseCategoryTitle": "اختر الفئات التي تهمك.",
     "btnText": "إكمال الملف الشخصي"
+  },
+  "chat": {
+    "placeholder": "ابحث عن المحادثات...",
+    "noData": {
+      "title": "لا توجد محادثات",
+      "description": "ابدأ محادثة مع مشترٍ أو بائع لرؤيتها هنا."
+    }
   }
 }

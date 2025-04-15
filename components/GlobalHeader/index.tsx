@@ -18,11 +18,11 @@ const GlobalHeader = ({ route }: any) => {
   const {
     headerTitle,
     title,
-    chatTitle = false,
+    chatTitle = 'false',
     fullName,
     profileImage,
     userId,
-  } = useGlobalSearchParams();
+  }: any = useGlobalSearchParams();
   const handleGoBack = () => {
     if (router.canGoBack()) {
       router.back();
@@ -31,8 +31,8 @@ const GlobalHeader = ({ route }: any) => {
   return (
     <SafeAreaView
       edges={['top']}
-      className={cn('flex-row   rounded-b-xl ', !chatTitle && 'bg-primary')}>
-      {chatTitle ? (
+      className={cn('flex-row   rounded-b-xl ', chatTitle === false && 'bg-primary')}>
+      {chatTitle === true ? (
         <View className="w-full">
           <Header
             onPress={handleGoBack}

@@ -4,68 +4,73 @@ import { ActivityIndicator, FlatList, RefreshControl } from 'react-native';
 import DefaultTextInput from '../common/DefaultTextInput';
 import { View } from '../common/View';
 import Render from './render';
-import { useConversation } from '~/context/ConversationContext';
 import { useAuth } from '~/context/AuthContext';
-import { useGlobalSearchParams } from 'expo-router';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useGetConversations } from '~/hooks/chats/query';
 import theme from '~/utils/theme';
-import { queryClient } from '~/app/_layout';
 import Loading from './loading';
 import LoggedOutView from './loggedOutView';
+import NoData from '../common/NoData';
+import { i18n } from '~/utils/i18n';
+import { useLocale } from '~/context/LocaleContext';
 
-export default function Chat() {
-  const params = useGlobalSearchParams();
-  const { createConversationHandler } = useConversation();
+// Define a type for your conversation data (replace with your actual type)
+interface Conversation {
+  uuid: string;
+  // Add other properties of your conversation object here
+  [key: string]: any; // Allows for other dynamic properties
+}
+
+export default function Chat({ routes }: any) {
+  const { locale } = useLocale();
   const { user } = useAuth();
-  //here we check if the conversation exists, if not we create it
-  //and then we get the conversation list
-  const checkConversation = async () => {
-    if (!params?.conversationId && params?.uuid && params?.userId) {
-      await createConversationHandler({
-        body: {
-          users: [params?.userId, user?.uuid],
-          postId: params?.uuid,
-        },
-      });
-    }
-  };
-  useEffect(() => {
-    checkConversation();
-  }, [params?.conversationId]);
-
-  const { isLoading, data, hasNextPage, fetchNextPage, isFetchingNextPage, refetch }: any =
-    useGetConversations();
-
+  const {
+    isLoading,
+    isFetching,
+    data,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+    refetch,
+  }: any = useGetConversations();
   const handleRefresh = useCallback(() => {
-    queryClient.removeQueries({ queryKey: ['conversation', ''] });
+    console.log(1);
     refetch();
-  }, [queryClient, refetch]);
+  }, [refetch]);
+
+  if (!user?.uuid) {
+    return <LoggedOutView />;
+  }
+
+  const conversations: Conversation[] = data?.pages.map((page: any) => page?.data).flat() || [];
 
   return (
     <View className="flex-1 bg-white">
       <View className="m-3">
         <DefaultTextInput
           prefix={<Ionicons name="search" size={20} color="#6B7280" />}
-          placeholder="Search chats..."
+          placeholder={i18n.t('chat.placeholder')}
           placeholderTextColor="#9CA3AF"
           containerClassName="  w-full text-base rounded-md bg-textInput_bg p-3 "
+          textAlign={locale === 'ar' ? 'right' : 'left'}
         />
       </View>
 
-      {isLoading ? (
+      {isFetching || isLoading ? (
         <Loading />
-      ) : !user?.uuid ? (
-        <LoggedOutView />
       ) : (
         <FlatList
-          data={data?.pages.map((page: any) => page?.data).flat() || []}
-          keyExtractor={(item) => item?.uuid?.toString()}
+          data={conversations}
+          keyExtractor={(item) => item?.uuid}
           renderItem={({ item }) => <Render item={item} />}
-          ListEmptyComponent={() => <View className="flex-1 items-center justify-center"></View>}
+          ListEmptyComponent={() => (
+            <View className="flex-1 items-center justify-center">
+              <NoData title="chat.noData.title" description="chat.noData.description" />
+            </View>
+          )}
           showsVerticalScrollIndicator={false}
           onEndReached={() => {
-            if (hasNextPage) {
+            if (hasNextPage && !isFetchingNextPage) {
               fetchNextPage();
             }
           }}

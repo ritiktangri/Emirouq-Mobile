@@ -25,7 +25,7 @@ const Render = ({ item }: any) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        router.push({
+        router.navigate({
           pathname: routes.tabs.chatScreen(item?.uuid),
           params: {
             conversationId: item?.uuid,

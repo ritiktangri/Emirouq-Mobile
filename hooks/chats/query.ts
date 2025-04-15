@@ -15,7 +15,7 @@ export const useGetMessages = (conversationId: any, start = 0, limit = 10, keywo
     enabled: !!conversationId,
   });
 
-export const useGetConversations = (keyword = '') =>
+export const useGetConversations = (keyword = '', enabled = true) =>
   useInfiniteQuery({
     queryKey: ['conversation', keyword],
     queryFn: ({ pageParam }) =>
@@ -31,4 +31,8 @@ export const useGetConversations = (keyword = '') =>
       }
     },
     initialPageParam: 0,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false, // 👈 prevents fetch on remount
+    refetchOnReconnect: false, // 👈 prevents fetch on network reconnect
+    enabled,
   });

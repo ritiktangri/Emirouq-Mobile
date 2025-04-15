@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
 import React from 'react';
-import { View, Text, Image } from 'react-native';
+import { View } from 'react-native';
 import SkeletonLoading from 'expo-skeleton-loading';
 import { FontAwesome } from '@expo/vector-icons';
 

@@ -6,6 +6,7 @@ const _layout = () => {
   return (
     <ConversationProvider>
       <Stack
+        initialRouteName="page"
         screenOptions={{
           headerShown: false,
         }}

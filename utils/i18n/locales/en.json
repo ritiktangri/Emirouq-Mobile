@@ -9,15 +9,14 @@
   },
   "home": {
     "searchPlaceHolder": "Search products or categories",
-    "featured_listings":"Featured Listings",
-    "see_all":"See All",
-    "hot_deals":"Hot Deals",
-    "view_more":"View More",
-    "unlock_full_features":"Unlock Full Features",
-    "unlock_card_description":"Complete your profile to access all marketplace features",
-    "create_profile":"Create Profile",
-    "view_plans":"View Plans"
-
+    "featured_listings": "Featured Listings",
+    "see_all": "See All",
+    "hot_deals": "Hot Deals",
+    "view_more": "View More",
+    "unlock_full_features": "Unlock Full Features",
+    "unlock_card_description": "Complete your profile to access all marketplace features",
+    "create_profile": "Create Profile",
+    "view_plans": "View Plans"
   },
   "profile": {
     "language": "Language",
@@ -139,5 +138,12 @@
     "selectInterests": "Select Your Interests *",
     "chooseCategoryTitle": "Choose categories that interest you.",
     "btnText": "Complete Profile"
+  },
+  "chat": {
+    "placeholder": "Search Chats...",
+    "noData": {
+      "title": "No Chats Yet",
+      "description": "Start a conversation with a buyer or seller to see it here."
+    }
   }
 }
