@@ -12,6 +12,8 @@ import { useGetPosts } from '~/hooks/post/query';
 import theme from '~/utils/theme';
 import { queryClient } from '~/app/_layout';
 import FeaturedListLoading from './Featured/loading';
+import Recent from './Recent';
+import Recommended from './Recommended';
 
 const Dashboard = () => {
   const {
@@ -19,6 +21,12 @@ const Dashboard = () => {
     data: category,
     refetch: categoryRefetch,
   }: any = useGetCategory();
+  const {
+    isFetching: recentPostFetching,
+    loading: recentPostLoading,
+    data: recentPost,
+    refetch: recentPostRefetch,
+  }: any = useGetPosts('');
   const {
     isFetching: featuredPostFetching,
     loading: featuredPostLoading,
@@ -31,18 +39,32 @@ const Dashboard = () => {
     data: hotDealPost,
     refetch: hotDealRefetch,
   }: any = useGetPosts('');
+  const {
+    isFetching: recommendedPostFetching,
+    loading: recommendedPostLoading,
+    data: recommendedPost,
+    refetch: recommendedPostRefetch,
+  }: any = useGetPosts('');
   const handleRefresh = useCallback(() => {
     queryClient.removeQueries({ queryKey: ['posts', ''] });
     queryClient.removeQueries({ queryKey: ['category'] });
     queryClient.removeQueries({ queryKey: ['posts', ''] });
+    queryClient.removeQueries({ queryKey: ['posts', ''] });
 
+    recentPostRefetch();
     featurePostRefetch();
     categoryRefetch();
     hotDealRefetch();
-  }, [queryClient, categoryRefetch, categoryRefetch]);
+    recommendedPostRefetch();
+  }, [queryClient, categoryRefetch, categoryRefetch, recentPostRefetch, recommendedPostRefetch]);
 
   const components = useMemo(
     () => [
+      recentPostLoading || recentPostFetching ? (
+        <FeaturedListLoading />
+      ) : (
+        <Recent data={recentPost?.pages.map((page: any) => page?.data).flat() || []} />
+      ),
       categoryLoading ? (
         <></>
       ) : (
@@ -58,6 +80,11 @@ const Dashboard = () => {
       ) : (
         <HotDeals data={hotDealPost?.pages.map((page: any) => page?.data).flat() || []} />
       ),
+      recommendedPostLoading || recommendedPostFetching ? (
+        <FeaturedListLoading />
+      ) : (
+        <Recommended data={recommendedPost?.pages.map((page: any) => page?.data).flat() || []} />
+      ),
       <UnlockFeature />,
     ],
     [
@@ -69,6 +96,12 @@ const Dashboard = () => {
       hotDealPostLoading,
       hotDealPostFetching,
       featuredPostFetching,
+      recentPost?.pages,
+      recentPostLoading,
+      recentPostFetching,
+      recommendedPostLoading,
+      recommendedPostFetching,
+      recommendedPost?.pages,
     ]
   );
   return (

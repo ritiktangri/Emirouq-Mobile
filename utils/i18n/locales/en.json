@@ -10,6 +10,8 @@
   "home": {
     "searchPlaceHolder": "Search products or categories",
     "featured_listings": "Featured Listings",
+    "recommended_for_you":"Recommended for you",
+    "recents":"Recents",
     "see_all": "See All",
     "hot_deals": "Hot Deals",
     "view_more": "View More",
