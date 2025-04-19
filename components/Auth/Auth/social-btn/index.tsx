@@ -20,7 +20,7 @@ const SocialButtons = () => {
   const { showToast } = useTheme();
   const { getUser } = useAuth();
   const router = useRouter();
-  const { user } = useUser();
+  const { user }: any = useUser();
   const oAuthLogin = useOAuthLogin();
   const onPress = React.useCallback(async (strategy: any) => {
     try {
@@ -39,6 +39,12 @@ const SocialButtons = () => {
       console.error('OAuth error', err);
     }
   }, []);
+
+  let verifications: any = {
+    from_oauth_google: 'google',
+    from_oauth_apple: 'apple',
+  };
+
   useEffect(() => {
     if (user?.firstName) {
       const payload = {
@@ -47,8 +53,9 @@ const SocialButtons = () => {
         fullName: user?.fullName,
         email: user?.primaryEmailAddress?.emailAddress,
         profileImage: user?.imageUrl,
-        oauthId: user?.primaryEmailAddress?.verification?.strategy,
+        oauthId: verifications?.[user?.primaryEmailAddress?.verification?.strategy],
       };
+
       oAuthLogin
         .mutateAsync({
           body: payload,
