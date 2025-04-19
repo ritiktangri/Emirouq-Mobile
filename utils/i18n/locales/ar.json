@@ -18,7 +18,15 @@
     "unlock_full_features": "فتح الميزات الكاملة",
     "unlock_card_description": "أكمل ملفك الشخصي للوصول إلى جميع ميزات السوق",
     "create_profile": "إنشاء الملف الشخصي",
-    "view_plans": "عرض الخطط"
+    "view_plans": "عرض الخطط",
+    "filters":"المرشحات",
+    "price_range":"نطاق السعر",
+    "categories":"فئات",
+    "location":"موقع",
+    "sortBy":"فرز حسب",
+    "datePosted":"تاريخ النشر",
+    "apply_filters":"تطبيق المرشحات",
+    "reset":"إعادة ضبط"
   },
   "profile": {
     "language": "لغة",

@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import { View, FlatList, ActivityIndicator } from 'react-native';
+import { View, FlatList, ActivityIndicator, Image } from 'react-native';
 import React, { useCallback } from 'react';
 import Render from './render';
 import { useGetPosts } from '~/hooks/post/query';
@@ -53,7 +53,14 @@ const AdsList = () => {
             tintColor={theme.colors.primary}
           />
         }
-        ListEmptyComponent={() => <Text>No Data</Text>}
+        ListEmptyComponent={() => (
+          <View className="flex flex-col items-center justify-center opacity-30">
+            <Image
+              className="relative top-28 h-36 w-36"
+              src="https://emirouq.s3.me-central-1.amazonaws.com/categories/9264822-removebg-preview-a8bbbd69-e7dd-4220-ad5e-4293b63ce01e.png"
+            />
+          </View>
+        )}
         onEndReachedThreshold={0.3}
         ListFooterComponent={
           isFetchingNextPage ? (

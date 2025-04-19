@@ -18,7 +18,15 @@
     "unlock_full_features": "Unlock Full Features",
     "unlock_card_description": "Complete your profile to access all marketplace features",
     "create_profile": "Create Profile",
-    "view_plans": "View Plans"
+    "view_plans": "View Plans",
+    "filters":"Filters",
+    "price_range":"Price Range",
+    "categories":"Categories",
+    "location":"Location",
+    "sortBy":"Sort By",
+    "datePosted":"Date Posted",
+    "apply_filters":"Apply Filters",
+    "reset":"Reset"
   },
   "profile": {
     "language": "Language",
