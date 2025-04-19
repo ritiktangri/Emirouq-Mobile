@@ -204,10 +204,15 @@ const UserProfile = () => {
           </View>
           <TouchableOpacity
             onPress={() => {
-              router.push(routes.tabs.create_profile as Href);
+              router.navigate({
+                pathname: routes.tabs.create_profile,
+                params: {
+                  isEdit: true,
+                },
+              } as unknown as Href);
             }}
             className="my-2 flex-row items-center justify-center gap-x-3 rounded-xl border-2 border-primary py-2">
-            <Feather name="edit-2" size={18} color="darkorange" />
+            <Feather name="edit-2" size={16} color="#FF5722" />
             <Text className="font-semibold text-primary">{i18n.t('profile.edit_profile')}</Text>
           </TouchableOpacity>
           <TouchableOpacity

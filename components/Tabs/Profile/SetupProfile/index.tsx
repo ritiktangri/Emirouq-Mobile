@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
 import React, { useEffect, useState } from 'react';
-import { Pressable, Alert, TouchableOpacity } from 'react-native';
+import { Pressable, Alert, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker';
 import { z } from 'zod';
@@ -19,7 +19,7 @@ import { View } from '~/components/common/View';
 import DefaultTextInput from '~/components/common/DefaultTextInput';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '~/components/Chat/ChatScreen/header';
-import { useRouter } from 'expo-router';
+import { useGlobalSearchParams, useRouter } from 'expo-router';
 
 const profileSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
@@ -36,11 +36,12 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 
 const SetupProfile = () => {
   const [profileImage, setProfileImage] = useState<any>(null);
+  const params: any = useGlobalSearchParams();
   const { locale } = useLocale();
   const { categories }: any = useCategory();
   const { showToast }: any = useTheme();
   const router = useRouter();
-
+  console.log('params', params);
   const {
     control,
     handleSubmit,
@@ -48,7 +49,7 @@ const SetupProfile = () => {
     formState: { errors },
     setValue,
   } = useForm<ProfileFormData>({ resolver: zodResolver(profileSchema) });
-  const { user, updateProfile } = useAuth();
+  const { user, updateProfile, btnLoading } = useAuth();
 
   useEffect(() => {
     if (user?.uuid) {
@@ -59,6 +60,7 @@ const SetupProfile = () => {
       setValue('phoneNumber', user?.phoneNumber || '');
       setValue('bio', user?.bio);
       setValue('interests', user?.userInterest);
+      setProfileImage({ uri: user?.profileImage });
     }
   }, [user]);
 
@@ -125,6 +127,7 @@ const SetupProfile = () => {
           ...(data?.location !== user?.location && { location: data?.location }),
           ...(data?.bio !== user?.bio && { bio: data?.bio }),
           ...(data?.countryCode !== user?.countryCode && { countryCode: data?.countryCode }),
+          ...(data?.phoneNumber !== user?.phoneNumber && { phoneNumber: data?.phoneNumber }),
           ...(data?.interests && { userInterest: JSON.stringify(data?.interests) }),
           ...(profileImage?.base64 && {
             profileImage: {
@@ -315,8 +318,8 @@ const SetupProfile = () => {
             {i18n.t('createProfile.phoneNumber')} *
           </Text>
           <View className="flex-row gap-2">
-            <View className="w-16 items-center justify-center rounded-lg border border-gray-200 px-4 py-4">
-              <Text>+1</Text>
+            <View className="w-20 items-center justify-center rounded-lg border border-gray-200 px-4">
+              <Text>+971</Text>
             </View>
             <Controller
               control={control}
@@ -422,10 +425,11 @@ const SetupProfile = () => {
       </KeyboardAwareScrollView>
 
       <TouchableOpacity
-        className="mt-6 w-full items-center rounded-lg bg-primary py-4"
+        className="mt-6 w-full flex-row items-center justify-center gap-x-2 rounded-lg bg-primary py-4"
         onPress={handleSubmit(onSubmit)}>
+        {btnLoading ? <ActivityIndicator className="text-white" /> : null}
         <Text className="text-base font-semibold text-white">
-          {i18n.t('createProfile.btnText')}
+          {params?.isEdit ? `Update ${i18n.t('tab.profile')}` : i18n.t('createProfile.btnText')}
         </Text>
       </TouchableOpacity>
     </SafeAreaView>

@@ -5,12 +5,12 @@ import queryString from 'querystring';
 import Axios from 'axios';
 import { getStorageAsync } from '~/hooks/useStorageState';
 export const socketHostname = () => 'wss://api-v1.emirouq.ae';
-// export const socketHostname = () => 'ws://192.168.29.33:4001';
+// export const socketHostname = () => 'ws://192.168.29.26:4001';
 
 export const hostname = () => {
   const hostUrl = 'https://api-v1.emirouq.ae';
   // const hostUrl = 'http://127.0.0.1:4001';
-  // const hostUrl = 'http://192.168.29.33:4001';
+  // const hostUrl = 'http://192.168.29.26:4001';
   return hostUrl;
 };
 const hostUrl = hostname();
@@ -19,6 +19,7 @@ export const makeUrl = ({ uri = '', pathParams, query, version }: any, host: any
     .split('/')
     .map((param: any) => (param.charAt(0) === ':' ? encodeURI(pathParams[param.slice(1)]) : param))
     .join('/')}${query ? `?${queryString.stringify(query)}` : ''}`;
+
 export const getDefaultHeaders = async (multipart: boolean) => {
   const authorization = await getStorageAsync('accessToken');
   const contentType = multipart ? 'multipart/form-data' : 'application/json';

@@ -6,7 +6,7 @@ import theme from '~/utils/theme';
 import { i18n } from '~/utils/i18n';
 import { View } from '~/components/common/View';
 import { useLocale } from '~/context/LocaleContext';
-import { FlatList, Modal, Text, TouchableOpacity } from 'react-native';
+import { FlatList, Modal, Platform, Text, TouchableOpacity } from 'react-native';
 import { cn } from '~/utils/helper';
 import {
   MemoizedCategorySelector,
@@ -25,7 +25,7 @@ const Search = () => {
       <DefaultTextInput
         prefix={<Ionicons name="search" size={20} color="#000" />}
         placeholder={i18n.t('home.searchPlaceHolder')}
-        containerClassName="bg-search_bg rounded-lg p-3"
+        containerClassName={`bg-search_bg rounded-lg ${Platform.OS === 'ios' ? 'p-3' : 'px-2'}`}
         textAlign={locale === 'ar' ? 'right' : 'left'}
         placeholderTextColor={theme.colors.gray}
         className="w-[80%] px-4 text-lg"
