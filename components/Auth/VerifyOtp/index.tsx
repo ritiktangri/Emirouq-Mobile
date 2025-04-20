@@ -13,7 +13,7 @@ import { logo } from '~/image';
 import { useTheme } from '~/context/ThemeContext';
 
 const VerifyOtp = () => {
-  const { email, phone } = useLocalSearchParams();
+  const { email, phone, isForgotPassword } = useLocalSearchParams();
   const { isDarkTheme, showToast } = useTheme();
   const [codes, setCodes] = useState(['', '', '', ''] as any);
   const { verify, forgotPassword, verifyOtpLoading } = useAuth();
@@ -25,6 +25,7 @@ const VerifyOtp = () => {
     useRef<TextInput>(null),
     useRef<TextInput>(null),
   ];
+
   const resendOtp = () => {
     forgotPassword(
       {
@@ -55,7 +56,11 @@ const VerifyOtp = () => {
       },
       (payload: any) => {
         showToast('Verified Successfully!', 'success');
-        router.push(routes?.auth?.auth as Href);
+        if (isForgotPassword == 'true') {
+          router.push(routes?.auth?.update_password as Href);
+        } else {
+          router.push(routes?.auth?.auth as Href);
+        }
         if (email) {
           router.setParams({ email });
         } else {

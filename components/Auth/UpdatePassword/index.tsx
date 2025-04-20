@@ -55,16 +55,20 @@ const Page = () => {
           pathParams: {
             token: encode(`${state.email}:${password.newPassword}`),
           },
+          body: {
+            password: password,
+            confirmPassword: password,
+          },
         },
         () => {
-          router.replace('/(auth)/auth');
+          router.replace(routes.auth.auth as Href);
         }
       );
     }
   };
 
   return (
-    <ImageBackground className="flex-1 flex-col" source={isDarkTheme ? pwd_background : ''}>
+    <ImageBackground className="flex-1 flex-col bg-white" source={isDarkTheme ? '' : ''}>
       <SafeAreaView edges={['top', 'left', 'right']} className="flex-1 flex-col">
         <View className="flex-row justify-end px-8 pt-4">
           <Image source={logo} className="h-[70px] w-[70px]" resizeMode="contain" />

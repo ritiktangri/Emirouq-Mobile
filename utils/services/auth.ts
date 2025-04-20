@@ -61,10 +61,11 @@ export async function verifyOtp({ pathParams }: any) {
   });
 }
 
-export async function resetPassword({ pathParams }: any) {
+export async function resetPassword({ pathParams,body }: any) {
   return callApi({
     uriEndPoint: { ...auth.resetPassword.v1 } as ApiEndpoint,
     pathParams,
+    body
   });
 }
 export async function oauthLogin({ body }: any) {

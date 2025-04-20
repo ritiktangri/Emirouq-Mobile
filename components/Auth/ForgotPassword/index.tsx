@@ -16,20 +16,30 @@ const ForgotPassword = () => {
   const { forgotPassword, forgotLoading } = useAuth();
   const [email, setEmail] = useState('');
   const { isDarkTheme } = useTheme();
+  const [activeTab, setActiveTab] = useState('email');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const router = useRouter();
+  const { showToast }: any = useTheme();
+
   const forgot = () => {
-    forgotPassword(
-      {
-        body: {
-          email,
-        },
-      },
-      () => {
-        // toast.success('Otp has been sent successfully to your email');
-        router.push(routes.auth.verifyOtp as Href);
-        router.setParams({ email });
+    if (activeTab == 'email') {
+      if (email) {
+        forgotPassword(
+          {
+            body: {
+              email,
+            },
+          },
+          () => {
+            // toast.success('Otp has been sent successfully to your email');
+            router.push(routes.auth.verifyOtp as Href);
+            router.setParams({ email, isForgotPassword: 'true' });
+          }
+        );
+      } else {
+        showToast('Missing Email!', 'error');
       }
-    );
+    }
   };
   return (
     <ImageBackground
@@ -41,17 +51,49 @@ const ForgotPassword = () => {
           <Text className="font-poppinsMedium text-3xl font-semibold dark:text-white">
             Forgot Password!
           </Text>
-          <Input
-            onChangeText={setEmail}
-            className="w-full py-4 dark:text-white"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            spellCheck={false}
-            autoCorrect={false}
-            title="Email"
-            placeholder="Enter your email"
-            value={email}
-          />
+          <View className="flex-row border-b border-gray-200">
+            <TouchableOpacity
+              className={`flex-1 pb-4 ${activeTab === 'email' ? 'border-primary-600 border-b-2' : ''}`}
+              onPress={() => setActiveTab('email')}>
+              <Text
+                className={`text-center font-['Inter-Bold'] text-base ${activeTab === 'email' ? 'text-primary-600' : 'text-gray-500'}`}>
+                Email
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className={`flex-1 pb-4 ${activeTab === 'phone' ? 'border-primary-600 border-b-2' : ''}`}
+              onPress={() => setActiveTab('phone')}>
+              <Text
+                className={`text-center font-['Inter-Bold'] text-base ${activeTab === 'phone' ? 'text-primary-600' : 'text-gray-500'}`}>
+                Phone Number
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {activeTab === 'email' ? (
+            <Input
+              onChangeText={setEmail}
+              className="w-full py-4 dark:text-white"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              spellCheck={false}
+              autoCorrect={false}
+              title="Email"
+              placeholder="Enter your email"
+              value={email}
+            />
+          ) : (
+            <Input
+              onChangeText={setPhoneNumber}
+              className="w-full py-4 dark:text-white"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              spellCheck={false}
+              autoCorrect={false}
+              title="Phone Number"
+              placeholder="Enter your phone number"
+              value={phoneNumber}
+            />
+          )}
 
           <DynamicButton
             titleClassName="!text-white !font-poppinsMedium !text-lg"

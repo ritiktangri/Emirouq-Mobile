@@ -8,11 +8,12 @@ import Input from '~/components/UI/Input';
 import { useAuth } from '~/context/AuthContext';
 import { useTheme } from '~/context/ThemeContext';
 import SocialButtons from '../social-btn';
+import { routes } from '~/utils/routes';
 
 const Login = ({ checkinType }: any) => {
   const [agreed, setAgreed] = useState(false);
   const { login, signInLoading } = useAuth();
-  const { router }: any = useRouter();
+  const router: any = useRouter();
   const [secureTextEntry, setSecureTextEntry] = useState(false);
   const [form, setForm] = useState({
     email: 'Gurpreets0207@gmail.com',
@@ -111,15 +112,21 @@ const Login = ({ checkinType }: any) => {
           scrollViewRef.current?.scrollTo({ y: 150, animated: true }); // Adjust 150 as needed
         }}
       />
-
-      <TouchableOpacity className="mt-4 flex-row items-start" onPress={() => setAgreed(!agreed)}>
-        <View
-          className={`mr-3 h-5 w-5 items-center justify-center rounded border-2 ${agreed ? 'bg-primary-600 border-primary-600' : 'border-gray-300'}`}>
-          {agreed && <View className="h-3 w-3 rounded-sm bg-white" />}
-        </View>
-        <Text className="flex-1 font-['Inter-Regular'] text-sm text-gray-600">Remember me</Text>
-      </TouchableOpacity>
-
+      <View className="mt-4 flex-row items-center justify-between">
+        <TouchableOpacity className="flex-row items-start" onPress={() => setAgreed(!agreed)}>
+          <View
+            className={`mr-3 h-5 w-5 items-center justify-center rounded border-2 ${agreed ? 'bg-primary-600 border-primary-600' : 'border-gray-300'}`}>
+            {agreed && <View className="h-3 w-3 rounded-sm bg-white" />}
+          </View>
+          <Text className="font-['Inter-Regular'] text-sm text-gray-600">Remember me</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            router.push(routes.auth.forgot_pwd);
+          }}>
+          <Text className="text-primary">Forgot Password?</Text>
+        </TouchableOpacity>
+      </View>
       <DynamicButton
         className="mt-4 rounded-xl"
         titleClassName="!text-white !font-poppinsMedium !text-lg"

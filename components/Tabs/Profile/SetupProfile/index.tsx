@@ -141,6 +141,7 @@ const SetupProfile = () => {
         showToast('Profile Updated!', 'success');
       },
       (err: any) => {
+        console.log('err', err);
         showToast(err?.message, 'error');
       }
     );

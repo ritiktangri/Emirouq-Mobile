@@ -258,9 +258,9 @@ const AuthProvider = ({ children }: any) => {
       });
   };
   // reset password when user is logged out
-  const resetPass = ({ pathParams }: any, cb: any, errorCallback: any) => {
+  const resetPass = ({ pathParams, body }: any, cb: any, errorCallback: any) => {
     setForgotLoading(true);
-    resetPassword({ pathParams })
+    resetPassword({ pathParams, body })
       .then(async () => {
         setForgotLoading(false);
         cb && cb();
