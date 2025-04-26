@@ -27,6 +27,7 @@ const ConversationProvider = ({ children }: any) => {
       };
     }
   }, [socketIo]);
+
   const value: any = useMemo(() => ({}), []);
 
   return <ConversationContext.Provider value={value}>{children}</ConversationContext.Provider>;

@@ -2,6 +2,7 @@
 import { Entypo, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import { BlurView } from 'expo-blur';
+import { debounce } from 'lodash';
 import * as React from 'react';
 import {
   Dimensions,
@@ -49,7 +50,15 @@ const SPRING_CONFIG = {
 // Note: For few messages to start at top, use a FlatList instead of the FlashList
 // Add `contentContainerStyle={{ justifyContent: 'flex-end', flexGrow: 1 }}` to the FlatList (it is not possible with FlashList atm)
 
-export default function Chat({ data, sendMessage }: { data: any; sendMessage: any }) {
+export default function Chat({
+  data,
+  sendMessage,
+  onEndReached,
+}: {
+  data: any;
+  sendMessage: any;
+  onEndReached: any;
+}) {
   const insets = useSafeAreaInsets();
   const textInputHeight = useSharedValue(17);
   const translateX = useSharedValue(0);
@@ -109,6 +118,7 @@ export default function Chat({ data, sendMessage }: { data: any; sendMessage: an
       translateX.value = withSpring(0, SPRING_CONFIG);
     });
 
+  const debouncedLoadMoreData = debounce(onEndReached, 300);
   return (
     <>
       <GestureDetector gesture={pan}>
@@ -117,9 +127,17 @@ export default function Chat({ data, sendMessage }: { data: any; sendMessage: an
             inverted
             estimatedItemSize={70}
             keyboardDismissMode="on-drag"
+            keyExtractor={(item: any, index: any) => `${item?.uuid}-${index}`}
             keyboardShouldPersistTaps="handled"
+            onEndReached={debouncedLoadMoreData}
+            onEndReachedThreshold={0.9}
             scrollIndicatorInsets={{ bottom: HEADER_HEIGHT + 10, top: insets.bottom + 2 }}
             data={data}
+            viewabilityConfig={{
+              waitForInteraction: true,
+              itemVisiblePercentThreshold: 50,
+              minimumViewTime: 1000,
+            }}
             renderItem={({ item, index }: any) => {
               // if (typeof item === 'string') {
               //   return <DateSeparator date={item} />;

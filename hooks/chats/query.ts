@@ -27,8 +27,8 @@ export const useGetMessages = (conversationId: any) =>
         query: { start: pageParam },
       }),
     getNextPageParam: (lastPage: any, allPages: any) => {
-      const currentStart = allPages?.length * 10;
-      if (currentStart < lastPage?.totalCount) {
+      const currentStart = allPages?.length * 25;
+      if (currentStart < lastPage?.total) {
         return currentStart;
       } else {
         return undefined;

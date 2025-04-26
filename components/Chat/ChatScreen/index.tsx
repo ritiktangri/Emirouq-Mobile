@@ -1,23 +1,31 @@
 /* eslint-disable import/order */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Product from './product';
-import { saveConversationCache, saveMessageCache, useGetMessages } from '~/hooks/chats/query';
+import { saveMessageCache, useGetMessages } from '~/hooks/chats/query';
 import Header from './header';
 import { useAuth } from '~/context/AuthContext';
 import { useCreateConversation } from '~/hooks/chats/mutation';
 import { queryClient } from '~/app/_layout';
 import Chat from './chat';
-import dayjs from 'dayjs';
-
+export function generateUUID(digits: any) {
+  let str = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVXZ';
+  let uuid = [];
+  for (let i = 0; i < digits; i++) {
+    uuid.push(str[Math.floor(Math.random() * str.length)]);
+  }
+  return uuid.join('');
+}
 const ChatScreen = () => {
   const params: any = useLocalSearchParams();
   const insets = useSafeAreaInsets();
   const { socketIo, user, onlineUsers } = useAuth();
 
-  const { data, refetch }: any = useGetMessages(params?.conversationId);
+  const { data, refetch, hasNextPage, fetchNextPage, isFetchingNextPage }: any = useGetMessages(
+    params?.conversationId
+  );
   useEffect(() => {
     if (params?.conversationId) {
       queryClient.removeQueries({ queryKey: ['messages', ''] });
@@ -34,6 +42,7 @@ const ChatScreen = () => {
 
     //save the message to the cache
     saveMessageCache({
+      uuid: generateUUID(20),
       message,
       user: user?.uuid,
       conversationId: params?.conversationId,
@@ -116,6 +125,7 @@ const ChatScreen = () => {
       };
     }
   }, [socketIo]);
+
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-white">
       <Header data={params} status={onlineUsers?.includes(params?.userId)} />
@@ -131,6 +141,12 @@ const ChatScreen = () => {
             <Chat
               data={data?.pages.map((page: any) => page?.data).flat()}
               sendMessage={sendMessage}
+              onEndReached={() => {
+                console.log(1, hasNextPage, isFetchingNextPage);
+                if (hasNextPage && !isFetchingNextPage) {
+                  fetchNextPage();
+                }
+              }}
             />
           </View>
         )}
