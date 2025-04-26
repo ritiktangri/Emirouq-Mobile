@@ -46,7 +46,7 @@ const Render = ({ item }: any) => {
           </Text>
           <Text
             className={`mt-1 self-start rounded-full px-2 py-1  ${
-              item.status === 'Active'
+              item.status === 'active'
                 ? 'bg-green-100 text-green-600'
                 : item.status === 'draft'
                   ? 'bg-yellow-100 text-yellow-600'

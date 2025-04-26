@@ -1,7 +1,7 @@
 /* eslint-disable import/order */
 import React, { useCallback, useEffect, useState } from 'react';
 import { Image, RefreshControl, ScrollView, TouchableOpacity } from 'react-native';
-import { Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
+import { AntDesign, Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { Href, router, useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
 import { View } from '~/components/common/View';
 import { Text } from '~/components/common/Text';
@@ -71,6 +71,7 @@ const SinglePost = () => {
 
         <ScrollView
           className="mb-10"
+          showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
               colors={[theme.colors.primary]}
@@ -132,50 +133,57 @@ const SinglePost = () => {
           {/* Product Details */}
           <View className="p-4">
             <Text className="mb-2 text-2xl font-bold">{data?.data?.title}</Text>
-            <Text className="text-2xl font-semibold text-red-600">
+            <Text className="text-2xl font-semibold text-primary">
               {toCurrency(data?.data?.price)}
             </Text>
-            {/* <View className="mt-1 flex-row items-center">
-            <Feather name="map-pin" size={16} color="gray" />
-            <Text className="ml-1 text-gray-600">New York, NY</Text>
-          </View> */}
+            <View className="mt-1 flex-row items-center">
+              <Feather name="map-pin" size={16} color="gray" />
+              <Text className="ml-1 text-gray-600">{data?.data?.location || 'New York, NY'}</Text>
+            </View>
           </View>
 
           {/* Seller Info */}
 
           {user?.uuid !== data?.data?.userId ? (
-            <View className="flex-row items-center px-4 py-2">
-              <Image
-                source={{
-                  uri:
-                    data?.data?.user?.profileImage ||
-                    'https://static.vecteezy.com/system/resources/previews/000/439/863/non_2x/vector-users-icon.jpg',
-                }}
-                style={{ width: 60, height: 60, borderRadius: 10 }}
-              />
-              <View className="flex-1 ">
-                <View className="flex-row items-center">
-                  <Text className="mr-1 font-bold">
-                    {data?.data?.user?.firstName} {data?.data?.user?.lastName}
-                  </Text>
-                  <FontAwesome name="check-circle" size={16} color="#e3350d" />
+            <View className="px-4 py-2">
+              <View className="flex-row items-center">
+                <Image
+                  source={{
+                    uri:
+                      data?.data?.user?.profileImage ||
+                      'https://static.vecteezy.com/system/resources/previews/000/439/863/non_2x/vector-users-icon.jpg',
+                  }}
+                  style={{ width: 50, height: 50, borderRadius: 10 }}
+                />
+                <View className="ml-2 flex-1">
+                  <View className="flex-row items-center">
+                    <Text className="mr-1 font-bold">
+                      {data?.data?.user?.firstName} {data?.data?.user?.lastName}
+                    </Text>
+                    <FontAwesome name="check-circle" size={16} color="#FF5722" />
+                  </View>
+                  <View className="flex-row items-center">
+                    <FontAwesome name="star" size={12} color="gold" />
+                    <Text className="ml-1 text-sm text-gray-600">4.9 (234 reviews)</Text>
+                  </View>
                 </View>
-                <View className="flex-row items-center">
-                  <FontAwesome name="star" size={12} color="gold" />
-                  <Text className="ml-1 text-gray-600">4.9 (234 reviews)</Text>
-                </View>
-                <Text className="text-gray-600">
-                  Member since {dayjs(data?.data?.user?.createdAt)?.format('YYYY')}
-                </Text>
+                <TouchableOpacity>
+                  <Text className="text-primary">View Profile {'>'}</Text>
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity>
-                <Text className="text-primary">View Profile {'>'}</Text>
-              </TouchableOpacity>
+              <Text className="mt-1 text-sm text-gray-600">
+                <AntDesign name="clockcircleo" size={12} color="#4b5563" /> Member since{' '}
+                {dayjs(data?.data?.user?.createdAt)?.format('YYYY')}
+              </Text>
             </View>
           ) : (
             <></>
           )}
-
+          <View className="flex-row items-center gap-3 border-[0.2px] border-t border-gray-200 px-4 pt-4">
+            <Text className="text-gray-600">120 Likes</Text>
+            <View className="h-2 w-2 rounded-full bg-gray-400" />
+            <Text className="text-gray-600">14 Comments</Text>
+          </View>
           {/* Interaction Buttons */}
           <View className="mt-2 flex-row justify-around">
             <TouchableOpacity className="flex-row items-center">
@@ -187,25 +195,25 @@ const SinglePost = () => {
               <Text className="ml-1 text-gray-600">Comment</Text>
             </TouchableOpacity>
             <TouchableOpacity className="flex-row items-center">
-              <Feather name="share" size={20} color="gray" />
+              <AntDesign name="sharealt" size={20} color="gray" />
               <Text className="ml-1 text-gray-600">Share</Text>
             </TouchableOpacity>
           </View>
 
           {/* Description */}
-          <View className="p-4">
+          <View className="px-4 pb-1 pt-4">
             <Text className="text-lg font-semibold">{i18n.t('post.description')}</Text>
             <Text className="mt-1 text-gray-700">{data?.data?.description}</Text>
             <View className="mt-2">
-              <View className="flex-row justify-between border-b border-gray-300 py-2">
+              <View className="flex-row justify-between  py-2">
                 <Text className="text-gray-600">{i18n.t('post.condition')}</Text>
                 <Text className="text-gray-800">{data?.data?.condition}</Text>
               </View>
-              <View className="flex-row justify-between border-b border-gray-300 py-2">
+              <View className="flex-row justify-between  py-2">
                 <Text className="text-gray-600">{i18n.t('post.category')}</Text>
                 <Text className="text-gray-800">{data?.data?.category?.title}</Text>
               </View>
-              {/* <View className="flex-row justify-between border-b border-gray-300 py-1">
+              {/* <View className="flex-row justify-between  py-1">
                 <Text className="text-gray-600">Brand</Text>
                 <Text className="text-gray-800">
                   {data?.data?.brand?.title}
@@ -219,7 +227,7 @@ const SinglePost = () => {
           </View>
 
           {/* Tags */}
-          <View className="mt-2 flex-row flex-wrap px-4">
+          <View className="mt-2 flex-row flex-wrap border-[0.2px] border-b border-t border-gray-200 px-4 pb-2 pt-4">
             <TouchableOpacity className="mb-2 mr-2 rounded-full bg-gray-200 px-3 py-1">
               <Text className="text-gray-700">Negotiable</Text>
             </TouchableOpacity>
@@ -270,7 +278,7 @@ const SinglePost = () => {
       </View>
 
       {/* Chat Button */}
-      {user?.uuid !== data?.data?.userId && removeChatButton === false ? (
+      {user?.uuid && user?.uuid !== data?.data?.userId && removeChatButton === false ? (
         <TouchableOpacity
           onPress={() =>
             router.push({
