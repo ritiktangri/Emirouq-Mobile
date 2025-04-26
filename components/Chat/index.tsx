@@ -5,8 +5,8 @@ import DefaultTextInput from '../common/DefaultTextInput';
 import { View } from '../common/View';
 import Render from './render';
 import { useAuth } from '~/context/AuthContext';
-import { useCallback, useEffect } from 'react';
-import { saveConversationCache, useGetConversations } from '~/hooks/chats/query';
+import { useCallback } from 'react';
+import { useGetConversations } from '~/hooks/chats/query';
 import theme from '~/utils/theme';
 import Loading from './loading';
 import LoggedOutView from './loggedOutView';
@@ -32,20 +32,6 @@ export default function Chat() {
     refetch();
   }, [refetch, queryClient]);
 
-  // useEffect(() => {
-  //   if (socketIo?.connected) {
-  //     const handleUpdateConversationCache = (data: any) => {
-  //       console.log(data, 'cache');
-  //       saveConversationCache(data);
-  //     };
-
-  //     socketIo?.on('update_conversation_cache', handleUpdateConversationCache);
-
-  //     return () => {
-  //       socketIo?.off('update_conversation_cache', handleUpdateConversationCache);
-  //     };
-  //   }
-  // }, [socketIo]);
   if (!user?.uuid) {
     return <LoggedOutView />;
   }
