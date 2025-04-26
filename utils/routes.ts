@@ -33,6 +33,7 @@ export const routes = {
     chatScreen: (id: string) => `/chat-screen/${id}`,
     preview_post: '/(hydrogen)/(tabs)/post/preview-post',
     success_view: '/(hydrogen)/(tabs)/post/success-view',
+    favourites: '/(hydrogen)/favourites',
   },
   'select-language': '/select-language',
   success: '/(hydrogen)/success',

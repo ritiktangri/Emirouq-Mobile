@@ -10,7 +10,7 @@ export const useGetCategory = (keyword = '') =>
         query: { start: pageParam, keyword },
       }),
     getNextPageParam: (lastPage: any, allPages: any) => {
-      const currentStart = allPages?.length * 10; // Calculate the start value for the next page
+      const currentStart = allPages?.length * 10;
       if (currentStart < lastPage?.count) {
         return currentStart;
       } else {

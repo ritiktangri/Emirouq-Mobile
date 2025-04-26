@@ -26,25 +26,25 @@ const Dashboard = () => {
     loading: recentPostLoading,
     data: recentPost,
     refetch: recentPostRefetch,
-  }: any = useGetPosts('');
+  }: any = useGetPosts('', 'active');
   const {
     isFetching: featuredPostFetching,
     loading: featuredPostLoading,
     data: featurePost,
     refetch: featurePostRefetch,
-  }: any = useGetPosts('');
+  }: any = useGetPosts('', 'active');
   const {
     isFetching: hotDealPostFetching,
     loading: hotDealPostLoading,
     data: hotDealPost,
     refetch: hotDealRefetch,
-  }: any = useGetPosts('');
+  }: any = useGetPosts('', 'active');
   const {
     isFetching: recommendedPostFetching,
     loading: recommendedPostLoading,
     data: recommendedPost,
     refetch: recommendedPostRefetch,
-  }: any = useGetPosts('');
+  }: any = useGetPosts('', 'active');
   const handleRefresh = useCallback(() => {
     queryClient.removeQueries({ queryKey: ['posts', ''] });
     queryClient.removeQueries({ queryKey: ['category'] });

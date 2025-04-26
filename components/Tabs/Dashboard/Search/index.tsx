@@ -1,7 +1,7 @@
 /* eslint-disable import/order */
 import React, { useState } from 'react';
 import DefaultTextInput from '~/components/common/DefaultTextInput';
-import { Ionicons, Octicons } from '@expo/vector-icons';
+import { AntDesign, Ionicons, Octicons } from '@expo/vector-icons';
 import theme from '~/utils/theme';
 import { i18n } from '~/utils/i18n';
 import { View } from '~/components/common/View';
@@ -15,11 +15,13 @@ import {
   MemoizedPriceRangeSelector,
   MemoizedSorting,
 } from './FilterComponents/export';
+import { Href, useRouter } from 'expo-router';
+import { routes } from '~/utils/routes';
 
 const Search = () => {
   const { locale } = useLocale();
   const [open, setOpen] = useState(false);
-
+  const router = useRouter();
   return (
     <View direction={locale} className="flex w-full items-center justify-between">
       <DefaultTextInput
@@ -28,7 +30,7 @@ const Search = () => {
         containerClassName={`bg-search_bg rounded-lg ${Platform.OS === 'ios' ? 'p-3' : 'px-2'}`}
         textAlign={locale === 'ar' ? 'right' : 'left'}
         placeholderTextColor={theme.colors.gray}
-        className="w-[80%] px-4 text-lg"
+        className="w-[70%] px-4 text-lg"
       />
       <TouchableOpacity
         className="relative"
@@ -36,6 +38,18 @@ const Search = () => {
           setOpen(!open);
         }}>
         <Octicons name="filter" size={24} color="black" />
+      </TouchableOpacity>
+      <TouchableOpacity
+        className="relative"
+        onPress={() => {
+          router.push({
+            pathname: routes.tabs.favourites,
+            params: {
+              headerTitle: 'createProfile.heading',
+            },
+          } as Href);
+        }}>
+        <AntDesign name="hearto" size={24} color="black" />
       </TouchableOpacity>
       <Modal
         animationType="slide"

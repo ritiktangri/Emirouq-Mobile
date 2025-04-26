@@ -24,3 +24,15 @@ export async function getSinglePostService({ pathParams }: any) {
     pathParams,
   });
 }
+export async function updateFavourite({ pathParams }: any) {
+  return callApi({
+    uriEndPoint: { ...post.favourite.v1 } as ApiEndpoint,
+    pathParams,
+  });
+}
+export async function getFavourite({ query }: any) {
+  return callApi({
+    uriEndPoint: { ...post.getFavourite.v1 } as ApiEndpoint,
+    query,
+  });
+}

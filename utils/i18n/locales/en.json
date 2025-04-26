@@ -155,5 +155,8 @@
       "title": "No Chats Yet",
       "description": "Start a conversation with a buyer or seller to see it here."
     }
+  },
+  "favourites":{
+    "favourites":"Favourites"
   }
 }
