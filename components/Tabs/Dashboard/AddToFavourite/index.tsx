@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Animated } from 'react-native';
+import { TouchableOpacity, Animated } from 'react-native';
 import React, { useState } from 'react';
 import { AntDesign } from '@expo/vector-icons';
 import { useAuth } from '~/context/AuthContext';

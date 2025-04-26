@@ -7,9 +7,9 @@ export const useUpdateFavourite = () => {
     mutationFn: (payload: any) => updateFavourite(payload),
     onSuccess: () => {
       // ✅ refetch posts
-    //   queryClient.invalidateQueries({
-    //     queryKey: ['favourite'],
-    //   });
+      queryClient.invalidateQueries({
+        queryKey: ['favourite'],
+      });
     },
   });
 };
