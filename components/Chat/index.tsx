@@ -22,30 +22,30 @@ interface Conversation {
   [key: string]: any; // Allows for other dynamic properties
 }
 
-export default function Chat({ routes }: any) {
+export default function Chat() {
   const { locale } = useLocale();
-  const { user, socketIo } = useAuth();
+  const { user } = useAuth();
   const { isFetching, data, hasNextPage, fetchNextPage, isFetchingNextPage, refetch }: any =
     useGetConversations();
   const handleRefresh = useCallback(() => {
     queryClient.removeQueries({ queryKey: ['conversation', ''] });
     refetch();
   }, [refetch, queryClient]);
-  useEffect(() => {
-    if (socketIo?.connected) {
-      //here we are updating the conversation cache
-      socketIo?.on('update_conversation_cache', (data: any) => {
-        console.log(data, 'data');
-        saveConversationCache(data);
-      });
-    }
-    return () => {
-      if (socketIo?.connected) {
-        socketIo?.off('update_conversation_cache');
-      }
-    };
-  }, [socketIo]);
 
+  // useEffect(() => {
+  //   if (socketIo?.connected) {
+  //     const handleUpdateConversationCache = (data: any) => {
+  //       console.log(data, 'cache');
+  //       saveConversationCache(data);
+  //     };
+
+  //     socketIo?.on('update_conversation_cache', handleUpdateConversationCache);
+
+  //     return () => {
+  //       socketIo?.off('update_conversation_cache', handleUpdateConversationCache);
+  //     };
+  //   }
+  // }, [socketIo]);
   if (!user?.uuid) {
     return <LoggedOutView />;
   }

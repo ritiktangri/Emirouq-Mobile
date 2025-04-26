@@ -4,12 +4,13 @@ import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Product from './product';
-import { saveMessageCache, useGetMessages } from '~/hooks/chats/query';
+import { saveConversationCache, saveMessageCache, useGetMessages } from '~/hooks/chats/query';
 import Header from './header';
 import { useAuth } from '~/context/AuthContext';
 import { useCreateConversation } from '~/hooks/chats/mutation';
 import { queryClient } from '~/app/_layout';
 import Chat from './chat';
+import dayjs from 'dayjs';
 
 const ChatScreen = () => {
   const params: any = useLocalSearchParams();
@@ -105,14 +106,15 @@ const ChatScreen = () => {
 
   useEffect(() => {
     if (socketIo?.connected) {
-      socketIo.on('message', ({ message }: any) => {
+      const handleMessageCache = ({ message }: any) => {
         //save the message to the cache
         saveMessageCache(message);
-      });
+      };
+      socketIo.on('message', handleMessageCache);
+      return () => {
+        socketIo?.off('message', handleMessageCache);
+      };
     }
-    return () => {
-      socketIo?.off('message');
-    };
   }, [socketIo]);
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-white">

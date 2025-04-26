@@ -70,7 +70,6 @@ export const saveConversationCache = async (data: any) => {
         {
           ...(oldData?.pages?.[0] || []),
           data: oldData?.pages?.[0]?.data?.map((item: any) => {
-            console.log(item?.uuid === data?.conversationId);
             if (item?.uuid === data?.conversationId) {
               return {
                 ...item,
