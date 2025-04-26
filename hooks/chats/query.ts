@@ -27,7 +27,7 @@ export const useGetMessages = (conversationId: any) =>
         query: { start: pageParam },
       }),
     getNextPageParam: (lastPage: any, allPages: any) => {
-      const currentStart = allPages?.length * 25;
+      const currentStart = allPages?.length || 0 * 25;
       if (currentStart < lastPage?.total) {
         return currentStart;
       } else {
@@ -49,8 +49,8 @@ export const useGetConversations = (keyword = '') =>
         query: { start: pageParam, keyword },
       }),
     getNextPageParam: (lastPage: any, allPages: any) => {
-      const currentStart = allPages?.length * 10;
-      if (currentStart < lastPage?.totalCount) {
+      const currentStart = allPages?.length || 0 * 10;
+      if (currentStart < lastPage ? lastPage?.totalCount : 0) {
         return currentStart;
       } else {
         return undefined;
@@ -69,15 +69,17 @@ export const saveConversationCache = async (data: any) => {
       pages: [
         {
           ...(oldData?.pages?.[0] || []),
-          data: oldData?.pages?.[0]?.data?.map((item: any) => {
-            if (item?.uuid === data?.conversationId) {
-              return {
-                ...item,
-                ...data,
-              };
-            }
-            return item;
-          }),
+          data: data?.firstConversation
+            ? [data, ...(oldData?.pages?.[0]?.data || [])]
+            : oldData?.pages?.[0]?.data?.map((item: any) => {
+                if (item?.uuid === data?.conversationId) {
+                  return {
+                    ...item,
+                    ...data,
+                  };
+                }
+                return item;
+              }),
         },
       ],
     };

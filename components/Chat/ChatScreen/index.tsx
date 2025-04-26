@@ -142,7 +142,6 @@ const ChatScreen = () => {
               data={data?.pages.map((page: any) => page?.data).flat()}
               sendMessage={sendMessage}
               onEndReached={() => {
-                console.log(1, hasNextPage, isFetchingNextPage);
                 if (hasNextPage && !isFetchingNextPage) {
                   fetchNextPage();
                 }
