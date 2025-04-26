@@ -1,13 +1,34 @@
 /* eslint-disable import/order */
 import { View, Text, TouchableOpacity, Image } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { cn, getInitials } from '~/utils/helper';
 import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
+import { useAuth } from '~/context/AuthContext';
+import { useAppState } from '@react-native-community/hooks';
 
 const Header = ({ data, status }: any) => {
   const router = useRouter();
+  const { socketIo, user } = useAuth();
+  const currentAppState = useAppState();
+
+  // this is required..
+  // here , we are leaving the conversation when the user is not active
+  useEffect(() => {
+    if (currentAppState !== 'active') {
+      socketIo?.emit('leave_conversation', {
+        conversationId: data?.conversationId,
+        userId: user?.uuid,
+      });
+    }
+    return () => {
+      socketIo?.emit('leave_conversation', {
+        conversationId: data?.conversationId,
+        userId: user?.uuid,
+      });
+    };
+  }, [currentAppState]);
   return (
     <View className="flex flex-row items-center gap-2 border-b border-gray-200 px-3 py-2 ">
       <TouchableOpacity
@@ -16,6 +37,11 @@ const Header = ({ data, status }: any) => {
             conversationId: undefined,
             userId: undefined,
             postId: undefined,
+          });
+          // here we are leaving the conversation
+          socketIo?.emit('leave_conversation', {
+            conversationId: data?.conversationId,
+            userId: user?.uuid,
           });
           router.replace(routes.tabs.chat as Href);
         }}>

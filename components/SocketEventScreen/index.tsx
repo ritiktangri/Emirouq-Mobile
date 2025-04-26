@@ -16,6 +16,7 @@ function SocketEventScreen({ children }: any) {
     return () => {
       if (interval) {
         clearInterval(interval);
+        socketIo.off('heartbeat');
       }
     };
   }, [socketIo.connected, user]);

@@ -20,11 +20,15 @@ dayjs.extend(isToday);
 dayjs.extend(isYesterday);
 dayjs.extend(isSameOrAfter);
 
+//from single post send
+// all response plus receiverId
 const Render = ({ item }: any) => {
   const router = useRouter();
   return (
     <TouchableOpacity
       onPress={() => {
+        const receiverId = item?.users?.filter((user: any) => user !== item?.user?.uuid)?.[0];
+
         router.navigate({
           pathname: routes.tabs.chatScreen(item?.uuid),
           params: {
@@ -32,11 +36,13 @@ const Render = ({ item }: any) => {
             fullName: `${item?.user?.firstName} ${item?.user?.lastName}`,
             profileImage: item?.profileImage,
             userId: item?.user?.uuid,
+            receiverId,
             uuid: item?.post?.uuid,
             chatTitle: true,
             name: item?.post?.title,
             file: item?.post?.file?.[0],
             price: item?.post?.price,
+            details: JSON.stringify(item),
           },
         } as unknown as Href);
       }}
@@ -89,11 +95,17 @@ const Render = ({ item }: any) => {
         </View>
         {item?.lastMessage ? (
           <View direction="row" className="mt-1">
-            <Text className="flex-1 text-base text-gray-600">{item?.message}</Text>
-            {item?.count && (
+            {item?.lastMessage ? (
+              <Text className="flex-1 text-base text-gray-600">{item?.lastMessage}</Text>
+            ) : (
+              <></>
+            )}
+            {item?.participant?.count ? (
               <View className=" flex h-5 w-5 items-center  rounded-full bg-red-500">
-                <Text className="text-xs font-bold text-white">{item?.count}</Text>
+                <Text className="text-xs font-bold text-white">{item?.participant?.count}</Text>
               </View>
+            ) : (
+              <></>
             )}
           </View>
         ) : (

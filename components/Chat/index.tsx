@@ -5,14 +5,15 @@ import DefaultTextInput from '../common/DefaultTextInput';
 import { View } from '../common/View';
 import Render from './render';
 import { useAuth } from '~/context/AuthContext';
-import { useCallback } from 'react';
-import { useGetConversations } from '~/hooks/chats/query';
+import { useCallback, useEffect } from 'react';
+import { saveConversationCache, useGetConversations } from '~/hooks/chats/query';
 import theme from '~/utils/theme';
 import Loading from './loading';
 import LoggedOutView from './loggedOutView';
 import NoData from '../common/NoData';
 import { i18n } from '~/utils/i18n';
 import { useLocale } from '~/context/LocaleContext';
+import { queryClient } from '~/app/_layout';
 
 // Define a type for your conversation data (replace with your actual type)
 interface Conversation {
@@ -23,12 +24,27 @@ interface Conversation {
 
 export default function Chat({ routes }: any) {
   const { locale } = useLocale();
-  const { user } = useAuth();
+  const { user, socketIo } = useAuth();
   const { isFetching, data, hasNextPage, fetchNextPage, isFetchingNextPage, refetch }: any =
     useGetConversations();
   const handleRefresh = useCallback(() => {
+    queryClient.removeQueries({ queryKey: ['conversation', ''] });
     refetch();
-  }, [refetch]);
+  }, [refetch, queryClient]);
+  useEffect(() => {
+    if (socketIo?.connected) {
+      //here we are updating the conversation cache
+      socketIo?.on('update_conversation_cache', (data: any) => {
+        console.log(data, 'data');
+        saveConversationCache(data);
+      });
+    }
+    return () => {
+      if (socketIo?.connected) {
+        socketIo?.off('update_conversation_cache');
+      }
+    };
+  }, [socketIo]);
 
   if (!user?.uuid) {
     return <LoggedOutView />;
