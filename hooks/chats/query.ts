@@ -49,6 +49,13 @@ export const useGetConversations = (keyword = '') =>
         query: { start: pageParam, keyword },
       }),
     getNextPageParam: (lastPage: any, allPages: any) => {
+      if (!lastPage) {
+        return undefined;
+      }
+      if (lastPage?.totalCount === 0) {
+        return undefined;
+      }
+
       const currentStart = allPages?.length || 0 * 10;
       if (currentStart < lastPage ? lastPage?.totalCount : 0) {
         return currentStart;

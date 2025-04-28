@@ -31,6 +31,7 @@ import { Text } from '~/components/common/Text';
 import { useAuth } from '~/context/AuthContext';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { cn } from '~/utils/helper';
+import Footer from './footer';
 
 // const ME = 'Alice';
 
@@ -213,7 +214,7 @@ function ChatBubble({
         item?.user === user?.uuid ? 'items-end pl-16' : 'items-start pr-16'
       )}>
       <Animated.View style={item?.user === user?.uuid ? rootStyle : undefined}>
-        {['image', 'video'].includes(item?.type) && item?.attachments?.length > 0 ? (
+        {item?.attachments?.length > 0 ? (
           <View
             className={cn(
               'flex-row items-center gap-4',
@@ -286,7 +287,6 @@ function Composer({
 }) {
   const { colors, isDarkColorScheme } = useColorScheme();
   const insets = useSafeAreaInsets();
-  const [message, setMessage] = React.useState('' as any);
 
   function onContentSizeChange(event: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) {
     textInputHeight.value = Math.max(
@@ -304,38 +304,10 @@ function Composer({
             ios: isDarkColorScheme ? '#00000080' : '#ffffff80',
             default: isDarkColorScheme ? colors.background : colors.card,
           }),
-          paddingBottom: insets.bottom,
+          // paddingBottom: insets.bottom,
         },
       ]}>
-      <View className="flex-row items-center  border-t border-gray-200 px-4 pt-4" style={{}}>
-        <TouchableOpacity>
-          <Entypo name="attachment" size={24} color="black" />
-        </TouchableOpacity>
-        <DefaultTextInput
-          className="w-full rounded-2xl bg-[#F0F0F0] px-3 py-4"
-          containerClassName="mr-2 flex-1 text-black rounded-full bg-white px-4  text-base"
-          placeholder="Type a message..."
-          onChangeText={setMessage}
-          multiline
-          returnKeyType="send"
-          onSubmitEditing={() => {
-            sendMessage(message, () => {
-              setMessage('');
-            });
-          }}
-          onContentSizeChange={onContentSizeChange}
-          value={message}
-        />
-        <TouchableOpacity
-          className="h-12 w-12 items-center justify-center rounded-full "
-          onPress={() => {
-            sendMessage(message, () => {
-              setMessage('');
-            });
-          }}>
-          <Ionicons name="send" size={30} className="!text-primary" />
-        </TouchableOpacity>
-      </View>
+      <Footer sendMessage={sendMessage} onContentSizeChange={onContentSizeChange} />
     </BlurView>
   );
 }
