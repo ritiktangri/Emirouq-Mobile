@@ -6,10 +6,8 @@ export const useCreateConversation = () => {
   return useMutation({
     mutationFn: (payload: any) => createConversationService(payload),
     onSuccess: () => {
-      // ✅ refetch posts
-      queryClient.invalidateQueries({
-        queryKey: ['conversation'],
-      });
+      // // ✅ refetch posts
+      // queryClient.invalidateQueries({ queryKey: ['conversation'] });
     },
   });
 };

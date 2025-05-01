@@ -27,30 +27,29 @@ const Render = ({ item }: any) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        const receiverId = item?.users?.filter((user: any) => user !== item?.user?.uuid)?.[0];
-
         router.navigate({
           pathname: routes.tabs.chatScreen(item?.uuid),
           params: {
             conversationId: item?.uuid,
-            fullName: `${item?.user?.firstName} ${item?.user?.lastName}`,
-            profileImage: item?.profileImage,
-            userId: item?.user?.uuid,
-            receiverId,
+            firstName: item?.receiver?.firstName,
+            lastName: item?.receiver?.lastName,
+            fullName: `${item?.receiver?.firstName} ${item?.receiver?.lastName}`,
+            profileImage: item?.receiver?.profileImage,
+            receiverId: item?.receiver?.uuid,
             uuid: item?.post?.uuid,
             chatTitle: true,
             name: item?.post?.title,
             file: item?.post?.file?.[0],
             price: item?.post?.price,
-            details: JSON.stringify(item),
+            post: JSON.stringify(item?.post),
           },
         } as unknown as Href);
       }}
       className="flex-row items-center gap-2 border-b border-gray-200  px-3 py-3">
-      {item?.profileImage ? (
+      {item?.receiver?.profileImage ? (
         <View className=" h-14 w-14 rounded-full bg-black">
           <Image
-            source={{ uri: item?.profileImage }}
+            source={{ uri: item?.receiver?.profileImage }}
             className="h-full w-full rounded-full" // Use a default image or placeholder if needed
             resizeMode="cover"
           />
@@ -58,14 +57,14 @@ const Render = ({ item }: any) => {
       ) : (
         <View className="flex h-14  w-14 items-center justify-center rounded-full bg-primary">
           <Text className=" font-poppinsMedium text-xl text-white">
-            {getInitials(`${item?.user?.firstName} ${item?.user?.lastName}`)}
+            {getInitials(`${item?.receiver?.firstName} ${item?.receiver?.lastName}`)}
           </Text>
         </View>
       )}
       <View className="w-full flex-1 ">
         <View className="w-full flex-row items-center ">
           <Text className="flex-1 font-poppinsMedium text-lg">
-            {item?.user?.firstName} {item?.user?.lastName}
+            {item?.receiver?.firstName} {item?.receiver?.lastName}
           </Text>
           <Text className="text-sm text-gray-500">
             {formatLastMessageTime(item?.lastMessageTime)}
@@ -100,9 +99,9 @@ const Render = ({ item }: any) => {
             ) : (
               <></>
             )}
-            {item?.participant?.count ? (
+            {item?.chatDetails?.count ? (
               <View className=" flex h-5 w-5 items-center  rounded-full bg-red-500">
-                <Text className="text-xs font-bold text-white">{item?.participant?.count}</Text>
+                <Text className="text-xs font-bold text-white">{item?.chatDetails?.count}</Text>
               </View>
             ) : (
               <></>

@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
 import { createContext, useContext, useMemo, useEffect } from 'react';
-import { saveConversationCache } from '~/hooks/chats/query';
+import { saveConversationCache, saveMessageCache } from '~/hooks/chats/query';
 
 import { useAuth } from './AuthContext';
 const defaultProvider = {
@@ -19,10 +19,15 @@ const ConversationProvider = ({ children }: any) => {
       const handleUpdateConversationCache = (data: any) => {
         saveConversationCache(data);
       };
-
+      const handleMessageCache = ({ message }: any) => {
+        //save the message to the cache
+        saveMessageCache(message);
+      };
+      socketIo.on('message', handleMessageCache);
       socketIo?.on('update_conversation_cache', handleUpdateConversationCache);
 
       return () => {
+        socketIo?.off('message', handleMessageCache);
         socketIo?.off('update_conversation_cache', handleUpdateConversationCache);
       };
     }

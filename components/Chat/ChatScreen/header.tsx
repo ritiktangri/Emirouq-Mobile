@@ -57,11 +57,15 @@ const Header = ({ data, status }: any) => {
             <></>
           )}
           {data?.profileImage ? (
-            <Image source={data?.profileImage} resizeMode="cover" />
+            <Image
+              source={{ uri: data?.profileImage }}
+              resizeMode="cover"
+              className="h-full w-full rounded-full" // Use a default image or placeholder if needed
+            />
           ) : (
             <View className="flex h-12  w-12 items-center justify-center rounded-full bg-primary">
               <Text className=" font-poppinsMedium text-2xl text-white">
-                {getInitials(data?.fullName)}
+                {getInitials(`${data?.firstName} ${data?.lastName}`)}
               </Text>
             </View>
           )}

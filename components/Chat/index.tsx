@@ -25,18 +25,26 @@ interface Conversation {
 export default function Chat() {
   const { locale } = useLocale();
   const { user } = useAuth();
-  const { isFetching, data, hasNextPage, fetchNextPage, isFetchingNextPage, refetch }: any =
-    useGetConversations();
+  const {
+    isFetching,
+    isLoading,
+    data,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+    refetch,
+  }: any = useGetConversations();
   const handleRefresh = useCallback(() => {
-    queryClient.removeQueries({ queryKey: ['conversation', ''] });
+    queryClient.removeQueries({ queryKey: ['conversation'] });
     refetch();
   }, [refetch, queryClient]);
 
   if (!user?.uuid) {
     return <LoggedOutView />;
   }
-
-  const conversations: Conversation[] = data?.pages.map((page: any) => page?.data).flat() || [];
+  const conversations: Conversation[] =
+    (data?.pages && !!data?.pages?.length && data?.pages?.map((page: any) => page?.data).flat()) ||
+    [];
 
   return (
     <View className="flex-1 bg-white">
@@ -50,7 +58,7 @@ export default function Chat() {
         />
       </View>
 
-      {isFetching ? (
+      {isFetching || isLoading ? (
         <Loading />
       ) : (
         <FlatList

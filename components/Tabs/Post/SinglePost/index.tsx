@@ -286,7 +286,10 @@ const SinglePost = () => {
               // : routes.tabs.chat,
               params: {
                 conversationId: data?.data?.conversation?.uuid,
-                userId: data?.data?.userId,
+                // receiverId: data?.data?.userId,
+                receiverId: data?.data?.userId,
+                firstName: data?.data?.user?.firstName,
+                lastName: data?.data?.user?.lastName,
                 fullName: `${data?.data?.user?.firstName} ${data?.data?.user?.lastName}`,
                 profileImage: data?.data?.user?.profileImage,
                 uuid: data?.data?.uuid,
@@ -295,6 +298,7 @@ const SinglePost = () => {
                 name: data?.data?.title,
                 file: data?.data?.file?.[0],
                 price: data?.data?.price,
+                post: JSON.stringify(data?.data),
               },
             } as unknown as Href)
           }

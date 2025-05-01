@@ -119,7 +119,14 @@ export default function Chat({
       translateX.value = withSpring(0, SPRING_CONFIG);
     });
 
-  const debouncedLoadMoreData = debounce(onEndReached, 300);
+  const debouncedLoadMoreData = React.useCallback(
+    debounce(() => {
+      if (onEndReached) {
+        onEndReached();
+      }
+    }, 500),
+    [onEndReached]
+  );
   return (
     <>
       <GestureDetector gesture={pan}>
