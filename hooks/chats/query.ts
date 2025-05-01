@@ -78,6 +78,40 @@ export const useGetConversations = (keyword = '', enabled = true) =>
     enabled,
   });
 
+// export const saveConversationCache = async (data: any, keyword = '') => {
+//   queryClient.setQueryData(['conversation', keyword], (oldData: any) => {
+//     if (!oldData) return;
+
+//     // Case 1: New conversation (no conversationId)
+//     if (data?.firstConversation) {
+//       const updatedFirstPage = {
+//         ...oldData?.pages?.[0],
+//         data: [data, ...(oldData.pages[0]?.data || [])],
+//       };
+
+//       return {
+//         ...oldData,
+//         pages: [updatedFirstPage, ...oldData.pages.slice(1)],
+//       };
+//     }
+
+//     // Case 2: Existing conversation — update it in all pages
+//     const updatedPages = oldData?.pages?.map((page: any) => {
+//       return {
+//         ...page,
+//         data: page?.data?.map((item: any) =>
+//           item?.uuid === data?.conversationId ? { ...item, ...data } : item
+//         ),
+//       };
+//     });
+
+//     return {
+//       ...oldData,
+//       pages: updatedPages,
+//     };
+//   });
+// };
+
 export const saveConversationCache = async (data: any, keyword = '') => {
   queryClient.setQueryData(['conversation', keyword], (oldData: any) => {
     if (!oldData) return;
@@ -95,19 +129,62 @@ export const saveConversationCache = async (data: any, keyword = '') => {
       };
     }
 
-    // Case 2: Existing conversation — update it in all pages
-    const updatedPages = oldData?.pages?.map((page: any) => {
-      return {
-        ...page,
-        data: page?.data?.map((item: any) =>
-          item?.uuid === data?.conversationId ? { ...item, ...data } : item
-        ),
-      };
-    });
+    // Case 2: Existing conversation — update it and move to top
+    if (data?.conversationId) {
+      // Find the conversation and update it
+      const updatedPages = oldData?.pages?.map((page: any) => {
+        return {
+          ...page,
+          data: page?.data?.map((item: any) =>
+            item?.uuid === data?.conversationId ? { ...item, ...data } : item
+          ),
+        };
+      });
 
-    return {
-      ...oldData,
-      pages: updatedPages,
-    };
+      // Find the page containing the updated conversation
+      let conversationPage = -1;
+      let conversationIndex = -1;
+
+      for (let i = 0; i < updatedPages?.length; i++) {
+        const pageData = updatedPages?.[i]?.data;
+        if (pageData) {
+          const index = pageData?.findIndex((item: any) => item?.uuid === data?.conversationId);
+          if (index !== -1) {
+            conversationPage = i;
+            conversationIndex = index;
+            break;
+          }
+        }
+      }
+
+      // If the conversation was found, move it to the top of the first page.
+      if (conversationPage !== -1 && conversationIndex !== -1) {
+        const conversationToMove = updatedPages?.[conversationPage]?.data?.[conversationIndex];
+
+        // Remove from old position
+        updatedPages[conversationPage].data.splice(conversationIndex, 1);
+
+        // Add to the beginning of the first page
+        updatedPages[0].data.unshift(conversationToMove);
+
+        // Clean up empty page if conversation moved from a page other than the first.
+        if (conversationPage > 0 && updatedPages[conversationPage].data.length === 0) {
+          updatedPages.splice(conversationPage, 1); // Remove the empty page
+        }
+
+        return {
+          ...oldData,
+          pages: updatedPages,
+        };
+      } else {
+        // Conversation ID was provided but wasn't found.  Log a warning.
+        console.warn('Conversation ID not found in cache:', data?.conversationId);
+        return {
+          ...oldData,
+          pages: updatedPages,
+        };
+      }
+    }
+    return oldData;
   });
 };
