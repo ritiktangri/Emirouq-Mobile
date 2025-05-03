@@ -30,6 +30,7 @@ import { useColorScheme } from '~/lib/useColorScheme';
 import { cn, getRelativeTime } from '~/utils/helper';
 import Footer from './footer';
 import SkeletonLoading from 'expo-skeleton-loading';
+import dayjs from 'dayjs';
 
 // const ME = 'Alice';
 
@@ -279,11 +280,26 @@ function ChatBubble({
         {item?.message ? (
           <Pressable className={cn(!!item?.attachments?.length && item?.message ? 'py-2' : 'mt-0')}>
             <View
-              style={BORDER_CURVE}
+              style={[
+                BORDER_CURVE,
+                {
+                  shadowColor: '#000',
+                  shadowOffset: {
+                    width: 0,
+                    height: 1,
+                  },
+                  shadowOpacity: 0.18,
+                  shadowRadius: 1.0,
+
+                  elevation: 1,
+                },
+              ]}
               className={cn(
-                'dark:bg-muted-foreground rounded-2xl bg-white px-3 py-1.5',
+                'dark:bg-muted-foreground  bg-white px-7 py-2',
                 Platform.OS === 'ios' && 'dark:bg-muted',
-                item?.user === user?.uuid && 'bg-primary dark:bg-primary'
+                item?.user === user?.uuid
+                  ? 'rounded-l-xl rounded-br-xl bg-primary dark:bg-primary'
+                  : 'dark:bg-muted-foreground rounded-r-xl rounded-bl-xl bg-white'
               )}>
               <Text className={cn(item?.user === user?.uuid && 'text-white')}>{item?.message}</Text>
             </View>
@@ -293,11 +309,12 @@ function ChatBubble({
         )}
       </Animated.View>
 
-      <Animated.View style={dateStyle} className="justify-center">
-        <Text variant="caption1" className="text-muted-foreground">
-          {getRelativeTime(item?.createdAt)}
-        </Text>
-      </Animated.View>
+      {/* <Animated.View style={dateStyle} className="justify-center"> */}
+      <Text variant="caption1" className="font-regular py-1 text-tertiary">
+        {/* {getRelativeTime(item?.createdAt)} */}
+        {dayjs(item?.createdAt).format('HH:mm A')}
+      </Text>
+      {/* </Animated.View> */}
     </View>
   );
 }

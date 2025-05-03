@@ -75,6 +75,7 @@ const ChatScreen = () => {
               user: user?.uuid,
               conversationId: params?.conversationId,
               attachments: res?.attachments,
+              createdAt: new Date(),
             });
             socketIo?.emit('message', {
               conversationId: params?.conversationId,
@@ -93,6 +94,7 @@ const ChatScreen = () => {
           message,
           user: user?.uuid,
           conversationId: params?.conversationId,
+          createdAt: new Date(),
         });
 
         socketIo?.emit('message', {
@@ -163,19 +165,6 @@ const ChatScreen = () => {
     };
   }, [socketIo, params?.conversationId, user?.uuid]);
 
-  // useEffect(() => {
-  //   if (socketIo?.connected) {
-  //     const handleMessageCache = ({ message }: any) => {
-  //       //save the message to the cache
-  //       saveMessageCache(message);
-  //     };
-  //     socketIo.on('message', handleMessageCache);
-  //     return () => {
-  //       socketIo?.off('message', handleMessageCache);
-  //     };
-  //   }
-  // }, [socketIo]);
-
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-white">
       <Header data={params} status={onlineUsers?.includes(params?.receiverId)} />
@@ -189,7 +178,7 @@ const ChatScreen = () => {
             <Text>Loading....</Text>
           </View>
         ) : (
-          <View className="flex-1">
+          <View className="flex-1 bg-gray-100">
             <Chat
               data={data?.pages.map((page: any) => page?.data).flat()}
               sendMessage={sendMessage}

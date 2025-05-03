@@ -10,6 +10,7 @@ import DefaultTextInput from '~/components/common/DefaultTextInput';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { cn } from '~/utils/helper';
 const schema = z.object({
   message: z.string().optional(),
   attachments: z
@@ -133,8 +134,12 @@ export default function Footer({
 
   return (
     <View className=" mb-2">
-      <View className="flex flex-row flex-wrap items-center  gap-2  border-b border-gray-200 bg-white px-4 py-2">
-        {(watch('attachments') ?? []).length > 0 ? (
+      <View
+        className={cn(
+          'flex flex-row flex-wrap items-center  gap-2  border-b border-gray-200 bg-gray-100 px-4 py-2',
+          (watch('attachments') ?? []).length > 0 ? 'bg-white' : 'bg-gray-100'
+        )}>
+        {(watch('attachments') ?? [])?.length > 0 ? (
           watch('attachments')?.map((i: any, index: any) => {
             return (
               <View
