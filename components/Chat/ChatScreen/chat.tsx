@@ -27,13 +27,33 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '~/components/common/Text';
 import { useAuth } from '~/context/AuthContext';
 import { useColorScheme } from '~/lib/useColorScheme';
-import { cn, getRelativeTime } from '~/utils/helper';
+import { cn } from '~/utils/helper';
 import Footer from './footer';
 import SkeletonLoading from 'expo-skeleton-loading';
 import dayjs from 'dayjs';
+import ChatBubbleSkeleton from './loading';
 
-// const ME = 'Alice';
+const SkeletonBox = ({ height, width, className = '' }: any) => (
+  <SkeletonLoading background="#d3d3d3" highlight="#e0e0e0">
+    <View className={`rounded-lg bg-gray-200 ${height} ${width} ${className}`} />
+  </SkeletonLoading>
+);
 
+const IncomingMessageSkeleton = () => {
+  return (
+    <View className="mb-2 flex-row justify-start">
+      <SkeletonBox height="h-8" width="w-40" className="rounded-2xl" />
+    </View>
+  );
+};
+
+const OutgoingMessageSkeleton = () => {
+  return (
+    <View className="mb-2 flex-row justify-end">
+      <SkeletonBox height="h-8" width="w-40" className="rounded-2xl" />
+    </View>
+  );
+};
 const HEADER_HEIGHT = Platform.select({ ios: 88, default: 64 });
 
 const dimensions = Dimensions.get('window');
@@ -55,11 +75,13 @@ export default function Chat({
   sendMessage,
   onEndReached,
   uploadFileLoading,
+  isFetching,
 }: {
   data: any;
   sendMessage: any;
   onEndReached: any;
   uploadFileLoading: any;
+  isFetching: any;
 }) {
   const insets = useSafeAreaInsets();
   const textInputHeight = useSharedValue(17);
@@ -131,17 +153,17 @@ export default function Chat({
   return (
     <>
       <GestureDetector gesture={pan}>
-        <View className="flex-1">
+        <View className="flex-1 bg-gray-100">
           <FlashList
             inverted
-            estimatedItemSize={70}
+            estimatedItemSize={100}
             ListHeaderComponent={() =>
               // if file is uploading, show a loading indicator
               uploadFileLoading ? (
                 <View className=" w-full flex-1 ">
                   <View className="mr-2 flex-row justify-end">
                     <SkeletonLoading background="#d3d3d3" highlight="#e0e0e0">
-                      <View className={`h-28 w-28 rounded-lg bg-gray-200`} />
+                      <View className="h-28 w-28 rounded-lg bg-gray-200" />
                     </SkeletonLoading>
                   </View>
                 </View>
@@ -155,20 +177,21 @@ export default function Chat({
             onEndReached={debouncedLoadMoreData}
             onEndReachedThreshold={0.9}
             scrollIndicatorInsets={{ bottom: HEADER_HEIGHT + 10, top: insets.bottom + 2 }}
-            data={data}
-            viewabilityConfig={
-              {
-                // waitForInteraction: true,
-                // itemVisiblePercentThreshold: 50,
-                // minimumViewTime: 1000,
-              }
-            }
+            data={isFetching ? Array(3).fill(null) : data} // Use skeleton data while loading
+            viewabilityConfig={{
+              waitForInteraction: true,
+              itemVisiblePercentThreshold: 50,
+              minimumViewTime: 1000,
+            }}
             renderItem={({ item, index }: any) => {
+              if (isFetching) {
+                return <ChatBubbleSkeleton numberOfMessages={10} />;
+              }
               // if (typeof item === 'string') {
               //   return <DateSeparator date={item} />;
               // }
 
-              const nextMessage = data[index - 1];
+              const nextMessage = data?.[index - 1];
               const isSameNextSender =
                 typeof nextMessage !== 'string' ? nextMessage?.user === item?.user : false;
 
@@ -182,6 +205,7 @@ export default function Chat({
               );
             }}
           />
+
           <Composer sendMessage={sendMessage} textInputHeight={textInputHeight} />
         </View>
       </GestureDetector>

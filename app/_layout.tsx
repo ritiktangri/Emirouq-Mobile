@@ -22,6 +22,7 @@ import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-qu
 import { AxiosError } from 'axios';
 import { ClerkLoaded, ClerkProvider } from '@clerk/clerk-expo';
 import { StripeProvider } from '@stripe/stripe-react-native';
+import 'react-native-get-random-values';
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.

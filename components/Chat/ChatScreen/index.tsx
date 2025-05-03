@@ -10,21 +10,15 @@ import { useAuth } from '~/context/AuthContext';
 import { useCreateConversation, useUploadFile } from '~/hooks/chats/mutation';
 import { queryClient } from '~/app/_layout';
 import Chat from './chat';
-import { saveFileLocally } from '~/utils/helper';
-export function generateUUID(digits: any) {
-  let str = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVXZ';
-  let uuid = [];
-  for (let i = 0; i < digits; i++) {
-    uuid.push(str[Math.floor(Math.random() * str.length)]);
-  }
-  return uuid.join('');
-}
+import { v4 as uuidV4 } from 'uuid';
+import ChatBubbleSkeleton from './loading';
+
 const ChatScreen = () => {
   const params: any = useLocalSearchParams();
   const insets = useSafeAreaInsets();
   const { socketIo, user, onlineUsers } = useAuth();
 
-  const { data, hasNextPage, fetchNextPage, isFetchingNextPage }: any = useGetMessages(
+  const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isFetching }: any = useGetMessages(
     params?.conversationId
   );
   const { refetch: conversationRefetch }: any = useGetConversations('', false);
@@ -42,6 +36,7 @@ const ChatScreen = () => {
   // }, [params?.conversationId]);
   const sendMessage = useCallback(
     async ({ message, attachments }: any, cb: any) => {
+      const uuid = uuidV4();
       if (attachments?.length) {
         //this is required to save the file locally
         // since if i fetch the url from res, it will take time
@@ -71,13 +66,14 @@ const ChatScreen = () => {
           })
           .then((res: any) => {
             saveMessageCache({
-              uuid: generateUUID(20),
+              uuid,
               user: user?.uuid,
               conversationId: params?.conversationId,
               attachments: res?.attachments,
               createdAt: new Date(),
             });
             socketIo?.emit('message', {
+              uuid,
               conversationId: params?.conversationId,
               senderId: user?.uuid,
               // this is to check if the user is the sender or receiver
@@ -90,7 +86,7 @@ const ChatScreen = () => {
       if (message) {
         //save the message to the cache
         saveMessageCache({
-          uuid: generateUUID(20),
+          uuid,
           message,
           user: user?.uuid,
           conversationId: params?.conversationId,
@@ -98,6 +94,7 @@ const ChatScreen = () => {
         });
 
         socketIo?.emit('message', {
+          uuid,
           post: JSON.parse(params?.post),
           conversationId: params?.conversationId,
           message,
@@ -123,7 +120,6 @@ const ChatScreen = () => {
           postId: params?.postId,
         },
       });
-      console.log(res?.isExist, 'res?.isExist');
       if (!res?.isExist) {
         router.setParams({
           conversationId: res?.data?.uuid,
@@ -174,22 +170,19 @@ const ChatScreen = () => {
         className="flex-1"
         keyboardVerticalOffset={Platform.OS === 'ios' ? insets.bottom : 0}>
         {createConversation?.isPending ? (
-          <View className="flex-1">
-            <Text>Loading....</Text>
-          </View>
+          [1, 2, 3].map((item) => <ChatBubbleSkeleton numberOfMessages={19} key={item} />)
         ) : (
-          <View className="flex-1 bg-gray-100">
-            <Chat
-              data={data?.pages.map((page: any) => page?.data).flat()}
-              sendMessage={sendMessage}
-              uploadFileLoading={uploadFile?.isPending}
-              onEndReached={() => {
-                // if (hasNextPage && !isFetchingNextPage) {
-                //   fetchNextPage();
-                // }
-              }}
-            />
-          </View>
+          <Chat
+            data={data?.pages.map((page: any) => page?.data).flat()}
+            sendMessage={sendMessage}
+            isFetching={isFetching}
+            uploadFileLoading={uploadFile?.isPending}
+            onEndReached={() => {
+              // if (hasNextPage && !isFetchingNextPage) {
+              //   fetchNextPage();
+              // }
+            }}
+          />
         )}
       </KeyboardAvoidingView>
     </SafeAreaView>

@@ -133,7 +133,7 @@ export default function Footer({
   };
 
   return (
-    <View className=" mb-2">
+    <View className=" mb-2 bg-white">
       <View
         className={cn(
           'flex flex-row flex-wrap items-center  gap-2  border-b border-gray-200 bg-gray-100 px-4 py-2',
