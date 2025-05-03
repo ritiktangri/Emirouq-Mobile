@@ -262,14 +262,22 @@ function ChatBubble({
                     ' flex-row flex-wrap items-center gap-2',
                     item?.user === user?.uuid && 'flex-row-reverse'
                   )}>
-                  {item?.attachments?.map((attachment: any, index: number) => (
-                    <Image
-                      key={index}
-                      source={{ uri: attachment.uri }}
-                      style={{ width: 100, height: 100, resizeMode: 'cover' }}
-                      borderRadius={12}
-                    />
-                  ))}
+                  {item?.attachments?.map((attachment: any, index: number) =>
+                    ['image/jpeg', 'image/png', 'image/jpg'].includes(attachment?.type) ? (
+                      <Image
+                        key={index}
+                        source={{ uri: attachment.uri }}
+                        style={{ width: 100, height: 100, resizeMode: 'cover' }}
+                        borderRadius={12}
+                      />
+                    ) : ['application/pdf'].includes(attachment?.type) ? (
+                      <FontAwesome name="file-pdf-o" size={24} color="#FF5733" />
+                    ) : ['video/mp4'].includes(attachment?.type) ? (
+                      <FontAwesome name="file-video-o" size={24} color="#FF5733" />
+                    ) : (
+                      <FontAwesome name="file-o" size={24} color="#FF5733" />
+                    )
+                  )}
                 </View>
               </Pressable>
             )}
