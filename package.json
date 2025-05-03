@@ -57,6 +57,7 @@
     "expo-splash-screen": "~0.29.22",
     "expo-status-bar": "~2.0.1",
     "expo-updates": "~0.27.1",
+    "expo-video": "^2.1.8",
     "expo-web-browser": "^14.0.2",
     "i18n-js": "^4.5.1",
     "js-base64": "^3.7.7",

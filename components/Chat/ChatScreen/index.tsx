@@ -12,6 +12,7 @@ import { queryClient } from '~/app/_layout';
 import Chat from './chat';
 import { v4 as uuidV4 } from 'uuid';
 import ChatBubbleSkeleton from './loading';
+import VideoMessagePlayer from '~/components/expoAv/videoScreen';
 
 const ChatScreen = () => {
   const params: any = useLocalSearchParams();
