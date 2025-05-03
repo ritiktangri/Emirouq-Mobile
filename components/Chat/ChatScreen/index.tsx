@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
 import React, { useCallback, useEffect } from 'react';
-import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
+import { KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Product from './product';
@@ -12,7 +12,6 @@ import { queryClient } from '~/app/_layout';
 import Chat from './chat';
 import { v4 as uuidV4 } from 'uuid';
 import ChatBubbleSkeleton from './loading';
-import VideoMessagePlayer from '~/components/expoAv/videoScreen';
 
 const ChatScreen = () => {
   const params: any = useLocalSearchParams();
@@ -166,6 +165,8 @@ const ChatScreen = () => {
     <SafeAreaView edges={['top']} className="flex-1 bg-white">
       <Header data={params} status={onlineUsers?.includes(params?.receiverId)} />
       <Product product={params?.uuid ? params : {}} />
+
+      {/* <VideoPlayer source="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" /> */}
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         className="flex-1"
