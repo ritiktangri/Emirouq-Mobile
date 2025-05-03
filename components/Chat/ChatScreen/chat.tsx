@@ -13,7 +13,6 @@ import {
   View,
   ViewStyle,
   Image,
-  TouchableOpacity,
 } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
@@ -25,13 +24,12 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Button } from '~/components/common/Button';
-import DefaultTextInput from '~/components/common/DefaultTextInput';
 import { Text } from '~/components/common/Text';
 import { useAuth } from '~/context/AuthContext';
 import { useColorScheme } from '~/lib/useColorScheme';
-import { cn } from '~/utils/helper';
+import { cn, getRelativeTime } from '~/utils/helper';
 import Footer from './footer';
+import SkeletonLoading from 'expo-skeleton-loading';
 
 // const ME = 'Alice';
 
@@ -55,10 +53,12 @@ export default function Chat({
   data,
   sendMessage,
   onEndReached,
+  uploadFileLoading,
 }: {
   data: any;
   sendMessage: any;
   onEndReached: any;
+  uploadFileLoading: any;
 }) {
   const insets = useSafeAreaInsets();
   const textInputHeight = useSharedValue(17);
@@ -134,6 +134,20 @@ export default function Chat({
           <FlashList
             inverted
             estimatedItemSize={70}
+            ListHeaderComponent={() =>
+              // if file is uploading, show a loading indicator
+              uploadFileLoading ? (
+                <View className=" w-full flex-1 ">
+                  <View className="mr-2 flex-row justify-end">
+                    <SkeletonLoading background="#d3d3d3" highlight="#e0e0e0">
+                      <View className={`h-28 w-28 rounded-lg bg-gray-200`} />
+                    </SkeletonLoading>
+                  </View>
+                </View>
+              ) : (
+                <></>
+              )
+            }
             keyboardDismissMode="on-drag"
             keyExtractor={(item: any, index: any) => `${item?.uuid}-${index}`}
             keyboardShouldPersistTaps="handled"
@@ -141,11 +155,13 @@ export default function Chat({
             onEndReachedThreshold={0.9}
             scrollIndicatorInsets={{ bottom: HEADER_HEIGHT + 10, top: insets.bottom + 2 }}
             data={data}
-            viewabilityConfig={{
-              waitForInteraction: true,
-              itemVisiblePercentThreshold: 50,
-              minimumViewTime: 1000,
-            }}
+            viewabilityConfig={
+              {
+                // waitForInteraction: true,
+                // itemVisiblePercentThreshold: 50,
+                // minimumViewTime: 1000,
+              }
+            }
             renderItem={({ item, index }: any) => {
               // if (typeof item === 'string') {
               //   return <DateSeparator date={item} />;
@@ -160,6 +176,7 @@ export default function Chat({
                   isSameNextSender={isSameNextSender}
                   item={item}
                   translateX={translateX}
+                  uploadLoading={uploadFileLoading}
                 />
               );
             }}
@@ -193,6 +210,7 @@ function ChatBubble({
   item: any;
   isSameNextSender: boolean;
   translateX: SharedValue<number>;
+  uploadLoading: boolean;
 }) {
   const { user }: any = useAuth();
   const contextMenuRef = React.useRef<any>(null);
@@ -212,11 +230,10 @@ function ChatBubble({
       transform: [{ translateX: interpolate(translateX.value, [-75, 0], [0, 75]) }],
     };
   });
-
   return (
     <View
       className={cn(
-        'justify-center px-2 pb-3.5',
+        'flex justify-center px-2 pb-3.5',
         isSameNextSender ? 'pb-1' : 'pb-3.5',
         item?.user === user?.uuid ? 'items-end pl-16' : 'items-start pr-16'
       )}>
@@ -231,7 +248,7 @@ function ChatBubble({
               <View ref={contextMenuRef} style={{ borderRadius: 12 }}>
                 <Pressable>
                   <Image
-                    source={{ uri: item?.attachments[0].url }}
+                    source={{ uri: item?.attachments[0].uri }}
                     style={{ width: 200, height: 200, resizeMode: 'cover' }}
                     borderRadius={12}
                   />
@@ -247,7 +264,7 @@ function ChatBubble({
                   {item?.attachments?.map((attachment: any, index: number) => (
                     <Image
                       key={index}
-                      source={{ uri: attachment.url }}
+                      source={{ uri: attachment.uri }}
                       style={{ width: 100, height: 100, resizeMode: 'cover' }}
                       borderRadius={12}
                     />
@@ -278,7 +295,7 @@ function ChatBubble({
 
       <Animated.View style={dateStyle} className="justify-center">
         <Text variant="caption1" className="text-muted-foreground">
-          {/* {item?.createdAt} */}
+          {getRelativeTime(item?.createdAt)}
         </Text>
       </Animated.View>
     </View>

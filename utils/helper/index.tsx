@@ -3,6 +3,7 @@ import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { twMerge } from 'tailwind-merge';
 import { clsx, ClassValue } from 'clsx';
+import * as FileSystem from 'expo-file-system';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -89,4 +90,33 @@ export function getRelativeTime(date: Date): string {
   return 'just now';
 }
 
-export { millisToTime, toCurrency, getInitials, cn, formatDateInTimeZone, capitalizeFirstLetter };
+//save file locally
+const saveFileLocally = async (attachments: any) => {
+  try {
+    attachments.forEach(async ({ uri, fileName }: any) => {
+      const newPath = `${FileSystem.documentDirectory}${fileName}`;
+
+      await FileSystem.copyAsync({
+        from: uri,
+        to: newPath,
+      });
+    });
+    return attachments.map((attachment: any) => ({
+      ...attachment,
+      uri: `${FileSystem.documentDirectory}${attachment.fileName}`,
+    }));
+  } catch (error) {
+    console.error('Error saving file:', error);
+    alert('Error saving file locally');
+  }
+};
+
+export {
+  millisToTime,
+  toCurrency,
+  getInitials,
+  cn,
+  formatDateInTimeZone,
+  capitalizeFirstLetter,
+  saveFileLocally,
+};

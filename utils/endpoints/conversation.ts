@@ -31,6 +31,13 @@ const conversation = {
       uri: `${prefix}/:conversationId/send-message/`,
     },
   },
+  uploadFiles: {
+    v1: {
+      ...defaults.methods.POST,
+      ...defaults.versions.v1,
+      uri: `${prefix}/:conversationId/upload-files/`,
+    },
+  },
 };
 
 export default conversation;

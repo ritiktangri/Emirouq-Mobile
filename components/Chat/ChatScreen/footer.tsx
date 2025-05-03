@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { TouchableOpacity, Modal, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import * as FileSystem from 'expo-file-system';
 import { View } from '~/components/common/View';
 import { Text } from '~/components/common/Text';
 import { Entypo, Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
@@ -123,22 +122,6 @@ export default function Footer({
     }
   };
 
-  const saveFile = async (uri: any, type: any) => {
-    try {
-      const fileName = uri.split('/').pop();
-      const newPath = `${FileSystem.documentDirectory}${fileName}`;
-
-      await FileSystem.copyAsync({
-        from: uri,
-        to: newPath,
-      });
-
-      console.log(`File saved at: ${newPath}`);
-    } catch (error) {
-      console.error('Error saving file:', error);
-      alert('Error saving file locally');
-    }
-  };
   const removeFile = (index: any) => {
     const updatedFiles = watch('attachments')?.filter((_: any, i: number) => i !== index);
     setValue('attachments', updatedFiles);

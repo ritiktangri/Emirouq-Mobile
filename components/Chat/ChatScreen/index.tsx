@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -7,9 +7,10 @@ import Product from './product';
 import { saveMessageCache, useGetConversations, useGetMessages } from '~/hooks/chats/query';
 import Header from './header';
 import { useAuth } from '~/context/AuthContext';
-import { useCreateConversation } from '~/hooks/chats/mutation';
+import { useCreateConversation, useUploadFile } from '~/hooks/chats/mutation';
 import { queryClient } from '~/app/_layout';
 import Chat from './chat';
+import { saveFileLocally } from '~/utils/helper';
 export function generateUUID(digits: any) {
   let str = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVXZ';
   let uuid = [];
@@ -27,6 +28,9 @@ const ChatScreen = () => {
     params?.conversationId
   );
   const { refetch: conversationRefetch }: any = useGetConversations('', false);
+  const createConversation = useCreateConversation();
+  const uploadFile = useUploadFile();
+  const router = useRouter();
   // useEffect(() => {
   //   if (params?.conversationId) {
   //     queryClient.removeQueries({ queryKey: ['messages', ''] });
@@ -36,33 +40,75 @@ const ChatScreen = () => {
   //     queryClient.removeQueries({ queryKey: ['messages', ''] });
   //   };
   // }, [params?.conversationId]);
-  const sendMessage = ({ message, attachments }: any, cb: any) => {
-    if (message?.trim() === '') {
-      return;
-    }
+  const sendMessage = useCallback(
+    async ({ message, attachments }: any, cb: any) => {
+      if (attachments?.length) {
+        //this is required to save the file locally
+        // since if i fetch the url from res, it will take time
+        // const localFiles = await saveFileLocally(attachments);
+        // console.log(localFiles, 'localFiles');
+        // saveMessageCache({
+        //   uuid: generateUUID(20),
+        //   user: user?.uuid,
+        //   conversationId: params?.conversationId,
+        //   attachments: localFiles,
+        // });
+        cb();
+        const formdata: any = new FormData();
+        attachments.forEach((attachment: any) => {
+          formdata.append('image', {
+            uri: attachment?.uri,
+            name: attachment?.fileName,
+            type: attachment?.type,
+          });
+        });
+        uploadFile
+          .mutateAsync({
+            body: formdata,
+            pathParams: {
+              conversationId: params?.conversationId,
+            },
+          })
+          .then((res: any) => {
+            saveMessageCache({
+              uuid: generateUUID(20),
+              user: user?.uuid,
+              conversationId: params?.conversationId,
+              attachments: res?.attachments,
+            });
+            socketIo?.emit('message', {
+              conversationId: params?.conversationId,
+              senderId: user?.uuid,
+              // this is to check if the user is the sender or receiver
+              receiverId: params?.receiverId,
+              type: 'image',
+              attachments: res?.attachments,
+            });
+          });
+      }
+      if (message) {
+        //save the message to the cache
+        saveMessageCache({
+          uuid: generateUUID(20),
+          message,
+          user: user?.uuid,
+          conversationId: params?.conversationId,
+        });
 
-    //save the message to the cache
-    saveMessageCache({
-      uuid: generateUUID(20),
-      message,
-      user: user?.uuid,
-      conversationId: params?.conversationId,
-      type: 'text',
-    });
+        socketIo?.emit('message', {
+          post: JSON.parse(params?.post),
+          conversationId: params?.conversationId,
+          message,
+          senderId: user?.uuid,
+          // this is to check if the user is the sender or receiver
+          receiverId: params?.receiverId,
+        });
+        cb();
+      }
+    },
+    [params?.conversationId, params?.post, params?.receiverId, socketIo, user?.uuid]
+  );
 
-    socketIo?.emit('message', {
-      post: JSON.parse(params?.post),
-      conversationId: params?.conversationId,
-      message,
-      senderId: user?.uuid,
-      // this is to check if the user is the sender or receiver
-      receiverId: params?.receiverId,
-      type: 'text',
-    });
-    cb();
-  };
-  const createConversation = useCreateConversation();
-  const router = useRouter();
   const checkConversation = async () => {
     if (params?.conversationId) {
       return;
@@ -139,12 +185,15 @@ const ChatScreen = () => {
         className="flex-1"
         keyboardVerticalOffset={Platform.OS === 'ios' ? insets.bottom : 0}>
         {createConversation?.isPending ? (
-          <Text>Loading....</Text>
+          <View className="flex-1">
+            <Text>Loading....</Text>
+          </View>
         ) : (
           <View className="flex-1">
             <Chat
               data={data?.pages.map((page: any) => page?.data).flat()}
               sendMessage={sendMessage}
+              uploadFileLoading={uploadFile?.isPending}
               onEndReached={() => {
                 // if (hasNextPage && !isFetchingNextPage) {
                 //   fetchNextPage();
