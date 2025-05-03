@@ -248,11 +248,21 @@ function ChatBubble({
             {item?.attachments?.length === 1 ? (
               <View ref={contextMenuRef} style={{ borderRadius: 12 }}>
                 <Pressable>
-                  <Image
-                    source={{ uri: item?.attachments[0].uri }}
-                    style={{ width: 200, height: 200, resizeMode: 'cover' }}
-                    borderRadius={12}
-                  />
+                  {['image/jpeg', 'image/png', 'image/jpg'].includes(
+                    item?.attachments?.[0]?.type
+                  ) ? (
+                    <Image
+                      source={{ uri: item?.attachments[0].uri }}
+                      style={{ width: 200, height: 200, resizeMode: 'cover' }}
+                      borderRadius={12}
+                    />
+                  ) : ['application/pdf'].includes(item?.attachments?.[0]?.type) ? (
+                    <FontAwesome name="file-pdf-o" size={24} color="#FF5733" />
+                  ) : ['video/mp4'].includes(item?.attachments?.[0]?.type) ? (
+                    <FontAwesome name="file-video-o" size={24} color="#FF5733" />
+                  ) : (
+                    <FontAwesome name="file-o" size={24} color="#FF5733" />
+                  )}
                 </Pressable>
               </View>
             ) : (
