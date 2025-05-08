@@ -184,9 +184,9 @@ export default function Chat({
               minimumViewTime: 1000,
             }}
             renderItem={({ item, index }: any) => {
-              if (isFetching) {
-                return <ChatBubbleSkeleton numberOfMessages={10} />;
-              }
+              // if (isFetching) {
+              //   return <ChatBubbleSkeleton numberOfMessages={10} />;
+              // }
               // if (typeof item === 'string') {
               //   return <DateSeparator date={item} />;
               // }

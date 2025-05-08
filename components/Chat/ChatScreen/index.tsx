@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
 import React, { useCallback, useEffect } from 'react';
-import { KeyboardAvoidingView, Platform } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Product from './product';
@@ -12,6 +12,10 @@ import { queryClient } from '~/app/_layout';
 import Chat from './chat';
 import { v4 as uuidV4 } from 'uuid';
 import ChatBubbleSkeleton from './loading';
+import DownloadFile from './download';
+import VideoPlayer from './videoPlayer';
+import { useColorScheme } from '~/lib/useColorScheme';
+import Footer from './footer';
 
 const ChatScreen = () => {
   const params: any = useLocalSearchParams();
@@ -162,10 +166,11 @@ const ChatScreen = () => {
   }, [socketIo, params?.conversationId, user?.uuid]);
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white">
       <Header data={params} status={onlineUsers?.includes(params?.receiverId)} />
       <Product product={params?.uuid ? params : {}} />
 
+      {/* <DownloadFile /> */}
       {/* <VideoPlayer source="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" /> */}
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -174,17 +179,19 @@ const ChatScreen = () => {
         {createConversation?.isPending ? (
           [1, 2, 3].map((item) => <ChatBubbleSkeleton numberOfMessages={19} key={item} />)
         ) : (
-          <Chat
-            data={data?.pages.map((page: any) => page?.data).flat()}
-            sendMessage={sendMessage}
-            isFetching={isFetching}
-            uploadFileLoading={uploadFile?.isPending}
-            onEndReached={() => {
-              // if (hasNextPage && !isFetchingNextPage) {
-              //   fetchNextPage();
-              // }
-            }}
-          />
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <Chat
+              data={data?.pages.map((page: any) => page?.data).flat()}
+              sendMessage={sendMessage}
+              isFetching={isFetching}
+              uploadFileLoading={uploadFile?.isPending}
+              onEndReached={() => {
+                // if (hasNextPage && !isFetchingNextPage) {
+                //   fetchNextPage();
+                // }
+              }}
+            />
+          </TouchableWithoutFeedback>
         )}
       </KeyboardAvoidingView>
     </SafeAreaView>

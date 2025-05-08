@@ -184,8 +184,8 @@ export default function Footer({
               containerClassName="mr-2 flex-1 text-black rounded-full bg-white px-4  text-base"
               placeholder="Type a message..."
               onChangeText={onChange}
-              focusable
-              autoFocus
+              // focusable
+              // autoFocus
               multiline
               value={value}
               returnKeyType="send"
