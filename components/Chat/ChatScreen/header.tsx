@@ -45,7 +45,7 @@ const Header = ({ data, status }: any) => {
           });
           router.replace(routes.tabs.chat as Href);
         }}>
-        <Ionicons name="arrow-back" size={30} color="black" />
+        <Ionicons name="arrow-back-sharp" size={24} color="black" />
       </TouchableOpacity>
       <View className="flex flex-1 flex-row items-center gap-3">
         <View className=" relative h-12 w-12 rounded-full ">
@@ -71,7 +71,7 @@ const Header = ({ data, status }: any) => {
           )}
         </View>
         <View className="">
-          <Text className="text-2xl font-semibold text-black">{data?.fullName}</Text>
+          <Text className="text-xl font-semibold text-black">{data?.fullName}</Text>
           {status ? (
             <View className="flex-row items-center gap-2">
               <Text className={cn('font-poppinsMedium text-green-500')}>Online</Text>

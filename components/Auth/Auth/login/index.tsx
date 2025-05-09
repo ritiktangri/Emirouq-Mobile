@@ -16,9 +16,9 @@ const Login = ({ checkinType }: any) => {
   const router: any = useRouter();
   const [secureTextEntry, setSecureTextEntry] = useState(false);
   const [form, setForm] = useState({
-    email: 'Gurpreets0207@gmail.com',
+    email: '',
     phoneNumber: '',
-    password: '12345678',
+    password: '',
   });
   const { showToast }: any = useTheme();
   const onChangeText = (key: string, value: string) => {
@@ -46,7 +46,7 @@ const Login = ({ checkinType }: any) => {
     );
   };
   return (
-    <View className="mt-8 space-y-6">
+    <View className="mt-4 space-y-6">
       {checkinType === 'email' ? (
         <Input
           value={form.email}
@@ -57,7 +57,7 @@ const Login = ({ checkinType }: any) => {
           onChangeText={(value: any) => onChangeText('email', value)}
           title="Email"
           placeholder="Enter your email"
-          className=" w-full py-4 dark:text-white"
+          className="w-full py-4 dark:text-white"
           keyboardType="email-address"
           autoCapitalize="none"
           spellCheck={false}

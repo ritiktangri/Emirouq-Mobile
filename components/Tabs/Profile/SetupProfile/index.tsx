@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
 import React, { useEffect, useState } from 'react';
-import { Pressable, Alert, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Pressable, Alert, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker';
 import { z } from 'zod';
@@ -231,7 +231,7 @@ const SetupProfile = () => {
               <DefaultTextInput
                 className="w-full"
                 prefix={<Ionicons name="person-outline" size={20} color="gray" />}
-                containerClassName="w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
+                containerClassName={`w-full rounded-lg border border-gray-200 bg-white px-4 ${Platform.OS === 'android' ? 'py-0' : 'py-3'}`}
                 onChangeText={onChange}
                 value={value}
                 placeholder={i18n.t('createProfile.firstNamePlaceholder')}
@@ -253,7 +253,7 @@ const SetupProfile = () => {
               <DefaultTextInput
                 className="w-full"
                 prefix={<Ionicons name="person-outline" size={20} color="gray" />}
-                containerClassName="w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
+                containerClassName={`w-full rounded-lg border border-gray-200 bg-white px-4 ${Platform.OS === 'android' ? 'py-0' : 'py-3'}`}
                 onChangeText={onChange}
                 value={value}
                 placeholder={i18n.t('createProfile.lastNamePlaceholder')}
@@ -276,7 +276,7 @@ const SetupProfile = () => {
               <DefaultTextInput
                 className="w-full"
                 prefix={<Ionicons name="at" size={20} color="gray" />}
-                containerClassName="w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
+                containerClassName={`w-full rounded-lg border border-gray-200 bg-white px-4 ${Platform.OS === 'android' ? 'py-0' : 'py-3'}`}
                 onChangeText={onChange}
                 value={value}
                 placeholder={i18n.t('createProfile.userNamePlaceholder')}
@@ -300,7 +300,7 @@ const SetupProfile = () => {
                 className="w-full"
                 editable={false}
                 prefix={<Feather name="mail" size={20} color="gray" />}
-                containerClassName="w-full rounded-lg border border-gray-200 bg-white px-4 py-4"
+                containerClassName={`w-full rounded-lg border border-gray-200 bg-white px-4 ${Platform.OS === 'android' ? 'py-0' : 'py-3'}`}
                 onChangeText={!user?.isEmail ? onChange : () => {}}
                 value={value}
                 placeholder={i18n.t('createProfile.emailPlaceholder')}
@@ -328,7 +328,7 @@ const SetupProfile = () => {
               render={({ field: { onChange, value } }) => (
                 <DefaultTextInput
                   className="w-full"
-                  containerClassName="w-full flex-1 rounded-lg border border-gray-200 bg-white px-4 py-4"
+                  containerClassName={`w-full rounded-lg border border-gray-200 bg-white px-4 ${Platform.OS === 'android' ? 'py-0' : 'py-3'}`}
                   onChangeText={user?.isEmail ? onChange : () => {}}
                   value={value}
                   placeholder={i18n.t('createProfile.phoneNumberPlaceholder')}

@@ -1,5 +1,5 @@
 import React, { memo, useRef } from 'react';
-import { TextInput as DefaultTextInput, TextInputProps } from 'react-native';
+import { TextInput as DefaultTextInput, Platform, TextInputProps } from 'react-native';
 import { Text } from '../Text';
 import { useLocale } from '~/context/LocaleContext';
 import { View } from '../View';

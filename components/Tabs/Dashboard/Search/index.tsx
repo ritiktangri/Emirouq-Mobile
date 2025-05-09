@@ -30,7 +30,7 @@ const Search = () => {
         containerClassName={`bg-search_bg rounded-lg ${Platform.OS === 'ios' ? 'p-3' : 'px-2'}`}
         textAlign={locale === 'ar' ? 'right' : 'left'}
         placeholderTextColor={theme.colors.gray}
-        className="w-[70%] px-4 text-lg"
+        className={`w-[70%] px-4 text-lg ${Platform.OS == 'android' ? 'h-12' : ''}`}
       />
       <TouchableOpacity
         className="relative"

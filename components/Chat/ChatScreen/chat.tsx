@@ -153,7 +153,7 @@ export default function Chat({
   return (
     <>
       <GestureDetector gesture={pan}>
-        <View className="flex-1 bg-gray-100">
+        <View className="flex-1 bg-white">
           <FlashList
             inverted
             estimatedItemSize={100}
@@ -171,6 +171,7 @@ export default function Chat({
                 <></>
               )
             }
+            showsVerticalScrollIndicator={false}
             keyboardDismissMode="on-drag"
             keyExtractor={(item: any, index: any) => `${item?.uuid}-${index}`}
             keyboardShouldPersistTaps="handled"
@@ -266,7 +267,7 @@ function ChatBubble({
         {item?.attachments?.length > 0 ? (
           <View
             className={cn(
-              'flex-row items-center gap-4',
+              'mt-2 flex-row items-center gap-4',
               item?.user === user?.uuid && 'flex-row-reverse'
             )}>
             {item?.attachments?.length === 1 ? (
@@ -293,7 +294,7 @@ function ChatBubble({
               <Pressable className="">
                 <View
                   className={cn(
-                    ' flex-row flex-wrap items-center gap-2',
+                    'flex-row flex-wrap items-center gap-2',
                     item?.user === user?.uuid && 'flex-row-reverse'
                   )}>
                   {item?.attachments?.map((attachment: any, index: number) =>
@@ -320,7 +321,7 @@ function ChatBubble({
           <></>
         )}
         {item?.message ? (
-          <Pressable className={cn(!!item?.attachments?.length && item?.message ? 'py-2' : 'mt-0')}>
+          <Pressable className={cn(!!item?.attachments?.length && item?.message ? 'py-2' : 'mt-2')}>
             <View
               style={[
                 BORDER_CURVE,
@@ -330,33 +331,38 @@ function ChatBubble({
                     width: 0,
                     height: 1,
                   },
-                  shadowOpacity: 0.18,
+                  shadowOpacity: 0.1,
                   shadowRadius: 1.0,
-
-                  elevation: 1,
+                  elevation: 0.5,
                 },
               ]}
               className={cn(
-                'dark:bg-muted-foreground  bg-white px-7 py-2',
-                Platform.OS === 'ios' && 'dark:bg-muted',
+                'min-w-[80px] px-3 pb-1 pt-2',
+                Platform.OS === 'ios' && item?.user !== user?.uuid && 'dark:bg-muted',
                 item?.user === user?.uuid
-                  ? 'rounded-l-xl rounded-br-xl bg-primary dark:bg-primary'
-                  : 'dark:bg-muted-foreground rounded-r-xl rounded-bl-xl bg-white'
+                  ? 'self-end rounded-l-xl rounded-br-md rounded-tr-xl bg-primary dark:bg-primary'
+                  : 'dark:bg-muted-foreground self-start rounded-r-xl rounded-bl-md rounded-tl-xl bg-[#F0F0F0]'
               )}>
-              <Text className={cn(item?.user === user?.uuid && 'text-white')}>{item?.message}</Text>
+              <Text
+                className={cn(
+                  'text-base',
+                  item?.user === user?.uuid ? 'text-white' : 'text-black dark:text-white'
+                )}>
+                {item?.message}
+              </Text>
+              <Text
+                className={cn(
+                  'font-regular mt-1 self-end text-xs',
+                  item?.user === user?.uuid ? 'text-white' : 'text-gray-600 dark:text-gray-400'
+                )}>
+                {dayjs(item?.createdAt).format('HH:mm A')}
+              </Text>
             </View>
           </Pressable>
         ) : (
           <></>
         )}
       </Animated.View>
-
-      {/* <Animated.View style={dateStyle} className="justify-center"> */}
-      <Text variant="caption1" className="font-regular py-1 text-tertiary">
-        {/* {getRelativeTime(item?.createdAt)} */}
-        {dayjs(item?.createdAt).format('HH:mm A')}
-      </Text>
-      {/* </Animated.View> */}
     </View>
   );
 }

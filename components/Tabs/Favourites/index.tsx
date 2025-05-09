@@ -1,5 +1,5 @@
 import { View, Text, FlatList, RefreshControl } from 'react-native';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import GlobalHeader from '~/components/GlobalHeader';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { cn } from '~/utils/helper';
@@ -9,7 +9,6 @@ import { i18n } from '~/utils/i18n';
 import { queryClient } from '~/app/_layout';
 import theme from '~/utils/theme';
 import { useGetFavouritePosts } from '~/hooks/post/query';
-import { useAuth } from '~/context/AuthContext';
 import Render from './render';
 
 const Favourites = () => {

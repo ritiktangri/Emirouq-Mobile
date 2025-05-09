@@ -24,6 +24,7 @@ import { Text } from '~/components/common/Text';
 import { useLocale } from '~/context/LocaleContext';
 import { i18n } from '~/utils/i18n';
 import { useRoute } from '@react-navigation/native';
+import LocationInput from '~/components/UI/GooglePlaceAutocomplete';
 
 const schema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -221,7 +222,10 @@ const AddPost = () => {
   };
   return (
     <View className="flex-1 bg-white px-4 py-6">
-      <KeyboardAwareScrollView showsVerticalScrollIndicator={false} className="flex-1">
+      <KeyboardAwareScrollView
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        className="flex-1">
         <View className="mb-8">
           <Pressable
             className="items-center justify-center rounded-xl border-2 border-dashed border-gray-200 p-6"
@@ -442,7 +446,8 @@ const AddPost = () => {
             <Text className="mt-1 text-sm text-red-500">{errors.description.message}</Text>
           )}
         </View>
-        <View className="mb-6">
+        <LocationInput control={control} errors={errors} />
+        {/* <View className="mb-6">
           <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
             {i18n.t('post.location')}
           </Text>
@@ -461,7 +466,7 @@ const AddPost = () => {
           {errors.location && (
             <Text className="mt-1 text-sm text-red-500">{errors.location.message}</Text>
           )}
-        </View>
+        </View> */}
 
         <View className="mb-6">
           <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">

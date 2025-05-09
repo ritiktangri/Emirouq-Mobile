@@ -50,7 +50,5 @@ export const useGetFavouritePosts = () =>
       }
     },
     initialPageParam: 0,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });

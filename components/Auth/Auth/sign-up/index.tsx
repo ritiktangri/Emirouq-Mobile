@@ -15,12 +15,12 @@ const Signup = ({ checkinType }: any) => {
   const [agreed, setAgreed] = useState(false);
   const [secureTextEntry, setSecureTextEntry] = useState(false);
   const [form, setForm] = useState({
-    firstName: 'Gurpreet',
-    lastName: 'Singh',
-    email: 'gurpreets0207@gmail.com',
-    phoneNumber: '7528095192',
-    password: '12345678',
-    confirmPassword: '12345678',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phoneNumber: '',
+    password: '',
+    confirmPassword: '',
   });
   const onChangeText = (key: string, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));

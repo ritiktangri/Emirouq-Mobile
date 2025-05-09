@@ -75,6 +75,7 @@
     "react-native-element-dropdown": "^2.12.4",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-get-random-values": "^1.11.0",
+    "react-native-google-places-autocomplete": "^2.5.7",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-keyboard-controller": "^1.17.1",
     "react-native-keyboard-sticky-view": "^1.0.1",

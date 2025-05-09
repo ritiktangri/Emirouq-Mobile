@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
 import { Ionicons } from '@expo/vector-icons';
-import { ActivityIndicator, FlatList, RefreshControl } from 'react-native';
+import { ActivityIndicator, FlatList, Platform, RefreshControl } from 'react-native';
 import DefaultTextInput from '../common/DefaultTextInput';
 import { View } from '../common/View';
 import Render from './render';
@@ -53,7 +53,7 @@ export default function Chat() {
           prefix={<Ionicons name="search" size={20} color="#6B7280" />}
           placeholder={i18n.t('chat.placeholder')}
           placeholderTextColor="#9CA3AF"
-          containerClassName="  w-full text-base rounded-md bg-textInput_bg p-3 "
+          containerClassName={`w-full text-base rounded-md bg-textInput_bg px-3 ${Platform.OS === 'android' ? 'h-12' : 'py-3'}`}
           textAlign={locale === 'ar' ? 'right' : 'left'}
         />
       </View>

@@ -111,7 +111,7 @@ const PreviewPost = () => {
             <View className="h-1 w-1 rounded-full bg-gray-400" />
             <Text className="text-gray-600">{data?.subCategoryName}</Text>
             <View className="h-1 w-1 rounded-full bg-gray-400" />
-            <Text className="text-gray-600">{data?.location}</Text>
+            <Text className="text-gray-600">{data?.location?.name}</Text>
           </View>
           {/* Description */}
           <View className="rounded-md bg-gray-50 p-2">

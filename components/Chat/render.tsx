@@ -71,8 +71,8 @@ const Render = ({ item }: any) => {
           </Text>
         </View>
         <View className="flex-row items-center ">
-          <View className="flex flex-row items-center gap-3">
-            <View className=" h-10 w-10 rounded-full  ">
+          <View className="flex flex-row items-center gap-2">
+            <View className="h-10 w-10 rounded-full">
               <Image
                 source={{ uri: item?.post?.file?.[0] }}
                 className="h-full w-full rounded-full"
@@ -81,7 +81,7 @@ const Render = ({ item }: any) => {
             </View>
 
             <View className="flex-1">
-              <Text className="max-w-56 text-[15px] text-gray-700">{item?.post?.title}</Text>
+              <Text className="max-w-56 text-[13px] text-gray-700">{item?.post?.title}</Text>
               <Text className="font-poppinsMedium text-base">{toCurrency(item?.post?.price)}</Text>
             </View>
             <Ionicons
@@ -93,14 +93,14 @@ const Render = ({ item }: any) => {
           </View>
         </View>
         {item?.lastMessage ? (
-          <View direction="row" className="mt-1">
+          <View direction="row" className="mt-[0.5px]">
             {item?.lastMessage ? (
               <Text className="flex-1 text-base text-gray-600">{item?.lastMessage}</Text>
             ) : (
               <></>
             )}
             {item?.chatDetails?.count ? (
-              <View className=" flex h-5 w-5 items-center  rounded-full bg-red-500">
+              <View className=" flex h-5 w-5 items-center justify-center rounded-full bg-red-500">
                 <Text className="text-xs font-bold text-white">{item?.chatDetails?.count}</Text>
               </View>
             ) : (
