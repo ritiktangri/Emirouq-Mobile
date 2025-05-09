@@ -49,6 +49,8 @@ const PostProvider = ({ children }: any) => {
     formData.append('timePeriod', body?.timePeriod);
     formData.append('category', body?.category);
     formData.append('subCategory', body?.subCategory);
+    formData.append('locationName', body?.locationName);
+    formData.append('locationPlaceId', body?.locationPlaceId);
     body?.isDraft && formData.append('isDraft', body?.isDraft);
     formData.append('properties', JSON.stringify(body?.properties));
     for (const imageAsset of body?.images) {
@@ -63,12 +65,10 @@ const PostProvider = ({ children }: any) => {
       body: formData,
     })
       .then((res) => {
-        setBtnLoading(false);
         cb && cb();
       })
       .catch((err: any) => {
         errCb && errCb(err);
-        setBtnLoading(false);
       })
       .finally(() => {
         setBtnLoading(false);

@@ -40,8 +40,14 @@ const PreviewPost = () => {
     } else {
       setSaveLoading(true);
     }
+    console.log('data', data);
     createPost(
-      { ...data, isDraft },
+      {
+        ...data,
+        locationName: data?.location?.name,
+        locationPlaceId: data?.location?.placeId,
+        isDraft,
+      },
       () => {
         if (!isDraft) {
           showToast('Ad created successfully', 'success');

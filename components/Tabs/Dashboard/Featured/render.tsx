@@ -35,7 +35,7 @@ const Render = ({ item }: any) => {
 
         <View className="flex-row items-center">
           <Entypo name="location-pin" size={16} color="#6b7280" />
-          <Text className="ml-1 text-sm text-gray-500">{item?.location || 'N/A'}</Text>
+          <Text className="ml-1 text-sm text-gray-500">{item?.location?.name || 'N/A'}</Text>
         </View>
       </View>
     </TouchableOpacity>

@@ -34,7 +34,7 @@ const Render = ({ item }: any) => {
         <View className="flex-row items-center">
           <Entypo name="location-pin" size={14} color="#6b7280" />
           <Text className="ml-1 text-xs text-gray-500" numberOfLines={1}>
-            {item?.location || 'N/A'}
+            {item?.location?.name || 'N/A'}
           </Text>
         </View>
       </View>
