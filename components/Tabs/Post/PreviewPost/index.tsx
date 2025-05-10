@@ -40,7 +40,6 @@ const PreviewPost = () => {
     } else {
       setSaveLoading(true);
     }
-    console.log('data', data);
     createPost(
       {
         ...data,
