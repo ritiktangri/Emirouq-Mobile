@@ -341,7 +341,7 @@ const SetupProfile = () => {
             <Text className="mt-1 text-sm text-red-500">{errors.phoneNumber.message}</Text>
           )}
         </View>
-
+        {/* 
         <View className="mb-2">
           <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
             {i18n.t('createProfile.location')} *
@@ -361,7 +361,7 @@ const SetupProfile = () => {
           {errors.location && (
             <Text className="mt-1 text-sm text-red-500">{errors.location.message}</Text>
           )}
-        </View>
+        </View> */}
 
         <View>
           <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">

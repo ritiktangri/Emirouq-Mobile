@@ -73,13 +73,13 @@ const UserProfile = () => {
             ) : (
               <FontAwesome name="user-circle-o" size={80} color="gray" />
             )}
-            <AntDesign
+            {/* <AntDesign
               name="camerao"
               size={18}
               color="white"
               onPress={pickImage}
               className="relative bottom-8 left-6 rounded-full bg-primary p-1"
-            />
+            /> */}
 
             <View className="flex flex-col items-center gap-y-2">
               <Text className="text-center text-lg font-semibold">{`${user?.firstName} ${user?.lastName || ''}`}</Text>
