@@ -27,7 +27,7 @@ const profileSchema = z.object({
   phoneNumber: z.string().min(8, 'Phone must be at least 8 characters'),
   userHandle: z.string().min(3, 'Username must be at least 3 characters'),
   email: z.string().email('Invalid email address'),
-  location: z.string().min(2, 'Location is required'),
+  // location: z.string().min(2, 'Location is required'),
   bio: z.string().max(150, 'Bio must be less than 150 characters').optional(),
   interests: z.array(z.string()).min(1, 'Select at least one interest'),
 });
@@ -50,7 +50,6 @@ const SetupProfile = () => {
     setValue,
   } = useForm<ProfileFormData>({ resolver: zodResolver(profileSchema) });
   const { user, updateProfile, btnLoading } = useAuth();
-
   useEffect(() => {
     if (user?.uuid) {
       setValue('firstName', user?.firstName);
@@ -63,15 +62,6 @@ const SetupProfile = () => {
       setProfileImage({ uri: user?.profileImage });
     }
   }, [user]);
-
-  const locations = [
-    'New York, NY',
-    'Los Angeles, CA',
-    'Chicago, IL',
-    'Houston, TX',
-    'Phoenix, AZ',
-    'Philadelphia, PA',
-  ];
 
   const pickImage = async (source: 'camera' | 'gallery') => {
     if (source === 'camera') {
