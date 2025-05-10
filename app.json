@@ -74,13 +74,30 @@
     },
     "ios": {
       "infoPlist": {
-        "CFBundleAllowMixedLocalizations": true
+        "CFBundleAllowMixedLocalizations": true,
+        "ExpoLocalization_supportsRTL": true
       },
       "googleServicesFile": "./GoogleService-Info.plist",
       "supportsTablet": true,
       "bundleIdentifier": "com.emirouq",
       "privacyManifests": {
         "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+          },
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
             "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
@@ -116,15 +133,15 @@
         "origin": "http://example.com/"
       },
       "eas": {
-        "projectId": "9c51ca7a-dd5c-46e1-9089-d32a655b5e7e"
+        "projectId": "db3fbf5a-4e2b-48f9-bf5f-0aea1aa5bb39"
       }
     },
-    "owner": "emirouq",
+    "owner": "emirouq-team",
     "runtimeVersion": {
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/9c51ca7a-dd5c-46e1-9089-d32a655b5e7e"
+      "url": "https://u.expo.dev/db3fbf5a-4e2b-48f9-bf5f-0aea1aa5bb39"
     }
   }
 }

@@ -8,7 +8,7 @@ export async function createPostService({ body }: any) {
   return callApi({
     uriEndPoint: { ...post.createPost.v1 } as ApiEndpoint,
     body,
-    // multipart: true,
+    multipart: true,
   });
 }
 export async function getPostService({ query, signal }: any) {
