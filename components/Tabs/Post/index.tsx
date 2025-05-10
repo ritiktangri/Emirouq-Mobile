@@ -66,53 +66,52 @@ const AddPost = () => {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      // condition: 'new',
-      // title: 'Nike Air Max 270 - Limited Edition Sneakers',
-      // category: '5ebdc8fa-dca3-4943-bbf1-a8a0019f2163',
-      // subCategory: 'd01fdc77-174f-449a-b28d-ad9ed4e99638',
-      // price: '3500.33',
-      // description:
-      //   'Brand new Nike Air Max 2023 sneakers in pristine condition. Never worn, comes in original box with all tags attached. Limited 256GB storage. Unlocked for all carriers. Price is firm. No trades please',
-      // location: 'New York, NY',
-      // timePeriod: '7 days',
-      // images: [
-      //   {
-      //     assetId: '9F983DBA-EC35-42B8-8773-B597CF782EDD/L0/001',
-      //     duration: null,
-      //     exif: null,
-      //     fileName: 'IMG_0003.jpg',
-      //     fileSize: 2050012,
-      //     height: 2002,
-      //     mimeType: 'image/jpeg',
-      //     pairedVideoAsset: null,
-      //     type: 'image',
-      //     uri: 'file:///Users/areeb/Library/Developer/CoreSimulator/Devices/682A5298-2FA4-48A8-8028-4FC69C9846AA/data/Containers/Data/Application/11592AA3-5A7C-481E-B7B7-9620B346B121/Library/Caches/ExponentExperienceData/@anonymous/emirouq-mobile-cb2a80bf-99e6-4bae-903e-23471cc3e5af/ImagePicker/BD6B2DB3-D1E5-4D74-8763-D414569827C1.jpg',
-      //     width: 3000,
-      //   },
-      //   {
-      //     assetId: 'B84E8479-475C-4727-A4A4-B77AA9980897/L0/001',
-      //     duration: null,
-      //     exif: null,
-      //     fileName: 'IMG_0002.jpg',
-      //     fileSize: 2590850,
-      //     height: 2848,
-      //     mimeType: 'image/jpeg',
-      //     pairedVideoAsset: null,
-      //     type: 'image',
-      //     uri: 'file:///Users/areeb/Library/Developer/CoreSimulator/Devices/682A5298-2FA4-48A8-8028-4FC69C9846AA/data/Containers/Data/Application/11592AA3-5A7C-481E-B7B7-9620B346B121/Library/Caches/ExponentExperienceData/@anonymous/emirouq-mobile-cb2a80bf-99e6-4bae-903e-23471cc3e5af/ImagePicker/3060E80E-DF73-494B-B723-E7E3F4D5A5F9.jpg',
-      //     width: 4288,
-      //   },
-      // ],
-      // properties: [
-      //   { name: 'Brand', value: '1' },
-      //   { name: 'Model', value: '1' },
-      //   { name: 'Condition', value: '1' },
-      //   { name: 'Operating System', value: '1' },
-      //   { name: 'Screen Size', value: '1' },
-      //   { name: 'Storage', value: '1' },
-      //   { name: 'Network Type', value: '1' },
-      //   { name: 'Seller Contact Info', value: '1' },
-      // ],
+      condition: 'new',
+      title: '',
+      category: '',
+      subCategory: '',
+      price: '',
+      description: '',
+      location: '',
+      timePeriod: '',
+      images: [
+        // {
+        //   assetId: '9F983DBA-EC35-42B8-8773-B597CF782EDD/L0/001',
+        //   duration: null,
+        //   exif: null,
+        //   fileName: 'IMG_0003.jpg',
+        //   fileSize: 2050012,
+        //   height: 2002,
+        //   mimeType: 'image/jpeg',
+        //   pairedVideoAsset: null,
+        //   type: 'image',
+        //   uri: 'file:///Users/areeb/Library/Developer/CoreSimulator/Devices/682A5298-2FA4-48A8-8028-4FC69C9846AA/data/Containers/Data/Application/11592AA3-5A7C-481E-B7B7-9620B346B121/Library/Caches/ExponentExperienceData/@anonymous/emirouq-mobile-cb2a80bf-99e6-4bae-903e-23471cc3e5af/ImagePicker/BD6B2DB3-D1E5-4D74-8763-D414569827C1.jpg',
+        //   width: 3000,
+        // },
+        // {
+        //   assetId: 'B84E8479-475C-4727-A4A4-B77AA9980897/L0/001',
+        //   duration: null,
+        //   exif: null,
+        //   fileName: 'IMG_0002.jpg',
+        //   fileSize: 2590850,
+        //   height: 2848,
+        //   mimeType: 'image/jpeg',
+        //   pairedVideoAsset: null,
+        //   type: 'image',
+        //   uri: 'file:///Users/areeb/Library/Developer/CoreSimulator/Devices/682A5298-2FA4-48A8-8028-4FC69C9846AA/data/Containers/Data/Application/11592AA3-5A7C-481E-B7B7-9620B346B121/Library/Caches/ExponentExperienceData/@anonymous/emirouq-mobile-cb2a80bf-99e6-4bae-903e-23471cc3e5af/ImagePicker/3060E80E-DF73-494B-B723-E7E3F4D5A5F9.jpg',
+        //   width: 4288,
+        // },
+      ],
+      properties: [
+        // { name: 'Brand', value: '1' },
+        // { name: 'Model', value: '1' },
+        // { name: 'Condition', value: '1' },
+        // { name: 'Operating System', value: '1' },
+        // { name: 'Screen Size', value: '1' },
+        // { name: 'Storage', value: '1' },
+        // { name: 'Network Type', value: '1' },
+        // { name: 'Seller Contact Info', value: '1' },
+      ],
     },
   });
   const router: any = useRouter();
@@ -126,7 +125,7 @@ const AddPost = () => {
   const params: any = useGlobalSearchParams();
   const locationRef: any = useRef(null);
   const { data: postDetails, refetch }: any = useGetSinglePosts(params?.postId);
-
+  console.log('params?.postId', params?.postId, typeof params?.postId);
   useEffect(() => {
     if (params?.postId) {
       setIsEdit(true);
@@ -178,6 +177,7 @@ const AddPost = () => {
       getSubCategoryList(selectedCategory);
     }
   }, [selectedCategory]);
+
   const pickImages = async () => {
     const result: any = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images', 'videos'],
@@ -186,7 +186,7 @@ const AddPost = () => {
       base64: false,
       allowsMultipleSelection: true,
     });
-
+    console.log('result', result);
     if (result.canceled) return;
     //if image already exists in the array, then do not add it
     const assetIds = result?.assets?.map((item: any) => item?.assetId);
