@@ -1,7 +1,12 @@
 /* eslint-disable import/order */
 import { createContext, useContext, useState, useMemo, useCallback, useEffect } from 'react';
 
-import { createPostService, getPostService, getSinglePostService } from '~/utils/services/post';
+import {
+  createPostService,
+  getPostService,
+  getSinglePostService,
+  updatePostService,
+} from '~/utils/services/post';
 
 const defaultProvider = {
   posts: [] as any,
@@ -23,6 +28,7 @@ const defaultProvider = {
   setStatus: (a: any) => {},
   getSinglePost: (a: any, b: any) => {},
   status: '' as any,
+  updatePost: (a: any, b: any, c: any, d: any) => {},
 };
 const PostContext = createContext(defaultProvider);
 export const usePosts = () => useContext(PostContext);
@@ -63,6 +69,44 @@ const PostProvider = ({ children }: any) => {
     }
     createPostService({
       body: formData,
+    })
+      .then((res) => {
+        cb && cb();
+      })
+      .catch((err: any) => {
+        errCb && errCb(err);
+      })
+      .finally(() => {
+        setBtnLoading(false);
+      });
+  }, []);
+
+  const updatePost = useCallback(async (body: any, pathParams: any, cb: any, errCb: any) => {
+    setBtnLoading(true);
+    const formData: any = new FormData();
+    formData.append('title', body?.title);
+    formData.append('description', body?.description);
+    formData.append('price', body?.price);
+    formData.append('condition', body?.condition);
+    formData.append('location', body?.location);
+    formData.append('timePeriod', body?.timePeriod);
+    formData.append('category', body?.category);
+    formData.append('subCategory', body?.subCategory);
+    formData.append('locationName', body?.locationName);
+    formData.append('locationPlaceId', body?.locationPlaceId);
+    body?.isDraft && formData.append('isDraft', body?.isDraft);
+    formData.append('properties', JSON.stringify(body?.properties));
+    for (const imageAsset of body?.images) {
+      formData.append('file', {
+        // Use 'images' as the field name for multiple files
+        uri: imageAsset.uri,
+        // name: imageAsset.fileName,
+        // type: imageAsset.type,
+      });
+    }
+    updatePostService({
+      body: formData,
+      pathParams,
     })
       .then((res) => {
         cb && cb();
@@ -126,6 +170,7 @@ const PostProvider = ({ children }: any) => {
       setStatus,
       status,
       getSinglePost,
+      updatePost,
     }),
     [
       setPosts,
@@ -145,6 +190,7 @@ const PostProvider = ({ children }: any) => {
       setStatus,
       status,
       getSinglePost,
+      updatePost,
     ]
   );
 

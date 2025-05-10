@@ -38,6 +38,13 @@ const post = {
       uri: `${prefix}/favourite/get`,
     },
   },
+  updatePost: {
+    v1: {
+      ...defaults.methods.PUT,
+      ...defaults.versions.v1,
+      uri: `${prefix}/:id`,
+    },
+  },
 };
 
 export default post;

@@ -66,13 +66,12 @@ const Render = ({ item }: any) => {
       <View className="mt-4 flex-row justify-end">
         <TouchableOpacity
           onPress={() => {
-            console.log('item', item);
-            // router.push({
-            //   pathname: routes.tabs.post as Href,
-            //   params: {
-            //     data: JSON.stringify(item),
-            //   },
-            // });
+            router.push({
+              pathname: routes.tabs.post as Href,
+              params: {
+                postId: item?.uuid,
+              },
+            });
             // router.push(routes.tabs.post as Href);
             // router.setParams({ data: JSON.stringify(item) });
           }}

@@ -36,3 +36,11 @@ export async function getFavourite({ query }: any) {
     query,
   });
 }
+export async function updatePostService({ pathParams,body }: any) {
+  return callApi({
+    uriEndPoint: { ...post.updatePost.v1 } as ApiEndpoint,
+    pathParams,
+    body,
+    multipart:true
+  });
+}

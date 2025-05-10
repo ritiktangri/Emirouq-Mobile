@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, forwardRef } from 'react';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import { Controller } from 'react-hook-form';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
@@ -18,8 +18,19 @@ const YOUR_GOOGLE_PLACES_API_KEY = 'AIzaSyBjSzyTvFszRwMz8sV-xBzKPnLDchDOVHY';
 // });
 // const locale = 'left'; // example
 
-const LocationInput = ({ control, errors }: any) => {
-  const googlePlacesRef: any = useRef(null);
+const LocationInput = forwardRef(({ control, errors }: any, ref: any) => {
+  // Expose the ref methods to parent
+  // useImperativeHandle(ref, () => ({
+  //   focus: () => {
+  //     ref.current?.focus();
+  //   },
+  //   blur: () => {
+  //     ref.current?.blur();
+  //   },
+  //   clear: () => {
+  //     ref.current?.setAddressText('');
+  //   },
+  // }));
 
   return (
     <View className="mb-6">
@@ -39,19 +50,19 @@ const LocationInput = ({ control, errors }: any) => {
         }}
         render={({ field: { onChange, value } }) => {
           useEffect(() => {
-            if (!value && googlePlacesRef.current) {
-              googlePlacesRef.current.setAddressText('');
-            } else if (value?.name && googlePlacesRef.current) {
-              const currentText = googlePlacesRef.current.getAddressText();
+            if (!value && ref.current) {
+              ref.current.setAddressText('');
+            } else if (value?.name && ref.current) {
+              const currentText = ref.current.getAddressText();
               if (currentText !== value.name) {
-                googlePlacesRef.current.setAddressText(value.name);
+                ref.current.setAddressText(value.name);
               }
             }
           }, [value]);
 
           return (
             <GooglePlacesAutocomplete
-              ref={googlePlacesRef}
+              ref={ref}
               nearbyPlacesAPI="GooglePlacesSearch"
               placeholder="Select location"
               listViewDisplayed="auto"
@@ -76,11 +87,8 @@ const LocationInput = ({ control, errors }: any) => {
               query={{
                 key: YOUR_GOOGLE_PLACES_API_KEY,
                 language: 'en',
-                // components: "country:au|country:nz",
               }}
               textInputProps={{
-                // value: value?.name || '', // Let the component manage its internal text state for typing
-                // We sync it using ref and useEffect above if needed
                 onChangeText: (text) => {
                   if (value?.placeId && text !== value?.name) {
                     onChange({ name: text, placeId: null });
@@ -111,7 +119,7 @@ const LocationInput = ({ control, errors }: any) => {
       )}
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   autocompleteContainer: {

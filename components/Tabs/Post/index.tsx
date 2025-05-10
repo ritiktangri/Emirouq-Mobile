@@ -4,27 +4,21 @@ import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as ImagePicker from 'expo-image-picker';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Feather } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import CustomDropdown from '~/components/UI/CustomDropdown';
 import SelectPicker from '~/components/UI/SelectPicker';
 import { useCategory } from '~/context/CategoryContext';
 import { useAuth } from '~/context/AuthContext';
-import {
-  useFocusEffect,
-  useGlobalSearchParams,
-  useLocalSearchParams,
-  useRouter,
-} from 'expo-router';
+import { useFocusEffect, useGlobalSearchParams, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import { useTheme } from '~/context/ThemeContext';
 import { View } from '~/components/common/View';
 import { Text } from '~/components/common/Text';
 import { useLocale } from '~/context/LocaleContext';
 import { i18n } from '~/utils/i18n';
-import { useRoute } from '@react-navigation/native';
 import LocationInput from '~/components/UI/GooglePlaceAutocomplete';
+import { useGetSinglePosts } from '~/hooks/post/query';
 
 const schema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -33,7 +27,7 @@ const schema = z.object({
   condition: z.enum(['new', 'used']),
   price: z.string().min(1, 'Price is required'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
-  location: z.string().min(1, 'Location is required'),
+  location: z.any(),
   timePeriod: z.string().min(1, 'Time period is required'),
   images: z.array(
     z.object({
@@ -60,15 +54,6 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-const locations = [
-  'New York, NY',
-  'Los Angeles, CA',
-  'Chicago, IL',
-  'Houston, TX',
-  'Phoenix, AZ',
-  'Philadelphia, PA',
-];
-
 const timePeriods = ['7 days', '14 days', '30 days', '60 days', '90 days'];
 
 const AddPost = () => {
@@ -77,56 +62,57 @@ const AddPost = () => {
     formState: { errors },
     watch,
     setValue,
+    reset,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      condition: 'new',
-      title: 'Nike Air Max 270 - Limited Edition Sneakers',
-      category: '5ebdc8fa-dca3-4943-bbf1-a8a0019f2163',
-      subCategory: 'd01fdc77-174f-449a-b28d-ad9ed4e99638',
-      price: '3500.33',
-      description:
-        'Brand new Nike Air Max 2023 sneakers in pristine condition. Never worn, comes in original box with all tags attached. Limited 256GB storage. Unlocked for all carriers. Price is firm. No trades please',
-      location: 'New York, NY',
-      timePeriod: '7 days',
-      images: [
-        {
-          assetId: '9F983DBA-EC35-42B8-8773-B597CF782EDD/L0/001',
-          duration: null,
-          exif: null,
-          fileName: 'IMG_0003.jpg',
-          fileSize: 2050012,
-          height: 2002,
-          mimeType: 'image/jpeg',
-          pairedVideoAsset: null,
-          type: 'image',
-          uri: 'file:///Users/areeb/Library/Developer/CoreSimulator/Devices/682A5298-2FA4-48A8-8028-4FC69C9846AA/data/Containers/Data/Application/11592AA3-5A7C-481E-B7B7-9620B346B121/Library/Caches/ExponentExperienceData/@anonymous/emirouq-mobile-cb2a80bf-99e6-4bae-903e-23471cc3e5af/ImagePicker/BD6B2DB3-D1E5-4D74-8763-D414569827C1.jpg',
-          width: 3000,
-        },
-        {
-          assetId: 'B84E8479-475C-4727-A4A4-B77AA9980897/L0/001',
-          duration: null,
-          exif: null,
-          fileName: 'IMG_0002.jpg',
-          fileSize: 2590850,
-          height: 2848,
-          mimeType: 'image/jpeg',
-          pairedVideoAsset: null,
-          type: 'image',
-          uri: 'file:///Users/areeb/Library/Developer/CoreSimulator/Devices/682A5298-2FA4-48A8-8028-4FC69C9846AA/data/Containers/Data/Application/11592AA3-5A7C-481E-B7B7-9620B346B121/Library/Caches/ExponentExperienceData/@anonymous/emirouq-mobile-cb2a80bf-99e6-4bae-903e-23471cc3e5af/ImagePicker/3060E80E-DF73-494B-B723-E7E3F4D5A5F9.jpg',
-          width: 4288,
-        },
-      ],
-      properties: [
-        { name: 'Brand', value: '1' },
-        { name: 'Model', value: '1' },
-        { name: 'Condition', value: '1' },
-        { name: 'Operating System', value: '1' },
-        { name: 'Screen Size', value: '1' },
-        { name: 'Storage', value: '1' },
-        { name: 'Network Type', value: '1' },
-        { name: 'Seller Contact Info', value: '1' },
-      ],
+      // condition: 'new',
+      // title: 'Nike Air Max 270 - Limited Edition Sneakers',
+      // category: '5ebdc8fa-dca3-4943-bbf1-a8a0019f2163',
+      // subCategory: 'd01fdc77-174f-449a-b28d-ad9ed4e99638',
+      // price: '3500.33',
+      // description:
+      //   'Brand new Nike Air Max 2023 sneakers in pristine condition. Never worn, comes in original box with all tags attached. Limited 256GB storage. Unlocked for all carriers. Price is firm. No trades please',
+      // location: 'New York, NY',
+      // timePeriod: '7 days',
+      // images: [
+      //   {
+      //     assetId: '9F983DBA-EC35-42B8-8773-B597CF782EDD/L0/001',
+      //     duration: null,
+      //     exif: null,
+      //     fileName: 'IMG_0003.jpg',
+      //     fileSize: 2050012,
+      //     height: 2002,
+      //     mimeType: 'image/jpeg',
+      //     pairedVideoAsset: null,
+      //     type: 'image',
+      //     uri: 'file:///Users/areeb/Library/Developer/CoreSimulator/Devices/682A5298-2FA4-48A8-8028-4FC69C9846AA/data/Containers/Data/Application/11592AA3-5A7C-481E-B7B7-9620B346B121/Library/Caches/ExponentExperienceData/@anonymous/emirouq-mobile-cb2a80bf-99e6-4bae-903e-23471cc3e5af/ImagePicker/BD6B2DB3-D1E5-4D74-8763-D414569827C1.jpg',
+      //     width: 3000,
+      //   },
+      //   {
+      //     assetId: 'B84E8479-475C-4727-A4A4-B77AA9980897/L0/001',
+      //     duration: null,
+      //     exif: null,
+      //     fileName: 'IMG_0002.jpg',
+      //     fileSize: 2590850,
+      //     height: 2848,
+      //     mimeType: 'image/jpeg',
+      //     pairedVideoAsset: null,
+      //     type: 'image',
+      //     uri: 'file:///Users/areeb/Library/Developer/CoreSimulator/Devices/682A5298-2FA4-48A8-8028-4FC69C9846AA/data/Containers/Data/Application/11592AA3-5A7C-481E-B7B7-9620B346B121/Library/Caches/ExponentExperienceData/@anonymous/emirouq-mobile-cb2a80bf-99e6-4bae-903e-23471cc3e5af/ImagePicker/3060E80E-DF73-494B-B723-E7E3F4D5A5F9.jpg',
+      //     width: 4288,
+      //   },
+      // ],
+      // properties: [
+      //   { name: 'Brand', value: '1' },
+      //   { name: 'Model', value: '1' },
+      //   { name: 'Condition', value: '1' },
+      //   { name: 'Operating System', value: '1' },
+      //   { name: 'Screen Size', value: '1' },
+      //   { name: 'Storage', value: '1' },
+      //   { name: 'Network Type', value: '1' },
+      //   { name: 'Seller Contact Info', value: '1' },
+      // ],
     },
   });
   const router: any = useRouter();
@@ -137,15 +123,39 @@ const AddPost = () => {
   const selectedCategory = watch('category');
   const selectedSubCategory = watch('subCategory');
   const [isEdit, setIsEdit] = useState(false);
-  const { data } = useGlobalSearchParams();
+  const params: any = useGlobalSearchParams();
+  const locationRef: any = useRef(null);
+  const { data: postDetails, refetch }: any = useGetSinglePosts(params?.postId);
 
-  // console.log('Received data:', data);
-  // useEffect(() => {
-  //   if (data?.uuid) {
-  //     setIsEdit(true);
-  //     setValue('condition', data?.condition);
-  //   }
-  // }, [data?.uuid]);
+  useEffect(() => {
+    if (params?.postId) {
+      setIsEdit(true);
+      refetch()?.then((res: any) => {
+        let singlePost = res?.data?.data;
+
+        const updatedProperties = singlePost?.properties?.map((prop: any) => ({
+          ...prop,
+          value: prop.value,
+        }));
+
+        reset({
+          title: singlePost?.title || '',
+          category: singlePost?.category?.uuid || '',
+          subCategory: singlePost?.subCategory?.uuid || '',
+          condition: singlePost?.condition || '',
+          price: singlePost?.price?.toString() || '',
+          description: singlePost?.description || '',
+          timePeriod: singlePost?.timePeriod || '',
+          images: singlePost?.file?.map((val: any) => ({ uri: val })) || [],
+          location: {
+            name: singlePost?.location?.name || '',
+            placeId: singlePost?.location?.placeId || '',
+          },
+          properties: updatedProperties || [],
+        });
+      });
+    }
+  }, [params?.postId]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -209,9 +219,6 @@ const AddPost = () => {
   };
 
   const handlePropertyChange = (name: string, text: string) => {
-    // setProperties((prevProperties: any) =>
-    //   prevProperties.map((prop: any) => (prop.name === name ? { ...prop, value: text } : prop))
-    // );
     const updatedProperties = watch('properties').map((prop: any) => {
       if (prop.name === name) {
         return { ...prop, value: text };
@@ -446,7 +453,7 @@ const AddPost = () => {
             <Text className="mt-1 text-sm text-red-500">{errors.description.message}</Text>
           )}
         </View>
-        <LocationInput control={control} errors={errors} />
+        <LocationInput control={control} errors={errors} ref={locationRef} />
         {/* <View className="mb-6">
           <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
             {i18n.t('post.location')}
@@ -524,6 +531,8 @@ const AddPost = () => {
                   subCategoryName: subCategories?.find(
                     (item: any) => item?.uuid === watch('subCategory')
                   )?.title,
+                  isEdit,
+                  ...(postDetails && { uuid: postDetails?.data?.uuid }),
                 }),
               },
             });

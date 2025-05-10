@@ -1,12 +1,5 @@
 /* eslint-disable import/order */
-import {
-  ScrollView,
-  Dimensions,
-  TouchableOpacity,
-  Pressable,
-  ActivityIndicator,
-  Image,
-} from 'react-native';
+import { ScrollView, TouchableOpacity, Pressable, ActivityIndicator, Image } from 'react-native';
 import React, { useState } from 'react';
 import { Href, useGlobalSearchParams, useRouter } from 'expo-router';
 import Swiper from 'react-native-swiper';
@@ -25,45 +18,69 @@ const PreviewPost = () => {
   const router: any = useRouter();
   const { showToast } = useTheme();
   const [selectFeature, setSelectFeature] = useState('');
-  const { createPost } = usePosts();
+  const { createPost, updatePost } = usePosts();
   const [saveLoading, setSaveLoading] = useState(false);
   const [draftLoading, setDraftLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const { width } = Dimensions.get('screen');
   const { locale } = useLocale();
   if (!params?.data) {
     return;
   }
+
   const onSubmit = async (isDraft = false) => {
-    if (isDraft) {
-      setDraftLoading(true);
-    } else {
+    if (data?.isEdit) {
       setSaveLoading(true);
-    }
-    createPost(
-      {
-        ...data,
-        locationName: data?.location?.name,
-        locationPlaceId: data?.location?.placeId,
-        isDraft,
-      },
-      () => {
-        if (!isDraft) {
-          showToast('Ad created successfully', 'success');
+      updatePost(
+        {
+          ...data,
+          locationName: data?.location?.name,
+          locationPlaceId: data?.location?.placeId,
+          isDraft,
+        },
+        {
+          id: data?.uuid,
+        },
+        () => {
+          showToast('Ad updated successfully', 'success');
           router.push(routes.success as Href);
-        } else {
-          showToast('Ad saved as draft successfully', 'success');
-          router.push(routes.tabs.home as Href);
+          setSaveLoading(false);
+        },
+        (err: any) => {
+          showToast(err?.message, 'error');
+          setSaveLoading(false);
         }
-        setDraftLoading(false);
-        setSaveLoading(false);
-      },
-      (err: any) => {
-        showToast(err?.message, 'error');
-        setDraftLoading(false);
-        setSaveLoading(false);
+      );
+    } else {
+      if (isDraft) {
+        setDraftLoading(true);
+      } else {
+        setSaveLoading(true);
       }
-    );
+      createPost(
+        {
+          ...data,
+          locationName: data?.location?.name,
+          locationPlaceId: data?.location?.placeId,
+          isDraft,
+        },
+        () => {
+          if (!isDraft) {
+            showToast('Ad created successfully', 'success');
+            router.push(routes.success as Href);
+          } else {
+            showToast('Ad saved as draft successfully', 'success');
+            router.push(routes.tabs.home as Href);
+          }
+          setDraftLoading(false);
+          setSaveLoading(false);
+        },
+        (err: any) => {
+          showToast(err?.message, 'error');
+          setDraftLoading(false);
+          setSaveLoading(false);
+        }
+      );
+    }
   };
 
   return (
@@ -159,7 +176,7 @@ const PreviewPost = () => {
 
           {/* Sub Category and Time Period*/}
           {data?.timePeriod ? (
-            <View className="flex flex-row items-center gap-x-2 rounded-md bg-gray-50">
+            <View className="flex flex-row items-center gap-x-2 rounded-md">
               <Text className="flex-1 text-gray-600">Time Period: </Text>
               <Text className="text-gray-800">{data?.timePeriod}</Text>
             </View>
@@ -250,17 +267,19 @@ const PreviewPost = () => {
                 {i18n.t('previewAd.confirm')}
               </Text>
             </Pressable>
-            <Pressable
-              onPress={() => {
-                onSubmit(true);
-              }}
-              className="flex-1 flex-row items-center justify-center gap-1 gap-2 rounded-lg bg-white py-4">
-              {draftLoading ? <ActivityIndicator size="small" color="black" /> : <></>}
+            {!data?.isEdit ? (
+              <Pressable
+                onPress={() => {
+                  onSubmit(true);
+                }}
+                className="flex-1 flex-row items-center justify-center gap-2 rounded-lg bg-white py-4">
+                {draftLoading ? <ActivityIndicator size="small" color="black" /> : <></>}
 
-              <Text className="text-base font-semibold text-gray-700">
-                {i18n.t('previewAd.saveDraft')}
-              </Text>
-            </Pressable>
+                <Text className="text-base font-semibold text-gray-700">
+                  {i18n.t('previewAd.saveDraft')}
+                </Text>
+              </Pressable>
+            ) : null}
             <Pressable
               className="flex-1 items-center rounded-lg border-[1px] border-primary py-4"
               onPress={() => router.back()}>
