@@ -138,7 +138,9 @@ const SinglePost = () => {
             </Text>
             <View className="mt-1 flex-row items-center">
               <Feather name="map-pin" size={16} color="gray" />
-              <Text className="ml-1 text-gray-600">{data?.data?.location || 'New York, NY'}</Text>
+              <Text className="ml-1 text-gray-600">
+                {data?.data?.location?.name || 'New York, NY'}
+              </Text>
             </View>
           </View>
 
