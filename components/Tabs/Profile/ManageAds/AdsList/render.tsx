@@ -42,7 +42,7 @@ const Render = ({ item }: any) => {
         <View className="flex-1">
           <Text className="text-lg font-semibold">{item?.title}</Text>
           <Text className="text-sm text-gray-500">
-            {item?.category?.title} • {item.location}
+            {item?.category?.title} • {item.location?.name}
           </Text>
           <Text
             className={`mt-1 self-start rounded-full px-2 py-1  ${
