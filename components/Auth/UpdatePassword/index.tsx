@@ -18,7 +18,7 @@ const Page = () => {
   const [secureTextNewPassword, setSecureTextNewPassword] = useState(false);
   const [secureTextConfirmPassword, setSecureTextConfirmPassword] = useState(false);
   const router = useRouter();
-  const { isDarkTheme } = useTheme();
+  const { isDarkTheme, showToast } = useTheme();
   const state = useLocalSearchParams();
 
   const [password, setPassword] = useState<any>({
@@ -56,11 +56,12 @@ const Page = () => {
             token: encode(`${state.email}:${password.newPassword}`),
           },
           body: {
-            password: password,
-            confirmPassword: password,
+            password: password.newPassword,
+            confirmPassword: password.newPassword,
           },
         },
         () => {
+          showToast('Password reset successfully!', 'success');
           router.replace(routes.auth.auth as Href);
         }
       );
@@ -70,10 +71,8 @@ const Page = () => {
   return (
     <ImageBackground className="flex-1 flex-col bg-white" source={isDarkTheme ? '' : ''}>
       <SafeAreaView edges={['top', 'left', 'right']} className="flex-1 flex-col">
-        <View className="flex-row justify-end px-8 pt-4">
-          <Image source={logo} className="h-[70px] w-[70px]" resizeMode="contain" />
-        </View>
-        <View className="mt-12 flex-col gap-y-6 p-6">
+        <AuthHeader />
+        <View className=" flex-col gap-y-6 p-6">
           <Text className="font-poppinsMedium text-3xl font-semibold dark:text-white">
             Update Password!
           </Text>

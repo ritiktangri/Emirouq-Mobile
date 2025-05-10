@@ -222,6 +222,7 @@ const AuthProvider = ({ children }: any) => {
         cb && cb(response, 'success');
       })
       .catch((err: any) => {
+        console.log('err', err);
         setVerifyOtpLoading(false);
         // toast.error(err?.message);
 

@@ -18,12 +18,14 @@ import { Text } from '~/components/common/Text';
 import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import { View } from '~/components/common/View';
-import { useAuth as ClerkUseAuth, useOAuth, useUser } from '@clerk/clerk-expo';
+import { useAuth as ClerkUseAuth } from '@clerk/clerk-expo';
 import { queryClient } from '~/app/_layout';
+import { useCurrentLocation } from '~/components/UserLocation';
 
 const UserProfile = () => {
   const { getToken, signOut } = ClerkUseAuth();
-
+  const { address }: any = useCurrentLocation();
+  console.log('address', address);
   const { user } = useAuth();
 
   const { locale } = useLocale();
@@ -48,6 +50,8 @@ const UserProfile = () => {
       setProfileImage(result?.assets?.[0]);
     }
   };
+
+  let addressStr = `${address?.name ? `${address?.name},` : ''} ${address?.district ? `${address?.district},` : ''} ${address?.city ? `${address?.city},` : ''} ${address?.country || ''}`;
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -86,7 +90,7 @@ const UserProfile = () => {
               <Text className="text-center text-gray-600">{user?.email}</Text>
               <View className="flex-row items-center justify-center ">
                 <EvilIcons name="location" size={18} color="#4b5563" />
-                <Text className="text-center text-gray-600">San Franciso, CA</Text>
+                <Text className="text-center text-gray-600">{addressStr}</Text>
               </View>
             </View>
           </View>
@@ -131,17 +135,17 @@ const UserProfile = () => {
                   </Text>
                 </View>
               </View>
-              <View direction={locale} className="">
+              {/* <View direction={locale} className="">
                 <EvilIcons name="location" size={24} color="gray" />
                 <View className="flex-col py-2">
                   <Text placement={locale} className="text-gray-600">
                     {i18n.t('profile.location')}
                   </Text>
                   <Text placement={locale} className="">
-                    San Francisco, CA
+                    {addressStr}
                   </Text>
                 </View>
-              </View>
+              </View> */}
             </View>
           </View>
           {/* ACCOUNT SETTINGS */}
