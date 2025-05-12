@@ -15,6 +15,7 @@ import { useTheme } from '~/context/ThemeContext';
 const PreviewPost = () => {
   const params: any = useGlobalSearchParams();
   const data = params?.data ? JSON.parse(params?.data) : {};
+  console.log(data?.images);
   const router: any = useRouter();
   const { showToast } = useTheme();
   const [selectFeature, setSelectFeature] = useState('');
@@ -93,9 +94,9 @@ const PreviewPost = () => {
           </Text>
         </View>
         <View className="p-4">
-          <View className="mb-4 h-64  rounded-lg">
+          <View className="mb-4 h-64  w-full rounded-lg">
             <Swiper
-              showsButtons
+              showsButtons={data?.images?.length > 1}
               dotStyle={{
                 backgroundColor: 'rgba(0,0,0,.2)',
                 width: 8,
@@ -110,16 +111,18 @@ const PreviewPost = () => {
                 borderRadius: 5,
                 margin: 3,
               }}>
-              {data?.images?.map((image: any, index: any) => (
-                <Image
-                  key={index}
-                  source={{
-                    uri: image?.uri,
-                  }}
-                  resizeMode="cover"
-                  className="h-full w-full rounded-lg"
-                />
-              ))}
+              {data?.images?.map((image: any, index: any) => {
+                return (
+                  <Image
+                    key={image?.uri}
+                    source={{
+                      uri: image?.uri,
+                    }}
+                    resizeMode="cover"
+                    className="h-full w-full rounded-lg"
+                  />
+                );
+              })}
             </Swiper>
           </View>
 

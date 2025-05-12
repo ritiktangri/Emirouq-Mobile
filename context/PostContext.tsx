@@ -1,5 +1,7 @@
 /* eslint-disable import/order */
 import { createContext, useContext, useState, useMemo, useCallback, useEffect } from 'react';
+import { Platform } from 'react-native';
+import mime from 'mime';
 
 import {
   createPostService,
@@ -59,14 +61,19 @@ const PostProvider = ({ children }: any) => {
     formData.append('locationPlaceId', body?.locationPlaceId);
     body?.isDraft && formData.append('isDraft', body?.isDraft);
     formData.append('properties', JSON.stringify(body?.properties));
-    for (const imageAsset of body?.images) {
-      formData.append('file', {
-        // Use 'images' as the field name for multiple files
-        uri: imageAsset.uri,
-        name: imageAsset.fileName,
-        type: imageAsset.type,
+
+    if (body?.images?.length)
+      body?.images?.forEach((file: any) => {
+        if (!file?.uri?.includes('https')) {
+          formData.append('image', {
+            uri: Platform.OS === 'android' ? file?.uri : file?.uri.replace('file://', ''),
+            name: file?.name,
+            type: file?.type,
+          });
+        }
       });
-    }
+
+    console.log(JSON.stringify(formData, null, 2), 'body?.images');
     createPostService({
       body: formData,
     })
@@ -74,6 +81,7 @@ const PostProvider = ({ children }: any) => {
         cb && cb();
       })
       .catch((err: any) => {
+        console.log(err, 'err');
         errCb && errCb(err);
       })
       .finally(() => {

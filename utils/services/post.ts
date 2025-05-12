@@ -6,9 +6,14 @@ import { ApiEndpoint } from '../types';
 
 export async function createPostService({ body }: any) {
   return callApi({
-    uriEndPoint: { ...post.createPost.v1 } as ApiEndpoint,
+    uriEndPoint: {
+      ...post.createPost.v1,
+      headerProps: {
+        'Content-Type': 'multipart/form-data',
+      },
+    } as ApiEndpoint,
     body,
-    multipart: true,
+    // multipart: true,
   });
 }
 export async function getPostService({ query, signal }: any) {

@@ -53,7 +53,8 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      "expo-video"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -125,8 +126,12 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.emirouq",
-      "permissions": ["android.permission.RECORD_AUDIO", "android.permission.RECORD_AUDIO", "android.permission.ACCESS_COARSE_LOCATION",
-      "android.permission.ACCESS_FINE_LOCATION"]
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "newArchEnabled": true,
     "extra": {
