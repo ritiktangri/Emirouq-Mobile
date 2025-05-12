@@ -19,6 +19,7 @@ import { useLocale } from '~/context/LocaleContext';
 import { i18n } from '~/utils/i18n';
 import LocationInput from '~/components/UI/GooglePlaceAutocomplete';
 import { useGetSinglePosts } from '~/hooks/post/query';
+import { saveFileLocally } from '~/utils/helper';
 
 const schema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -184,7 +185,11 @@ const AddPost = () => {
     //   );
     //   setValue('images', [...filterImages, ...formattedAssets]);
     // } else {
-    setValue('images', [...watch('images'), ...formattedAssets]);
+    // setValue('images', [...watch('images'), ...formattedAssets]);
+    // this is important to save the file locally
+    const res = await saveFileLocally(formattedAssets);
+    setValue('images', res);
+
     // }
   };
 

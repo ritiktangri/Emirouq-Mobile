@@ -3,6 +3,7 @@ import { ScrollView, TouchableOpacity, Pressable, ActivityIndicator, Image } fro
 import React, { useState } from 'react';
 import { Href, useGlobalSearchParams, useRouter } from 'expo-router';
 import Swiper from 'react-native-swiper';
+
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { routes } from '~/utils/routes';
 import { toCurrency } from '~/utils/helper';
@@ -111,7 +112,26 @@ const PreviewPost = () => {
                 borderRadius: 5,
                 margin: 3,
               }}>
-              {data?.images?.map((image: any, index: any) => {
+              {[
+                {
+                  name: '1000055177.jpg',
+                  type: 'image/jpeg',
+                  uri: 'file:///data/user/0/host.exp.exponent/files/1000055177.jpg',
+                  uuid: '1000055177.jpg',
+                },
+                {
+                  name: '1000055175.jpg',
+                  type: 'image/jpeg',
+                  uri: 'file:///data/user/0/host.exp.exponent/files/1000055175.jpg',
+                  uuid: '1000055175.jpg',
+                },
+                {
+                  name: '1000055164.jpg',
+                  type: 'image/jpeg',
+                  uri: 'file:///data/user/0/host.exp.exponent/files/1000055164.jpg',
+                  uuid: '1000055164.jpg',
+                },
+              ]?.map((image: any, index: any) => {
                 return (
                   <Image
                     key={image?.uri}

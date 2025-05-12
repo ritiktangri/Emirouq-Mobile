@@ -73,7 +73,6 @@ const PostProvider = ({ children }: any) => {
         }
       });
 
-    console.log(JSON.stringify(formData, null, 2), 'body?.images');
     createPostService({
       body: formData,
     })

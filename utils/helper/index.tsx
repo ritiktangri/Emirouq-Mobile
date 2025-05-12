@@ -93,8 +93,8 @@ export function getRelativeTime(date: Date): string {
 //save file locally
 const saveFileLocally = async (attachments: any) => {
   try {
-    attachments.forEach(async ({ uri, fileName }: any) => {
-      const newPath = `${FileSystem.documentDirectory}${fileName}`;
+    attachments.forEach(async ({ uri, name }: any) => {
+      const newPath = `${FileSystem.documentDirectory}${name}`;
 
       await FileSystem.copyAsync({
         from: uri,
@@ -103,7 +103,7 @@ const saveFileLocally = async (attachments: any) => {
     });
     return attachments.map((attachment: any) => ({
       ...attachment,
-      uri: `${FileSystem.documentDirectory}${attachment.fileName}`,
+      uri: `${FileSystem.documentDirectory}${attachment.name}`,
     }));
   } catch (error) {
     console.error('Error saving file:', error);
