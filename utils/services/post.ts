@@ -8,13 +8,13 @@ export async function createPostService({ body }: any) {
   return callApi({
     uriEndPoint: {
       ...post.createPost.v1,
-      headerProps: {
-        'Content-Type': 'multipart/form-data',
-        accept: 'application/json',
-      },
+      // headerProps: {
+      //   'Content-Type': 'multipart/form-data',
+      //   accept: 'application/json',
+      // },
     } as ApiEndpoint,
     body,
-    // multipart: true,
+    multipart: true,
   });
 }
 export async function getPostService({ query, signal }: any) {

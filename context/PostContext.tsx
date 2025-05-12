@@ -53,12 +53,11 @@ const PostProvider = ({ children }: any) => {
     formData.append('description', body?.description);
     formData.append('price', body?.price);
     formData.append('condition', body?.condition);
-    formData.append('location', body?.location);
     formData.append('timePeriod', body?.timePeriod);
     formData.append('category', body?.category);
     formData.append('subCategory', body?.subCategory);
-    formData.append('locationName', body?.locationName);
-    formData.append('locationPlaceId', body?.locationPlaceId);
+    formData.append('locationName', body?.location?.name);
+    formData.append('locationPlaceId', body?.location?.placeId);
     body?.isDraft && formData.append('isDraft', body?.isDraft);
     formData.append('properties', JSON.stringify(body?.properties));
 
@@ -80,7 +79,6 @@ const PostProvider = ({ children }: any) => {
         cb && cb();
       })
       .catch((err: any) => {
-        console.log(err, 'err');
         errCb && errCb(err);
       })
       .finally(() => {
@@ -116,14 +114,14 @@ const PostProvider = ({ children }: any) => {
       pathParams,
     })
       .then((res) => {
+        setBtnLoading(false);
         cb && cb();
       })
       .catch((err: any) => {
         errCb && errCb(err);
-      })
-      .finally(() => {
         setBtnLoading(false);
-      });
+      })
+      .finally(() => {});
   }, []);
 
   const getAdsList = async (
