@@ -77,14 +77,14 @@ const AddPost = () => {
       timePeriod: '',
       images: [],
       properties: [
-        // { name: 'Brand', value: '1' },
-        // { name: 'Model', value: '1' },
-        // { name: 'Condition', value: '1' },
-        // { name: 'Operating System', value: '1' },
-        // { name: 'Screen Size', value: '1' },
-        // { name: 'Storage', value: '1' },
-        // { name: 'Network Type', value: '1' },
-        // { name: 'Seller Contact Info', value: '1' },
+        { name: 'Brand', value: '1' },
+        { name: 'Model', value: '1' },
+        { name: 'Condition', value: '1' },
+        { name: 'Operating System', value: '1' },
+        { name: 'Screen Size', value: '1' },
+        { name: 'Storage', value: '1' },
+        { name: 'Network Type', value: '1' },
+        { name: 'Seller Contact Info', value: '1' },
       ],
     },
   });
@@ -185,10 +185,14 @@ const AddPost = () => {
     //   );
     //   setValue('images', [...filterImages, ...formattedAssets]);
     // } else {
-    // setValue('images', [...watch('images'), ...formattedAssets]);
-    // this is important to save the file locally
-    const res = await saveFileLocally(formattedAssets);
-    setValue('images', res);
+
+    if (Platform.OS === 'ios') {
+      setValue('images', [...watch('images'), ...formattedAssets]);
+    }
+    if (Platform.OS === 'android') {
+      const res = await saveFileLocally(formattedAssets);
+      setValue('images', res);
+    }
 
     // }
   };

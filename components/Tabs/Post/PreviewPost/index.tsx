@@ -112,26 +112,7 @@ const PreviewPost = () => {
                 borderRadius: 5,
                 margin: 3,
               }}>
-              {[
-                {
-                  name: '1000055177.jpg',
-                  type: 'image/jpeg',
-                  uri: 'file:///data/user/0/host.exp.exponent/files/1000055177.jpg',
-                  uuid: '1000055177.jpg',
-                },
-                {
-                  name: '1000055175.jpg',
-                  type: 'image/jpeg',
-                  uri: 'file:///data/user/0/host.exp.exponent/files/1000055175.jpg',
-                  uuid: '1000055175.jpg',
-                },
-                {
-                  name: '1000055164.jpg',
-                  type: 'image/jpeg',
-                  uri: 'file:///data/user/0/host.exp.exponent/files/1000055164.jpg',
-                  uuid: '1000055164.jpg',
-                },
-              ]?.map((image: any, index: any) => {
+              {data?.images?.map((image: any, index: any) => {
                 return (
                   <Image
                     key={image?.uri}
