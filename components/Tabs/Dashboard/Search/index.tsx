@@ -30,14 +30,14 @@ const Search = () => {
         containerClassName={`bg-search_bg rounded-lg ${Platform.OS === 'ios' ? 'p-3' : 'px-2'}`}
         textAlign={locale === 'ar' ? 'right' : 'left'}
         placeholderTextColor={theme.colors.gray}
-        className={`w-[70%] px-4 text-lg ${Platform.OS == 'android' ? 'h-12' : ''}`}
+        className={`w-[75%] px-4 text-lg ${Platform.OS == 'android' ? 'h-12' : ''}`}
       />
       <TouchableOpacity
         className="relative"
         onPress={() => {
           setOpen(!open);
         }}>
-        <Octicons name="filter" size={24} color="black" />
+        <Octicons name="filter" size={20} color="black" />
       </TouchableOpacity>
       <TouchableOpacity
         className="relative"
@@ -49,8 +49,20 @@ const Search = () => {
             },
           } as Href);
         }}>
-        <AntDesign name="hearto" size={24} color="black" />
+        <AntDesign name="hearto" size={20} color="black" />
       </TouchableOpacity>
+      {/* <TouchableOpacity
+        className="relative"
+        onPress={() => {
+          router.push({
+            pathname: routes.tabs.notification,
+            params: {
+              headerTitle: 'notification.title',
+            },
+          } as Href);
+        }}>
+        <Ionicons name="notifications-outline" size={20} color="black" />
+      </TouchableOpacity> */}
       <Modal
         animationType="slide"
         visible={open}

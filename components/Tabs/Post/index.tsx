@@ -99,7 +99,7 @@ const AddPost = () => {
   const params: any = useGlobalSearchParams();
   const locationRef: any = useRef(null);
   const { data: postDetails, refetch }: any = useGetSinglePosts(params?.postId);
-  console.log('params?.postId', params?.postId, typeof params?.postId);
+
   useEffect(() => {
     if (params?.postId) {
       setIsEdit(true);

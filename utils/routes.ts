@@ -34,6 +34,7 @@ export const routes = {
     preview_post: '/(hydrogen)/(tabs)/post/preview-post',
     success_view: '/(hydrogen)/(tabs)/post/success-view',
     favourites: '/(hydrogen)/favourites',
+    notification: '/(hydrogen)/notifications',
   },
   'select-language': '/select-language',
   success: '/(hydrogen)/success',

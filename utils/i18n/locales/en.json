@@ -158,5 +158,8 @@
   },
   "favourites":{
     "favourites":"Favourites"
+  },
+  "notification":{
+    "title":"Notifications"
   }
 }

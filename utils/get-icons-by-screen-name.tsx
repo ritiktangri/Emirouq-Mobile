@@ -19,7 +19,7 @@ export const getIconsByScreenName = (theme: string, screenName: string, active: 
     ),
     search: (
       <Ionicons
-        name="search"
+        name="search-outline"
         size={24}
         className={active ? '!text-primary' : '!text-bottom_inactive'}
       />

@@ -163,7 +163,7 @@
       "description": "ابدأ محادثة مع مشترٍ أو بائع لرؤيتها هنا."
     }
   },
-  "favourites":{
-    "favourites":"المفضلة"
+  "notification":{
+    "title":"إشعارات"
   }
 }

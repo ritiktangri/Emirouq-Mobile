@@ -7,7 +7,6 @@ import AddToFavourite from '../AddToFavourite';
 
 const Render = ({ item }: any) => {
   const router = useRouter();
-
   return (
     <TouchableOpacity
       className="mr-4 w-72 overflow-hidden rounded-2xl border-[0.4px] border-gray-300 bg-white shadow-sm shadow-slate-50"
