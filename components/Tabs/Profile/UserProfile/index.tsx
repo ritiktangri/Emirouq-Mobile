@@ -219,6 +219,7 @@ const UserProfile = () => {
             <Feather name="edit-2" size={16} color="#FF5722" />
             <Text className="font-semibold text-primary">{i18n.t('profile.edit_profile')}</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             onPress={() =>
               logout(() => {
@@ -230,6 +231,16 @@ const UserProfile = () => {
             <Ionicons name="log-out" size={20} color="red" />
             <Text className="font-semibold text-red-500">{i18n.t('profile.logout')}</Text>
           </TouchableOpacity>
+          <View className="mt-6 rounded-t-xl border-t border-gray-300 p-2">
+            <View className="mb-2 flex-row items-center justify-center gap-x-2">
+              <Feather name="mail" size={18} color="#4B5563" />
+              <Text className="text-sm font-medium text-gray-700">Support@emirouq.ae</Text>
+            </View>
+            <View className="flex-row items-center justify-center gap-x-2">
+              <Feather name="clock" size={18} color="#4B5563" />
+              <Text className="text-sm font-medium text-gray-700">Support Hours: 9 AM - 6 PM</Text>
+            </View>
+          </View>
         </View>
       </TouchableWithoutFeedback>
     </ScrollView>
