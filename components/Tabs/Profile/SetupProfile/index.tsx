@@ -41,7 +41,6 @@ const SetupProfile = () => {
   const { categories }: any = useCategory();
   const { showToast }: any = useTheme();
   const router = useRouter();
-  console.log('params', params);
   const {
     control,
     handleSubmit,
@@ -131,7 +130,6 @@ const SetupProfile = () => {
         showToast('Profile Updated!', 'success');
       },
       (err: any) => {
-        console.log('err', err);
         showToast(err?.message, 'error');
       }
     );

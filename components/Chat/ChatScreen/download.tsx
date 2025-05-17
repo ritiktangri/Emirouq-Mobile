@@ -9,7 +9,6 @@ export default function App() {
       'http://techslides.com/demos/sample-videos/small.mp4',
       FileSystem.documentDirectory + filename
     );
-    console.log(result);
 
     save(result.uri, filename, result.headers['Content-Type']);
   };
@@ -32,7 +31,7 @@ export default function App() {
               encoding: FileSystem.EncodingType.Base64,
             });
           })
-          .catch((e) => console.log(e));
+          .catch((e) => {});
       } else {
         shareAsync(uri);
       }

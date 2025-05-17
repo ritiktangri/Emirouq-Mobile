@@ -191,6 +191,7 @@ const AuthProvider = ({ children }: any) => {
   };
   const handleLogout = async (cb: any) => {
     setUser(null);
+    socketIo?.disconnect();
     setActiveAccount([]);
     await Promise.all([
       removeStorageItemAsync(storageTokenKeyName),
@@ -222,7 +223,6 @@ const AuthProvider = ({ children }: any) => {
         cb && cb(response, 'success');
       })
       .catch((err: any) => {
-        console.log('err', err);
         setVerifyOtpLoading(false);
         // toast.error(err?.message);
 

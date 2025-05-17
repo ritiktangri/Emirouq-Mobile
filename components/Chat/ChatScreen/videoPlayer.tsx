@@ -76,11 +76,9 @@ export default function VideoPlayer({ source }: Props) {
         // className="absolute bottom-0 left-0 right-0 top-0 h-full w-full"
         style={{ width: '100%', height: '100%', position: 'absolute' }}
         onFullscreenEnter={() => {
-          console.log('Fullscreen Enter');
           setIsFullscreen(true);
         }}
         onFullscreenExit={() => {
-          console.log('Fullscreen Exit');
           setIsFullscreen(false);
         }}
       />

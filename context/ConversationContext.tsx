@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
 import { createContext, useContext, useMemo, useEffect } from 'react';
-import { saveConversationCache, saveMessageCache } from '~/hooks/chats/query';
+import { handleSeenMessage, saveConversationCache, saveMessageCache } from '~/hooks/chats/query';
 
 import { useAuth } from './AuthContext';
 const defaultProvider = {
@@ -16,19 +16,25 @@ const ConversationProvider = ({ children }: any) => {
 
   useEffect(() => {
     if (socketIo?.connected) {
-      const handleUpdateConversationCache = (data: any) => {
+      const handleUpdateConversationCacheHandler = (data: any) => {
         saveConversationCache(data);
       };
-      const handleMessageCache = ({ message }: any) => {
+      const handleMessageCacheHandler = ({ message }: any) => {
         //save the message to the cache
         saveMessageCache(message);
       };
-      socketIo.on('message', handleMessageCache);
-      socketIo?.on('update_conversation_cache', handleUpdateConversationCache);
+      const handleSeenMessageHandler = ({ conversationId, seenBy }: any) => {
+        //save the message to the cache
+        handleSeenMessage({ conversationId, seenBy });
+      };
+      socketIo.on('message', handleMessageCacheHandler);
+      socketIo?.on('update_conversation_cache', handleUpdateConversationCacheHandler);
+      socketIo?.on('seen_message', handleSeenMessageHandler);
 
       return () => {
-        socketIo?.off('message', handleMessageCache);
-        socketIo?.off('update_conversation_cache', handleUpdateConversationCache);
+        socketIo?.off('message', handleMessageCacheHandler);
+        socketIo?.off('update_conversation_cache', handleUpdateConversationCacheHandler);
+        socketIo?.off('seen_message', handleSeenMessageHandler);
       };
     }
   }, [socketIo]);

@@ -130,8 +130,6 @@ const AddPost = () => {
     }
   }, [params?.postId]);
 
-  console.log(watch('images'));
-
   useFocusEffect(
     React.useCallback(() => {
       if (!user?.uuid) {
@@ -162,7 +160,6 @@ const AddPost = () => {
       base64: false,
       allowsMultipleSelection: true,
     });
-    console.log('result', result);
     if (result.canceled) return;
     const formattedAssets = result?.assets?.map((item: any) => {
       return {
@@ -178,7 +175,6 @@ const AddPost = () => {
     //   assetIds?.includes(item?.assetId || item?.fileName)
     // );
 
-    // console.log(formattedAssets, 'formattedAssets');
     // if (isIncluded) {
     //   const filterImages = watch('images')?.filter(
     //     (item: any) => !assetIds?.includes(item?.uuid || item?.name)

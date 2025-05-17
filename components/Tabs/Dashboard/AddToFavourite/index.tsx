@@ -35,7 +35,6 @@ const AddToFavourite = ({ item }: any) => {
       updateFavouriteStatus
         ?.mutateAsync({ pathParams: { id: item?.uuid } })
         ?.then((res: any) => {
-          console.log('res', res);
           showToast('Favourites updated!', 'success');
           getUser();
           if (pathname == '/favourites/page') {
@@ -43,7 +42,6 @@ const AddToFavourite = ({ item }: any) => {
           }
         })
         ?.catch((err: any) => {
-          console.log('err', err);
           if (err) {
             setIsFavourited(false);
           }

@@ -31,6 +31,7 @@ const Render = ({ item }: any) => {
           pathname: routes.tabs.chatScreen(item?.uuid),
           params: {
             conversationId: item?.uuid,
+            usersInConversation: item?.users,
             firstName: item?.receiver?.firstName,
             lastName: item?.receiver?.lastName,
             fullName: `${item?.receiver?.firstName} ${item?.receiver?.lastName}`,

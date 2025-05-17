@@ -288,6 +288,7 @@ const SinglePost = () => {
               // : routes.tabs.chat,
               params: {
                 conversationId: data?.data?.conversation?.uuid,
+                usersInConversation: [data?.data?.userId, user?.uuid],
                 // receiverId: data?.data?.userId,
                 receiverId: data?.data?.userId,
                 firstName: data?.data?.user?.firstName,

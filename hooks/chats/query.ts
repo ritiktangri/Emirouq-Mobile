@@ -21,6 +21,28 @@ export const saveMessageCache = async (payload: any) => {
     };
   });
 };
+export const handleSeenMessage = async (payload: any) => {
+  if (!payload?.conversationId) return;
+
+  return queryClient.setQueryData(['messages', payload.conversationId], (oldData: any) => {
+    if (!oldData) return;
+
+    const updatedPages = oldData?.pages?.map((page: any) => {
+      return {
+        ...page,
+        data: page?.data?.map((item: any) =>
+          item.conversationId === payload?.conversationId
+            ? { ...item, seenBy: payload?.seenBy }
+            : item
+        ),
+      };
+    });
+    return {
+      ...oldData,
+      pages: updatedPages,
+    };
+  });
+};
 
 export const useGetMessages = (conversationId: any) =>
   useInfiniteQuery({

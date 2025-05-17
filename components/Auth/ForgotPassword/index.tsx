@@ -146,9 +146,7 @@ const ForgotPassword = () => {
               className="my-4"
             />
           )}
-          <TouchableOpacity
-            onPress={() => console.log('Back to Login')}
-            className="mb-8 items-center">
+          <TouchableOpacity onPress={() => {}} className="mb-8 items-center">
             <Text className="font-medium text-primary">Back to Login</Text>
           </TouchableOpacity>
           {/* Secure Info */}

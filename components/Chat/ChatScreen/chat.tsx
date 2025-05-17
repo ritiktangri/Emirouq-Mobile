@@ -2,7 +2,7 @@
 import { Entypo, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import { BlurView } from 'expo-blur';
-import { debounce } from 'lodash';
+import _, { debounce, isEqual } from 'lodash';
 import * as React from 'react';
 import {
   Dimensions,
@@ -76,12 +76,15 @@ export default function Chat({
   onEndReached,
   uploadFileLoading,
   isFetching,
+  //this will be used to show the user in the chat for single tci
+  usersInConversation,
 }: {
   data: any;
   sendMessage: any;
   onEndReached: any;
   uploadFileLoading: any;
   isFetching: any;
+  usersInConversation: any;
 }) {
   const insets = useSafeAreaInsets();
   const textInputHeight = useSharedValue(17);
@@ -202,6 +205,7 @@ export default function Chat({
                   item={item}
                   translateX={translateX}
                   uploadLoading={uploadFileLoading}
+                  usersInConversation={usersInConversation}
                 />
               );
             }}
@@ -232,11 +236,13 @@ function ChatBubble({
   item,
   isSameNextSender,
   translateX,
+  usersInConversation,
 }: {
   item: any;
   isSameNextSender: boolean;
   translateX: SharedValue<number>;
   uploadLoading: boolean;
+  usersInConversation: any;
 }) {
   const { user }: any = useAuth();
   const contextMenuRef = React.useRef<any>(null);
@@ -350,18 +356,43 @@ function ChatBubble({
                 )}>
                 {item?.message}
               </Text>
-              <Text
-                className={cn(
-                  'font-regular mt-1 self-end text-xs',
-                  item?.user === user?.uuid ? 'text-white' : 'text-gray-600 dark:text-gray-400'
-                )}>
-                {dayjs(item?.createdAt).format('HH:mm A')}
-              </Text>
             </View>
           </Pressable>
         ) : (
           <></>
         )}
+        <View className="flex-row items-center justify-end pt-1">
+          <Text
+            className={cn(
+              'font-regular   text-xs',
+              item?.user === user?.uuid ? 'text-gray-600' : 'text-gray-600 dark:text-gray-400'
+            )}>
+            {dayjs(item?.createdAt).format('HH:mm A')}
+          </Text>
+          {item?.user === user?.uuid ? (
+            <Ionicons
+              name={
+                isEqual(
+                  (usersInConversation?.split(',') || [])?.sort(),
+                  (item?.seenBy || [])?.sort()
+                )
+                  ? 'checkmark-done-outline'
+                  : 'checkmark-done-outline'
+              }
+              className={cn(
+                'ml-2 !text-xl',
+                isEqual(
+                  (usersInConversation?.split(',') || [])?.sort()?.sort(),
+                  (item?.seenBy || [])?.sort()
+                )
+                  ? '!text-primary'
+                  : '!text-gray-600'
+              )}
+            />
+          ) : (
+            <></>
+          )}
+        </View>
       </Animated.View>
     </View>
   );

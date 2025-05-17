@@ -4,7 +4,12 @@ import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } fr
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Product from './product';
-import { saveMessageCache, useGetConversations, useGetMessages } from '~/hooks/chats/query';
+import {
+  handleSeenMessage,
+  saveMessageCache,
+  useGetConversations,
+  useGetMessages,
+} from '~/hooks/chats/query';
 import Header from './header';
 import { useAuth } from '~/context/AuthContext';
 import { useCreateConversation, useUploadFile } from '~/hooks/chats/mutation';
@@ -21,7 +26,6 @@ const ChatScreen = () => {
   const params: any = useLocalSearchParams();
   const insets = useSafeAreaInsets();
   const { socketIo, user, onlineUsers } = useAuth();
-
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isFetching }: any = useGetMessages(
     params?.conversationId
   );
@@ -29,15 +33,23 @@ const ChatScreen = () => {
   const createConversation = useCreateConversation();
   const uploadFile = useUploadFile();
   const router = useRouter();
-  // useEffect(() => {
-  //   if (params?.conversationId) {
-  //     queryClient.removeQueries({ queryKey: ['messages', ''] });
-  //     refetch();
-  //   }
-  //   return () => {
-  //     queryClient.removeQueries({ queryKey: ['messages', ''] });
-  //   };
-  // }, [params?.conversationId]);
+  //here we are updating the seen message in the cache
+  useEffect(() => {
+    if (socketIo?.connected && params?.conversationId) {
+      socketIo.emit('seen_message', {
+        userId: user?.uuid,
+        receiverId: params?.receiverId,
+        conversationId: params?.conversationId,
+      });
+      handleSeenMessage({
+        conversationId: params?.conversationId,
+        seenBy: [user?.uuid, params?.receiverId],
+      });
+    }
+    return () => {
+      socketIo?.off('seen_message');
+    };
+  }, [socketIo, params?.conversationId, user?.uuid]);
   const sendMessage = useCallback(
     async ({ message, attachments }: any, cb: any) => {
       const uuid = uuidV4();
@@ -45,7 +57,6 @@ const ChatScreen = () => {
         //this is required to save the file locally
         // since if i fetch the url from res, it will take time
         // const localFiles = await saveFileLocally(attachments);
-        // console.log(localFiles, 'localFiles');
         // saveMessageCache({
         //   uuid: generateUUID(20),
         //   user: user?.uuid,
@@ -185,6 +196,7 @@ const ChatScreen = () => {
               sendMessage={sendMessage}
               isFetching={isFetching}
               uploadFileLoading={uploadFile?.isPending}
+              usersInConversation={params?.usersInConversation}
               onEndReached={() => {
                 // if (hasNextPage && !isFetchingNextPage) {
                 //   fetchNextPage();

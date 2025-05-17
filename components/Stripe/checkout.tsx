@@ -17,7 +17,6 @@ export default function CheckoutScreen({ id, item }: any) {
       return;
     }
     // setSubscriptionId(subscriptionId);
-    console.log('Payment sheet closed');
     router.replace(routes.paymentSuccess(subscriptionId) as Href);
   };
   const initializePaymentSheet = async (clientSecret: any, subscriptionId: any) => {
@@ -28,9 +27,8 @@ export default function CheckoutScreen({ id, item }: any) {
       allowsDelayedPaymentMethods: true,
     });
     if (error) {
-      return console.log('Error initializing payment sheet:', error);
+      return;
     }
-    console.log('Payment sheet initialized successfully');
     openPaymentSheet(subscriptionId);
   };
 
@@ -44,9 +42,7 @@ export default function CheckoutScreen({ id, item }: any) {
       .then(async (res: any) => {
         initializePaymentSheet(res?.clientSecret, res?.subscriptionId);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   };
   return (
     <TouchableOpacity

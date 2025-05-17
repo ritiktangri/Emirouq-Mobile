@@ -25,7 +25,6 @@ import { useCurrentLocation } from '~/components/UserLocation';
 const UserProfile = () => {
   const { getToken, signOut } = ClerkUseAuth();
   const { address }: any = useCurrentLocation();
-  console.log('address', address);
   const { user } = useAuth();
 
   const { locale } = useLocale();
