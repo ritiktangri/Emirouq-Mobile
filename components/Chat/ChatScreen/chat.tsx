@@ -372,19 +372,13 @@ function ChatBubble({
           {item?.user === user?.uuid ? (
             <Ionicons
               name={
-                isEqual(
-                  (usersInConversation?.split(',') || [])?.sort(),
-                  (item?.seenBy || [])?.sort()
-                )
+                isEqual((usersInConversation || [])?.sort(), (item?.seenBy || [])?.sort())
                   ? 'checkmark-done-outline'
                   : 'checkmark-done-outline'
               }
               className={cn(
                 'ml-2 !text-xl',
-                isEqual(
-                  (usersInConversation?.split(',') || [])?.sort()?.sort(),
-                  (item?.seenBy || [])?.sort()
-                )
+                isEqual((usersInConversation || [])?.sort()?.sort(), (item?.seenBy || [])?.sort())
                   ? '!text-primary'
                   : '!text-gray-600'
               )}

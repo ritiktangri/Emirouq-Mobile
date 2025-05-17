@@ -196,7 +196,7 @@ const ChatScreen = () => {
               sendMessage={sendMessage}
               isFetching={isFetching}
               uploadFileLoading={uploadFile?.isPending}
-              usersInConversation={params?.usersInConversation}
+              usersInConversation={params?.usersInConversation?.split(',')}
               onEndReached={() => {
                 // if (hasNextPage && !isFetchingNextPage) {
                 //   fetchNextPage();
