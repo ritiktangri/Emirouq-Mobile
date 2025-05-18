@@ -32,6 +32,8 @@ import Footer from './footer';
 import SkeletonLoading from 'expo-skeleton-loading';
 import dayjs from 'dayjs';
 import ChatBubbleSkeleton from './loading';
+import ImagePopup from '~/components/ImagePopUp';
+import VideoPlayer from './videoPlayer';
 
 const SkeletonBox = ({ height, width, className = '' }: any) => (
   <SkeletonLoading background="#d3d3d3" highlight="#e0e0e0">
@@ -282,15 +284,16 @@ function ChatBubble({
                   {['image/jpeg', 'image/png', 'image/jpg'].includes(
                     item?.attachments?.[0]?.type
                   ) ? (
-                    <Image
-                      source={{ uri: item?.attachments[0].uri }}
-                      style={{ width: 200, height: 200, resizeMode: 'cover' }}
-                      borderRadius={12}
-                    />
+                    // <Image
+                    //   source={{ uri: item?.attachments[0].uri }}
+                    //   style={{ width: 200, height: 200, resizeMode: 'cover' }}
+                    //   borderRadius={12}
+                    // />
+                    <ImagePopup uri={item?.attachments[0].uri} />
                   ) : ['application/pdf'].includes(item?.attachments?.[0]?.type) ? (
                     <FontAwesome name="file-pdf-o" size={24} color="#FF5733" />
                   ) : ['video/mp4'].includes(item?.attachments?.[0]?.type) ? (
-                    <FontAwesome name="file-video-o" size={24} color="#FF5733" />
+                    <VideoPlayer source={item?.attachments[0]?.uri} />
                   ) : (
                     <FontAwesome name="file-o" size={24} color="#FF5733" />
                   )}
@@ -305,16 +308,17 @@ function ChatBubble({
                   )}>
                   {item?.attachments?.map((attachment: any, index: number) =>
                     ['image/jpeg', 'image/png', 'image/jpg'].includes(attachment?.type) ? (
-                      <Image
-                        key={index}
-                        source={{ uri: attachment.uri }}
-                        style={{ width: 100, height: 100, resizeMode: 'cover' }}
-                        borderRadius={12}
-                      />
+                      // <Image
+                      //   key={index}
+                      //   source={{ uri: attachment.uri }}
+                      //   style={{ width: 100, height: 100, resizeMode: 'cover' }}
+                      //   borderRadius={12}
+                      // />
+                      <ImagePopup key={index} uri={attachment.uri} />
                     ) : ['application/pdf'].includes(attachment?.type) ? (
                       <FontAwesome name="file-pdf-o" size={24} color="#FF5733" />
                     ) : ['video/mp4'].includes(attachment?.type) ? (
-                      <FontAwesome name="file-video-o" size={24} color="#FF5733" />
+                      <VideoPlayer source={attachment?.uri} />
                     ) : (
                       <FontAwesome name="file-o" size={24} color="#FF5733" />
                     )
