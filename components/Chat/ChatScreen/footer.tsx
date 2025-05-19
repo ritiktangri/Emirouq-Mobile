@@ -137,7 +137,7 @@ export default function Footer({
       <View
         className={cn(
           'flex flex-row flex-wrap items-center  gap-2  border-b border-gray-200 bg-gray-100 px-4 py-2',
-          (watch('attachments') ?? []).length > 0 ? 'bg-white' : 'bg-gray-100'
+          (watch('attachments') ?? []).length > 0 ? 'bg-gray-100' : 'bg-white'
         )}>
         {(watch('attachments') ?? [])?.length > 0 ? (
           watch('attachments')?.map((i: any, index: any) => {

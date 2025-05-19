@@ -422,7 +422,6 @@ function Composer({
             ios: isDarkColorScheme ? '#00000080' : '#ffffff80',
             default: isDarkColorScheme ? colors.background : colors.card,
           }),
-          // paddingBottom: insets.bottom,
         },
       ]}>
       <Footer sendMessage={sendMessage} onContentSizeChange={onContentSizeChange} />

@@ -26,3 +26,18 @@ export interface SelectProps {
   placeholder: string;
   onSelect: (option: IoData) => void;
 }
+
+export interface AudioRecorderState {
+  isRecording: boolean;
+  isPaused: boolean;
+  recordingTime: number;
+  mediaRecorder: MediaRecorder | null;
+  audioChunks: Blob[];
+  audioUrl: string | null;
+}
+
+export interface WaveformPoint {
+  x: number;
+  y: number;
+  height: number;
+}

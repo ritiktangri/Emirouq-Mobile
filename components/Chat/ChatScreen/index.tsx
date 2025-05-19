@@ -21,6 +21,7 @@ import DownloadFile from './download';
 import VideoPlayer from './videoPlayer';
 import { useColorScheme } from '~/lib/useColorScheme';
 import Footer from './footer';
+import { View } from '~/components/common/View';
 
 const ChatScreen = () => {
   const params: any = useLocalSearchParams();
@@ -177,19 +178,22 @@ const ChatScreen = () => {
   }, [socketIo, params?.conversationId, user?.uuid]);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View
+      className="flex-1 bg-white "
+      style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
       <Header data={params} status={onlineUsers?.includes(params?.receiverId)} />
       <Product product={params?.uuid ? params : {}} />
-
+      {/* <AudioRecorder /> */}
       {/* <DownloadFile /> */}
       {/* <VideoPlayer source="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" /> */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        className="flex-1"
-        keyboardVerticalOffset={Platform.OS === 'ios' ? insets.bottom : 0}>
-        {createConversation?.isPending ? (
-          [1, 2, 3].map((item) => <ChatBubbleSkeleton numberOfMessages={19} key={item} />)
-        ) : (
+
+      {createConversation?.isPending || isFetching ? (
+        [1, 2, 3].map((item) => <ChatBubbleSkeleton numberOfMessages={19} key={item} />)
+      ) : (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          className="flex-1"
+          keyboardVerticalOffset={Platform.OS === 'ios' ? insets.bottom : 0}>
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <Chat
               data={data?.pages.map((page: any) => page?.data).flat()}
@@ -204,9 +208,9 @@ const ChatScreen = () => {
               }}
             />
           </TouchableWithoutFeedback>
-        )}
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+        </KeyboardAvoidingView>
+      )}
+    </View>
   );
 };
 
