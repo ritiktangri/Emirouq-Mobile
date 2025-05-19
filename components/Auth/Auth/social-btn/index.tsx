@@ -68,7 +68,11 @@ const SocialButtons = () => {
           });
         })
         .catch((err) => {
-          showToast(err?.message, 'error');
+          if (err.status === 500) {
+            showToast('User already exists!', 'error');
+          } else {
+            showToast(err?.message, 'error');
+          }
           signOut();
         });
     }

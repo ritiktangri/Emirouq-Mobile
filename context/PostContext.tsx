@@ -1,10 +1,10 @@
 /* eslint-disable import/order */
 import { createContext, useContext, useState, useMemo, useCallback, useEffect } from 'react';
 import { Platform } from 'react-native';
-import mime from 'mime';
 
 import {
   createPostService,
+  deletePostService,
   getPostService,
   getSinglePostService,
   updatePostService,
@@ -101,14 +101,21 @@ const PostProvider = ({ children }: any) => {
     formData.append('locationPlaceId', body?.locationPlaceId);
     body?.isDraft && formData.append('isDraft', body?.isDraft);
     formData.append('properties', JSON.stringify(body?.properties));
-    for (const imageAsset of body?.images) {
-      formData.append('file', {
-        // Use 'images' as the field name for multiple files
-        uri: imageAsset.uri,
-        // name: imageAsset.fileName,
-        // type: imageAsset.type,
+    const uploadedUrls = body?.images
+      .filter((img: any) => img.uri.includes('https'))
+      .map((img: any) => img.uri);
+
+    formData.append('uploadedUrls', JSON.stringify(uploadedUrls));
+
+    body?.images
+      .filter((img: any) => !img.uri.includes('https'))
+      .forEach((file: any) => {
+        formData.append('image', {
+          uri: Platform.OS === 'android' ? file.uri : file.uri.replace('file://', ''),
+          name: file.name,
+          type: file.type,
+        });
       });
-    }
     updatePostService({
       body: formData,
       pathParams,
@@ -142,6 +149,7 @@ const PostProvider = ({ children }: any) => {
     setLoading(false);
     onRefresh || (keyword && setKeyword(''));
   };
+
   const getSinglePost = async (id: string, cb: any) => {
     setSinglePostLoading(true);
     getSinglePostService({ pathParams: { id } })
@@ -152,6 +160,20 @@ const PostProvider = ({ children }: any) => {
       })
       .catch(() => {
         setSinglePostLoading(false);
+      })
+      .finally(() => {});
+  };
+
+  const deletePost = async (id: string, cb: any, errCb: any) => {
+    setBtnLoading(true);
+    deletePostService({ pathParams: { id } })
+      .then((res: any) => {
+        setBtnLoading(false);
+        cb && cb(res?.data);
+      })
+      .catch((err) => {
+        setBtnLoading(false);
+        errCb && errCb(err);
       })
       .finally(() => {});
   };
@@ -176,6 +198,7 @@ const PostProvider = ({ children }: any) => {
       status,
       getSinglePost,
       updatePost,
+      deletePost,
     }),
     [
       setPosts,
@@ -196,6 +219,7 @@ const PostProvider = ({ children }: any) => {
       status,
       getSinglePost,
       updatePost,
+      deletePost,
     ]
   );
 

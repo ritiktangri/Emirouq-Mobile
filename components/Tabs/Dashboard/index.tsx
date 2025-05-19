@@ -2,7 +2,6 @@
 /* eslint-disable no-unused-expressions */
 import React, { useCallback, useMemo } from 'react';
 import { View, FlatList, RefreshControl } from 'react-native';
-import Category from './Category';
 import Featured from './Featured';
 import HotDeals from './HotDeals';
 import Search from './Search';
@@ -65,11 +64,11 @@ const Dashboard = () => {
       ) : (
         <Recent data={recentPost?.pages.map((page: any) => page?.data).flat() || []} />
       ),
-      categoryLoading ? (
-        <></>
-      ) : (
-        <Category data={category?.pages.map((page: any) => page?.data).flat() || []} />
-      ),
+      // categoryLoading ? (
+      //   <></>
+      // ) : (
+      //   <Category data={category?.pages.map((page: any) => page?.data).flat() || []} />
+      // ),
       featuredPostLoading || featuredPostFetching ? (
         <FeaturedListLoading />
       ) : (

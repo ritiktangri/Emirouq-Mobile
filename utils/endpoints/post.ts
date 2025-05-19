@@ -45,6 +45,13 @@ const post = {
       uri: `${prefix}/:id`,
     },
   },
+   deletePost: {
+    v1: {
+      ...defaults.methods.DELETE,
+      ...defaults.versions.v1,
+      uri: `${prefix}/:id`,
+    },
+  },
 };
 
 export default post;

@@ -50,3 +50,9 @@ export async function updatePostService({ pathParams, body }: any) {
     multipart: true,
   });
 }
+export async function deletePostService({ pathParams}: any) {
+  return callApi({
+    uriEndPoint: { ...post.deletePost.v1 } as ApiEndpoint,
+    pathParams,
+  });
+}

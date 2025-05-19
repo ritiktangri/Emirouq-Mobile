@@ -1,11 +1,13 @@
 /* eslint-disable import/order */
-import { View, Text, TouchableOpacity, Image } from 'react-native';
-import React from 'react';
+import { View, Text, TouchableOpacity, Image, Alert, Modal, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { getRelativeTime } from '~/utils/helper';
 import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import { i18n } from '~/utils/i18n';
+import { usePosts } from '~/context/PostContext';
+import { useTheme } from '~/context/ThemeContext';
 const status: any = {
   active: 'Active',
   draft: 'Draft',
@@ -16,6 +18,22 @@ const status: any = {
 
 const Render = ({ item }: any) => {
   const router = useRouter();
+  const { deletePost, btnLoading }: any = usePosts();
+  const { showToast }: any = useTheme();
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleDeletePost = () => {
+    deletePost(
+      item?.uuid,
+      () => {
+        showToast('Post deleted!', 'success');
+      },
+      (err: any) => {
+        console.log('err', err);
+      }
+    );
+  };
+
   return (
     <View className="mb-4 rounded-lg border-b-[0.5px] border-gray-300 py-2">
       <TouchableOpacity
@@ -72,16 +90,58 @@ const Render = ({ item }: any) => {
                 postId: item?.uuid,
               },
             });
-            // router.push(routes.tabs.post as Href);
-            // router.setParams({ data: JSON.stringify(item) });
           }}
           className="mr-2 rounded-lg border border-primary px-4 py-2">
           <Text className="text-primary">{i18n.t('profile.edit')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity className="rounded-lg border border-red-500 px-4 py-2">
+        <TouchableOpacity
+          className="rounded-lg border border-red-500 px-4 py-2"
+          onPress={() => {
+            setModalVisible(true);
+            // Alert.alert('Delete Post', 'Are you sure you want to delete this post?', [
+            //   {
+            //     text: 'Confirm',
+            //     onPress: () => setModalVisible(true),
+            //   },
+            //   {
+            //     text: 'Cancel',
+            //     style: 'destructive',
+            //   },
+            // ]);
+          }}>
           <Text className="text-red-500">{i18n.t('profile.delete')}</Text>
         </TouchableOpacity>
       </View>
+      <Modal
+        transparent
+        animationType="fade"
+        visible={modalVisible}
+        onRequestClose={() => {
+          if (!btnLoading) setModalVisible(false);
+        }}>
+        <View className=" h-[40%] w-[85%] max-w-md rounded-2xl bg-white p-6 shadow-xl">
+          <Text className="mb-2 text-xl font-bold text-gray-900">Delete Post</Text>
+          <Text className="mb-6 text-gray-700">Are you sure you want to delete this post?</Text>
+
+          {btnLoading ? (
+            <ActivityIndicator size="large" color="#f00" />
+          ) : (
+            <View className="flex-row justify-end space-x-4">
+              <TouchableOpacity
+                disabled={btnLoading}
+                onPress={() => {
+                  setModalVisible(false);
+                }}>
+                <Text className="font-medium text-gray-600">Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity className="rounded-lg bg-red-500 px-4 py-2" onPress={() => {}}>
+                <Text className="font-semibold text-white">Confirm</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </Modal>
     </View>
   );
 };

@@ -21,6 +21,7 @@ const CategoryProvider = ({ children }: any) => {
   const { globalQueries } = useQuery();
   const [keyword, setKeyword] = useState('');
   const [categoryLoading, setCategoryLoading] = useState(true);
+  const [subCategoryLoading, setSubCategoryLoading] = useState(true);
 
   //filter keys from trade table
   // Toggle individual row selection
@@ -50,12 +51,13 @@ const CategoryProvider = ({ children }: any) => {
     keyword = '',
     onRefresh: boolean
   ) => {
-    // setCategoryLoading(true);
+    setSubCategoryLoading(true);
     const res: any = await getSubCategories({
       query: { limit, start, ...(keyword && { keyword }) },
       ...(signal && { signal }),
       pathParams: { id },
     });
+    setSubCategoryLoading(false);
     setTotal(res?.count);
     setSubCategories(res?.data);
     onRefresh || (keyword && setCurrentPage(1));
@@ -85,6 +87,7 @@ const CategoryProvider = ({ children }: any) => {
       setSingleCategory,
       getSubCategoryList,
       subCategories,
+      subCategoryLoading,
     }),
     [
       setCategories,
@@ -100,6 +103,7 @@ const CategoryProvider = ({ children }: any) => {
       setSingleCategory,
       getSubCategoryList,
       subCategories,
+      subCategoryLoading,
     ]
   );
 

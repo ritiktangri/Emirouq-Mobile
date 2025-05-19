@@ -1,13 +1,16 @@
 /* eslint-disable import/order */
 import { Stack } from 'expo-router';
+import { CategoryProvider } from '~/context/CategoryContext';
 
 const _layout = () => {
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    />
+    <CategoryProvider>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      />
+    </CategoryProvider>
   );
 };
 
