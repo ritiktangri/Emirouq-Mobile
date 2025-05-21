@@ -22,6 +22,7 @@ import VideoPlayer from './videoPlayer';
 import { useColorScheme } from '~/lib/useColorScheme';
 import Footer from './footer';
 import { View } from '~/components/common/View';
+import AudioRecorder from './audioRecord';
 
 const ChatScreen = () => {
   const params: any = useLocalSearchParams();
@@ -50,7 +51,7 @@ const ChatScreen = () => {
     return () => {
       socketIo?.off('seen_message');
     };
-  }, [socketIo, params?.conversationId, user?.uuid]);
+  }, [socketIo, params?.conversationId, params?.receiverId, user?.uuid]);
   const sendMessage = useCallback(
     async ({ message, attachments }: any, cb: any) => {
       const uuid = uuidV4();
@@ -183,7 +184,7 @@ const ChatScreen = () => {
       style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
       <Header data={params} status={onlineUsers?.includes(params?.receiverId)} />
       <Product product={params?.uuid ? params : {}} />
-      {/* <AudioRecorder /> */}
+      <AudioRecorder />
       {/* <DownloadFile /> */}
       {/* <VideoPlayer source="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" /> */}
 

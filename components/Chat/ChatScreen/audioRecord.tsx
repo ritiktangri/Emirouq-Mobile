@@ -4,7 +4,7 @@ import { Text, View, Pressable, Alert, Button, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 
-export default function App() {
+export default function AudioRecorder() {
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [recordingFileURI, setRecordingFileURI] = useState<string | null>(null);
   // Add state to hold the sound object for playback
