@@ -86,31 +86,31 @@ const ChatScreen = () => {
           formdata.append('sound', audio?.sound);
         }
         console.log(formdata, 'formdata');
-        uploadFile
-          .mutateAsync({
-            body: formdata,
-            pathParams: {
-              conversationId: params?.conversationId,
-            },
-          })
-          .then((res: any) => {
-            saveMessageCache({
-              uuid,
-              user: user?.uuid,
-              conversationId: params?.conversationId,
-              attachments: res?.attachments,
-              createdAt: new Date(),
-            });
-            socketIo?.emit('message', {
-              uuid,
-              conversationId: params?.conversationId,
-              senderId: user?.uuid,
-              // this is to check if the user is the sender or receiver
-              receiverId: params?.receiverId,
-              type: 'image',
-              attachments: res?.attachments,
-            });
-          });
+        // uploadFile
+        //   .mutateAsync({
+        //     body: formdata,
+        //     pathParams: {
+        //       conversationId: params?.conversationId,
+        //     },
+        //   })
+        //   .then((res: any) => {
+        //     saveMessageCache({
+        //       uuid,
+        //       user: user?.uuid,
+        //       conversationId: params?.conversationId,
+        //       attachments: res?.attachments,
+        //       createdAt: new Date(),
+        //     });
+        //     socketIo?.emit('message', {
+        //       uuid,
+        //       conversationId: params?.conversationId,
+        //       senderId: user?.uuid,
+        //       // this is to check if the user is the sender or receiver
+        //       receiverId: params?.receiverId,
+        //       type: 'image',
+        //       attachments: res?.attachments,
+        //     });
+        //   });
       }
       if (message) {
         //save the message to the cache
