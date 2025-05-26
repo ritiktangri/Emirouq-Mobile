@@ -1,232 +1,174 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable import/order */
+import React, { forwardRef, useRef, useState } from 'react';
+import { Alert, Pressable } from 'react-native';
+import { Audio } from 'expo-av';
+import * as FileSystem from 'expo-file-system';
+import { audioRecorder } from '~/image';
+import LottieFilesAnimation from '~/components/LottieFiles';
+import { useTheme } from '~/context/ThemeContext';
 
-import { Text, View, Pressable, Alert, Button, StyleSheet } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
+const MAX_DURATION = 10; // seconds
+const MIN_RECORDING_DURATION = 2000;
 
-export default function AudioRecorder() {
-  const [recording, setRecording] = useState<Audio.Recording | null>(null);
-  const [recordingFileURI, setRecordingFileURI] = useState<string | null>(null);
-  // Add state to hold the sound object for playback
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false); // Optional: track playback status
+const AudioRecorder = forwardRef(({ onRecordingComplete, audio }: any, ref: any) => {
+  // ref is currentlyPlayingRef
 
-  async function handleRecordingStart() {
-    // Ensure previous sound is unloaded if it exists (though unlikely here)
-    if (sound) {
-      await sound.unloadAsync();
-      setSound(null);
-      setIsPlaying(false);
-    }
+  const [recording, setRecording] = useState(false);
 
-    const { granted } = await Audio.getPermissionsAsync();
+  // const [recording, setRecording] = useState(null);
+  // const [recordings, setRecordings] = useState([] as any);
+  const { showToast } = useTheme();
+  const recordingRef: any = useRef(null);
+  const pressStartTime: any = useRef(null);
+  const durationRef: any = useRef(0);
+  const intervalIdRef: any = useRef(null);
 
-    if (granted) {
-      try {
-        // Set appropriate audio mode for recording
-        await Audio.setAudioModeAsync({
-          allowsRecordingIOS: true,
-          interruptionModeIOS: InterruptionModeIOS.DoNotMix,
-          playsInSilentModeIOS: true,
-          shouldDuckAndroid: true,
-          interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
-          playThroughEarpieceAndroid: false, // Usually you record via microphone, not earpiece
-          // Optional: Add recording quality settings here if needed
-          // web: { disablePlaybackAndFocus: true, progressUpdateIntervalMillis: 16 }
-        });
-
-        const { recording } = await Audio.Recording.createAsync(
-          Audio.RecordingOptionsPresets.HIGH_QUALITY // Use a preset for quality
-        );
-        setRecording(recording);
-        setRecordingFileURI(null); // Clear previous recording URI
-        console.log('Recording started');
-      } catch (error) {
-        console.log('error starting recording', error);
-        Alert.alert('Error Recording', 'Unable to start recording audio.');
-        setRecording(null); // Ensure state is reset on error
-      }
-    } else {
-      Alert.alert('Permission Required', 'Please grant microphone permission.');
-    }
-  }
-
-  async function handleRecordingStop() {
-    try {
-      if (recording) {
-        console.log('Stopping recording..');
-        // Set appropriate audio mode for playback again
-        await Audio.setAudioModeAsync({
-          allowsRecordingIOS: false, // Disable recording mode
-          interruptionModeIOS: InterruptionModeIOS.DoNotMix,
-          playsInSilentModeIOS: true,
-          shouldDuckAndroid: true,
-          interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
-          playThroughEarpieceAndroid: true, // Allow playback via earpiece
-        });
-
-        await recording.stopAndUnloadAsync();
-        const fileUri = recording.getURI();
-
-        console.log('Recording stopped and stored at', fileUri);
-
-        setRecordingFileURI(fileUri);
-        setRecording(null);
-
-        // Optional: Reload permissions check if needed, though useEffect should handle it
-        // Audio.requestPermissionsAsync();
-      }
-    } catch (error) {
-      console.log('error stopping recording', error);
-      // Changed alert message from 'pausing' to 'stopping'
-      Alert.alert('Error Stopping', 'Unable to stop recording audio.');
-      // Even if stop fails, attempt to clear recording state? Depends on desired behavior.
-      setRecording(null);
-    }
-  }
-
-  async function handleAudioPlayPause() {
-    if (!recordingFileURI) {
-      console.log('No recording file URI available.');
+  const startRecording = async () => {
+    if (ref.current) {
+      // await ref.current.stopAsync();
+      showToast(`Wait for the current audio to finish`, 'warning', 1000);
+      // ref.current = null;
       return;
     }
 
-    try {
-      if (sound) {
-        // If sound exists, check its status
-        const status = await sound.getStatusAsync();
-        if (status.isLoaded) {
-          if (status.isPlaying) {
-            console.log('Pausing Sound');
-            await sound.pauseAsync();
-            setIsPlaying(false);
-          } else {
-            console.log('Playing Sound');
-            await sound.playAsync();
-            setIsPlaying(true);
-          }
-          return; // Handled play/pause on existing sound
-        }
-        // If status is not loaded, maybe unload it and create a new one
-        console.log('Sound not loaded, attempting unload...');
-        await sound.unloadAsync();
-        setSound(null);
-        setIsPlaying(false);
-      }
+    if (recordingRef.current) {
+      try {
+        await recordingRef.current.stopAndUnloadAsync();
+        // showToast(`Recording stopped`, 'info', 1000);
+      } catch {}
+      recordingRef.current = null;
+    }
 
-      // If no sound object exists or previous one was unloaded, create a new one
-      console.log('Loading Sound');
-      const { sound: newSound, status: newStatus } = await Audio.Sound.createAsync(
-        { uri: recordingFileURI }
-        // { shouldPlay: true } // Don't auto-play here, play explicitly below
-      );
-      setSound(newSound);
-      // Optional: Set up a listener to automatically unload when playback finishes
-      newSound.setOnPlaybackStatusUpdate(async (status) => {
-        if (status.isLoaded && status.didJustFinish) {
-          console.log('Playback finished, unloading sound');
-          await newSound.unloadAsync(); // Unload resources
-          setSound(null); // Clear state
-          setIsPlaying(false);
-        }
+    if (ref.current) {
+      await ref.current.stopAsync();
+      // showToast(`Playback stopped`, 'info', 1000);
+      ref.current = null;
+    }
+
+    try {
+      const permission = await Audio.requestPermissionsAsync();
+      if (permission.status !== 'granted') {
+        Alert.alert('Permission Required', 'Microphone permission is required.');
+        return;
+      }
+      showToast(`Recording`, 'info', 10000);
+
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
       });
 
-      console.log('Playing Sound');
-      await newSound.playAsync();
-      setIsPlaying(true);
-    } catch (error) {
-      console.log('Error playing audio', error);
-      Alert.alert('Error Playback', 'Unable to play audio.');
-      // Ensure state is reset on error during creation/playback
-      if (sound) {
-        await sound.unloadAsync().catch(() => {}); // Attempt unload, ignore errors
-        setSound(null);
-      }
-      setIsPlaying(false);
+      // const recordingOptions = {
+      //   android: {
+      //     extension: '.m4a',
+      //     outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
+      //     audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
+      //     sampleRate: 44100,
+      //     numberOfChannels: 2,
+      //     bitRate: 128000,
+      //   },
+      //   ios: {
+      //     extension: '.caf',
+      //     audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
+      //     sampleRate: 44100,
+      //     numberOfChannels: 2,
+      //     bitRate: 128000,
+      //     linearPCMBitDepth: 16,
+      //     linearPCMIsBigEndian: false,
+      //     linearPCMIsFloat: false,
+      //   },
+      // };
+      setRecording(true);
+      // const { recording }: any = await Audio.Recording.createAsync(recordingOptions);
+      const { recording }: any = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+
+      recordingRef.current = recording;
+      durationRef.current = 0;
+
+      intervalIdRef.current = setInterval(() => {
+        if (durationRef.current >= MAX_DURATION) {
+          stopRecording();
+          return;
+        }
+        durationRef.current++;
+      }, 1000);
+    } catch (err) {
+      console.error('Failed to start recording:', err);
+      setRecording(false);
+      showToast(`Error starting recording`, 'error', 1000);
     }
-  }
+  };
 
-  // Effect to request permissions and set initial audio mode on mount
-  useEffect(() => {
-    // Initial mode set for potential playback on startup (less common for this flow)
-    // The mode is explicitly set in handleRecordingStart and handleRecordingStop as well
-    // to switch between recording and playback needs.
-    Audio.requestPermissionsAsync().then(({ granted }) => {
-      if (granted) {
-        Audio.setAudioModeAsync({
-          allowsRecordingIOS: false, // Start in playback-friendly mode
-          interruptionModeIOS: InterruptionModeIOS.DoNotMix,
-          playsInSilentModeIOS: true,
-          shouldDuckAndroid: true,
-          interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
-          playThroughEarpieceAndroid: true,
-        });
+  const stopRecording = async () => {
+    setRecording(false);
+
+    clearInterval(intervalIdRef.current);
+    intervalIdRef.current = null;
+
+    const elapsed = Date.now() - pressStartTime.current;
+
+    if (!recordingRef.current) return;
+
+    try {
+      await recordingRef.current.stopAndUnloadAsync();
+      const uri = recordingRef.current.getURI();
+
+      if (elapsed < MIN_RECORDING_DURATION) {
+        console.warn('Recording too short, discarded.');
+        showToast(`Please record for at least 2 seconds`, 'warning', 1000);
+
+        if (uri) {
+          await FileSystem.deleteAsync(uri, { idempotent: true });
+        }
       } else {
-        Alert.alert('Permission Required', 'Microphone permission is needed for recording.');
+        const res = await recordingRef.current.createNewLoadedSoundAsync();
+        const { sound, status } = res;
+        const newRecording = {
+          sound,
+          duration: formatTime(status.durationMillis),
+          uri,
+        };
+        showToast(`Uploading ...`, 'info', 1000);
+        onRecordingComplete(newRecording);
+        // setRecordings((prev: any) => [...prev, newRecording]);
       }
-    });
+    } catch (err) {
+      showToast(`Error stopping recording`, 'error', 1000);
+      // console.error('Error stopping recording:', err);
+    } finally {
+      recordingRef.current = null;
+      durationRef.current = 0;
+      setRecording(false);
+    }
+  };
 
-    // Cleanup effect: Unload the sound when the component unmounts
-    return () => {
-      if (sound) {
-        console.log('Component unmounting, unloading sound');
-        sound.unloadAsync(); // No await in cleanup return
-      }
-    };
-  }, [sound]); // Add sound to dependency array so the cleanup runs when sound changes
+  const formatTime = (millis: any) => {
+    const totalSeconds = Math.floor(millis / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+  };
 
   return (
-    <View style={styles.container}>
-      <Pressable
-        style={[styles.button, recording && styles.recording]}
-        onPressIn={handleRecordingStart}
-        onPressOut={handleRecordingStop}>
-        <MaterialIcons name="mic" size={44} color="#212121" />
-      </Pressable>
-
-      {recording && <Text style={styles.label}>Recording...</Text>}
-      {isPlaying && <Text style={styles.label}>Playing...</Text>}
-      {!recording && !isPlaying && recordingFileURI && (
-        <Text style={styles.label}>Ready to Play</Text>
-      )}
-      {!recording && !isPlaying && !recordingFileURI && (
-        <Text style={styles.label}>Hold to Record</Text>
-      )}
-
-      {recordingFileURI && (
-        <Button
-          title={isPlaying ? 'Pause' : 'Listen'} // Button title changes based on state
-          onPress={handleAudioPlayPause}
-        />
-      )}
-    </View>
+    <Pressable
+      // style={[styles.recordButton, recording && styles.recordingActive]}
+      onLongPress={() => {
+        if (audio?.sound) {
+          showToast('Only one audio can be recorded at a time', 'warning', 1000);
+          return;
+        }
+        pressStartTime.current = Date.now();
+        startRecording();
+      }}
+      className=""
+      hitSlop={{ top: 40, bottom: 40, left: 40, right: 40 }}
+      pressRetentionOffset={{ top: 40, bottom: 40, left: 40, right: 40 }}
+      onPressOut={stopRecording}>
+      <LottieFilesAnimation source={audioRecorder} play={recording} />
+    </Pressable>
   );
-}
-
-export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20, // Added padding
-  },
-  button: {
-    width: 94,
-    height: 94,
-    borderRadius: 47,
-    backgroundColor: '#B3B3B3',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  label: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 32,
-    textAlign: 'center', // Center text
-  },
-  recording: {
-    backgroundColor: '#1DB954',
-  },
 });
+
+export default AudioRecorder;

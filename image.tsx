@@ -33,6 +33,9 @@ const executions_inactive = require('./assets/drawer/executions_inactive.png');
 //select language
 const arabic = require('./assets/select-language/sa.png');
 const english = require('./assets/select-language/en.png');
+
+//lottify
+const audioRecorder = require('./assets/lottify/audio-recorder.json');
 export {
   //login
   splash_background,
@@ -62,4 +65,6 @@ export {
   //select language
   arabic,
   english,
+  //lottify
+  audioRecorder,
 };

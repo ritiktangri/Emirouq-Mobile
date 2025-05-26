@@ -14,7 +14,7 @@ const Toast = (props: any, ref: any) => {
   const [type, setType] = useState('');
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  const toast = (newMessage: string, newType: string) => {
+  const toast = (newMessage: string, newType: string, duration = 3000) => {
     setMessage(newMessage);
     setType(newType);
     setVisible(true);
@@ -31,7 +31,7 @@ const Toast = (props: any, ref: any) => {
       }).start(() => {
         setVisible(false);
       });
-    }, 3000);
+    }, duration);
   };
 
   useImperativeHandle(ref, () => ({

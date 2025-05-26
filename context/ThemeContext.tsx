@@ -11,7 +11,7 @@ const defaultProvider = {
   setIsDarkTheme: () => {},
   colors: DefaultTheme?.[0]?.colors,
   onSelectTheme: (payload: any) => {},
-  showToast: (message: string, type: string) => {},
+  showToast: (message: string, type: string, duration?: number) => {},
 };
 const ThemeContext = createContext(defaultProvider);
 export const useTheme = () => useContext(ThemeContext);
@@ -34,8 +34,8 @@ const ThemeProvider = ({ children }: any) => {
     setColorIndex(+index);
   };
 
-  const showToast = (message: string, type: string) => {
-    toastRef.current.toast(message, type);
+  const showToast = (message: string, type: string, duration: any) => {
+    toastRef.current.toast(message, type, duration);
   };
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { TouchableOpacity, Modal, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
@@ -11,6 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { cn } from '~/utils/helper';
+import AudioRecorder from './audioRecord';
 const schema = z.object({
   message: z.string().optional(),
   attachments: z
@@ -23,6 +24,12 @@ const schema = z.object({
       })
     )
     .optional(),
+  audio: z.object({
+    sound: z.string(),
+    duration: z.string(),
+    uri: z.string(),
+    type: z.string(),
+  }),
 });
 type FormData = z.infer<typeof schema>;
 
@@ -132,6 +139,27 @@ export default function Footer({
     'application/pdf': <FontAwesome name="file-pdf-o" size={24} color="#FF5733" />,
   };
 
+  const currentlyPlayingRef: any = useRef(null);
+  const handlePlayAudio = useCallback(
+    async (audio: any) => {
+      if (currentlyPlayingRef.current && currentlyPlayingRef.current !== audio.sound) {
+        await currentlyPlayingRef.current.stopAsync();
+      }
+      try {
+        await audio.sound.replayAsync();
+        currentlyPlayingRef.current = audio.sound;
+        audio.sound.setOnPlaybackStatusUpdate((status: any) => {
+          if (status.didJustFinish) {
+            currentlyPlayingRef.current = null;
+          }
+        });
+      } catch (err) {
+        console.error('Playback error:', err);
+      }
+    },
+    [currentlyPlayingRef]
+  );
+
   return (
     <View className=" mb-2 bg-white">
       <View
@@ -168,11 +196,34 @@ export default function Footer({
         ) : (
           <></>
         )}
+        {watch('audio')?.sound && (
+          <View className="flex-row items-center">
+            <Text className="mr-2">Audio:</Text>
+            <TouchableOpacity
+              onPress={() => {
+                setValue('audio', { sound: '', duration: '', uri: '', type: '' });
+              }}
+              className="flex-row items-center rounded-full bg-gray-200 px-3 py-1">
+              <Ionicons name="close-circle" size={20} color="#FF5722" />
+              <Text className="ml-2 text-sm">{watch('audio')?.duration || 'Audio'}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                handlePlayAudio(watch('audio'));
+              }}
+              className="ml-2 flex-row items-center rounded-full bg-gray-200 px-3 py-1">
+              <Ionicons name="play-circle" size={20} color="#4CAF50" />
+              <Text className="ml-2 text-sm">Play</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-      <View className="flex-row items-center  border-t border-gray-200 px-4 pt-4" style={{}}>
+      <View
+        className="h-20 flex-row  items-center gap-2 border-t border-gray-200 px-2 pt-4"
+        style={{}}>
         <TouchableOpacity
           onPress={() => setModalVisible(true)}
-          className="mx-2 h-10 w-10 items-center justify-center rounded-full">
+          className=" h-10 w-10 items-center justify-center rounded-full">
           <Entypo name="attachment" size={22} color="#FF5722" />
         </TouchableOpacity>
         <Controller
@@ -181,7 +232,7 @@ export default function Footer({
           render={({ field: { onChange, value } }: any) => (
             <DefaultTextInput
               className="w-full rounded-2xl bg-[#F0F0F0] px-3 py-4"
-              containerClassName="mr-2 flex-1 text-black rounded-full bg-white px-4  text-base"
+              containerClassName=" flex-1 text-black rounded-full bg-white  text-base"
               placeholder="Type a message..."
               onChangeText={onChange}
               // focusable
@@ -193,6 +244,7 @@ export default function Footer({
                 const message: any = {
                   message: watch('message')?.trim() ?? '',
                   attachments: watch('attachments') || [],
+                  audio: watch('audio') || { sound: '', duration: '', uri: '', type: '' },
                 };
                 sendMessage(message, () => {
                   setValue('message', '');
@@ -203,17 +255,26 @@ export default function Footer({
             />
           )}
         />
-
+        <AudioRecorder
+          onRecordingComplete={(payload: any) => {
+            setValue('audio', payload);
+          }}
+          ref={currentlyPlayingRef}
+          audio={watch('audio') || { sound: '', duration: '', uri: '', type: '' }}
+        />
         <TouchableOpacity
           className="h-12 w-12 items-center justify-center rounded-full "
           onPress={() => {
+            console.log(1);
             const message: any = {
               message: watch('message')?.trim() ?? '',
               attachments: watch('attachments') || [],
+              audio: watch('audio') || { sound: '', duration: '', uri: '', type: '' },
             };
             sendMessage(message, () => {
               setValue('message', '');
               setValue('attachments', []);
+              setValue('audio', { sound: '', duration: '', uri: '', type: '' });
             });
           }}>
           <Ionicons name="send" size={30} className="!text-primary" />

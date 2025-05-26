@@ -53,9 +53,9 @@ const ChatScreen = () => {
     };
   }, [socketIo, params?.conversationId, params?.receiverId, user?.uuid]);
   const sendMessage = useCallback(
-    async ({ message, attachments }: any, cb: any) => {
+    async ({ message, attachments, audio }: any, cb: any) => {
       const uuid = uuidV4();
-      if (attachments?.length) {
+      if (attachments?.length || audio?.sound) {
         //this is required to save the file locally
         // since if i fetch the url from res, it will take time
         // const localFiles = await saveFileLocally(attachments);
@@ -65,15 +65,27 @@ const ChatScreen = () => {
         //   conversationId: params?.conversationId,
         //   attachments: localFiles,
         // });
-        cb();
         const formdata: any = new FormData();
-        attachments.forEach((attachment: any) => {
-          formdata.append('image', {
-            uri: attachment?.uri,
-            name: attachment?.fileName,
-            type: attachment?.type,
+        if (attachments?.length > 0) {
+          cb();
+          attachments.forEach((attachment: any) => {
+            formdata.append('image', {
+              uri: attachment?.uri,
+              name: attachment?.fileName,
+              type: attachment?.type,
+            });
           });
-        });
+        }
+        if (audio?.sound) {
+          formdata.append('audio', {
+            uri: audio?.uri,
+            name: 'audio.m4a',
+            type: 'audio/m4a',
+          });
+          formdata.append('audioDuration', audio?.duration);
+          formdata.append('sound', audio?.sound);
+        }
+        console.log(formdata, 'formdata');
         uploadFile
           .mutateAsync({
             body: formdata,
@@ -184,7 +196,7 @@ const ChatScreen = () => {
       style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
       <Header data={params} status={onlineUsers?.includes(params?.receiverId)} />
       <Product product={params?.uuid ? params : {}} />
-      <AudioRecorder />
+      {/* <AudioRecorder /> */}
       {/* <DownloadFile /> */}
       {/* <VideoPlayer source="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" /> */}
 
