@@ -9,7 +9,15 @@ import {
 import React, { useState } from 'react';
 import { useAuth } from '~/context/AuthContext';
 import { Image as ExpoImage } from 'expo-image';
-import { AntDesign, EvilIcons, Feather, FontAwesome, Fontisto, Ionicons } from '@expo/vector-icons';
+import {
+  AntDesign,
+  Entypo,
+  EvilIcons,
+  Feather,
+  FontAwesome,
+  Fontisto,
+  Ionicons,
+} from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useLocale } from '~/context/LocaleContext';
 import { arabic, english } from '~/image';
@@ -183,14 +191,18 @@ const UserProfile = () => {
                 </View>
               </View>
             </TouchableOpacity>
-            {/* <View className="my-3 flex-row items-center justify-between">
+            <TouchableOpacity
+              className="my-3 flex-row items-center justify-between"
+              onPress={() => {
+                router.push(routes.tabs.help_support as Href);
+              }}>
               <View className="flex-row  items-center gap-x-2">
-                <AntDesign name="mobile1" size={20} color="gray" />
-                <Text className="">Show Contact Details</Text>
+                <Feather name="help-circle" size={20} color="gray" />
+                <Text className="text-gray-900">Help & Support</Text>
               </View>
-              <Switch value={true} />
-            </View>
-            <View className="my-3 flex-row items-center justify-between">
+              <Entypo name="chevron-right" size={20} color="gray" />
+            </TouchableOpacity>
+            {/* <View className="my-3 flex-row items-center justify-between">
               <View className="flex-row  items-center gap-x-2">
                 <Ionicons name="notifications-outline" size={20} color="gray" />
                 <Text className="">Direct Messages</Text>

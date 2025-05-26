@@ -36,6 +36,7 @@ export const routes = {
     favourites: '/(hydrogen)/favourites',
     notification: '/(hydrogen)/notifications',
     post_list: '/(hydrogen)/post-list',
+    help_support:'/(hydrogen)/help-support'
   },
   'select-language': '/select-language',
   success: '/(hydrogen)/success',
