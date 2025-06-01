@@ -381,6 +381,7 @@ const SinglePost = () => {
                 file: data?.data?.file?.[0],
                 price: data?.data?.price,
                 post: JSON.stringify(data?.data),
+                sortConversation: true,
               },
             } as unknown as Href)
           }

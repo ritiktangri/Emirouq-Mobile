@@ -2,7 +2,12 @@ import LottieView from 'lottie-react-native';
 import { useEffect, useRef } from 'react';
 import { View } from '../common/View';
 
-export default function LottieFilesAnimation({ source, play = false }: any) {
+export default function LottieFilesAnimation({
+  source,
+  play = false,
+  className,
+  autoPlay = false,
+}: any) {
   const animationRef = useRef<LottieView>(null);
 
   useEffect(() => {
@@ -19,11 +24,11 @@ export default function LottieFilesAnimation({ source, play = false }: any) {
   }, [play]);
 
   return (
-    <View className="h-28 w-20 items-center justify-center">
+    <View className={className}>
       <LottieView
         ref={animationRef}
         loop={play}
-        autoPlay={false}
+        autoPlay={autoPlay}
         style={{
           width: '100%',
           height: '100%',

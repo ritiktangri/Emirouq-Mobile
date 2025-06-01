@@ -23,6 +23,7 @@ import { useColorScheme } from '~/lib/useColorScheme';
 import Footer from './footer';
 import { View } from '~/components/common/View';
 import AudioRecorder from './audioRecord';
+import { useTheme } from '~/context/ThemeContext';
 
 const ChatScreen = () => {
   const params: any = useLocalSearchParams();
@@ -31,6 +32,7 @@ const ChatScreen = () => {
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isFetching }: any = useGetMessages(
     params?.conversationId
   );
+  const { showToast } = useTheme();
   const { refetch: conversationRefetch }: any = useGetConversations('', false);
   const createConversation = useCreateConversation();
   const uploadFile = useUploadFile();
@@ -67,7 +69,8 @@ const ChatScreen = () => {
         // });
         const formdata: any = new FormData();
         if (attachments?.length > 0) {
-          cb();
+          showToast('Uploading files...', 'info');
+
           attachments.forEach((attachment: any) => {
             formdata.append('image', {
               uri: attachment?.uri,
@@ -77,40 +80,44 @@ const ChatScreen = () => {
           });
         }
         if (audio?.sound) {
+          showToast('Uploading audio...', 'info', 500);
           formdata.append('audio', {
             uri: audio?.uri,
             name: 'audio.m4a',
             type: 'audio/m4a',
           });
           formdata.append('audioDuration', audio?.duration);
-          formdata.append('sound', audio?.sound);
+          formdata.append('audioType', 'voice');
         }
-        console.log(formdata, 'formdata');
-        // uploadFile
-        //   .mutateAsync({
-        //     body: formdata,
-        //     pathParams: {
-        //       conversationId: params?.conversationId,
-        //     },
-        //   })
-        //   .then((res: any) => {
-        //     saveMessageCache({
-        //       uuid,
-        //       user: user?.uuid,
-        //       conversationId: params?.conversationId,
-        //       attachments: res?.attachments,
-        //       createdAt: new Date(),
-        //     });
-        //     socketIo?.emit('message', {
-        //       uuid,
-        //       conversationId: params?.conversationId,
-        //       senderId: user?.uuid,
-        //       // this is to check if the user is the sender or receiver
-        //       receiverId: params?.receiverId,
-        //       type: 'image',
-        //       attachments: res?.attachments,
-        //     });
-        //   });
+        uploadFile
+          .mutateAsync({
+            body: formdata,
+            pathParams: {
+              conversationId: params?.conversationId,
+            },
+          })
+          .then((res: any) => {
+            showToast('Uploaded successfully', 'success', 1000);
+            cb();
+            saveMessageCache({
+              uuid,
+              user: user?.uuid,
+              conversationId: params?.conversationId,
+              attachments: res?.attachments,
+              createdAt: new Date(),
+              audio: res?.audio,
+            });
+            socketIo?.emit('message', {
+              uuid,
+              conversationId: params?.conversationId,
+              senderId: user?.uuid,
+              // this is to check if the user is the sender or receiver
+              receiverId: params?.receiverId,
+              type: 'image',
+              attachments: res?.attachments,
+              audio: res?.audio,
+            });
+          });
       }
       if (message) {
         //save the message to the cache
@@ -182,6 +189,7 @@ const ChatScreen = () => {
       socketIo.emit('join_conversation', {
         userId: user?.uuid,
         conversationId: params?.conversationId,
+        sortConversation: params?.sortConversation,
       });
     }
 

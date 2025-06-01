@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Image, BackHandler } from 'react-native';
 import React, { useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { cn, getInitials } from '~/utils/helper';
@@ -7,20 +7,21 @@ import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import { useAuth } from '~/context/AuthContext';
 import { useAppState } from '@react-native-community/hooks';
+import { useAudioPlayer } from '~/context/AudioPlayerContext';
 
 const Header = ({ data, status }: any) => {
   const router = useRouter();
   const { socketIo, user } = useAuth();
   const currentAppState = useAppState();
+  const { clearAudioCache, stop } = useAudioPlayer();
 
-  // this is required..
-  // here , we are leaving the conversation when the user is not active
   useEffect(() => {
     if (currentAppState !== 'active') {
       socketIo?.emit('leave_conversation', {
         conversationId: data?.conversationId,
         userId: user?.uuid,
       });
+      clearAudioCache(); // Clear the audio cache when the app goes to background or inactive state
     }
     return () => {
       socketIo?.emit('leave_conversation', {
@@ -29,10 +30,26 @@ const Header = ({ data, status }: any) => {
       });
     };
   }, [currentAppState]);
+  useEffect(() => {
+    const backAction = () => {
+      clearAudioCache(); // Clear the audio cache when the app goes to background or inactive state
+
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace(routes.tabs.chat as Href);
+      }
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    return () => backHandler.remove();
+  }, []);
   return (
     <View className="flex flex-row items-center gap-2 border-b border-gray-200 px-3 py-2 ">
       <TouchableOpacity
-        onPress={() => {
+        onPress={async () => {
           router.setParams({
             conversationId: undefined,
             userId: undefined,
@@ -44,6 +61,7 @@ const Header = ({ data, status }: any) => {
             userId: user?.uuid,
           });
           router.replace(routes.tabs.chat as Href);
+          stop(); // Stop any currently playing audio when leaving the chat
         }}>
         <Ionicons name="arrow-back-sharp" size={24} color="black" />
       </TouchableOpacity>

@@ -162,7 +162,10 @@ export const saveConversationCache = async (data: any, keyword = '') => {
           ),
         };
       });
-
+      // if false , no need to sort the conversation
+      if (!data?.sortConversation) {
+        return;
+      }
       // Find the page containing the updated conversation
       let conversationPage = -1;
       let conversationIndex = -1;

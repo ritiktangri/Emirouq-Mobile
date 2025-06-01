@@ -13,6 +13,7 @@ import weekday from 'dayjs/plugin/weekday';
 import isToday from 'dayjs/plugin/isToday';
 import isYesterday from 'dayjs/plugin/isYesterday';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import { queryClient } from '~/app/_layout';
 
 dayjs.extend(relativeTime);
 dayjs.extend(weekday);
@@ -43,6 +44,7 @@ const Render = ({ item }: any) => {
             file: item?.post?.file?.[0],
             price: item?.post?.price,
             post: JSON.stringify(item?.post),
+            sortConversation: !!item?.chatDetails?.count,
           },
         } as unknown as Href);
       }}

@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { TouchableOpacity, Modal, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
@@ -12,6 +12,9 @@ import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { cn } from '~/utils/helper';
 import AudioRecorder from './audioRecord';
+import { useAudioPlayer } from '~/context/AudioPlayerContext';
+import LottieFilesAnimation from '~/components/LottieFiles';
+import { uploadingFiles } from '~/image';
 const schema = z.object({
   message: z.string().optional(),
   attachments: z
@@ -36,9 +39,11 @@ type FormData = z.infer<typeof schema>;
 export default function Footer({
   sendMessage,
   onContentSizeChange,
+  uploadLoading,
 }: {
   sendMessage: (message: string, callback?: () => void) => void;
   onContentSizeChange: (event: any) => void;
+  uploadLoading?: any;
 }) {
   const [modalVisible, setModalVisible] = useState(false);
   const { watch, setValue, control } = useForm<FormData>({
@@ -48,7 +53,6 @@ export default function Footer({
       message: '',
     },
   });
-
   const pickImage = async () => {
     const result: any = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images', 'videos'],
@@ -139,88 +143,92 @@ export default function Footer({
     'application/pdf': <FontAwesome name="file-pdf-o" size={24} color="#FF5733" />,
   };
 
-  const currentlyPlayingRef: any = useRef(null);
-  const handlePlayAudio = useCallback(
-    async (audio: any) => {
-      if (currentlyPlayingRef.current && currentlyPlayingRef.current !== audio.sound) {
-        await currentlyPlayingRef.current.stopAsync();
-      }
-      try {
-        await audio.sound.replayAsync();
-        currentlyPlayingRef.current = audio.sound;
-        audio.sound.setOnPlaybackStatusUpdate((status: any) => {
-          if (status.didJustFinish) {
-            currentlyPlayingRef.current = null;
-          }
-        });
-      } catch (err) {
-        console.error('Playback error:', err);
-      }
-    },
-    [currentlyPlayingRef]
-  );
-
+  const { play, stop, currentlyPlayingRef, currentAudio, setCurrentAudio } = useAudioPlayer();
   return (
     <View className=" mb-2 bg-white">
       <View
         className={cn(
-          'flex flex-row flex-wrap items-center  gap-2  border-b border-gray-200 bg-gray-100 px-4 py-2',
+          'flex-row  border-b border-gray-200 bg-gray-100 px-4 py-2',
           (watch('attachments') ?? []).length > 0 ? 'bg-gray-100' : 'bg-white'
         )}>
-        {(watch('attachments') ?? [])?.length > 0 ? (
-          watch('attachments')?.map((i: any, index: any) => {
-            return (
-              <View
-                key={`${i?.assetId}-${index}`}
-                className="  flex-row items-center rounded-2xl bg-gray-100 p-2">
-                {['video/mp4', 'image/jpeg', 'image/png', 'image/jpg'].includes(i?.type) ? (
-                  <Image
-                    source={{ uri: i?.uri }}
-                    className=" h-10 w-10 rounded-md"
-                    resizeMode="cover"
-                  />
-                ) : (
-                  <View className="p-2">{fileIcon[i?.type]}</View>
-                )}
+        <View className={cn('flex flex-1 flex-row flex-wrap items-center  gap-2   ')}>
+          {(watch('attachments') ?? [])?.length > 0 ? (
+            watch('attachments')?.map((i: any, index: any) => {
+              return (
+                <View
+                  key={`${i?.assetId}-${index}`}
+                  className="  flex-row items-center rounded-2xl bg-gray-100 p-2">
+                  {['video/mp4', 'image/jpeg', 'image/png', 'image/jpg'].includes(i?.type) ? (
+                    <Image
+                      source={{ uri: i?.uri }}
+                      className=" h-10 w-10 rounded-md"
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <View className="p-2">{fileIcon[i?.type]}</View>
+                  )}
 
-                <TouchableOpacity
-                  onPress={() => {
-                    removeFile(index);
-                  }}
-                  className="ml-2">
-                  <Ionicons name="close-circle" size={20} color="#FF5722" />
-                </TouchableOpacity>
-              </View>
-            );
-          })
+                  <TouchableOpacity
+                    onPress={() => {
+                      removeFile(index);
+                    }}
+                    className="ml-2">
+                    <Ionicons name="close-circle" size={20} color="#FF5722" />
+                  </TouchableOpacity>
+                </View>
+              );
+            })
+          ) : (
+            <></>
+          )}
+          {watch('audio')?.sound ? (
+            <View className="max-w-[80%] flex-row items-center self-end rounded-2xl bg-[#DCF8C6] px-4 py-2 shadow">
+              {/* Mic Icon or Waveform */}
+              <Ionicons name="mic" size={20} color="#075E54" className="mr-2" />
+
+              {/* Duration */}
+              <Text className="text-sm font-medium text-gray-800">
+                {watch('audio')?.duration || '0:00'}
+              </Text>
+
+              {/* Play Button */}
+              <TouchableOpacity
+                onPress={async () => {
+                  setCurrentAudio(watch('audio').uri);
+                  play(watch('audio'));
+                }}
+                className="ml-3">
+                <Ionicons
+                  name={currentAudio && currentAudio === watch('audio').uri ? 'pause' : 'play'}
+                  size={22}
+                  color="#128C7E"
+                />
+              </TouchableOpacity>
+
+              {/* Cancel / Delete Button */}
+              <TouchableOpacity
+                onPress={async () => {
+                  setValue('audio', { sound: '', duration: '', uri: '', type: '' });
+                  await stop();
+                }}
+                className="ml-3">
+                <Ionicons name="close" size={22} color="#D32F2F" />
+              </TouchableOpacity>
+            </View>
+          ) : null}
+        </View>
+        {uploadLoading ? (
+          <LottieFilesAnimation
+            source={uploadingFiles}
+            play
+            autoPlay
+            className="h-10 w-10 items-center justify-center"
+          />
         ) : (
           <></>
         )}
-        {watch('audio')?.sound && (
-          <View className="flex-row items-center">
-            <Text className="mr-2">Audio:</Text>
-            <TouchableOpacity
-              onPress={() => {
-                setValue('audio', { sound: '', duration: '', uri: '', type: '' });
-              }}
-              className="flex-row items-center rounded-full bg-gray-200 px-3 py-1">
-              <Ionicons name="close-circle" size={20} color="#FF5722" />
-              <Text className="ml-2 text-sm">{watch('audio')?.duration || 'Audio'}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                handlePlayAudio(watch('audio'));
-              }}
-              className="ml-2 flex-row items-center rounded-full bg-gray-200 px-3 py-1">
-              <Ionicons name="play-circle" size={20} color="#4CAF50" />
-              <Text className="ml-2 text-sm">Play</Text>
-            </TouchableOpacity>
-          </View>
-        )}
       </View>
-      <View
-        className="h-20 flex-row  items-center gap-2 border-t border-gray-200 px-2 pt-4"
-        style={{}}>
+      <View className="h-20 flex-row  items-center gap-2 border-t border-gray-200 px-2 " style={{}}>
         <TouchableOpacity
           onPress={() => setModalVisible(true)}
           className=" h-10 w-10 items-center justify-center rounded-full">
@@ -264,8 +272,11 @@ export default function Footer({
         />
         <TouchableOpacity
           className="h-12 w-12 items-center justify-center rounded-full "
-          onPress={() => {
-            console.log(1);
+          onPress={async () => {
+            if (currentlyPlayingRef.current) {
+              await stop();
+            }
+
             const message: any = {
               message: watch('message')?.trim() ?? '',
               attachments: watch('attachments') || [],

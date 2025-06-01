@@ -34,6 +34,7 @@ import dayjs from 'dayjs';
 import ChatBubbleSkeleton from './loading';
 import ImagePopup from '~/components/ImagePopUp';
 import VideoPlayer from './videoPlayer';
+import VoiceMessage from './voice-message';
 
 const SkeletonBox = ({ height, width, className = '' }: any) => (
   <SkeletonLoading background="#d3d3d3" highlight="#e0e0e0">
@@ -162,20 +163,20 @@ export default function Chat({
           <FlashList
             inverted
             estimatedItemSize={100}
-            ListHeaderComponent={() =>
-              // if file is uploading, show a loading indicator
-              uploadFileLoading ? (
-                <View className=" w-full flex-1 ">
-                  <View className="mr-2 flex-row justify-end">
-                    <SkeletonLoading background="#d3d3d3" highlight="#e0e0e0">
-                      <View className="h-28 w-28 rounded-lg bg-gray-200" />
-                    </SkeletonLoading>
-                  </View>
-                </View>
-              ) : (
-                <></>
-              )
-            }
+            // ListHeaderComponent={() =>
+            //   // if file is uploading, show a loading indicator
+            //   uploadFileLoading ? (
+            //     <View className=" w-full flex-1 ">
+            //       <View className="mr-2 flex-row justify-end">
+            //         <SkeletonLoading background="#d3d3d3" highlight="#e0e0e0">
+            //           <View className="h-28 w-28 rounded-lg bg-gray-200" />
+            //         </SkeletonLoading>
+            //       </View>
+            //     </View>
+            //   ) : (
+            //     <></>
+            //   )
+            // }
             showsVerticalScrollIndicator={false}
             keyboardDismissMode="on-drag"
             keyExtractor={(item: any, index: any) => `${item?.uuid}-${index}`}
@@ -213,7 +214,11 @@ export default function Chat({
             }}
           />
 
-          <Composer sendMessage={sendMessage} textInputHeight={textInputHeight} />
+          <Composer
+            sendMessage={sendMessage}
+            textInputHeight={textInputHeight}
+            uploadLoading={uploadFileLoading}
+          />
         </View>
       </GestureDetector>
     </>
@@ -330,6 +335,7 @@ function ChatBubble({
         ) : (
           <></>
         )}
+        {item?.audio?.uri ? <VoiceMessage audio={item?.audio} /> : <></>}
         {item?.message ? (
           <Pressable className={cn(!!item?.attachments?.length && item?.message ? 'py-2' : 'mt-2')}>
             <View
@@ -399,9 +405,11 @@ function ChatBubble({
 function Composer({
   textInputHeight,
   sendMessage,
+  uploadLoading,
 }: {
   sendMessage: any;
   textInputHeight: SharedValue<number>;
+  uploadLoading: boolean;
 }) {
   const { colors, isDarkColorScheme } = useColorScheme();
   const insets = useSafeAreaInsets();
@@ -424,7 +432,11 @@ function Composer({
           }),
         },
       ]}>
-      <Footer sendMessage={sendMessage} onContentSizeChange={onContentSizeChange} />
+      <Footer
+        sendMessage={sendMessage}
+        onContentSizeChange={onContentSizeChange}
+        uploadLoading={uploadLoading}
+      />
     </BlurView>
   );
 }

@@ -3,6 +3,7 @@ import { createContext, useContext, useMemo, useEffect } from 'react';
 import { handleSeenMessage, saveConversationCache, saveMessageCache } from '~/hooks/chats/query';
 
 import { useAuth } from './AuthContext';
+
 const defaultProvider = {
   conversationList: [],
   createConversationHandler: (a: any) => {},

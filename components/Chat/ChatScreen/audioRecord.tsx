@@ -1,7 +1,7 @@
 /* eslint-disable import/order */
 import React, { forwardRef, useRef, useState } from 'react';
 import { Alert, Pressable } from 'react-native';
-import { Audio } from 'expo-av';
+import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 import { audioRecorder } from '~/image';
 import LottieFilesAnimation from '~/components/LottieFiles';
@@ -56,6 +56,11 @@ const AudioRecorder = forwardRef(({ onRecordingComplete, audio }: any, ref: any)
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
+        staysActiveInBackground: true,
+        interruptionModeIOS: InterruptionModeIOS.DuckOthers, // Change as you like
+        interruptionModeAndroid: InterruptionModeAndroid.DuckOthers, // Change as you like
+        shouldDuckAndroid: true,
+        playThroughEarpieceAndroid: true,
       });
 
       // const recordingOptions = {
@@ -166,7 +171,11 @@ const AudioRecorder = forwardRef(({ onRecordingComplete, audio }: any, ref: any)
       hitSlop={{ top: 40, bottom: 40, left: 40, right: 40 }}
       pressRetentionOffset={{ top: 40, bottom: 40, left: 40, right: 40 }}
       onPressOut={stopRecording}>
-      <LottieFilesAnimation source={audioRecorder} play={recording} />
+      <LottieFilesAnimation
+        source={audioRecorder}
+        play={recording}
+        className="h-28 w-20 items-center justify-center"
+      />
     </Pressable>
   );
 });
