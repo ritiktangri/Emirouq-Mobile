@@ -59,11 +59,6 @@ const Dashboard = () => {
 
   const components = useMemo(
     () => [
-      recentPostLoading || recentPostFetching ? (
-        <FeaturedListLoading />
-      ) : (
-        <Recent data={recentPost?.pages.map((page: any) => page?.data).flat() || []} />
-      ),
       // categoryLoading ? (
       //   <></>
       // ) : (
@@ -73,6 +68,11 @@ const Dashboard = () => {
         <FeaturedListLoading />
       ) : (
         <Featured data={featurePost?.pages.map((page: any) => page?.data).flat() || []} />
+      ),
+      recentPostLoading || recentPostFetching ? (
+        <FeaturedListLoading />
+      ) : (
+        <Recent data={recentPost?.pages.map((page: any) => page?.data).flat() || []} />
       ),
       hotDealPostLoading || hotDealPostFetching ? (
         <FeaturedListLoading />

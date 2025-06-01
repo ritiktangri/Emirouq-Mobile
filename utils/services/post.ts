@@ -50,9 +50,22 @@ export async function updatePostService({ pathParams, body }: any) {
     multipart: true,
   });
 }
-export async function deletePostService({ pathParams}: any) {
+export async function deletePostService({ pathParams }: any) {
   return callApi({
     uriEndPoint: { ...post.deletePost.v1 } as ApiEndpoint,
     pathParams,
+  });
+}
+export async function likePostService({ pathParams }: any) {
+  return callApi({
+    uriEndPoint: { ...post.likePost.v1 } as ApiEndpoint,
+    pathParams,
+  });
+}
+export async function addCommentService({ pathParams, body }: any) {
+  return callApi({
+    uriEndPoint: { ...post.addComment.v1 } as ApiEndpoint,
+    pathParams,
+    body,
   });
 }

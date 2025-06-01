@@ -4,6 +4,7 @@ import utc from 'dayjs/plugin/utc';
 import { twMerge } from 'tailwind-merge';
 import { clsx, ClassValue } from 'clsx';
 import * as FileSystem from 'expo-file-system';
+import { Dimensions } from 'react-native';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -111,6 +112,8 @@ const saveFileLocally = async (attachments: any) => {
   }
 };
 
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+
 export {
   millisToTime,
   toCurrency,
@@ -119,4 +122,6 @@ export {
   formatDateInTimeZone,
   capitalizeFirstLetter,
   saveFileLocally,
+  screenWidth,
+  screenHeight,
 };

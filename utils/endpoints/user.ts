@@ -29,6 +29,13 @@ const user = {
       uri: '/user/password/:token',
     },
   },
+  getSingleUser: {
+    v1: {
+      ...defaults.methods.GET,
+      ...defaults.versions.v2,
+      uri: '/user/:id',
+    },
+  },
 };
 
 export default user;

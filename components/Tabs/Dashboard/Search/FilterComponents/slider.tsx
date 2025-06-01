@@ -10,9 +10,7 @@ export default function PriceRangeSlider() {
     <View className="px-4 pt-6">
       <View className="mb-2 flex-row items-center justify-between">
         <Text className="text-base font-semibold">{i18n.t('home.price_range')}</Text>
-        <Text className="text-sm text-gray-500">
-          ${0} - ${value.toLocaleString()}
-        </Text>
+        <Text className="text-sm text-gray-500">AED 0 - {value.toLocaleString()}</Text>
       </View>
 
       <View className="h-8 w-full justify-center">
@@ -22,8 +20,8 @@ export default function PriceRangeSlider() {
           step={100}
           value={value}
           onValueChange={(val) => setValue(val)}
-          minimumTrackTintColor="#F97316" // orange-500
-          maximumTrackTintColor="#E5E7EB" // gray-200
+          minimumTrackTintColor="#F97316"
+          maximumTrackTintColor="#E5E7EB"
           thumbTintColor="#F97316"
           style={{ width: '100%' }}
         />

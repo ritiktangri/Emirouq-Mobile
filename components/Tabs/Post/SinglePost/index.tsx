@@ -1,6 +1,15 @@
 /* eslint-disable import/order */
 import React, { useCallback, useEffect, useState } from 'react';
-import { Image, RefreshControl, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  Linking,
+  RefreshControl,
+  ScrollView,
+  Share,
+  TouchableOpacity,
+} from 'react-native';
 import { AntDesign, Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { Href, router, useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
 import { View } from '~/components/common/View';
@@ -15,10 +24,15 @@ import { useGetSinglePosts } from '~/hooks/post/query';
 import theme from '~/utils/theme';
 import { queryClient } from '~/app/_layout';
 import Loading from './loading';
+import CommentSheet from './commentSheet';
+import { useLikePost } from '~/hooks/post/mutation';
 
 const SinglePost = () => {
   const { id }: any = useLocalSearchParams();
   const { removeChatButton = false } = useGlobalSearchParams();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const likePost: any = useLikePost();
+  const [isLiked, setIsLiked] = useState(false);
   const [selectedImage, setSelectedImage] = useState({
     uri: '',
     index: 1,
@@ -31,6 +45,9 @@ const SinglePost = () => {
         uri: data?.data?.file?.[0],
         index: 1,
       });
+    }
+    if (data?.data?.likes?.includes(user?.uuid)) {
+      setIsLiked(true);
     }
   }, [data]);
 
@@ -55,6 +72,23 @@ const SinglePost = () => {
       </SafeAreaView>
     );
   }
+
+  const onLikePost = () => {
+    if (id) {
+      setIsLiked(!isLiked);
+      likePost
+        ?.mutateAsync({
+          pathParams: { postId: id },
+        })
+        ?.then((res: any) => {
+          console.log('res', res);
+        })
+        .catch((err: any) => {
+          console.log('err', err);
+          setIsLiked(!isLiked);
+        });
+    }
+  };
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1">
@@ -80,56 +114,41 @@ const SinglePost = () => {
               tintColor={theme.colors.primary}
             />
           }>
-          <View className="mx-auto  h-[300px] w-[100%] px-3 py-3">
-            {selectedImage?.uri ? (
+          <FlatList
+            data={data?.data?.file}
+            keyExtractor={(item, index) => index.toString()}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={(event) => {
+              const index = Math.round(
+                event.nativeEvent.contentOffset.x / Dimensions.get('screen').width
+              );
+              setSelectedImage({
+                uri: data?.data?.file[index],
+                index: index + 1,
+              });
+            }}
+            contentContainerClassName="mx-auto"
+            renderItem={({ item }) => (
               <Image
-                source={{
-                  uri: selectedImage?.uri,
-                }}
+                source={{ uri: item }}
                 style={{
-                  width: '100%',
-                  height: '100%',
+                  width: Dimensions.get('screen').width - 8,
+                  height: 300,
+                  resizeMode: 'cover',
                   borderRadius: 10,
                 }}
-                resizeMode="cover"
               />
-            ) : (
-              <></>
             )}
-          </View>
+          />
 
+          {/* Page indicator badge */}
           <View className="absolute right-4 top-10 rounded-full bg-gray-800 px-3 py-1">
             <Text className="text-white">
               {selectedImage?.index}/{data?.data?.file?.length}
             </Text>
           </View>
-
-          <View className="flex flex-row flex-wrap items-center gap-2 px-3 py-2">
-            {data?.data?.file?.map((uri: any, index: any) => (
-              <TouchableOpacity
-                key={index}
-                className=""
-                onPress={() =>
-                  setSelectedImage({
-                    uri,
-                    index: index + 1,
-                  })
-                }>
-                <Image
-                  source={{
-                    uri,
-                  }}
-                  resizeMode="cover"
-                  style={{
-                    width: 70,
-                    height: 70,
-                    borderRadius: 8,
-                  }}
-                />
-              </TouchableOpacity>
-            ))}
-          </View>
-
           {/* Product Details */}
           <View className="p-4">
             <Text className="mb-2 text-2xl font-bold">{data?.data?.title}</Text>
@@ -169,7 +188,15 @@ const SinglePost = () => {
                     <Text className="ml-1 text-sm text-gray-600">4.9 (234 reviews)</Text>
                   </View>
                 </View>
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    router.push({
+                      pathname: routes.tabs.single_user_profile,
+                      params: {
+                        userId: data?.data?.user?.uuid,
+                      },
+                    } as Href);
+                  }}>
                   <Text className="text-primary">View Profile {'>'}</Text>
                 </TouchableOpacity>
               </View>
@@ -181,26 +208,70 @@ const SinglePost = () => {
           ) : (
             <></>
           )}
-          <View className="flex-row items-center gap-3 border-[0.2px] border-t border-gray-200 px-4 pt-4">
-            <Text className="text-gray-600">120 Likes</Text>
+          <View className="flex-row items-center gap-3 border-[1px] border-t border-gray-200 px-4 pb-3 pt-4">
+            <Text className="text-gray-600">
+              {data?.data?.likes?.length} {`${data?.data?.likes?.length === 1 ? 'Like' : 'Likes'}`}
+            </Text>
             <View className="h-2 w-2 rounded-full bg-gray-400" />
-            <Text className="text-gray-600">14 Comments</Text>
+            <Text className="text-gray-600">
+              {' '}
+              {data?.data?.comments?.length}{' '}
+              {`${data?.data?.comments?.length === 1 ? 'Comment' : 'Comments'}`}
+            </Text>
           </View>
           {/* Interaction Buttons */}
-          <View className="mt-2 flex-row justify-around">
-            <TouchableOpacity className="flex-row items-center">
-              <Feather name="heart" size={20} color="gray" />
-              <Text className="ml-1 text-gray-600">Like</Text>
-            </TouchableOpacity>
-            <TouchableOpacity className="flex-row items-center">
-              <Feather name="message-square" size={20} color="gray" />
-              <Text className="ml-1 text-gray-600">Comment</Text>
-            </TouchableOpacity>
-            <TouchableOpacity className="flex-row items-center">
-              <AntDesign name="sharealt" size={20} color="gray" />
-              <Text className="ml-1 text-gray-600">Share</Text>
-            </TouchableOpacity>
-          </View>
+          {user?.uuid && (
+            <View className="mt-2 flex-row  justify-around">
+              <TouchableOpacity className="flex-row items-center" onPress={onLikePost}>
+                {isLiked ? (
+                  <AntDesign name="heart" size={20} color="red" />
+                ) : (
+                  <Feather name="heart" size={20} color="gray" />
+                )}
+                <Text className="ml-1 text-gray-600">Like</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="flex-row items-center"
+                onPress={() => {
+                  setIsSheetOpen(true);
+                }}>
+                <Feather name="message-square" size={20} color="gray" />
+                <Text className="ml-1 text-gray-600">Comment</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="flex-row items-center"
+                onPress={async () => {
+                  try {
+                    await Share.share({
+                      message: 'Check out this app: https://emirouq.ae',
+                    });
+                  } catch (error) {
+                    console.error('Error sharing:', error);
+                  }
+                }}>
+                <AntDesign name="sharealt" size={20} color="gray" />
+                <Text className="ml-1 text-gray-600">Share</Text>
+              </TouchableOpacity>
+              {data?.data?.user?.phoneNumber && (
+                <TouchableOpacity
+                  className="flex-row items-center"
+                  onPress={async () => {
+                    const phoneNumber = `${data?.data?.user?.countryCode || '+971'}${data?.data?.user?.phoneNumber}`;
+                    const message = encodeURIComponent('Check out this app: https://emirouq.ae');
+                    const url = `whatsapp://send?phone=${phoneNumber}&text=${message}`;
+                    const canOpen = await Linking.canOpenURL(url);
+                    if (canOpen) {
+                      Linking.openURL(url);
+                    } else {
+                      alert('WhatsApp is not installed');
+                    }
+                  }}>
+                  <FontAwesome name="whatsapp" size={20} color="green" />
+                  <Text className="ml-1 text-green-700">Chat</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
 
           {/* Description */}
           <View className="px-4 pb-1 pt-4">
@@ -247,7 +318,15 @@ const SinglePost = () => {
               <View className="p-4">
                 <View className="mb-2 flex-row items-center py-2 ">
                   <Text className="flex-1 font-poppinsMedium text-lg">Similar Products</Text>
-                  <TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      router.push({
+                        pathname: routes.tabs.post_list,
+                        params: {
+                          tag: 'featured_listings',
+                        },
+                      } as Href);
+                    }}>
                     <Text className="font-poppinsMedium text-lg text-primary">View all {'>'}</Text>
                   </TouchableOpacity>
                 </View>
@@ -312,6 +391,12 @@ const SinglePost = () => {
       ) : (
         <></>
       )}
+      <CommentSheet
+        visible={isSheetOpen}
+        setVisible={setIsSheetOpen}
+        postId={id}
+        postComments={data?.data?.comments}
+      />
     </SafeAreaView>
   );
 };

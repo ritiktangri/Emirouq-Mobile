@@ -38,7 +38,7 @@ const Login = ({ checkinType }: any) => {
     login(
       body,
       () => {
-        showToast('Login Successful!', 'success');
+        showToast('Login Successful!', 'success', 600);
       },
       (err: any) => {
         showToast(err?.message, 'error');

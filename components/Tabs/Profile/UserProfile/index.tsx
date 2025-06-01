@@ -95,10 +95,12 @@ const UserProfile = () => {
             <View className="flex flex-col items-center gap-y-2">
               <Text className="text-center text-lg font-semibold">{`${user?.firstName} ${user?.lastName || ''}`}</Text>
               <Text className="text-center text-gray-600">{user?.email}</Text>
-              <View className="flex-row items-center justify-center ">
-                <EvilIcons name="location" size={18} color="#4b5563" />
-                <Text className="text-center text-gray-600">{addressStr}</Text>
-              </View>
+              {address && (
+                <View className="flex-row items-center justify-center ">
+                  <EvilIcons name="location" size={18} color="#4b5563" />
+                  <Text className="text-center text-gray-600">{addressStr}</Text>
+                </View>
+              )}
             </View>
           </View>
           {/* STATS */}

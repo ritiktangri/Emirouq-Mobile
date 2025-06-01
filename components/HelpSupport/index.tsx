@@ -23,15 +23,22 @@ const HelpSupport = () => {
       <Text className="mb-1 text-lg font-semibold text-[#FF5722]">{item.title}</Text>
       <Text className="mb-2 text-gray-700">{item.description}</Text>
 
-      {item.attachments && (
+      {item.attachments && item.attachments[0]?.url && !item.responded && (
         <Image
-          source={{ uri: item.attachments[0]?.url }}
+          source={{ uri: item.attachments[0].url }}
           className="mb-2 h-40 w-full rounded-xl"
           resizeMode="cover"
         />
       )}
 
-      <View className="mt-2 flex-row items-center justify-between">
+      {item.responded && item.adminResponse && (
+        <View className="mt-2 rounded-lg bg-gray-100 p-3">
+          <Text className="text-sm font-semibold text-gray-800">Admin Response:</Text>
+          <Text className="mt-1 text-sm text-gray-700">{item.adminResponse}</Text>
+        </View>
+      )}
+
+      <View className="mt-3 flex-row items-center justify-between">
         <Text
           className={`rounded-full px-2 py-1 text-xs ${
             item.responded === false ? 'bg-green-100 text-green-700' : 'bg-gray-300 text-gray-700'
@@ -69,7 +76,7 @@ const HelpSupport = () => {
         </View>
         <FlatList
           data={tickets?.data}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.uuid}
           renderItem={renderItem}
           contentContainerStyle={{ paddingBottom: 20 }}
           showsVerticalScrollIndicator={false}

@@ -106,6 +106,7 @@ const SetupProfile = () => {
       setProfileImage(result?.assets?.[0]);
     }
   };
+
   const onSubmit = (data: any) => {
     updateProfile(
       {
@@ -318,7 +319,7 @@ const SetupProfile = () => {
                   className="w-full"
                   containerClassName={`w-full rounded-lg border border-gray-200 bg-white px-4 ${Platform.OS === 'android' ? 'py-0' : 'py-3'}`}
                   onChangeText={user?.isEmail ? onChange : () => {}}
-                  value={value}
+                  value={value.toString()}
                   placeholder={i18n.t('createProfile.phoneNumberPlaceholder')}
                   keyboardType="phone-pad"
                 />

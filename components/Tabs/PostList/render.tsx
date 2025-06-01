@@ -4,9 +4,12 @@ import { Entypo } from '@expo/vector-icons';
 import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import AddToFavourite from '../Dashboard/AddToFavourite';
+import { useAuth } from '~/context/AuthContext';
 
 const Render = ({ item, index }: any) => {
   const router = useRouter();
+  const { user } = useAuth();
+
   return (
     <TouchableOpacity
       className={` ${index % 2 === 0 ? 'mr-2' : ''} w-[49%] overflow-hidden rounded-2xl border-[0.4px] border-gray-300 bg-white shadow-sm shadow-slate-50`}
@@ -21,7 +24,8 @@ const Render = ({ item, index }: any) => {
       <View className="overflow-hidden rounded-t-2xl">
         <Image source={{ uri: item?.file?.[0] }} className="h-44 w-full" resizeMode="cover" />
       </View>
-      <AddToFavourite item={item} />
+      {user?.uuid && <AddToFavourite item={item} />}
+
       <View className="p-4">
         <View className="mb-1 flex-row items-center justify-between">
           <Text className="w-[98%] text-sm font-semibold text-gray-900">{item?.title}</Text>

@@ -8,29 +8,33 @@ import { ApiEndpoint } from '../types';
 // this conversion should be straightforward.
 
 export const getCurrentUser = async () => {
-  // Ensure uriEndPoint conforms to the expected UriEndPoint interface/type
   return callApi({
     uriEndPoint: { ...user.fetchMe.v1 } as ApiEndpoint,
   });
 };
 export const getUserDetails = async (id: any) => {
-  // Ensure uriEndPoint conforms to the expected UriEndPoint interface/type
   return callApi({
     uriEndPoint: { ...user.getUserDetails.v1 } as ApiEndpoint,
     pathParams: { id },
   });
 };
 export const updateProfileService = async ({ body }: any) => {
-  // Ensure uriEndPoint conforms to the expected UriEndPoint interface/type
   return callApi({
     uriEndPoint: { ...user.updateProfile.v1 } as ApiEndpoint,
     body,
   });
 };
 export const resetPasswordService = async ({ pathParams }: any) => {
-  // Ensure uriEndPoint conforms to the expected UriEndPoint interface/type
   return callApi({
     uriEndPoint: { ...user.resetPassword.v1 } as ApiEndpoint,
     pathParams,
+  });
+};
+export const getSingleUserService = async (id: any) => {
+  return callApi({
+    uriEndPoint: { ...user.getSingleUser.v1 } as ApiEndpoint,
+    pathParams: {
+      id,
+    },
   });
 };

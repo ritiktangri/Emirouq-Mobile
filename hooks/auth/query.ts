@@ -5,6 +5,7 @@ import {
   fetchPaymentSheetService,
   getPlansService,
 } from '~/utils/services/stripe';
+import { getSingleUserService } from '~/utils/services/user';
 
 export const useGetPlans = () =>
   useQuery({
@@ -33,4 +34,11 @@ export const useCheckSubscription = (id: any, refetchInterval: any) =>
       }
       return refetchInterval;
     },
+  });
+export const useGetSingleUser = (id: any) =>
+  useQuery({
+    queryKey: ['single-user', id],
+    queryFn: () => getSingleUserService(id),
+    refetchOnWindowFocus: false,
+    enabled: !!id,
   });

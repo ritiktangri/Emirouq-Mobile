@@ -17,11 +17,13 @@ import {
 } from './FilterComponents/export';
 import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
+import { useAuth } from '~/context/AuthContext';
 
 const Search = () => {
   const { locale } = useLocale();
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const { user } = useAuth();
   return (
     <View direction={locale} className="flex w-full items-center justify-between">
       <DefaultTextInput
@@ -30,7 +32,7 @@ const Search = () => {
         containerClassName={`bg-search_bg rounded-lg ${Platform.OS === 'ios' ? 'p-3' : 'px-2'}`}
         textAlign={locale === 'ar' ? 'right' : 'left'}
         placeholderTextColor={theme.colors.gray}
-        className={`w-[75%] px-4 text-lg ${Platform.OS == 'android' ? 'h-12' : ''}`}
+        className={`${user?.uuid ? 'w-[62%]' : 'w-[85%]'} px-4 text-lg ${Platform.OS == 'android' ? 'h-12' : ''}`}
       />
       <TouchableOpacity
         className="relative"
@@ -39,30 +41,34 @@ const Search = () => {
         }}>
         <Octicons name="filter" size={20} color="black" />
       </TouchableOpacity>
-      <TouchableOpacity
-        className="relative"
-        onPress={() => {
-          router.push({
-            pathname: routes.tabs.favourites,
-            params: {
-              headerTitle: 'createProfile.heading',
-            },
-          } as Href);
-        }}>
-        <AntDesign name="hearto" size={20} color="black" />
-      </TouchableOpacity>
-      {/* <TouchableOpacity
-        className="relative"
-        onPress={() => {
-          router.push({
-            pathname: routes.tabs.notification,
-            params: {
-              headerTitle: 'notification.title',
-            },
-          } as Href);
-        }}>
-        <Ionicons name="notifications-outline" size={20} color="black" />
-      </TouchableOpacity> */}
+      {user?.uuid && (
+        <>
+          <TouchableOpacity
+            className="relative"
+            onPress={() => {
+              router.push({
+                pathname: routes.tabs.favourites,
+                params: {
+                  headerTitle: 'createProfile.heading',
+                },
+              } as Href);
+            }}>
+            <AntDesign name="hearto" size={20} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="relative"
+            onPress={() => {
+              router.push({
+                pathname: routes.tabs.notification,
+                params: {
+                  headerTitle: 'notification.title',
+                },
+              } as Href);
+            }}>
+            <Ionicons name="notifications-outline" size={20} color="black" />
+          </TouchableOpacity>
+        </>
+      )}
       <Modal
         animationType="slide"
         visible={open}

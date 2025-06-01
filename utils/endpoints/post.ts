@@ -45,11 +45,25 @@ const post = {
       uri: `${prefix}/:id`,
     },
   },
-   deletePost: {
+  deletePost: {
     v1: {
       ...defaults.methods.DELETE,
       ...defaults.versions.v1,
       uri: `${prefix}/:id`,
+    },
+  },
+  likePost: {
+    v1: {
+      ...defaults.methods.POST,
+      ...defaults.versions.v1,
+      uri: `${prefix}/like/:postId`,
+    },
+  },
+  addComment: {
+    v1: {
+      ...defaults.methods.POST,
+      ...defaults.versions.v1,
+      uri: `${prefix}/comment/:postId`,
     },
   },
 };
