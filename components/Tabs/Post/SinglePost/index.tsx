@@ -32,7 +32,7 @@ const SinglePost = () => {
   const { removeChatButton = false } = useGlobalSearchParams();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const likePost: any = useLikePost();
-  const [isLiked, setIsLiked] = useState(false);
+  // const [isLiked, setIsLiked] = useState(false);
   const [selectedImage, setSelectedImage] = useState({
     uri: '',
     index: 1,
@@ -41,13 +41,12 @@ const SinglePost = () => {
   const { isLoading, data, refetch }: any = useGetSinglePosts(id);
   useEffect(() => {
     if (data?.data?.file?.length > 0) {
+      //cache update
+
       setSelectedImage({
         uri: data?.data?.file?.[0],
         index: 1,
       });
-    }
-    if (data?.data?.likes?.includes(user?.uuid)) {
-      setIsLiked(true);
     }
   }, [data]);
 
@@ -72,20 +71,40 @@ const SinglePost = () => {
       </SafeAreaView>
     );
   }
-
   const onLikePost = () => {
     if (id) {
-      setIsLiked(!isLiked);
+      queryClient.setQueryData(['singlePost', id], (oldData: any) => {
+        const isIncluded = (oldData?.data?.likes || [])?.includes(user?.uuid);
+
+        if (isIncluded) {
+          // If the user already liked the post, remove their UUID from the likes array
+          return {
+            ...oldData,
+            data: {
+              ...oldData?.data,
+              likes: oldData?.data?.likes?.filter((like: string) => like !== user?.uuid),
+            },
+          };
+        }
+        return {
+          ...oldData,
+          data: {
+            ...oldData?.data,
+            likes: [...(oldData?.data?.likes || []), user?.uuid],
+          },
+        };
+      });
+
       likePost
         ?.mutateAsync({
           pathParams: { postId: id },
         })
-        ?.then((res: any) => {
-          console.log('res', res);
-        })
+        ?.then((res: any) => {})
         .catch((err: any) => {
           console.log('err', err);
-          setIsLiked(!isLiked);
+          queryClient.setQueryData(['singlePost', id], (oldData: any) => {
+            // If the mutation fails, revert the likes array to its previous state
+          });
         });
     }
   };
@@ -223,7 +242,7 @@ const SinglePost = () => {
           {user?.uuid && (
             <View className="mt-2 flex-row  justify-around">
               <TouchableOpacity className="flex-row items-center" onPress={onLikePost}>
-                {isLiked ? (
+                {data?.data?.likes?.includes(user?.uuid) ? (
                   <AntDesign name="heart" size={20} color="red" />
                 ) : (
                   <Feather name="heart" size={20} color="gray" />

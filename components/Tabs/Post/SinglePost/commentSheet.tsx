@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import {
   View,
   Text,
@@ -6,9 +7,8 @@ import {
   FlatList,
   Image,
   ActivityIndicator,
-  Keyboard,
 } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import CustomBottomSheet from '~/components/CustomBottomSheet';
 import { useAuth } from '~/context/AuthContext';
 import { useAddComment } from '~/hooks/post/mutation';
@@ -18,8 +18,6 @@ import { Feather } from '@expo/vector-icons';
 
 const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
   const addComment: any = useAddComment();
-  const [loading, setLoading] = useState(false);
-  const [comments, setComments] = useState<any>(postComments);
   const [newComment, setNewComment] = useState('');
   const { user } = useAuth();
 
@@ -31,9 +29,8 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
     }
   }, [visible]);
 
-  const handleSend = () => {
+  const handleSend = useCallback(() => {
     if (!newComment.trim()) return;
-    setLoading(true);
 
     if (newComment && postId) {
       addComment
@@ -51,25 +48,25 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
             },
           };
 
-          setComments((prev: any) => [newCommentData, ...prev]);
-
           queryClient.setQueryData(['singlePost', postId], (oldData: any) => {
             if (oldData) {
               return {
                 ...oldData,
-                comments: [newCommentData, ...oldData.comments],
+                data: {
+                  ...oldData.data,
+                  comments: [newCommentData, ...oldData.data.comments],
+                  commentsCount: oldData.data.commentsCount + 1,
+                },
               };
             }
             return oldData;
           });
         })
         .catch((err: any) => {})
-        ?.finally(() => {
-          setLoading(false);
-        });
+        ?.finally(() => {});
     }
     setNewComment('');
-  };
+  }, [newComment, postId, addComment, user]);
   return (
     <CustomBottomSheet
       visible={visible}
@@ -80,7 +77,7 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
         <Text className="mb-3 text-center text-lg font-semibold text-gray-900">Comments</Text>
 
         <FlatList
-          data={comments?.filter((ite: any) => ite.uuid)}
+          data={postComments}
           keyExtractor={(item) => item.uuid}
           showsVerticalScrollIndicator={false}
           className="mb-2"
@@ -127,7 +124,11 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
             />
           </View>
           <TouchableOpacity onPress={handleSend} className="ml-2 flex-row items-center gap-2">
-            {loading ? <ActivityIndicator /> : <Feather name="send" size={24} color="#FF5722" />}
+            {addComment?.isPending ? (
+              <ActivityIndicator />
+            ) : (
+              <Feather name="send" size={24} color="#FF5722" />
+            )}
           </TouchableOpacity>
         </View>
       </View>
