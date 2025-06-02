@@ -144,12 +144,15 @@ export default function Footer({
   };
 
   const { play, stop, currentlyPlayingRef, currentAudio, setCurrentAudio } = useAudioPlayer();
+  const isEditable = !!watch('audio')?.uri || !!(watch('attachments') || [])?.length;
   return (
     <View className=" mb-2 bg-white">
       <View
         className={cn(
-          'flex-row  border-b border-gray-200 bg-gray-100 px-4 py-2',
-          (watch('attachments') ?? []).length > 0 ? 'bg-gray-100' : 'bg-white'
+          'flex-row  border-b border-gray-100 bg-gray-100 p-3',
+          !!(watch('attachments') ?? []).length || !!watch('audio')?.sound
+            ? 'bg-gray-100'
+            : 'bg-white'
         )}>
         <View className={cn('flex flex-1 flex-row flex-wrap items-center  gap-2   ')}>
           {(watch('attachments') ?? [])?.length > 0 ? (
@@ -157,22 +160,18 @@ export default function Footer({
               return (
                 <View
                   key={`${i?.assetId}-${index}`}
-                  className="  flex-row items-center rounded-2xl bg-gray-100 p-2">
+                  className="relative mr-3 h-16 w-16 overflow-hidden rounded-xl bg-white ">
                   {['video/mp4', 'image/jpeg', 'image/png', 'image/jpg'].includes(i?.type) ? (
-                    <Image
-                      source={{ uri: i?.uri }}
-                      className=" h-10 w-10 rounded-md"
-                      resizeMode="cover"
-                    />
+                    <Image source={{ uri: i?.uri }} className="h-full w-full" resizeMode="cover" />
                   ) : (
-                    <View className="p-2">{fileIcon[i?.type]}</View>
+                    <View className="flex h-full w-full items-center justify-center bg-gray-100">
+                      {fileIcon[i?.type]}
+                    </View>
                   )}
 
                   <TouchableOpacity
-                    onPress={() => {
-                      removeFile(index);
-                    }}
-                    className="ml-2">
+                    onPress={() => removeFile(index)}
+                    className="absolute -right-0 -top-0 z-10 rounded-full bg-white p-0.5">
                     <Ionicons name="close-circle" size={20} color="#FF5722" />
                   </TouchableOpacity>
                 </View>
@@ -182,36 +181,38 @@ export default function Footer({
             <></>
           )}
           {watch('audio')?.sound ? (
-            <View className="max-w-[80%] flex-row items-center self-end rounded-2xl bg-[#DCF8C6] px-4 py-2 shadow">
-              {/* Mic Icon or Waveform */}
-              <Ionicons name="mic" size={20} color="#075E54" className="mr-2" />
+            <View className="max-w-[80%] flex-row items-center space-x-3 self-end rounded-2xl bg-[#DCF8C6] p-3 shadow-sm">
+              {/* Left: Circular mic icon */}
+              <View className="flex h-9 w-9 items-center justify-center rounded-full bg-white">
+                <Ionicons name="mic" size={18} color="#128C7E" />
+              </View>
 
-              {/* Duration */}
-              <Text className="text-sm font-medium text-gray-800">
+              {/* Center: Timer text */}
+              <Text className="text-sm font-semibold text-gray-800">
                 {watch('audio')?.duration || '0:00'}
               </Text>
 
-              {/* Play Button */}
+              {/* Play/Pause Button */}
               <TouchableOpacity
                 onPress={async () => {
                   setCurrentAudio(watch('audio').uri);
                   play(watch('audio'));
                 }}
-                className="ml-3">
+                className="p-1">
                 <Ionicons
                   name={currentAudio && currentAudio === watch('audio').uri ? 'pause' : 'play'}
-                  size={22}
+                  size={24}
                   color="#128C7E"
                 />
               </TouchableOpacity>
 
-              {/* Cancel / Delete Button */}
+              {/* Delete Button */}
               <TouchableOpacity
                 onPress={async () => {
+                  stop();
                   setValue('audio', { sound: '', duration: '', uri: '', type: '' });
-                  await stop();
                 }}
-                className="ml-3">
+                className="p-1">
                 <Ionicons name="close" size={22} color="#D32F2F" />
               </TouchableOpacity>
             </View>
@@ -224,6 +225,27 @@ export default function Footer({
             autoPlay
             className="h-10 w-10 items-center justify-center"
           />
+        ) : watch('audio')?.sound || watch('attachments')?.length ? (
+          <TouchableOpacity
+            className="h-10 w-10 items-center justify-center rounded-full bg-primary"
+            onPress={async () => {
+              if (currentlyPlayingRef.current) {
+                await stop();
+              }
+
+              const message: any = {
+                message: watch('message')?.trim() ?? '',
+                attachments: watch('attachments') || [],
+                audio: watch('audio') || { sound: '', duration: '', uri: '', type: '' },
+              };
+              sendMessage(message, () => {
+                setValue('message', '');
+                setValue('attachments', []);
+                setValue('audio', { sound: '', duration: '', uri: '', type: '' });
+              });
+            }}>
+            <Ionicons name="send" size={20} className="!text-white" />
+          </TouchableOpacity>
         ) : (
           <></>
         )}
@@ -247,6 +269,7 @@ export default function Footer({
               // autoFocus
               multiline
               value={value}
+              editable={!isEditable}
               returnKeyType="send"
               onSubmitEditing={() => {
                 const message: any = {
@@ -263,33 +286,37 @@ export default function Footer({
             />
           )}
         />
-        <AudioRecorder
-          onRecordingComplete={(payload: any) => {
-            setValue('audio', payload);
-          }}
-          ref={currentlyPlayingRef}
-          audio={watch('audio') || { sound: '', duration: '', uri: '', type: '' }}
-        />
-        <TouchableOpacity
-          className="h-12 w-12 items-center justify-center rounded-full "
-          onPress={async () => {
-            if (currentlyPlayingRef.current) {
-              await stop();
-            }
 
-            const message: any = {
-              message: watch('message')?.trim() ?? '',
-              attachments: watch('attachments') || [],
-              audio: watch('audio') || { sound: '', duration: '', uri: '', type: '' },
-            };
-            sendMessage(message, () => {
-              setValue('message', '');
-              setValue('attachments', []);
-              setValue('audio', { sound: '', duration: '', uri: '', type: '' });
-            });
-          }}>
-          <Ionicons name="send" size={30} className="!text-primary" />
-        </TouchableOpacity>
+        {watch('message')?.trim() ? (
+          <TouchableOpacity
+            className="h-12 w-12 items-center justify-center rounded-full "
+            onPress={async () => {
+              if (currentlyPlayingRef.current) {
+                await stop();
+              }
+
+              const message: any = {
+                message: watch('message')?.trim() ?? '',
+                attachments: watch('attachments') || [],
+                audio: watch('audio') || { sound: '', duration: '', uri: '', type: '' },
+              };
+              sendMessage(message, () => {
+                setValue('message', '');
+                setValue('attachments', []);
+                setValue('audio', { sound: '', duration: '', uri: '', type: '' });
+              });
+            }}>
+            <Ionicons name="send" size={30} className="!text-primary" />
+          </TouchableOpacity>
+        ) : (
+          <AudioRecorder
+            onRecordingComplete={(payload: any) => {
+              setValue('audio', payload);
+            }}
+            ref={currentlyPlayingRef}
+            audio={watch('audio') || { sound: '', duration: '', uri: '', type: '' }}
+          />
+        )}
       </View>
 
       <Modal
@@ -297,41 +324,45 @@ export default function Footer({
         transparent
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}>
-        <View className="flex-1 justify-end bg-black bg-opacity-50">
-          <View className="rounded-t-3xl bg-white pb-8">
-            <View className="my-2 items-center">
-              <View className="h-1 w-12 rounded-full bg-gray-300" />
+        <View className="flex-1 justify-end bg-black/50">
+          <View className="rounded-t-3xl bg-white px-4 pb-6 pt-4">
+            {/* Drag handle */}
+            <View className="mb-4 items-center">
+              <View className="h-1.5 w-12 rounded-full bg-gray-300" />
             </View>
 
-            <Text className="mb-6 text-center text-xl font-semibold text-gray-800">
-              Select an Option
+            {/* Title (Optional) */}
+            <Text className="mb-4 text-center text-base font-semibold text-gray-800">
+              Upload Options
             </Text>
 
+            {/* Options */}
             <TouchableOpacity
-              className="mx-4 mb-3 flex-row items-center rounded-xl bg-[#4285F4] px-4 py-3.5"
+              className="mb-3 flex-row items-center rounded-xl bg-blue-500 px-4 py-4"
               onPress={pickImage}>
-              <Ionicons name="images" size={24} color="white" className="mr-3" />
-              <Text className="flex-1 text-center font-medium text-white">Choose from Gallery</Text>
+              <Ionicons name="images" size={22} color="white" className="mr-3" />
+              <Text className="flex-1 text-base font-medium text-white">Choose from Gallery</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              className="mx-4 mb-3 flex-row items-center rounded-xl bg-[#34A853] px-4 py-3.5"
+              className="mb-3 flex-row items-center rounded-xl bg-green-500 px-4 py-4"
               onPress={takePhoto}>
-              <Ionicons name="camera" size={24} color="white" className="mr-3" />
-              <Text className="flex-1 text-center font-medium text-white">Take a Photo</Text>
+              <Ionicons name="camera" size={22} color="white" className="mr-3" />
+              <Text className="flex-1 text-base font-medium text-white">Take a Photo</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              className="mx-4 mb-6 flex-row items-center rounded-xl bg-[#9C27B0] px-4 py-3.5"
+              className="mb-4 flex-row items-center rounded-xl bg-purple-600 px-4 py-4"
               onPress={pickDocument}>
-              <MaterialIcons name="insert-drive-file" size={24} color="white" className="mr-3" />
-              <Text className="flex-1 text-center font-medium text-white">Select a Document</Text>
+              <MaterialIcons name="insert-drive-file" size={22} color="white" className="mr-3" />
+              <Text className="flex-1 text-base font-medium text-white">Select a Document</Text>
             </TouchableOpacity>
 
+            {/* Cancel */}
             <TouchableOpacity
-              className="mx-4 flex-row items-center rounded-xl bg-gray-200 px-4 py-3.5"
+              className="flex-row items-center justify-center rounded-xl border border-gray-300 bg-white py-3"
               onPress={() => setModalVisible(false)}>
-              <Text className="flex-1 text-center font-medium text-gray-700">Cancel</Text>
+              <Text className="text-base font-medium text-gray-700">Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>

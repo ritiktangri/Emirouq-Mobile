@@ -3,9 +3,14 @@ import React, { forwardRef, useRef, useState } from 'react';
 import { Alert, Pressable } from 'react-native';
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
-import { audioRecorder } from '~/image';
-import LottieFilesAnimation from '~/components/LottieFiles';
 import { useTheme } from '~/context/ThemeContext';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
+import { Ionicons } from '@expo/vector-icons';
 
 const MAX_DURATION = 10; // seconds
 const MIN_RECORDING_DURATION = 2000;
@@ -155,7 +160,25 @@ const AudioRecorder = forwardRef(({ onRecordingComplete, audio }: any, ref: any)
     const seconds = totalSeconds % 60;
     return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
   };
+  const scale = useSharedValue(1);
 
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const handlePressIn = () => {
+    scale.value = withTiming(1.4, { duration: 150 });
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1, {
+      damping: 5,
+      stiffness: 150,
+    });
+    if (recording) {
+      stopRecording();
+    }
+  };
   return (
     <Pressable
       // style={[styles.recordButton, recording && styles.recordingActive]}
@@ -168,14 +191,20 @@ const AudioRecorder = forwardRef(({ onRecordingComplete, audio }: any, ref: any)
         startRecording();
       }}
       className=""
-      hitSlop={{ top: 40, bottom: 40, left: 40, right: 40 }}
-      pressRetentionOffset={{ top: 40, bottom: 40, left: 40, right: 40 }}
-      onPressOut={stopRecording}>
-      <LottieFilesAnimation
+      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+      pressRetentionOffset={{ top: 10, bottom: 10, left: 10, right: 10 }}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}>
+      {/* <LottieFilesAnimation
         source={audioRecorder}
         play={recording}
         className="h-28 w-20 items-center justify-center"
-      />
+      /> */}
+      <Animated.View
+        style={[animatedStyle]}
+        className="h-10 w-10  items-center justify-center rounded-full  bg-primary">
+        <Ionicons name="mic" className="!text-3xl !text-white" />
+      </Animated.View>
     </Pressable>
   );
 });

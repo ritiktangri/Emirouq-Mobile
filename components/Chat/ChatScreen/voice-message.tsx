@@ -46,21 +46,21 @@ export default function VoiceMessage({ audio }: any) {
     if (isActive) {
       const newOffset = CIRCUMFERENCE * (1 - progress / 100);
       progressValue.value = withTiming(newOffset, {
-        duration: 400,
+        duration: 100,
         easing: Easing.inOut(Easing.ease),
       });
     } else {
       progressValue.value = withTiming(CIRCUMFERENCE, {
-        duration: 400,
+        duration: 100,
         easing: Easing.inOut(Easing.ease),
       });
     }
   }, [progress, isActive]);
 
   return (
-    <View className="w-full max-w-xs flex-row items-center gap-3 rounded-xl bg-gray-100 p-3 shadow-sm dark:bg-gray-800">
+    <View className="w-full max-w-xs flex-row items-center gap-3 rounded-xl bg-gray-100 p-3  dark:bg-gray-800">
       {/* Ring + Play button wrapper */}
-      <View style={{ width: RING_SIZE, height: RING_SIZE, position: 'relative' }}>
+      <View className="" style={{ width: RING_SIZE, height: RING_SIZE, position: 'relative' }}>
         <Svg width={RING_SIZE} height={RING_SIZE} style={{ position: 'absolute', top: 0, left: 0 }}>
           {/* Background ring */}
           <Circle
@@ -94,7 +94,7 @@ export default function VoiceMessage({ audio }: any) {
             await play({ sound });
             setCurrentAudio(audio);
           }}
-          className="items-center justify-center rounded-full bg-white shadow-sm"
+          className="items-center justify-center rounded-full bg-white "
           style={{
             width: BUTTON_SIZE,
             height: BUTTON_SIZE,
