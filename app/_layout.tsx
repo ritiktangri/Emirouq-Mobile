@@ -23,6 +23,7 @@ import { AxiosError } from 'axios';
 import { ClerkLoaded, ClerkProvider } from '@clerk/clerk-expo';
 import { StripeProvider } from '@stripe/stripe-react-native';
 import 'react-native-get-random-values';
+import { MenuProvider } from 'react-native-popup-menu';
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -126,8 +127,12 @@ export default function RootLayoutNav() {
                         <AuthProvider>
                           <LocaleProvider>
                             <PaperProvider>
-                              <SocketEventScreen />
-                              <InitialLayout />
+                              <MenuProvider>
+                                <SocketEventScreen />
+                                <InitialLayout />
+                              </MenuProvider>
+                              {/* The Slot component is where the current route will be rendered */}
+                              {/* It is used to render the current route in the layout */}
                             </PaperProvider>
                           </LocaleProvider>
                         </AuthProvider>

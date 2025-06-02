@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
-import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
-import { TouchableOpacity, Modal, Image } from 'react-native';
+import { useState } from 'react';
+import { TouchableOpacity, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { View } from '~/components/common/View';
@@ -15,6 +15,7 @@ import AudioRecorder from './audioRecord';
 import { useAudioPlayer } from '~/context/AudioPlayerContext';
 import LottieFilesAnimation from '~/components/LottieFiles';
 import { uploadingFiles } from '~/image';
+import CustomMenu from '~/components/common/PopoverMenu';
 const schema = z.object({
   message: z.string().optional(),
   attachments: z
@@ -251,11 +252,36 @@ export default function Footer({
         )}
       </View>
       <View className="h-20 flex-row  items-center gap-2 border-t border-gray-200 px-2 " style={{}}>
-        <TouchableOpacity
-          onPress={() => setModalVisible(true)}
-          className=" h-10 w-10 items-center justify-center rounded-full">
-          <Entypo name="attachment" size={22} color="#FF5722" />
-        </TouchableOpacity>
+        <CustomMenu
+          customStyles={{
+            optionsContainer: {
+              borderRadius: 10,
+              marginTop: -30,
+            },
+            optionsWrapper: {},
+          }}
+          data={[
+            {
+              label: 'Choose from Gallery',
+              icon: <Ionicons name="images" size={20} className="mr-3 !text-primary" />,
+              onPress: pickImage,
+            },
+            {
+              label: 'Take a Photo',
+              icon: <Ionicons name="camera" size={20} className="mr-3 !text-primary" />,
+              onPress: takePhoto,
+            },
+            {
+              label: 'Select a Document',
+              icon: (
+                <MaterialIcons name="insert-drive-file" size={20} className="mr-3 !text-primary" />
+              ),
+              onPress: pickDocument,
+            },
+          ]}
+          icon={<Entypo name="attachment" size={22} color="#FF5722" className="!px-2" />}
+        />
+
         <Controller
           control={control}
           name="message"
@@ -318,55 +344,6 @@ export default function Footer({
           />
         )}
       </View>
-
-      <Modal
-        animationType="slide"
-        transparent
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}>
-        <View className="flex-1 justify-end bg-black/50">
-          <View className="rounded-t-3xl bg-white px-4 pb-6 pt-4">
-            {/* Drag handle */}
-            <View className="mb-4 items-center">
-              <View className="h-1.5 w-12 rounded-full bg-gray-300" />
-            </View>
-
-            {/* Title (Optional) */}
-            <Text className="mb-4 text-center text-base font-semibold text-gray-800">
-              Upload Options
-            </Text>
-
-            {/* Options */}
-            <TouchableOpacity
-              className="mb-3 flex-row items-center rounded-xl bg-blue-500 px-4 py-4"
-              onPress={pickImage}>
-              <Ionicons name="images" size={22} color="white" className="mr-3" />
-              <Text className="flex-1 text-base font-medium text-white">Choose from Gallery</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              className="mb-3 flex-row items-center rounded-xl bg-green-500 px-4 py-4"
-              onPress={takePhoto}>
-              <Ionicons name="camera" size={22} color="white" className="mr-3" />
-              <Text className="flex-1 text-base font-medium text-white">Take a Photo</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              className="mb-4 flex-row items-center rounded-xl bg-purple-600 px-4 py-4"
-              onPress={pickDocument}>
-              <MaterialIcons name="insert-drive-file" size={22} color="white" className="mr-3" />
-              <Text className="flex-1 text-base font-medium text-white">Select a Document</Text>
-            </TouchableOpacity>
-
-            {/* Cancel */}
-            <TouchableOpacity
-              className="flex-row items-center justify-center rounded-xl border border-gray-300 bg-white py-3"
-              onPress={() => setModalVisible(false)}>
-              <Text className="text-base font-medium text-gray-700">Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }
