@@ -1,7 +1,7 @@
 /* eslint-disable import/order */
 import React, { useCallback, useEffect } from 'react';
 import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Product from './product';
 import {
@@ -17,12 +17,7 @@ import { queryClient } from '~/app/_layout';
 import Chat from './chat';
 import { v4 as uuidV4 } from 'uuid';
 import ChatBubbleSkeleton from './loading';
-import DownloadFile from './download';
-import VideoPlayer from './videoPlayer';
-import { useColorScheme } from '~/lib/useColorScheme';
-import Footer from './footer';
 import { View } from '~/components/common/View';
-import AudioRecorder from './audioRecord';
 import { useTheme } from '~/context/ThemeContext';
 
 const ChatScreen = () => {
@@ -70,7 +65,6 @@ const ChatScreen = () => {
         const formdata: any = new FormData();
         if (attachments?.length > 0) {
           showToast('Uploading files...', 'info');
-
           attachments.forEach((attachment: any) => {
             formdata.append('image', {
               uri: attachment?.uri,
@@ -117,6 +111,9 @@ const ChatScreen = () => {
               attachments: res?.attachments,
               audio: res?.audio,
             });
+          })
+          .catch((error: any) => {
+            showToast(`Error uploading file: ${error?.message}`, 'error', 2000);
           });
       }
       if (message) {
