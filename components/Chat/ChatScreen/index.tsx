@@ -35,6 +35,8 @@ const ChatScreen = () => {
   //here we are updating the seen message in the cache
   useEffect(() => {
     if (socketIo?.connected && params?.conversationId) {
+      // have to check, , who has sen the last message sender or receiver
+      // and accordingly emit the seen message
       socketIo.emit('seen_message', {
         userId: user?.uuid,
         receiverId: params?.receiverId,

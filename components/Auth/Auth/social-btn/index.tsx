@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import { View, Text, TouchableOpacity, Platform, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, Platform, ActivityIndicator, Modal } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { AntDesign } from '@expo/vector-icons';
 import { useWamUpBrowser } from '~/hooks/useWarmUpBrowser';
@@ -11,12 +11,13 @@ import { useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import { useTheme } from '~/context/ThemeContext';
 import * as AuthSession from 'expo-auth-session';
+import { cn } from '~/utils/helper';
 const SocialButtons = () => {
   useWamUpBrowser();
 
   const { startSSOFlow } = useSSO();
   const { signOut } = ClerkUseAuth();
-
+  const [loading, setLoading] = useState(false);
   const { showToast } = useTheme();
   const { getUser } = useAuth();
   const router = useRouter();
@@ -55,16 +56,22 @@ const SocialButtons = () => {
         profileImage: user?.imageUrl,
         oauthId: verifications?.[user?.primaryEmailAddress?.verification?.strategy],
       };
-
+      setLoading(true);
       oAuthLogin
         .mutateAsync({
           body: payload,
         })
         .then(async (res: any) => {
           await setStorageItemAsync('accessToken', res?.accessToken);
+          console.log(res?.newUser, 'res?.newUser');
           getUser(() => {
-            router.replace(routes.tabs.home as any);
+            if (!res?.newUser) {
+              router.replace(routes.tabs.profile?.profile as any);
+            } else {
+              router.replace(routes.tabs.home as any);
+            }
             showToast('Login successful', 'success');
+            setLoading(false);
           });
         })
         .catch((err) => {
@@ -74,22 +81,32 @@ const SocialButtons = () => {
             showToast(err?.message, 'error');
           }
           signOut();
+          setLoading(false);
         });
     }
   }, [user?.firstName]);
 
   return (
     <View className="">
+      <Modal visible={loading} transparent animationType="fade">
+        <View
+          className="flex-1 items-center justify-center  bg-opacity-50"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)' }}>
+          <View className="h-28 w-28 items-center justify-center rounded-xl bg-white">
+            <ActivityIndicator size="large" color="#000" />
+          </View>
+        </View>
+      </Modal>
       <TouchableOpacity
         onPress={() => {
           onPress('oauth_google');
         }}
         className="mb-4 h-12 flex-row items-center justify-center rounded-lg border border-gray-200 bg-white">
-        {oAuthLogin?.isPending && oAuthLogin?.variables?.body?.oauthId === 'from_oauth_google' ? (
+        {/* {loading && oAuthLogin?.variables?.body?.oauthId === 'google' ? (
           <ActivityIndicator size="small" color="#000" />
-        ) : (
-          <AntDesign name="google" size={20} color="black" />
-        )}
+        ) : ( */}
+        <AntDesign name="google" size={20} color="black" />
+        {/* )} */}
 
         <Text className="ml-2 font-['Inter-Semibold'] text-base text-gray-800">
           Continue with Google
@@ -102,11 +119,11 @@ const SocialButtons = () => {
             onPress('oauth_apple');
           }}
           className="h-12 flex-row items-center justify-center rounded-lg bg-black">
-          {oAuthLogin?.isPending && oAuthLogin?.variables?.body?.oauthId === 'from_oauth_apple' ? (
+          {/* {loading && oAuthLogin?.variables?.body?.oauthId === 'apple' ? (
             <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <AntDesign name="apple1" size={20} color="white" />
-          )}
+          ) : ( */}
+          <AntDesign name="apple1" size={20} color="white" />
+          {/* )} */}
           <Text className="ml-2 font-['Inter-Semibold'] text-base text-white">
             Continue with Apple
           </Text>

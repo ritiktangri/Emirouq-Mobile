@@ -25,6 +25,7 @@ export const routes = {
     // sell: '/(hydrogen)/(tabs)/sell',
     chat: '/(hydrogen)/(tabs)/chat',
     profile: {
+      profile: '/(hydrogen)/(tabs)/profile',
       'select-language': '/(hydrogen)/(tabs)/profile/select-language',
     },
     create_profile: '/(hydrogen)/create-profile',
