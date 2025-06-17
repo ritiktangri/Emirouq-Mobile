@@ -23,11 +23,11 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
 
   const inputRef = useRef(null);
 
-  useEffect(() => {
-    if (visible && inputRef.current) {
-      setTimeout(() => inputRef.current?.focus(), 300);
-    }
-  }, [visible]);
+  // useEffect(() => {
+  //   if (visible && inputRef.current) {
+  //     setTimeout(() => inputRef.current?.focus(), 300);
+  //   }
+  // }, [visible]);
 
   const handleSend = useCallback(() => {
     if (!newComment.trim()) return;
@@ -120,7 +120,7 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
               multiline
               returnKeyType="send"
               onSubmitEditing={handleSend}
-              ref={inputRef}
+              // ref={inputRef}
             />
           </View>
           <TouchableOpacity onPress={handleSend} className="ml-2 flex-row items-center gap-2">

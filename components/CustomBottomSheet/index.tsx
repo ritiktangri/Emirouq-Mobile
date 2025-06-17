@@ -72,16 +72,16 @@ const CustomBottomSheet = forwardRef<CustomBottomSheetHandle, CustomBottomSheetP
     return (
       <RBSheet
         ref={sheetRef}
-        closeOnDragDown
-        dragFromTopOnly={dragFromTopOnly}
+        // closeOnDragDown
+        // dragFromTopOnly={dragFromTopOnly}
         closeOnPressMask={closeOnPressMask}
         closeOnPressBack
         onClose={() => {
           setVisible(false);
           onClose();
         }}
-        animationType="fade"
-        keyboardAvoidingViewEnabled
+        // animationType="fade"
+        // keyboardAvoidingViewEnabled
         customStyles={{
           draggableIcon: {
             height: expanded || expandable ? dragIconHeight : 0,
