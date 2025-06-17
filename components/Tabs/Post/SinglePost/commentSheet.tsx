@@ -15,6 +15,7 @@ import { useAddComment } from '~/hooks/post/mutation';
 import dayjs from 'dayjs';
 import { queryClient } from '~/app/_layout';
 import { Feather } from '@expo/vector-icons';
+import { getInitials } from '~/utils/helper';
 
 const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
   const addComment: any = useAddComment();
@@ -67,6 +68,7 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
     }
     setNewComment('');
   }, [newComment, postId, addComment, user]);
+  console.log(postComments);
   return (
     <CustomBottomSheet
       visible={visible}
@@ -89,14 +91,22 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
           renderItem={({ item }) => {
             return (
               <View className="mb-4 flex-row items-start gap-3">
-                <Image
-                  source={{ uri: item.user?.profileImage }}
-                  className="h-10 w-10 rounded-full"
-                />
+                {item?.user?.profileImage ? (
+                  <Image
+                    source={{ uri: item?.user?.profileImage }}
+                    className="mr-2 h-9 w-9 rounded-full"
+                  />
+                ) : (
+                  <View className="flex h-9  w-9 items-center justify-center rounded-full bg-primary">
+                    <Text className=" font-poppinsMedium text-xl text-white">
+                      {getInitials(`${item?.user?.firstName} ${item?.user?.lastName}`)}
+                    </Text>
+                  </View>
+                )}
                 <View className="flex-1">
                   <View className="flex-row items-center justify-between gap-1">
                     <Text className="text-sm font-medium text-gray-900">
-                      {`${item.user?.firstName} ${item.user?.lastName}`}
+                      {`${item?.user?.firstName} ${item?.user?.lastName}`}
                     </Text>
                     <Text className="text-xs text-gray-500">{dayjs(item.createdAt).fromNow()}</Text>
                   </View>
@@ -108,7 +118,15 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
         />
 
         <View className="flex-row items-center border-t border-gray-200 bg-white py-2">
-          <Image source={{ uri: user?.profileImage }} className="mr-2 h-9 w-9 rounded-full" />
+          {user?.profileImage ? (
+            <Image source={{ uri: user?.profileImage }} className="mr-2 h-9 w-9 rounded-full" />
+          ) : (
+            <View className="flex h-14  w-14 items-center justify-center rounded-full bg-primary">
+              <Text className=" font-poppinsMedium text-xl text-white">
+                {getInitials(`${user?.firstName} ${user?.lastName}`)}
+              </Text>
+            </View>
+          )}
           <View className="flex-1 rounded-full bg-gray-100 px-4 py-2">
             <TextInput
               placeholder="Add a comment..."
