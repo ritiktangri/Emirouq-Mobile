@@ -76,8 +76,8 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
       <View className="flex-1 bg-white px-4 py-6">
         <Text className="mb-3 text-center text-lg font-semibold text-gray-900">Comments</Text>
 
-        <FlatList
-          data={postComments}
+        {/* <FlatList
+          data={postComments || []}
           keyExtractor={(item) => item.uuid}
           showsVerticalScrollIndicator={false}
           className="mb-2"
@@ -107,7 +107,6 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
           }}
         />
 
-        {/* Input field */}
         <View className="flex-row items-center border-t border-gray-200 bg-white py-2">
           <Image source={{ uri: user?.profileImage }} className="mr-2 h-9 w-9 rounded-full" />
           <View className="flex-1 rounded-full bg-gray-100 px-4 py-2">
@@ -130,7 +129,7 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
               <Feather name="send" size={24} color="#FF5722" />
             )}
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
     </CustomBottomSheet>
   );
