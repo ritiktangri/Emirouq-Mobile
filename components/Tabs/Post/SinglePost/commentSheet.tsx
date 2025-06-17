@@ -76,9 +76,9 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
       <View className="flex-1 bg-white px-4 py-6">
         <Text className="mb-3 text-center text-lg font-semibold text-gray-900">Comments</Text>
 
-        {/* <FlatList
+        <FlatList
           data={postComments || []}
-          keyExtractor={(item) => item.uuid}
+          keyExtractor={(item) => item?.uuid}
           showsVerticalScrollIndicator={false}
           className="mb-2"
           ListEmptyComponent={
@@ -129,7 +129,7 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
               <Feather name="send" size={24} color="#FF5722" />
             )}
           </TouchableOpacity>
-        </View> */}
+        </View>
       </View>
     </CustomBottomSheet>
   );
