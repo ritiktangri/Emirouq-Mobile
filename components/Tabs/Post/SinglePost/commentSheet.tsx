@@ -16,7 +16,9 @@ import dayjs from 'dayjs';
 import { queryClient } from '~/app/_layout';
 import { Feather } from '@expo/vector-icons';
 import { getInitials } from '~/utils/helper';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
+dayjs.extend(relativeTime);
 const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
   const addComment: any = useAddComment();
   const [newComment, setNewComment] = useState('');
@@ -77,45 +79,50 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
       showIndicator>
       <View className="flex-1 bg-white px-4 py-6">
         <Text className="mb-3 text-center text-lg font-semibold text-gray-900">Comments</Text>
-
-        <FlatList
-          data={postComments || []}
-          keyExtractor={(item) => item?.uuid}
-          showsVerticalScrollIndicator={false}
-          className="mb-2"
-          ListEmptyComponent={
-            <View className="flex h-56 items-center justify-center">
-              <Text className="text-lg text-gray-500">No Comments</Text>
-            </View>
-          }
-          renderItem={({ item }) => {
-            return (
-              <View className="mb-4 flex-row items-start gap-3">
-                {item?.user?.profileImage ? (
-                  <Image
-                    source={{ uri: item?.user?.profileImage }}
-                    className="mr-2 h-9 w-9 rounded-full"
-                  />
-                ) : (
-                  <View className="flex h-9  w-9 items-center justify-center rounded-full bg-primary">
-                    <Text className=" font-poppinsMedium text-xl text-white">
-                      {getInitials(`${item?.user?.firstName} ${item?.user?.lastName}`)}
-                    </Text>
-                  </View>
-                )}
-                <View className="flex-1">
-                  <View className="flex-row items-center justify-between gap-1">
-                    <Text className="text-sm font-medium text-gray-900">
-                      {`${item?.user?.firstName} ${item?.user?.lastName}`}
-                    </Text>
-                    <Text className="text-xs text-gray-500">{dayjs(item.createdAt).fromNow()}</Text>
-                  </View>
-                  <Text className="text-sm text-gray-800">{item?.content}</Text>
-                </View>
+        {postComments?.length > 0 ? (
+          <FlatList
+            data={postComments || []}
+            keyExtractor={(item) => item?.uuid}
+            showsVerticalScrollIndicator={false}
+            className="mb-2"
+            ListEmptyComponent={
+              <View className="flex h-56 items-center justify-center">
+                <Text className="text-lg text-gray-500">No Comments</Text>
               </View>
-            );
-          }}
-        />
+            }
+            renderItem={({ item }) => {
+              return (
+                <View className="mb-4 flex-row items-start gap-3">
+                  {item?.user?.profileImage ? (
+                    <Image
+                      source={{ uri: item?.user?.profileImage }}
+                      className="mr-2 h-9 w-9 rounded-full"
+                    />
+                  ) : (
+                    <View className="flex h-9  w-9 items-center justify-center rounded-full bg-primary">
+                      <Text className=" font-poppinsMedium text-xl text-white">
+                        {getInitials(`${item?.user?.firstName} ${item?.user?.lastName}`)}
+                      </Text>
+                    </View>
+                  )}
+                  <View className="flex-1">
+                    <View className="flex-row items-center justify-between gap-1">
+                      <Text className="text-sm font-medium text-gray-900">
+                        {`${item?.user?.firstName} ${item?.user?.lastName}`}
+                      </Text>
+                      <Text className="text-xs text-gray-500">
+                        {dayjs(item.createdAt).fromNow()}
+                      </Text>
+                    </View>
+                    <Text className="text-sm text-gray-800">{item?.content}</Text>
+                  </View>
+                </View>
+              );
+            }}
+          />
+        ) : (
+          <></>
+        )}
 
         <View className="flex-row items-center border-t border-gray-200 bg-white py-2">
           {user?.profileImage ? (
