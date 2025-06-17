@@ -24,7 +24,7 @@ import { useGlobalSearchParams, useRouter } from 'expo-router';
 const profileSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
   lastName: z.string().min(2, 'Last name must be at least 2 characters'),
-  phoneNumber: z.string().min(8, 'Phone must be at least 8 characters'),
+  phoneNumber: z.any(),
   userHandle: z.string().min(3, 'Username must be at least 3 characters'),
   email: z.string().email('Invalid email address'),
   // location: z.string().min(2, 'Location is required'),
@@ -176,7 +176,7 @@ const SetupProfile = () => {
                 style={{
                   height: '100%',
                   width: '100%',
-                  borderRadius: '50%',
+                  borderRadius: 50,
                 }}
               />
             ) : (
@@ -319,7 +319,7 @@ const SetupProfile = () => {
                   className="w-full"
                   containerClassName={`w-full rounded-lg border border-gray-200 bg-white px-4 ${Platform.OS === 'android' ? 'py-0' : 'py-3'}`}
                   onChangeText={user?.isEmail ? onChange : () => {}}
-                  value={value.toString()}
+                  value={value?.toString()}
                   placeholder={i18n.t('createProfile.phoneNumberPlaceholder')}
                   keyboardType="phone-pad"
                 />
