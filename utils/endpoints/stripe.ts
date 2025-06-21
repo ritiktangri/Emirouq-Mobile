@@ -94,6 +94,13 @@ const stripe = {
       uri: prefix + '/check-subscription/:id',
     },
   },
+  isCategorySubscribed: {
+    v1: {
+      ...defaults.methods.GET,
+      ...defaults.versions.v1,
+      uri: prefix + '/is_subscribed/:categoryId',
+    },
+  },
 };
 
 export default stripe;

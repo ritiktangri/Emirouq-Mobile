@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import { TextInput, Pressable, Image, Platform, Alert } from 'react-native';
+import { TextInput, Pressable, Image, Platform, Alert, TouchableOpacity } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,7 +19,11 @@ import { useLocale } from '~/context/LocaleContext';
 import { i18n } from '~/utils/i18n';
 import LocationInput from '~/components/UI/GooglePlaceAutocomplete';
 import { useGetSinglePosts } from '~/hooks/post/query';
-import { saveFileLocally } from '~/utils/helper';
+import { saveFileLocally, screenHeight } from '~/utils/helper';
+import { useIsSubscribedForCategory } from '~/hooks/stripe/query';
+import SubscriptionDropdownList from './dropdown';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import SubscriptionPlanList from '~/components/Stripe/subscriptionPlanList';
 
 const schema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -90,11 +94,14 @@ const AddPost = () => {
   });
   const router: any = useRouter();
   const { locale } = useLocale();
+  const refRBSheet: any = useRef();
+
   const { categories, getSubCategoryList, subCategories }: any = useCategory();
   const { user }: any = useAuth();
-  const { showToast }: any = useTheme();
   const selectedCategory = watch('category');
   const selectedSubCategory = watch('subCategory');
+  //check if user is subscribed to the selected category
+  const isSubscribed: any = useIsSubscribedForCategory(selectedCategory);
   const [isEdit, setIsEdit] = useState(false);
   const params: any = useGlobalSearchParams();
   const locationRef: any = useRef(null);
@@ -104,7 +111,7 @@ const AddPost = () => {
     if (params?.postId) {
       setIsEdit(true);
       refetch()?.then((res: any) => {
-        let singlePost = res?.data?.data;
+        const singlePost = res?.data?.data;
 
         const updatedProperties = singlePost?.properties?.map((prop: any) => ({
           ...prop,
@@ -503,9 +510,15 @@ const AddPost = () => {
         )}
       </KeyboardAwareScrollView>
       <View className=" flex-row gap-4">
-        <Pressable
+        <TouchableOpacity
           className="flex-1 flex-row items-center justify-center gap-1 rounded-lg bg-primary py-4"
           onPress={() => {
+            if (!isSubscribed?.data?.isSubscribed) {
+              if (isSubscribed?.data?.subscriptionPlan?.length === 0) {
+                return console.log('no subscription plan available');
+              }
+              return refRBSheet.current.open();
+            }
             router.push({
               pathname: routes.tabs.preview_post,
               params: {
@@ -524,8 +537,31 @@ const AddPost = () => {
             });
           }}>
           <Text className="text-base font-semibold text-white">{i18n.t('post.continue')}</Text>
-        </Pressable>
+        </TouchableOpacity>
       </View>
+      <RBSheet
+        ref={refRBSheet}
+        // useNativeDriver
+        customStyles={{
+          wrapper: {
+            backgroundColor: 'transparent',
+          },
+          draggableIcon: {
+            backgroundColor: '#000',
+          },
+        }}
+        height={screenHeight * 0.9}
+        customModalProps={{
+          animationType: 'slide',
+        }}>
+        <SubscriptionPlanList
+          categoryId={selectedCategory}
+          cb={() => {
+            refRBSheet.current.close();
+          }}
+          list={isSubscribed?.data?.subscriptionPlan || []}
+        />
+      </RBSheet>
     </View>
   );
 };

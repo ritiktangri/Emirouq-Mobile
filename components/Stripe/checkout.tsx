@@ -7,17 +7,19 @@ import { useCreateSubscription } from '~/hooks/stripe/mutation';
 import { Href, router } from 'expo-router';
 import { routes } from '~/utils/routes';
 
-export default function CheckoutScreen({ id, item }: any) {
+export default function CheckoutScreen({ id, categoryId, item, cb }: any) {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const createSubscription = useCreateSubscription();
 
   const openPaymentSheet = async (subscriptionId: any) => {
+    console.log(1);
     const { error } = await presentPaymentSheet();
     if (error?.code === 'Canceled') {
       return;
     }
     // setSubscriptionId(subscriptionId);
-    router.replace(routes.paymentSuccess(subscriptionId) as Href);
+    cb && cb();
+    // router.replace(routes.paymentSuccess(subscriptionId) as Href);
   };
   const initializePaymentSheet = async (clientSecret: any, subscriptionId: any) => {
     const { error } = await initPaymentSheet({
@@ -32,14 +34,16 @@ export default function CheckoutScreen({ id, item }: any) {
     openPaymentSheet(subscriptionId);
   };
 
-  const handlePayment = async (priceId: any) => {
+  const handlePayment = async (priceId: any, categoryId: any) => {
     createSubscription
       .mutateAsync({
         body: {
           priceId,
+          categoryId,
         },
       })
       .then(async (res: any) => {
+        console.log(res, 'res');
         initializePaymentSheet(res?.clientSecret, res?.subscriptionId);
       })
       .catch((err) => {});
@@ -49,7 +53,7 @@ export default function CheckoutScreen({ id, item }: any) {
       className="gap-32rounded-lg mt-4 flex-row items-center justify-center border-2 border-primary bg-white py-3"
       activeOpacity={0.7}
       onPress={() => {
-        handlePayment(item?.priceId);
+        handlePayment(item?.priceId, categoryId);
       }}>
       {createSubscription?.isPending ? (
         <ActivityIndicator size="small" className="!text-primary" />

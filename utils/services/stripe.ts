@@ -96,3 +96,10 @@ export const createSubscription = async ({ body }: any) => {
     body,
   });
 };
+export const isCategorySubscribed = async ({ pathParams }: any) => {
+  // Ensure uriEndPoint conforms to the expected UriEndPoint interface/type
+  return callApi({
+    uriEndPoint: { ...stripe.isCategorySubscribed.v1 } as ApiEndpoint,
+    pathParams,
+  });
+};
