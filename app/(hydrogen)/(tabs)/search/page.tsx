@@ -1,7 +1,6 @@
 import { Href, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
-import Search from '~/components/Tabs/Search';
 import { useCategory } from '~/context/CategoryContext';
 import { routes } from '~/utils/routes';
 
@@ -18,9 +17,8 @@ export default function Page() {
 
   return (
     <View className="flex-1 flex-row bg-white">
-      <Search />
       {/* Left - Category List */}
-      {/* <FlatList
+      <FlatList
         data={categories}
         keyExtractor={(item) => item?.uuid}
         renderItem={({ item }) => (
@@ -36,10 +34,10 @@ export default function Page() {
         )}
         className="w-1/3 bg-gray-100"
         showsVerticalScrollIndicator={false}
-      /> */}
+      />
 
       {/* Right - Subcategory Grid */}
-      {/* <FlatList
+      <FlatList
         data={subCategories}
         keyExtractor={(item, index) => `${item.title}-${index}`}
         renderItem={({ item }) => (
@@ -83,7 +81,7 @@ export default function Page() {
             </Text>
           </View>
         }
-      /> */}
+      />
     </View>
   );
 }
