@@ -20,9 +20,9 @@ const SubscriptionPlanList = ({ list, categoryId, cb }: any) => {
               <Text className="mb-3 text-center text-3xl font-bold text-gray-800">
                 Choose Your Subscription Plan
               </Text>
-              <Text className="mb-8 text-center text-base leading-relaxed text-gray-600">
+              {/* <Text className="mb-8 text-center text-base leading-relaxed text-gray-600">
                 Select a plan that fits your needs. Longer plans offer better value.
-              </Text>
+              </Text> */}
             </>
           )}
           className="w-full"

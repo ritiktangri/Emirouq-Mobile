@@ -28,7 +28,8 @@ import SubscriptionPlanList from '~/components/Stripe/subscriptionPlanList';
 const schema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
   category: z.string().min(1, 'Please select a category'),
-  subCategory: z.string().min(1, 'Please select a subCategory'),
+  // subCategory: z.string().min(1, 'Please select a subCategory'),
+  subCategory: z.string().optional(),
   condition: z.enum(['new', 'used']),
   price: z.string().min(1, 'Price is required'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
@@ -36,23 +37,16 @@ const schema = z.object({
   timePeriod: z.string().min(1, 'Time period is required'),
   images: z.array(
     z.object({
-      uri: z.string(),
-      assetId: z.string(),
-      fileName: z.string(),
-      fileSize: z.number(),
-      mimeType: z.string(),
-      width: z.number(),
-      height: z.number(),
-      type: z.string(),
-      duration: z.string().nullable(),
-      exif: z.string().nullable(),
-      pairedVideoAsset: z.string().nullable(),
+      uri: z.string().min(1, 'Image URI is required'),
+      uuid: z.string().min(1, 'Image UUID is required'),
+      name: z.string().min(1, 'Image name is required'),
+      type: z.string().min(1, 'Image type is required'),
     })
   ),
   properties: z.array(
     z.object({
-      name: z.string(),
-      value: z.string(),
+      name: z.string().min(1, 'Property name is required'),
+      value: z.string().min(1, 'Property value is required'),
     })
   ),
 });
@@ -68,6 +62,7 @@ const AddPost = () => {
     watch,
     setValue,
     reset,
+    handleSubmit,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -92,10 +87,11 @@ const AddPost = () => {
       ],
     },
   });
+  console.log(JSON.stringify(watch(), null, 2));
   const router: any = useRouter();
   const { locale } = useLocale();
   const refRBSheet: any = useRef();
-
+  const { showToast } = useTheme();
   const { categories, getSubCategoryList, subCategories }: any = useCategory();
   const { user }: any = useAuth();
   const selectedCategory = watch('category');
@@ -220,6 +216,35 @@ const AddPost = () => {
       }
     })();
   }, []);
+
+  const onConfirm = async (data: any) => {
+    if (!user?._id) {
+      return router.push({
+        pathname: routes.auth.auth,
+      });
+    }
+
+    if (!isSubscribed?.data?.isSubscribed) {
+      if (isSubscribed?.data?.subscriptionPlan?.length === 0) {
+        return console.log('no subscription plan available');
+      }
+      return refRBSheet.current.open();
+    }
+    router.push({
+      pathname: routes.tabs.preview_post,
+      params: {
+        headerTitle: 'post.previewAd',
+        data: JSON.stringify({
+          ...watch(),
+          categoryName: categories?.find((item: any) => item?.uuid === watch('category'))?.title,
+          subCategoryName: subCategories?.find((item: any) => item?.uuid === watch('subCategory'))
+            ?.title,
+          isEdit,
+          ...(postDetails && { uuid: postDetails?.data?.uuid }),
+        }),
+      },
+    });
+  };
   return (
     <View className="flex-1 bg-white px-4 py-6">
       <KeyboardAwareScrollView
@@ -512,13 +537,30 @@ const AddPost = () => {
       <View className=" flex-row gap-4">
         <TouchableOpacity
           className="flex-1 flex-row items-center justify-center gap-1 rounded-lg bg-primary py-4"
-          onPress={() => {
-            if (!isSubscribed?.data?.isSubscribed) {
-              if (isSubscribed?.data?.subscriptionPlan?.length === 0) {
-                return console.log('no subscription plan available');
-              }
-              return refRBSheet.current.open();
-            }
+          onPress={handleSubmit(onConfirm)}>
+          <Text className="text-base font-semibold text-white">{i18n.t('post.continue')}</Text>
+        </TouchableOpacity>
+      </View>
+      <RBSheet
+        ref={refRBSheet}
+        // useNativeDriver
+        customStyles={{
+          wrapper: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          },
+          draggableIcon: {
+            backgroundColor: '#000',
+          },
+        }}
+        height={screenHeight * 0.6}
+        customModalProps={{
+          animationType: 'fade',
+        }}>
+        <SubscriptionPlanList
+          categoryId={selectedCategory}
+          cb={() => {
+            refRBSheet.current.close();
+            showToast('Your subscription has been activated.', 'success', 1500);
             router.push({
               pathname: routes.tabs.preview_post,
               params: {
@@ -535,29 +577,6 @@ const AddPost = () => {
                 }),
               },
             });
-          }}>
-          <Text className="text-base font-semibold text-white">{i18n.t('post.continue')}</Text>
-        </TouchableOpacity>
-      </View>
-      <RBSheet
-        ref={refRBSheet}
-        // useNativeDriver
-        customStyles={{
-          wrapper: {
-            backgroundColor: 'transparent',
-          },
-          draggableIcon: {
-            backgroundColor: '#000',
-          },
-        }}
-        height={screenHeight * 0.9}
-        customModalProps={{
-          animationType: 'slide',
-        }}>
-        <SubscriptionPlanList
-          categoryId={selectedCategory}
-          cb={() => {
-            refRBSheet.current.close();
           }}
           list={isSubscribed?.data?.subscriptionPlan || []}
         />

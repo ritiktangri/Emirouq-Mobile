@@ -64,7 +64,7 @@ const Toast = (props: any, ref: any) => {
     };
     return (
       <Animated.View
-        className={`flex-row items-center gap-2 `}
+        className={`mx-2 flex-row items-center gap-2`}
         style={[
           {
             opacity: fadeAnim,

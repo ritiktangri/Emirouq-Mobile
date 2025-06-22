@@ -43,7 +43,6 @@ export default function CheckoutScreen({ id, categoryId, item, cb }: any) {
         },
       })
       .then(async (res: any) => {
-        console.log(res, 'res');
         initializePaymentSheet(res?.clientSecret, res?.subscriptionId);
       })
       .catch((err) => {});
