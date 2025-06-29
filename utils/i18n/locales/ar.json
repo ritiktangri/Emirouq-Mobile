@@ -10,8 +10,8 @@
   "home": {
     "searchPlaceHolder": "ابحث عن المنتجات أو الفئات",
     "featured_listings": "القوائم المميزة",
-    "recommended_for_you":"موصى به لك",
-    "recents":"مؤخرًا",
+    "recommended_for_you": "موصى به لك",
+    "recents": "مؤخرًا",
     "see_all": "رؤية الكل",
     "hot_deals": "العروض الساخنة",
     "view_more": "عرض المزيد",
@@ -19,14 +19,14 @@
     "unlock_card_description": "أكمل ملفك الشخصي للوصول إلى جميع ميزات السوق",
     "create_profile": "إنشاء الملف الشخصي",
     "view_plans": "عرض الخطط",
-    "filters":"المرشحات",
-    "price_range":"نطاق السعر",
-    "categories":"فئات",
-    "location":"موقع",
-    "sortBy":"فرز حسب",
-    "datePosted":"تاريخ النشر",
-    "apply_filters":"تطبيق المرشحات",
-    "reset":"إعادة ضبط",
+    "filters": "المرشحات",
+    "price_range": "نطاق السعر",
+    "categories": "فئات",
+    "location": "موقع",
+    "sortBy": "فرز حسب",
+    "datePosted": "تاريخ النشر",
+    "apply_filters": "تطبيق المرشحات",
+    "reset": "إعادة ضبط",
     "search": "بحث"
   },
   "profile": {
@@ -113,7 +113,8 @@
     "premiumPlacement": "موضع متميز",
     "confirm": "تأكيد ونشر",
     "saveDraft": "حفظ كمسودة",
-    "edit": "تعديل"
+    "edit": "تعديل",
+    "boostAd": "تعزيز إعلانك"
   },
 
   "success_page": {
@@ -164,7 +165,7 @@
       "description": "ابدأ محادثة مع مشترٍ أو بائع لرؤيتها هنا."
     }
   },
-  "notification":{
-    "title":"إشعارات"
+  "notification": {
+    "title": "إشعارات"
   }
 }

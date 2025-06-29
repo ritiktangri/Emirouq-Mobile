@@ -17,9 +17,9 @@ export async function createPostService({ body }: any) {
     multipart: true,
   });
 }
-export async function getPostService({ query, signal }: any) {
+export async function getPostService({ query, signal, key }: any) {
   return callApi({
-    uriEndPoint: { ...post.getPostList.v1 } as ApiEndpoint,
+    uriEndPoint: { ...post[key].v1 } as ApiEndpoint,
     query,
     ...(signal ? { signal } : {}),
   });

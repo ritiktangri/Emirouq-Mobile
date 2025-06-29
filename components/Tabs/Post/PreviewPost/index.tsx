@@ -188,8 +188,7 @@ const PreviewPost = () => {
           )}
 
           {/* Add any other details if needed */}
-          <View className="mt-4 w-full flex-row items-center rounded-md bg-gray-50 p-3">
-            {/* Profile Image */}
+          {/* <View className="mt-4 w-full flex-row items-center rounded-md bg-gray-50 p-3">
             <View className="mr-3 h-16 w-16 overflow-hidden rounded-full">
               <Image
                 source={{
@@ -200,7 +199,6 @@ const PreviewPost = () => {
               />
             </View>
 
-            {/* User Details */}
             <View className="flex-1">
               <Text className="text-lg font-semibold">John Doe</Text>
               <View className="flex-row items-center">
@@ -209,7 +207,6 @@ const PreviewPost = () => {
               </View>
             </View>
 
-            {/* Icons */}
             <View className="flex-row items-center gap-x-4">
               <TouchableOpacity onPress={() => {}} className="ml-2">
                 <FontAwesome name="phone" size={24} color="#6B7280" />
@@ -256,7 +253,7 @@ const PreviewPost = () => {
                 </View>
               </View>
             </TouchableOpacity>
-          </View>
+          </View> */}
 
           {/*Action buttons */}
           <View className="mt-4 flex flex-col gap-y-3">

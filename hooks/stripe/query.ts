@@ -14,12 +14,18 @@ export const useGetPlans = () =>
     refetchOnWindowFocus: false,
   });
 
-export const useFetchPaymentSheet = (id: any) =>
+export const useFetchPaymentSheet = (payload: any) =>
   useQuery({
-    queryKey: ['fetch-payment', id],
-    queryFn: () => fetchPaymentSheetService(id),
+    queryKey: [
+      'fetch-payment',
+      payload?.pathParams?.planId,
+      payload?.body?.amount,
+      payload?.body?.postId,
+      payload?.body?.isFeaturedAd,
+    ],
+    queryFn: () => fetchPaymentSheetService(payload),
     refetchOnWindowFocus: false,
-    enabled: !!id,
+    enabled: !!payload?.pathParams?.planId,
   });
 
 export const useCheckSubscription = (id: any, refetchInterval: any) =>

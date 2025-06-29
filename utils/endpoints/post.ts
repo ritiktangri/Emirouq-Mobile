@@ -2,7 +2,7 @@ import defaults from './defaults';
 
 const prefix = '/post';
 
-const post = {
+const post: any = {
   createPost: {
     v1: {
       ...defaults.methods.POST,
@@ -15,6 +15,13 @@ const post = {
       ...defaults.methods.GET,
       ...defaults.versions.v1,
       uri: `${prefix}/list`,
+    },
+  },
+  getFeaturedAds: {
+    v1: {
+      ...defaults.methods.GET,
+      ...defaults.versions.v1,
+      uri: `${prefix}/featured-ads`,
     },
   },
   getSinglePost: {

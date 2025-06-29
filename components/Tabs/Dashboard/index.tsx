@@ -31,7 +31,7 @@ const Dashboard = () => {
     loading: featuredPostLoading,
     data: featurePost,
     refetch: featurePostRefetch,
-  }: any = useGetPosts('', 'active');
+  }: any = useGetPosts('', 'active', null, 'getFeaturedAds');
   const {
     isFetching: hotDealPostFetching,
     loading: hotDealPostLoading,
@@ -66,8 +66,10 @@ const Dashboard = () => {
       // ),
       featuredPostLoading || featuredPostFetching ? (
         <FeaturedListLoading />
-      ) : (
+      ) : (featurePost?.pages.map((page: any) => page?.data).flat() || [])?.length ? (
         <Featured data={featurePost?.pages.map((page: any) => page?.data).flat() || []} />
+      ) : (
+        <></>
       ),
       recentPostLoading || recentPostFetching ? (
         <FeaturedListLoading />

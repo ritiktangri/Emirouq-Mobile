@@ -75,7 +75,7 @@ const stripe = {
   },
   fetchPaymentSheet: {
     v1: {
-      ...defaults.methods.GET,
+      ...defaults.methods.POST,
       ...defaults.versions.v1,
       uri: prefix + '/payment-sheet/:planId',
     },

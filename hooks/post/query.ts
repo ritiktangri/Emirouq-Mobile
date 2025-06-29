@@ -2,12 +2,13 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 import { getFavourite, getPostService, getSinglePostService } from '~/utils/services/post';
 
-export const useGetPosts = (keyword = '', status = '', userId = null) =>
+export const useGetPosts = (keyword = '', status = '', userId = null, key = 'getPostList') =>
   useInfiniteQuery({
-    queryKey: ['posts', keyword, status, userId],
+    queryKey: ['posts', keyword, status, userId, key],
     queryFn: ({ pageParam }) =>
       getPostService({
         query: { start: pageParam, keyword, status, userId },
+        key,
       }),
     getNextPageParam: (lastPage: any, allPages: any) => {
       const currentStart = allPages?.length * 10; // Calculate the start value for the next page

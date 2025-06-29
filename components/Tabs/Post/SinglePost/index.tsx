@@ -26,12 +26,18 @@ import { queryClient } from '~/app/_layout';
 import Loading from './loading';
 import CommentSheet from './commentSheet';
 import { useLikePost } from '~/hooks/post/mutation';
+import { useLocale } from '~/context/LocaleContext';
+import { useFetchPaymentSheet } from '~/hooks/stripe/query';
+import { initPaymentSheet, presentPaymentSheet } from '@stripe/stripe-react-native';
 
 const SinglePost = () => {
   const { id }: any = useLocalSearchParams();
   const { removeChatButton = false } = useGlobalSearchParams();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const likePost: any = useLikePost();
+  const { locale } = useLocale();
+  const [selectFeature, setSelectFeature] = useState('featured');
+
   // const [isLiked, setIsLiked] = useState(false);
   const [selectedImage, setSelectedImage] = useState({
     uri: '',
@@ -54,6 +60,62 @@ const SinglePost = () => {
     queryClient.removeQueries({ queryKey: ['singlePost', id] });
     refetch();
   }, [queryClient, refetch, id]);
+
+  const payload = {
+    pathParams: {
+      planId: data?.data?.postSubscription?.subscriptionPlan?.planId,
+    },
+    body: {
+      amount: '5.99',
+      metadata: {
+        postId: id,
+        isFeaturedAd: true,
+      },
+    },
+  };
+  const paymentSheet: any = useFetchPaymentSheet(payload);
+  const initializePaymentSheet = async () => {
+    const { paymentIntent, customer } = paymentSheet?.data;
+    console.log(paymentIntent, customer);
+    if (!paymentIntent || !customer) {
+      console.error('Payment intent or customer not found');
+      return;
+    }
+    const { error } = await initPaymentSheet({
+      merchantDisplayName: 'Emirouq',
+      customerId: customer,
+      paymentIntentClientSecret: paymentIntent,
+      // Set `allowsDelayedPaymentMethods` to true if your business can handle payment
+      //methods that complete payment after a delay, like SEPA Debit and Sofort.
+      allowsDelayedPaymentMethods: true,
+      defaultBillingDetails: {
+        name: 'Jane Doe',
+      },
+      returnURL: 'emirouq-mobile://payment-sheet',
+    });
+    if (error) {
+      console.error('Error initializing payment sheet:', error);
+      return;
+    }
+  };
+
+  const openPaymentSheet = async () => {
+    const { error } = await presentPaymentSheet();
+    if (error?.code === 'Canceled') {
+      console.log('Payment canceled');
+      return;
+    }
+    if (error) {
+      console.error('Error presenting payment sheet:', error);
+      return;
+    }
+    console.log('Payment successful');
+  };
+
+  useEffect(() => {
+    initializePaymentSheet();
+  }, []);
+
   if (isLoading) {
     return (
       <SafeAreaView className="flex-1 bg-white  ">
@@ -108,6 +170,7 @@ const SinglePost = () => {
         });
     }
   };
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1">
@@ -330,6 +393,71 @@ const SinglePost = () => {
               <Text className="text-gray-700">Warranty</Text>
             </TouchableOpacity>
           </View>
+
+          {/* Boost Ad Section */}
+          {data?.data?.subscriptionId &&
+          data?.data?.status === 'active' &&
+          !data?.data?.isFeaturedAdBoostUsed ? (
+            <View className="mt-2 gap-3 bg-boostAd_bg p-4">
+              <Text placement={locale} className="text-lg font-medium text-black">
+                {i18n.t('previewAd.boostAdHeading')}
+              </Text>
+              <TouchableOpacity
+                className=""
+                onPress={() => {
+                  if (selectFeature !== 'featured') {
+                    setSelectFeature('featured');
+                  } else {
+                    setSelectFeature('');
+                  }
+                }}>
+                <View direction={locale}>
+                  <FontAwesome
+                    name={selectFeature === 'featured' ? 'circle' : 'circle-thin'}
+                    size={20}
+                    className={selectFeature === 'featured' ? '!text-primary' : '!text-black'}
+                  />
+                  <View direction={locale} className="gap-2">
+                    <Text className="font- ml-2 font-interMedium text-base text-black">
+                      {i18n.t('previewAd.featuredAd')}
+                    </Text>
+                    <Text>-</Text>
+                    <Text className="font-poppinsMedium">{toCurrency(5.99)}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+              {/* <TouchableOpacity className="" onPress={() => setSelectFeature('premium')}>
+                <View direction={locale}>
+                  <FontAwesome
+                    name={selectFeature === 'premium' ? 'circle' : 'circle-thin'}
+                    size={20}
+                    className={selectFeature === 'premium' ? '!text-primary' : '!text-black'}
+                  />
+
+                  <View direction={locale} className="gap-2">
+                    <Text className="font- ml-2 font-interMedium text-base text-black">
+                      {i18n.t('previewAd.premiumPlacement')}
+                    </Text>
+                    <Text>-</Text>
+                    <Text className="font-poppinsMedium">{toCurrency(9.99)}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity> */}
+              {selectFeature ? (
+                <TouchableOpacity
+                  onPress={openPaymentSheet}
+                  className="mt-2 flex-row items-center justify-center rounded-lg bg-primary py-3">
+                  <Text className="font-poppinsMedium text-lg text-white">
+                    {i18n.t('previewAd.boostAd')}
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <></>
+              )}
+            </View>
+          ) : (
+            <></>
+          )}
 
           {removeChatButton === false ? (
             <>

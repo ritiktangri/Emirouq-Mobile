@@ -10,8 +10,8 @@
   "home": {
     "searchPlaceHolder": "Search products or categories",
     "featured_listings": "Featured Listings",
-    "recommended_for_you":"Recommended for you",
-    "recents":"Recents",
+    "recommended_for_you": "Recommended for you",
+    "recents": "Recents",
     "see_all": "See All",
     "hot_deals": "Hot Deals",
     "view_more": "View More",
@@ -19,16 +19,15 @@
     "unlock_card_description": "Complete your profile to access all marketplace features",
     "create_profile": "Create Profile",
     "view_plans": "View Plans",
-    "filters":"Filters",
-    "price_range":"Price Range",
-    "categories":"Categories",
-    "location":"Location",
-    "sortBy":"Sort By",
-    "datePosted":"Date Posted",
-    "apply_filters":"Apply Filters",
-    "reset":"Reset",
+    "filters": "Filters",
+    "price_range": "Price Range",
+    "categories": "Categories",
+    "location": "Location",
+    "sortBy": "Sort By",
+    "datePosted": "Date Posted",
+    "apply_filters": "Apply Filters",
+    "reset": "Reset",
     "search": "Search"
-
   },
   "profile": {
     "language": "Language",
@@ -109,7 +108,8 @@
     "premiumPlacement": "Premium Placement",
     "confirm": "Confirm & Post",
     "saveDraft": "Save as Draft",
-    "edit": "Edit"
+    "edit": "Edit",
+    "boostAd": "Boost your ad"
   },
   "success_page": {
     "title": "Successfully posted!",
@@ -158,10 +158,10 @@
       "description": "Start a conversation with a buyer or seller to see it here."
     }
   },
-  "favourites":{
-    "favourites":"Favourites"
+  "favourites": {
+    "favourites": "Favourites"
   },
-  "notification":{
-    "title":"Notifications"
+  "notification": {
+    "title": "Notifications"
   }
 }
