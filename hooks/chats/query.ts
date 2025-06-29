@@ -1,8 +1,12 @@
 /* eslint-disable import/order */
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { queryClient } from '~/app/_layout';
 
-import { getConversationService, getMessageService } from '~/utils/services/conversation';
+import {
+  getConversationService,
+  getMessageService,
+  getPostConversationService,
+} from '~/utils/services/conversation';
 
 export const saveMessageCache = async (payload: any) => {
   if (!payload?.conversationId) return;
@@ -66,6 +70,17 @@ export const useGetMessages = (conversationId: any) =>
     refetchOnMount: false, // 👈 prevents fetch on remount
     refetchOnReconnect: false, // 👈 prevents fetch on network reconnect
     enabled: !!conversationId,
+  });
+
+export const useGetPostConversation = (postId: any) =>
+  useQuery({
+    queryKey: ['postConversation', postId],
+    queryFn: () =>
+      getPostConversationService({
+        pathParams: { postId },
+      }),
+    refetchOnWindowFocus: false,
+    enabled: !!postId,
   });
 
 export const useGetConversations = (keyword = '', enabled = true) =>

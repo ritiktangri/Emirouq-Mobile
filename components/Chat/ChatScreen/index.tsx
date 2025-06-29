@@ -46,10 +46,10 @@ const ChatScreen = () => {
         conversationId: params?.conversationId,
         seenBy: [user?.uuid, params?.receiverId],
       });
+      return () => {
+        socketIo?.off('seen_message');
+      };
     }
-    return () => {
-      socketIo?.off('seen_message');
-    };
   }, [socketIo, params?.conversationId, params?.receiverId, user?.uuid]);
   const sendMessage = useCallback(
     async ({ message, attachments, audio }: any, cb: any) => {

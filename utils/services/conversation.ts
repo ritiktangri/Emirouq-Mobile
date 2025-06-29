@@ -32,6 +32,12 @@ export const getMessageService = async ({ query, pathParams }: any) => {
     pathParams,
   });
 };
+export const getPostConversationService = async ({ pathParams }: any) => {
+  return callApi({
+    uriEndPoint: { ...conversation.getPostConversation.v1 } as ApiEndpoint,
+    pathParams,
+  });
+};
 export const uploadFilesService = async ({ body, pathParams }: any) => {
   return callApi({
     uriEndPoint: { ...conversation.uploadFiles.v1 } as ApiEndpoint,

@@ -29,6 +29,7 @@ import { useLikePost } from '~/hooks/post/mutation';
 import { useLocale } from '~/context/LocaleContext';
 import { useFetchPaymentSheet } from '~/hooks/stripe/query';
 import { initPaymentSheet, presentPaymentSheet } from '@stripe/stripe-react-native';
+import { useGetPostConversation } from '~/hooks/chats/query';
 
 const SinglePost = () => {
   const { id }: any = useLocalSearchParams();
@@ -61,6 +62,8 @@ const SinglePost = () => {
     refetch();
   }, [queryClient, refetch, id]);
 
+  const getConversationId: any = useGetPostConversation(id);
+
   const payload = {
     pathParams: {
       planId: data?.data?.postSubscription?.subscriptionPlan?.planId,
@@ -76,7 +79,6 @@ const SinglePost = () => {
   const paymentSheet: any = useFetchPaymentSheet(payload);
   const initializePaymentSheet = async () => {
     const { paymentIntent, customer } = paymentSheet?.data;
-    console.log(paymentIntent, customer);
     if (!paymentIntent || !customer) {
       console.error('Payment intent or customer not found');
       return;
@@ -510,10 +512,10 @@ const SinglePost = () => {
         <TouchableOpacity
           onPress={() =>
             router.push({
-              pathname: routes.tabs.chatScreen(data?.data?.conversation?.uuid),
+              pathname: routes.tabs.chatScreen(getConversationId?.data?.conversationId),
               // : routes.tabs.chat,
               params: {
-                conversationId: data?.data?.conversation?.uuid,
+                conversationId: getConversationId?.data?.conversationId,
                 usersInConversation: [data?.data?.userId, user?.uuid],
                 // receiverId: data?.data?.userId,
                 receiverId: data?.data?.userId,
@@ -523,7 +525,7 @@ const SinglePost = () => {
                 profileImage: data?.data?.user?.profileImage,
                 uuid: data?.data?.uuid,
                 postId: data?.data?.uuid,
-                chatTitle: !!data?.data?.conversation?.uuid,
+                chatTitle: !!getConversationId?.data?.conversationId,
                 name: data?.data?.title,
                 file: data?.data?.file?.[0],
                 price: data?.data?.price,

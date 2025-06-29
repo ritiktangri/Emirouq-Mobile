@@ -14,22 +14,24 @@ const Header = ({ data, status }: any) => {
   const { socketIo, user } = useAuth();
   const currentAppState = useAppState();
   const { clearAudioCache, stop } = useAudioPlayer();
-
+  console.log(socketIo?.connected);
   useEffect(() => {
-    if (currentAppState !== 'active') {
-      socketIo?.emit('leave_conversation', {
-        conversationId: data?.conversationId,
-        userId: user?.uuid,
-      });
-      clearAudioCache(); // Clear the audio cache when the app goes to background or inactive state
+    if (socketIo?.connected) {
+      if (currentAppState !== 'active') {
+        socketIo?.emit('leave_conversation', {
+          conversationId: data?.conversationId,
+          userId: user?.uuid,
+        });
+        clearAudioCache(); // Clear the audio cache when the app goes to background or inactive state
+      }
+      return () => {
+        socketIo?.emit('leave_conversation', {
+          conversationId: data?.conversationId,
+          userId: user?.uuid,
+        });
+      };
     }
-    return () => {
-      socketIo?.emit('leave_conversation', {
-        conversationId: data?.conversationId,
-        userId: user?.uuid,
-      });
-    };
-  }, [currentAppState]);
+  }, [currentAppState, socketIo, user?.uuid, data?.conversationId]);
   useEffect(() => {
     const backAction = () => {
       clearAudioCache(); // Clear the audio cache when the app goes to background or inactive state
@@ -50,17 +52,17 @@ const Header = ({ data, status }: any) => {
     <View className="flex flex-row items-center gap-2 border-b border-gray-200 px-3 py-2 ">
       <TouchableOpacity
         onPress={async () => {
-          router.setParams({
-            conversationId: undefined,
-            userId: undefined,
-            postId: undefined,
-          });
           // here we are leaving the conversation
           socketIo?.emit('leave_conversation', {
             conversationId: data?.conversationId,
             userId: user?.uuid,
           });
           router.replace(routes.tabs.chat as Href);
+          router.setParams({
+            conversationId: undefined,
+            userId: undefined,
+            postId: undefined,
+          });
           stop(); // Stop any currently playing audio when leaving the chat
         }}>
         <Ionicons name="arrow-back-sharp" size={24} color="black" />
