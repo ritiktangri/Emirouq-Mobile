@@ -19,6 +19,7 @@ import { v4 as uuidV4 } from 'uuid';
 import ChatBubbleSkeleton from './loading';
 import { View } from '~/components/common/View';
 import { useTheme } from '~/context/ThemeContext';
+import _ from 'lodash';
 
 const ChatScreen = () => {
   const params: any = useLocalSearchParams();
@@ -33,10 +34,13 @@ const ChatScreen = () => {
   const uploadFile = useUploadFile();
   const router = useRouter();
   //here we are updating the seen message in the cache
+  console.log(params?.count, 'params?.count');
   useEffect(() => {
-    if (socketIo?.connected && params?.conversationId) {
+    //if unseen count is greater than 0 then emit the seen message
+    if (socketIo?.connected && params?.conversationId && +params?.count > 0) {
       // have to check, , who has sen the last message sender or receiver
       // and accordingly emit the seen message
+
       socketIo.emit('seen_message', {
         userId: user?.uuid,
         receiverId: params?.receiverId,
@@ -50,7 +54,7 @@ const ChatScreen = () => {
         socketIo?.off('seen_message');
       };
     }
-  }, [socketIo, params?.conversationId, params?.receiverId, user?.uuid]);
+  }, [socketIo, params?.conversationId, params?.receiverId, user?.uuid, params?.count]);
   const sendMessage = useCallback(
     async ({ message, attachments, audio }: any, cb: any) => {
       const uuid = uuidV4();

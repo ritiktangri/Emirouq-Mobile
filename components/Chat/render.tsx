@@ -45,6 +45,7 @@ const Render = ({ item }: any) => {
             price: item?.post?.price,
             post: JSON.stringify(item?.post),
             sortConversation: !!item?.chatDetails?.count,
+            count: item?.chatDetails?.count,
           },
         } as unknown as Href);
       }}
