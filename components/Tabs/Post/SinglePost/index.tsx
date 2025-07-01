@@ -30,6 +30,7 @@ import { useLocale } from '~/context/LocaleContext';
 import { useFetchPaymentSheet } from '~/hooks/stripe/query';
 import { initPaymentSheet, presentPaymentSheet } from '@stripe/stripe-react-native';
 import { useGetPostConversation } from '~/hooks/chats/query';
+import { useTheme } from '~/context/ThemeContext';
 
 const SinglePost = () => {
   const { id }: any = useLocalSearchParams();
@@ -38,7 +39,7 @@ const SinglePost = () => {
   const likePost: any = useLikePost();
   const { locale } = useLocale();
   const [selectFeature, setSelectFeature] = useState('featured');
-
+  const { showToast } = useTheme();
   // const [isLiked, setIsLiked] = useState(false);
   const [selectedImage, setSelectedImage] = useState({
     uri: '',
@@ -112,11 +113,13 @@ const SinglePost = () => {
       return;
     }
     console.log('Payment successful');
+    showToast('Payment successful', 'success');
+    queryClient.invalidateQueries({ queryKey: ['singlePost', id] });
   };
 
   useEffect(() => {
     initializePaymentSheet();
-  }, []);
+  }, [paymentSheet?.data]);
 
   if (isLoading) {
     return (
