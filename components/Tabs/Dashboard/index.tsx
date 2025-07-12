@@ -86,7 +86,7 @@ const Dashboard = () => {
       ) : (
         <Recommended data={recommendedPost?.pages.map((page: any) => page?.data).flat() || []} />
       ),
-      <UnlockFeature />,
+      // <UnlockFeature />,
     ],
     [
       category?.pages,

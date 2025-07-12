@@ -5,6 +5,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Image,
+  Alert,
 } from 'react-native';
 import React, { useState } from 'react';
 import { useAuth } from '~/context/AuthContext';
@@ -235,10 +236,27 @@ const UserProfile = () => {
 
           <TouchableOpacity
             onPress={() =>
-              logout(() => {
-                signOut();
-                queryClient.clear();
-              })
+              Alert.alert(
+                'Confirm Logout',
+                'Are you sure you want to log out?',
+                [
+                  {
+                    text: 'Cancel',
+                    style: 'cancel',
+                  },
+                  {
+                    text: 'Logout',
+                    style: 'destructive',
+                    onPress: () => {
+                      logout(() => {
+                        signOut();
+                        queryClient.clear();
+                      });
+                    },
+                  },
+                ],
+                { cancelable: true }
+              )
             }
             className="my-2 flex-row items-center justify-center gap-x-3 rounded-xl border-2 border-red-500 py-2">
             <Ionicons name="log-out" size={20} color="red" />

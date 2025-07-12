@@ -70,7 +70,7 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
     }
     setNewComment('');
   }, [newComment, postId, addComment, user]);
-  console.log(postComments);
+  console.log(postComments, 'postComments');
   return (
     <CustomBottomSheet
       visible={visible}
@@ -79,9 +79,9 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
       showIndicator>
       <View className="flex-1 bg-white px-4 py-6">
         <Text className="mb-3 text-center text-lg font-semibold text-gray-900">Comments</Text>
-        {postComments?.length > 0 ? (
+        {postComments?.length && postComments?.[0]?.user?.firstName ? (
           <FlatList
-            data={postComments || []}
+            data={postComments?.filter((ite: any) => ite?.user?.firstName) || []}
             keyExtractor={(item) => item?.uuid}
             showsVerticalScrollIndicator={false}
             className="mb-2"
@@ -121,7 +121,9 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
             }}
           />
         ) : (
-          <></>
+          <View className="flex-1 items-center justify-center">
+            <Text className="text-lg text-gray-400">Add comments!</Text>
+          </View>
         )}
 
         <View className="flex-row items-center border-t border-gray-200 bg-white py-2">

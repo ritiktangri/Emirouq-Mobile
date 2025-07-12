@@ -77,9 +77,9 @@ const ManageAds = () => {
           <Ionicons name="list-outline" size={20} color="gray" />
           <Text className="ml-2 text-gray-700">Sort by: Date</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}}>
+        {/* <TouchableOpacity onPress={() => {}}>
           <Ionicons name="filter-outline" size={20} color="gray" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <AdsList />
     </View>

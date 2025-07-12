@@ -17,8 +17,8 @@ const Profile = () => {
   const render: any = useMemo(() => {
     return {
       '0': <UserProfile />,
-      '1': <AdsDashboard />,
-      '2': <ManageAds />,
+      // '1': <AdsDashboard />,
+      '1': <ManageAds />,
     };
   }, [activeTab]);
 

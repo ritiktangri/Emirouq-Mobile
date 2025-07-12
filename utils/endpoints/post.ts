@@ -73,6 +73,13 @@ const post: any = {
       uri: `${prefix}/comment/:postId`,
     },
   },
+  getSimilarPosts: {
+    v1: {
+      ...defaults.methods.GET,
+      ...defaults.versions.v1,
+      uri: `${prefix}/:categoryId/similar`,
+    },
+  },
 };
 
 export default post;

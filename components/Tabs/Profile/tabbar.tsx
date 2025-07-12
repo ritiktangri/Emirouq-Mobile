@@ -9,11 +9,11 @@ export default function TabLayout({ activeTab, setActiveTab }: any) {
       title: i18n.t('profile.profile'),
       component: <Text>profile</Text>,
     },
-    {
-      key: 'dashboard',
-      title: i18n.t('profile.ads_dashboard'),
-      component: <Text>sddashboardsd</Text>,
-    },
+    // {
+    //   key: 'dashboard',
+    //   title: i18n.t('profile.ads_dashboard'),
+    //   component: <Text>sddashboardsd</Text>,
+    // },
     {
       key: 'manageAds',
       title: i18n.t('profile.manage_ads'),

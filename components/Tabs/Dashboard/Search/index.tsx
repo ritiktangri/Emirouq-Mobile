@@ -107,7 +107,7 @@ const Search = () => {
                 <MemoizedCategorySelector />,
                 <MemoizedLocationInput />,
                 <MemoizedSorting />,
-                <MemoizedDateSorting />,
+                // <MemoizedDateSorting />,
               ]}
               keyExtractor={(_, index) => index.toString()}
               renderItem={({ item, index }: any) => {

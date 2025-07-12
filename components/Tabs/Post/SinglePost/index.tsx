@@ -20,7 +20,7 @@ import { routes } from '~/utils/routes';
 import { useAuth } from '~/context/AuthContext';
 import dayjs from 'dayjs';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useGetSinglePosts } from '~/hooks/post/query';
+import { useGetSimilarPosts, useGetSinglePosts } from '~/hooks/post/query';
 import theme from '~/utils/theme';
 import { queryClient } from '~/app/_layout';
 import Loading from './loading';
@@ -47,10 +47,11 @@ const SinglePost = () => {
   } as any);
   const { user } = useAuth();
   const { isLoading, data, refetch }: any = useGetSinglePosts(id);
+  const { data: similarPosts }: any = useGetSimilarPosts(data?.data?.category?.uuid);
+
   useEffect(() => {
     if (data?.data?.file?.length > 0) {
       //cache update
-
       setSelectedImage({
         uri: data?.data?.file?.[0],
         index: 1,
@@ -387,7 +388,7 @@ const SinglePost = () => {
           </View>
 
           {/* Tags */}
-          <View className="mt-2 flex-row flex-wrap border-[0.2px] border-b border-t border-gray-200 px-4 pb-2 pt-4">
+          {/* <View className="mt-2 flex-row flex-wrap border-[0.2px] border-b border-t border-gray-200 px-4 pb-2 pt-4">
             <TouchableOpacity className="mb-2 mr-2 rounded-full bg-gray-200 px-3 py-1">
               <Text className="text-gray-700">Negotiable</Text>
             </TouchableOpacity>
@@ -397,7 +398,7 @@ const SinglePost = () => {
             <TouchableOpacity className="mb-2 mr-2 rounded-full bg-gray-200 px-3 py-1">
               <Text className="text-gray-700">Warranty</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
 
           {/* Boost Ad Section */}
           {data?.data?.subscriptionId &&
@@ -484,11 +485,23 @@ const SinglePost = () => {
                 </View>
 
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  {data?.data?.file?.map((uri: any, index: any) => (
-                    <TouchableOpacity key={index} className="mr-4">
+                  {similarPosts?.data?.map((uri: any, index: any) => (
+                    <TouchableOpacity
+                      key={index}
+                      className="mr-4"
+                      onPress={() => {
+                        router.push({
+                          pathname: routes.tabs.singlePost(uri?.uuid),
+                          params: {
+                            title: `${uri?.title}`,
+                          },
+                        } as Href);
+                      }}>
                       <Image
                         source={{
-                          uri,
+                          uri:
+                            uri?.file?.[0] ||
+                            'https://cdn.dribbble.com/userupload/20492562/file/original-eb6386e74bffac7624ca8ef3c9015f2b.jpg?resize=400x0',
                         }}
                         resizeMode="cover"
                         style={{
@@ -497,8 +510,8 @@ const SinglePost = () => {
                           borderRadius: 8,
                         }}
                       />
-                      <Text className="mt-1 text-gray-800">iPhone 14 Pro Max</Text>
-                      <Text className="text-gray-600">$1,099</Text>
+                      <Text className="mt-1 text-gray-800">{uri?.title}</Text>
+                      <Text className="text-gray-600">{toCurrency(uri?.price)}</Text>
                     </TouchableOpacity>
                   ))}
                 </ScrollView>

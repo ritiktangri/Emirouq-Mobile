@@ -16,17 +16,20 @@ const status: any = {
   expired: 'Expired',
 };
 
-const Render = ({ item }: any) => {
+const Render = ({ item, refetch }: any) => {
   const router = useRouter();
   const { deletePost, btnLoading }: any = usePosts();
   const { showToast }: any = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleDeletePost = () => {
+  const onDeletePost = () => {
+    if (btnLoading) return;
     deletePost(
       item?.uuid,
       () => {
         showToast('Post deleted!', 'success');
+        setModalVisible(false);
+        refetch();
       },
       (err: any) => {
         console.log('err', err);
@@ -119,27 +122,27 @@ const Render = ({ item }: any) => {
         onRequestClose={() => {
           if (!btnLoading) setModalVisible(false);
         }}>
-        <View className=" h-[40%] w-[85%] max-w-md rounded-2xl bg-white p-6 shadow-xl">
+        <View className=" absolute left-[10%] top-[40%] h-[18%] w-[85%] max-w-md rounded-2xl bg-white p-6 shadow-xl">
           <Text className="mb-2 text-xl font-bold text-gray-900">Delete Post</Text>
           <Text className="mb-6 text-gray-700">Are you sure you want to delete this post?</Text>
 
-          {btnLoading ? (
-            <ActivityIndicator size="large" color="#f00" />
-          ) : (
-            <View className="flex-row justify-end space-x-4">
-              <TouchableOpacity
-                disabled={btnLoading}
-                onPress={() => {
-                  setModalVisible(false);
-                }}>
-                <Text className="font-medium text-gray-600">Cancel</Text>
-              </TouchableOpacity>
+          <View className="flex-row items-center justify-end gap-x-4">
+            <TouchableOpacity
+              disabled={btnLoading}
+              onPress={() => {
+                setModalVisible(false);
+              }}>
+              <Text className="font-medium text-gray-600">Cancel</Text>
+            </TouchableOpacity>
 
-              <TouchableOpacity className="rounded-lg bg-red-500 px-4 py-2" onPress={() => {}}>
+            <TouchableOpacity className="rounded-lg bg-red-500 px-4 py-2" onPress={onDeletePost}>
+              {btnLoading ? (
+                <ActivityIndicator className="text-white" />
+              ) : (
                 <Text className="font-semibold text-white">Confirm</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+              )}
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
     </View>

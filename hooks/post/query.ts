@@ -1,6 +1,11 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
-import { getFavourite, getPostService, getSinglePostService } from '~/utils/services/post';
+import {
+  getFavourite,
+  getPostService,
+  getSimilarPostsService,
+  getSinglePostService,
+} from '~/utils/services/post';
 
 export const useGetPosts = (keyword = '', status = '', userId = null, key = 'getPostList') =>
   useInfiniteQuery({
@@ -52,4 +57,14 @@ export const useGetFavouritePosts = () =>
     },
     initialPageParam: 0,
     refetchOnReconnect: false,
+  });
+export const useGetSimilarPosts = (id: any) =>
+  useQuery({
+    queryKey: ['similarPosts', id],
+    queryFn: () =>
+      getSimilarPostsService({
+        pathParams: { categoryId: id },
+      }),
+    refetchOnWindowFocus: false,
+    enabled: !!id,
   });

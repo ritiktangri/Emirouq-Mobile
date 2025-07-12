@@ -37,7 +37,7 @@ const AdsList = () => {
       <FlatList
         data={data?.pages.map((page: any) => page?.data).flat() || []}
         showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => <Render item={item} />}
+        renderItem={({ item }) => <Render item={item} refetch={refetch} />}
         keyExtractor={(item) => item?.uuid?.toString()}
         contentContainerStyle={{ padding: 10 }}
         onEndReached={() => {
