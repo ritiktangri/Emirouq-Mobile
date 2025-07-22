@@ -87,7 +87,7 @@ const SocialButtons = () => {
   }, [user?.firstName]);
 
   return (
-    <View className="">
+    <View className="mx-6">
       <Modal visible={loading} transparent animationType="fade">
         <View
           className="flex-1 items-center justify-center  bg-opacity-50"

@@ -20,6 +20,7 @@ import { useTheme } from '~/context/ThemeContext';
 import Signup from './sign-up';
 import Login from './login';
 import * as WebBrowser from 'expo-web-browser';
+import SocialButtons from './social-btn';
 
 export const useWarmUpBrowser = () => {
   useEffect(() => {
@@ -68,6 +69,12 @@ const LoginComponent = () => {
                 <Text className="my-1 text-center font-poppinsMedium text-xl font-semibold dark:text-white">
                   مرحباً
                 </Text>
+              </View>
+              <SocialButtons />
+              <View className="my-6 flex-row items-center">
+                <View className="h-px flex-1 bg-gray-200" />
+                <Text className="mx-4 font-['Inter-Regular'] text-sm text-gray-500">or</Text>
+                <View className="h-px flex-1 bg-gray-200" />
               </View>
 
               <ScrollView

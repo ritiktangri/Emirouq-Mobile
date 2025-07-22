@@ -201,13 +201,6 @@ const Signup = ({ checkinType }: any) => {
         title="Create Account"
         // isLoading={signInLoading}
       />
-      <View className="my-6 flex-row items-center">
-        <View className="h-px flex-1 bg-gray-200" />
-        <Text className="mx-4 font-['Inter-Regular'] text-sm text-gray-500">or</Text>
-        <View className="h-px flex-1 bg-gray-200" />
-      </View>
-
-      <SocialButtons />
     </View>
   );
 };
