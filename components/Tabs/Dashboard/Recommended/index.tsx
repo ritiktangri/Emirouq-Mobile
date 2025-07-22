@@ -1,14 +1,16 @@
 import React from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Image } from 'react-native';
 import { Text } from '~/components/common/Text';
 import { View } from '~/components/common/View';
 import { i18n } from '~/utils/i18n';
 import Render from './render';
 import { routes } from '~/utils/routes';
 import { Href, useRouter } from 'expo-router';
+import { empty } from '~/image';
 
 const Recommended = ({ data }: any) => {
   const router = useRouter();
+
   return (
     <View className="mb-3">
       <View className="mb-3 flex-row items-center justify-between px-4">
@@ -36,6 +38,18 @@ const Recommended = ({ data }: any) => {
         contentContainerStyle={{
           margin: 12,
         }}
+        ListEmptyComponent={() => (
+          <View
+            style={{
+              height: 200,
+              width: 400,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Image source={empty} className="h-48 w-48 self-center" />
+          </View>
+        )}
       />
     </View>
   );

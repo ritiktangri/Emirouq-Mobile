@@ -10,8 +10,6 @@ import { FlatList, Modal, Platform, Text, TouchableOpacity } from 'react-native'
 import { cn } from '~/utils/helper';
 import {
   MemoizedCategorySelector,
-  MemoizedDateSorting,
-  MemoizedLocationInput,
   MemoizedPriceRangeSelector,
   MemoizedSorting,
 } from './FilterComponents/export';
@@ -22,8 +20,13 @@ import { useAuth } from '~/context/AuthContext';
 const Search = () => {
   const { locale } = useLocale();
   const [open, setOpen] = useState(false);
+  const [priceRangeValue, setPriceRangeValue] = useState([0, 0]);
+  const [categoryValue, setCategoryValue] = useState('');
+  const [sortingValue, setSortingValue] = useState('newest');
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, setPriceRange, setSelectedCategory, setSelectedSorting, keyword, setKeyword } =
+    useAuth();
+
   return (
     <View direction={locale} className="flex w-full items-center justify-between">
       <DefaultTextInput
@@ -32,6 +35,10 @@ const Search = () => {
         containerClassName={`bg-search_bg rounded-lg ${Platform.OS === 'ios' ? 'p-3' : 'px-2'}`}
         textAlign={locale === 'ar' ? 'right' : 'left'}
         placeholderTextColor={theme.colors.gray}
+        value={keyword}
+        onChangeText={(text) => {
+          setKeyword(text);
+        }}
         className={`${user?.uuid ? 'w-[62%]' : 'w-[85%]'} px-4 text-lg ${Platform.OS == 'android' ? 'h-12' : ''}`}
       />
       <TouchableOpacity
@@ -76,7 +83,7 @@ const Search = () => {
         onDismiss={() => setOpen(open)}
         onRequestClose={() => setOpen(open)}>
         <View className="flex-1 justify-end bg-[rgba(0,0,0,0.5)]">
-          <View className="h-[80%] rounded-tl-xl rounded-tr-xl  bg-white pl-3 dark:bg-dashboard_card">
+          <View className="h-[60%] rounded-tl-xl rounded-tr-xl  bg-white pl-3 dark:bg-dashboard_card">
             <FlatList
               onEndReachedThreshold={0.3}
               showsVerticalScrollIndicator={false}
@@ -103,10 +110,13 @@ const Search = () => {
                 </View>
               )}
               data={[
-                <MemoizedPriceRangeSelector />,
-                <MemoizedCategorySelector />,
-                <MemoizedLocationInput />,
-                <MemoizedSorting />,
+                <MemoizedPriceRangeSelector
+                  value={priceRangeValue}
+                  onChange={setPriceRangeValue}
+                />,
+                <MemoizedCategorySelector value={categoryValue} onChange={setCategoryValue} />,
+                // <MemoizedLocationInput />,
+                <MemoizedSorting value={sortingValue} onChange={setSortingValue} />,
                 // <MemoizedDateSorting />,
               ]}
               keyExtractor={(_, index) => index.toString()}
@@ -117,7 +127,11 @@ const Search = () => {
             />
             <View className="mb-10 flex w-full flex-row justify-center gap-x-4 p-5">
               <TouchableOpacity
-                onPress={() => {}}
+                onPress={() => {
+                  setPriceRangeValue([0, 0]);
+                  setCategoryValue('');
+                  setSortingValue('newest');
+                }}
                 className={cn(
                   'flex-1 rounded-md   bg-[#E3EAF31F] py-3',
                   'border border-gray-400 dark:border-0'
@@ -128,6 +142,9 @@ const Search = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
+                  setPriceRange(priceRangeValue);
+                  setSelectedCategory(categoryValue);
+                  setSelectedSorting(sortingValue);
                   setOpen(false);
                 }}
                 className="flex-1 rounded-md bg-primary py-3">

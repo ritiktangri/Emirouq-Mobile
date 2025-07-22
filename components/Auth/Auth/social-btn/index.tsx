@@ -1,9 +1,18 @@
 /* eslint-disable import/order */
-import { View, Text, TouchableOpacity, Platform, ActivityIndicator, Modal } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Platform,
+  ActivityIndicator,
+  Modal,
+  Alert,
+  BackHandler,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { AntDesign } from '@expo/vector-icons';
 import { useWamUpBrowser } from '~/hooks/useWarmUpBrowser';
-import { useAuth as ClerkUseAuth, useOAuth, useSSO, useUser } from '@clerk/clerk-expo';
+import { useAuth as ClerkUseAuth, useSSO, useUser } from '@clerk/clerk-expo';
 import { useOAuthLogin } from '~/hooks/auth/mutation';
 import { setStorageItemAsync } from '~/hooks/useStorageState';
 import { useAuth } from '~/context/AuthContext';
@@ -11,7 +20,6 @@ import { useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import { useTheme } from '~/context/ThemeContext';
 import * as AuthSession from 'expo-auth-session';
-import { cn } from '~/utils/helper';
 const SocialButtons = () => {
   useWamUpBrowser();
 
@@ -28,10 +36,11 @@ const SocialButtons = () => {
       const { createdSessionId, setActive } = await startSSOFlow({
         strategy,
         // Defaults to current path
-        redirectUrl: AuthSession.makeRedirectUri(),
+        // redirectUrl: AuthSession.makeRedirectUri(),
       });
 
       if (createdSessionId) {
+        setLoading(true);
         setActive!({ session: createdSessionId });
       } else {
         // Use signIn or signUp for next steps such as MFA
@@ -85,7 +94,18 @@ const SocialButtons = () => {
         });
     }
   }, [user?.firstName]);
+  useEffect(() => {
+    const backAction = () => {
+      if (loading) {
+        return true; // Prevent back action
+      }
+      return false; // Allow back action
+    };
 
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    return () => backHandler.remove();
+  }, [loading]);
   return (
     <View className="mx-6">
       <Modal visible={loading} transparent animationType="fade">

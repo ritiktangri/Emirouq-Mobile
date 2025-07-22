@@ -37,6 +37,8 @@ const english = require('./assets/select-language/en.png');
 //lottify
 const audioRecorder = require('./assets/lottify/audio-recorder.json');
 const uploadingFiles = require('./assets/lottify/uploading-files.json');
+
+const empty = require('./assets/empty.png');
 export {
   //login
   splash_background,
@@ -69,4 +71,6 @@ export {
   //lottify
   audioRecorder,
   uploadingFiles,
+  //empty state
+  empty,
 };

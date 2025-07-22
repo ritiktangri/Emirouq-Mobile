@@ -7,12 +7,28 @@ import {
   getSinglePostService,
 } from '~/utils/services/post';
 
-export const useGetPosts = (keyword = '', status = '', userId = null, key = 'getPostList') =>
+export const useGetPosts = (
+  keyword = '',
+  status = '',
+  userId = null,
+  key = 'getPostList',
+  priceRange = null,
+  category = null,
+  sortBy = ''
+) =>
   useInfiniteQuery({
-    queryKey: ['posts', keyword, status, userId, key],
+    queryKey: ['posts', keyword, status, userId, key, priceRange, category, sortBy],
     queryFn: ({ pageParam }) =>
       getPostService({
-        query: { start: pageParam, keyword, status, userId },
+        query: {
+          start: pageParam,
+          keyword,
+          status,
+          userId,
+          priceRange,
+          category,
+          sortBy,
+        },
         key,
       }),
     getNextPageParam: (lastPage: any, allPages: any) => {

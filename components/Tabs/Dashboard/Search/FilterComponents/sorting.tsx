@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import { useAuth } from '~/context/AuthContext';
 import { i18n } from '~/utils/i18n';
 // No need to import `styled` if you're using className directly with NativeWind v4+
 
@@ -7,14 +8,12 @@ const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest First' },
   { value: 'price_asc', label: 'Price: Low to High' },
   { value: 'price_desc', label: 'Price: High to Low' },
-  { value: 'relevant', label: 'Most Relevant' },
+  // { value: 'relevant', label: 'Most Relevant' },
 ];
 
-const SortByOptions = ({ initialSelection = 'newest' }) => {
-  const [selectedOption, setSelectedOption] = useState(initialSelection);
-
+const SortByOptions = ({ value, onChange }: any) => {
   const handleSelect = (value: any) => {
-    setSelectedOption(value);
+    onChange(value);
   };
 
   return (
@@ -28,11 +27,9 @@ const SortByOptions = ({ initialSelection = 'newest' }) => {
           activeOpacity={0.7}>
           <View
             className={`mr-3 flex h-6 w-6 items-center justify-center rounded-full border-2 ${
-              selectedOption === option.value ? 'border-orange-500' : 'border-gray-300'
+              value === option.value ? 'border-orange-500' : 'border-gray-300'
             }`}>
-            {selectedOption === option.value && (
-              <View className="h-3 w-3 rounded-full bg-orange-500" />
-            )}
+            {value === option.value && <View className="h-3 w-3 rounded-full bg-orange-500" />}
           </View>
 
           <Text className="flex-1 text-base text-gray-700">{option.label}</Text>

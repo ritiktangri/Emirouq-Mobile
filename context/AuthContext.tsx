@@ -94,6 +94,10 @@ const AuthProvider = ({ children }: any) => {
   // ** Hooks
   const router = useRouter();
 
+  const [priceRange, setPriceRange] = useState([0, 0]);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedSorting, setSelectedSorting] = useState('newest');
+  const [keyword, setKeyword] = useState('');
   const getActiveAccount = async (response: any) => {
     const allAccountList = [...response?.accounts];
     let activeAccountsList: any = {};
@@ -193,6 +197,10 @@ const AuthProvider = ({ children }: any) => {
     setUser(null);
     socketIo?.disconnect();
     setActiveAccount([]);
+    setUser(null);
+    setPriceRange([0, 0]);
+    setSelectedCategory('');
+    setSelectedSorting('newest');
     await Promise.all([
       removeStorageItemAsync(storageTokenKeyName),
       removeStorageItemAsync('activeAccount'),
@@ -432,6 +440,14 @@ const AuthProvider = ({ children }: any) => {
     checkSubscription,
     setOnlineUsers,
     onlineUsers,
+    priceRange,
+    setPriceRange,
+    selectedCategory,
+    setSelectedCategory,
+    selectedSorting,
+    setSelectedSorting,
+    setKeyword,
+    keyword,
   };
 
   return <AuthContext.Provider value={values as any}>{children}</AuthContext.Provider>;

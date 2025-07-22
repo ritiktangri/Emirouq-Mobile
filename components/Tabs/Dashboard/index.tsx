@@ -5,7 +5,6 @@ import { View, FlatList, RefreshControl } from 'react-native';
 import Featured from './Featured';
 import HotDeals from './HotDeals';
 import Search from './Search';
-import UnlockFeature from './UnlockFeature';
 import { useGetCategory } from '~/hooks/category/query';
 import { useGetPosts } from '~/hooks/post/query';
 import theme from '~/utils/theme';
@@ -13,8 +12,10 @@ import { queryClient } from '~/app/_layout';
 import FeaturedListLoading from './Featured/loading';
 import Recent from './Recent';
 import Recommended from './Recommended';
+import { useAuth } from '~/context/AuthContext';
 
 const Dashboard = () => {
+  const { priceRange, selectedCategory, selectedSorting, keyword } = useAuth();
   const {
     isLoading: categoryLoading,
     data: category,
@@ -25,25 +26,57 @@ const Dashboard = () => {
     loading: recentPostLoading,
     data: recentPost,
     refetch: recentPostRefetch,
-  }: any = useGetPosts('', 'active');
+  }: any = useGetPosts(
+    keyword,
+    'active',
+    null,
+    'getPostList',
+    priceRange,
+    selectedCategory,
+    'newest'
+  );
   const {
     isFetching: featuredPostFetching,
     loading: featuredPostLoading,
     data: featurePost,
     refetch: featurePostRefetch,
-  }: any = useGetPosts('', 'active', null, 'getFeaturedAds');
+  }: any = useGetPosts(
+    keyword,
+    'active',
+    null,
+    'getFeaturedAds',
+    priceRange,
+    selectedCategory,
+    selectedSorting
+  );
   const {
     isFetching: hotDealPostFetching,
     loading: hotDealPostLoading,
     data: hotDealPost,
     refetch: hotDealRefetch,
-  }: any = useGetPosts('', 'active');
+  }: any = useGetPosts(
+    keyword,
+    'active',
+    null,
+    'getPostList',
+    priceRange,
+    selectedCategory,
+    selectedSorting
+  );
   const {
     isFetching: recommendedPostFetching,
     loading: recommendedPostLoading,
     data: recommendedPost,
     refetch: recommendedPostRefetch,
-  }: any = useGetPosts('', 'active');
+  }: any = useGetPosts(
+    keyword,
+    'active',
+    null,
+    'getPostList',
+    priceRange,
+    selectedCategory,
+    selectedSorting
+  );
   const handleRefresh = useCallback(() => {
     queryClient.removeQueries({ queryKey: ['posts', ''] });
     queryClient.removeQueries({ queryKey: ['category'] });
