@@ -101,9 +101,9 @@ const Header = ({ data, status }: any) => {
           )}
         </View>
       </View>
-      <TouchableOpacity>
+      {/* <TouchableOpacity>
         <Ionicons name="ellipsis-vertical" size={24} color="black" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };

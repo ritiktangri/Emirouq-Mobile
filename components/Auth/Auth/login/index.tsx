@@ -112,14 +112,14 @@ const Login = ({ checkinType }: any) => {
           scrollViewRef.current?.scrollTo({ y: 150, animated: true }); // Adjust 150 as needed
         }}
       />
-      <View className="mt-4 flex-row items-center justify-between">
-        <TouchableOpacity className="flex-row items-start" onPress={() => setAgreed(!agreed)}>
+      <View className="mt-4 flex-row items-center justify-end">
+        {/* <TouchableOpacity className="flex-row items-start" onPress={() => setAgreed(!agreed)}>
           <View
             className={`mr-3 h-5 w-5 items-center justify-center rounded border-2 ${agreed ? 'bg-primary-600 border-primary-600' : 'border-gray-300'}`}>
             {agreed && <View className="h-3 w-3 rounded-sm bg-white" />}
           </View>
           <Text className="font-['Inter-Regular'] text-sm text-gray-600">Remember me</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity
           onPress={() => {
             router.push(routes.auth.forgot_pwd);
