@@ -17,13 +17,14 @@ export default function PriceRangeSlider({ value, onChange }: any) {
       <View className="h-8 w-full justify-center">
         <Slider
           minimumValue={0}
-          maximumValue={200}
-          step={1}
-          value={value?.[1]}
+          maximumValue={9999}
+          step={50}
+          value={value[1]}
           onValueChange={(val) => {
-            debounce(() => {
-              onChange([value[0], val]);
-            }, 300)();
+            // onChange([value[0], val]); // updates global state immediately
+          }}
+          onSlidingComplete={(val) => {
+            onChange([0, val]); // updates global state only once
           }}
           minimumTrackTintColor="#F97316"
           maximumTrackTintColor="#E5E7EB"

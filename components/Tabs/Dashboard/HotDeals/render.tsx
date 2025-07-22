@@ -1,6 +1,6 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import React from 'react';
-import { Feather } from '@expo/vector-icons';
+import { Entypo, Feather } from '@expo/vector-icons';
 import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 
@@ -19,17 +19,17 @@ const Render = ({ item }: any) => {
       }}>
       <Image source={{ uri: item?.file?.[0] }} className="h-44 w-full" resizeMode="cover" />
       <View className="p-4">
-        <Text className="mb-1 text-lg font-semibold text-gray-900">{item?.title}</Text>
-        <View className="mb-2 flex-row items-center space-x-2">
-          <Text className="text-lg font-bold text-red-500">${Number(item?.price) - 10}</Text>
-          <Text className="text-base text-gray-400 line-through">${item?.price || 0}</Text>
-          <View className="rounded-md bg-red-100 px-2 py-0.5">
-            <Text className="text-xs font-semibold text-red-500">- 12%</Text>
+        <View className="mb-1 flex-row items-center justify-between">
+          <Text className="text-md w-[75%] font-semibold text-gray-900">{item?.title}</Text>
+          <View className="rounded-full bg-orange-100 px-2 py-0.5">
+            <Text className="text-xs font-semibold text-orange-500">Featured</Text>
           </View>
         </View>
+        <Text className="mb-2 text-base font-bold text-orange-500">${item?.price || 0}</Text>
+
         <View className="flex-row items-center">
-          <Feather name="clock" size={16} color="#6b7280" />
-          <Text className="ml-1 text-sm text-gray-500">Ends in 2d</Text>
+          <Entypo name="location-pin" size={16} color="#6b7280" />
+          <Text className="ml-1 text-sm text-gray-500">{item?.location?.name || 'N/A'}</Text>
         </View>
       </View>
     </TouchableOpacity>
