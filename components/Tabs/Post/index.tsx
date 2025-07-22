@@ -34,7 +34,7 @@ const schema = z.object({
   price: z.string().min(1, 'Price is required'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
   location: z.any(),
-  timePeriod: z.string().min(1, 'Time period is required'),
+  timePeriod: z.any().optional(),
   images: z.array(
     z.object({
       uri: z.string().min(1, 'Image URI is required'),
@@ -73,17 +73,17 @@ const AddPost = () => {
       price: '',
       description: '',
       location: '',
-      timePeriod: '',
+      timePeriod: '7 days',
       images: [],
       properties: [
-        { name: 'Brand', value: '1' },
-        { name: 'Model', value: '1' },
-        { name: 'Condition', value: '1' },
-        { name: 'Operating System', value: '1' },
-        { name: 'Screen Size', value: '1' },
-        { name: 'Storage', value: '1' },
-        { name: 'Network Type', value: '1' },
-        { name: 'Seller Contact Info', value: '1' },
+        // { name: 'Brand', value: '1' },
+        // { name: 'Model', value: '1' },
+        // { name: 'Condition', value: '1' },
+        // { name: 'Operating System', value: '1' },
+        // { name: 'Screen Size', value: '1' },
+        // { name: 'Storage', value: '1' },
+        // { name: 'Network Type', value: '1' },
+        // { name: 'Seller Contact Info', value: '1' },
       ],
     },
   });
@@ -121,7 +121,7 @@ const AddPost = () => {
           condition: singlePost?.condition || '',
           price: singlePost?.price?.toString() || '',
           description: singlePost?.description || '',
-          timePeriod: singlePost?.timePeriod || '',
+          timePeriod: '7 days',
           images: singlePost?.file?.map((val: any) => ({ uri: val })) || [],
           location: {
             name: singlePost?.location?.name || '',
@@ -492,7 +492,7 @@ const AddPost = () => {
             <Text className="mt-1 text-sm text-red-500">{errors.location.message}</Text>
           )}
         </View> */}
-
+        {/* 
         <View className="mb-6">
           <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
             {i18n.t('post.timePeriod')}
@@ -517,7 +517,7 @@ const AddPost = () => {
           {errors.timePeriod && (
             <Text className="mt-1 text-sm text-red-500">{errors.timePeriod.message}</Text>
           )}
-        </View>
+        </View> */}
         {watch('properties')?.length > 0 && (
           <View className="mb-6">
             {watch('properties')?.map((prop: any, index: number) => (

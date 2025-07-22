@@ -465,7 +465,7 @@ const SinglePost = () => {
             <></>
           )}
 
-          {removeChatButton === false ? (
+          {removeChatButton === false && similarPosts?.data?.length > 0 ? (
             <>
               {/* Similar Products */}
               <View className="p-4">
