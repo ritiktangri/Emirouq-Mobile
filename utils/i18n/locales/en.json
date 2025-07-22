@@ -2,7 +2,7 @@
   "hello": "hello %{name}!",
   "tab": {
     "home": "Home",
-    "search": "Categories",
+    "search": "Category",
     "post": "Post",
     "chat": "Chat",
     "profile": "Profile"

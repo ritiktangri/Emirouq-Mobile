@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { i18n } from '~/utils/i18n';
+import { debounce } from 'lodash';
 
 export default function PriceRangeSlider({ value, onChange }: any) {
   return (
@@ -19,7 +20,11 @@ export default function PriceRangeSlider({ value, onChange }: any) {
           maximumValue={200}
           step={1}
           value={value?.[1]}
-          onValueChange={(val) => onChange([0, val])}
+          onValueChange={(val) => {
+            debounce(() => {
+              onChange([value[0], val]);
+            }, 300)();
+          }}
           minimumTrackTintColor="#F97316"
           maximumTrackTintColor="#E5E7EB"
           thumbTintColor="#F97316"
