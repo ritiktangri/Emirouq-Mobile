@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
-import React, { forwardRef, useRef, useState } from 'react';
-import { Alert, Pressable } from 'react-native';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import { Alert, Linking, Platform, Pressable, Animated as RNAnimated, View } from 'react-native';
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 import { useTheme } from '~/context/ThemeContext';
@@ -11,13 +11,48 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
+import CustomTooltip from '~/components/CustomTooltip';
+import { Text } from '~/components/common/Text';
 
 const MAX_DURATION = 10; // seconds
 const MIN_RECORDING_DURATION = 2000;
 
+const requestMicPermission = async () => {
+  const permission = await Audio.requestPermissionsAsync();
+
+  if (!permission.granted) {
+    if (permission.status === 'denied') {
+      Alert.alert(
+        'Permission Required',
+        'Microphone permission is required. Please enable it from app settings.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Open Settings',
+            onPress: () => {
+              if (Platform.OS === 'ios') {
+                Linking.openURL('app-settings:');
+              } else {
+                Linking.openSettings();
+              }
+            },
+          },
+        ]
+      );
+    }
+    return false;
+  }
+
+  return true;
+};
 const AudioRecorder = forwardRef(({ onRecordingComplete, audio }: any, ref: any) => {
   // ref is currentlyPlayingRef
-
+  useEffect(() => {
+    requestMicPermission();
+  }, []);
   const [recording, setRecording] = useState(false);
 
   // const [recording, setRecording] = useState(null);
@@ -27,6 +62,24 @@ const AudioRecorder = forwardRef(({ onRecordingComplete, audio }: any, ref: any)
   const pressStartTime: any = useRef(null);
   const durationRef: any = useRef(0);
   const intervalIdRef: any = useRef(null);
+  const [visible, setVisible] = useState(false);
+  const toolTipScale = useRef(new RNAnimated.Value(0)).current;
+
+  const showTooltip = () => {
+    setVisible(true);
+    RNAnimated.spring(toolTipScale, {
+      toValue: 1,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const hideTooltip = () => {
+    RNAnimated.timing(toolTipScale, {
+      toValue: 0,
+      duration: 150,
+      useNativeDriver: true,
+    }).start(() => setVisible(false));
+  };
 
   const startRecording = async () => {
     if (ref.current) {
@@ -51,11 +104,8 @@ const AudioRecorder = forwardRef(({ onRecordingComplete, audio }: any, ref: any)
     }
 
     try {
-      const permission = await Audio.requestPermissionsAsync();
-      if (permission.status !== 'granted') {
-        Alert.alert('Permission Required', 'Microphone permission is required.');
-        return;
-      }
+      setRecording(true);
+
       showToast(`Recording`, 'info', 10000);
 
       await Audio.setAudioModeAsync({
@@ -88,7 +138,6 @@ const AudioRecorder = forwardRef(({ onRecordingComplete, audio }: any, ref: any)
       //     linearPCMIsFloat: false,
       //   },
       // };
-      setRecording(true);
       // const { recording }: any = await Audio.Recording.createAsync(recordingOptions);
       const { recording }: any = await Audio.Recording.createAsync(
         Audio.RecordingOptionsPresets.HIGH_QUALITY
@@ -167,10 +216,12 @@ const AudioRecorder = forwardRef(({ onRecordingComplete, audio }: any, ref: any)
   }));
 
   const handlePressIn = () => {
+    showTooltip();
     scale.value = withTiming(1.4, { duration: 150 });
   };
 
   const handlePressOut = () => {
+    hideTooltip();
     scale.value = withSpring(1, {
       damping: 5,
       stiffness: 150,
@@ -205,6 +256,11 @@ const AudioRecorder = forwardRef(({ onRecordingComplete, audio }: any, ref: any)
         className="h-10 w-10  items-center justify-center rounded-full  bg-primary">
         <Ionicons name="mic" className="!text-3xl !text-white" />
       </Animated.View>
+      {visible && (
+        <Animated.View className="absolute -left-48 bottom-14 z-50 w-64  rounded-md bg-gray-300 px-3 py-2">
+          <Text className="text-sm text-black">Hold to record, release to send</Text>
+        </Animated.View>
+      )}
     </Pressable>
   );
 });

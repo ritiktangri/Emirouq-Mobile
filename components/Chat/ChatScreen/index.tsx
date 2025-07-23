@@ -151,6 +151,10 @@ const ChatScreen = () => {
     if (params?.conversationId) {
       return;
     }
+    if (!params?.postId) {
+      console.warn('No postId provided, cannot create conversation.');
+      return;
+    }
     try {
       // Check if the conversation already exists
       const res: any = await createConversation.mutateAsync({

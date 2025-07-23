@@ -39,6 +39,7 @@ const Render = ({ item }: any) => {
             profileImage: item?.receiver?.profileImage,
             receiverId: item?.receiver?.uuid,
             uuid: item?.post?.uuid,
+            postId: item?.post?.uuid,
             chatTitle: true,
             name: item?.post?.title,
             file: item?.post?.file?.[0],

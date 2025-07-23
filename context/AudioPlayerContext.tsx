@@ -9,12 +9,12 @@ type AudioPlayerContextType = {
   loadAudio: (audioSrc: string) => Promise<{ sound: Audio.Sound }>;
   currentlyPlayingRef: React.MutableRefObject<any>;
   progress?: number;
-  setProgress?: React.Dispatch<React.SetStateAction<number>>;
   audioCacheRef: React.MutableRefObject<Map<string, Audio.Sound>>;
   currentAudio?: any;
   setCurrentAudio: React.Dispatch<React.SetStateAction<any>>;
   downloadAndCacheAudio: (remoteUrl: string) => Promise<string>;
   clearAudioCache: () => void;
+  setProgress?: any;
 };
 
 const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(undefined);
@@ -30,7 +30,7 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
     if (currentlyPlayingRef.current) {
       await Promise.all([
         currentlyPlayingRef.current.stopAsync(),
-        currentlyPlayingRef.current.unloadAsync(), // cleanup
+        // currentlyPlayingRef.current.unloadAsync(), // cleanup
       ]);
       currentlyPlayingRef.current = null;
       setProgress(0);
