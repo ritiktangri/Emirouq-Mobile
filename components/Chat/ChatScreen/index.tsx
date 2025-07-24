@@ -116,6 +116,7 @@ const ChatScreen = () => {
               type: 'image',
               attachments: res?.attachments,
               audio: res?.audio,
+              senderName: user?.fullName,
             });
           })
           .catch((error: any) => {
@@ -140,6 +141,7 @@ const ChatScreen = () => {
           senderId: user?.uuid,
           // this is to check if the user is the sender or receiver
           receiverId: params?.receiverId,
+          senderName: user?.fullName,
         });
         cb();
       }

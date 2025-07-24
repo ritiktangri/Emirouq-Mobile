@@ -18,6 +18,13 @@ export const getUserDetails = async (id: any) => {
     pathParams: { id },
   });
 };
+export const saveNotificationToken = async ({ body }: any) =>
+  callApi({
+    uriEndPoint: {
+      ...user.saveNotificationToken.v1,
+    } as ApiEndpoint,
+    body,
+  });
 export const updateProfileService = async ({ body }: any) => {
   return callApi({
     uriEndPoint: { ...user.updateProfile.v1 } as ApiEndpoint,

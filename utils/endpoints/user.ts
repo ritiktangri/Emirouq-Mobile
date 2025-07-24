@@ -15,6 +15,13 @@ const user = {
       uri: '/user/:id',
     },
   },
+  saveNotificationToken: {
+    v1: {
+      ...defaults.methods.PUT,
+      ...defaults.versions.v1,
+      uri: '/user/save-notification-token',
+    },
+  },
   updateProfile: {
     v1: {
       ...defaults.methods.PUT,

@@ -9,7 +9,7 @@ import {
   Alert,
   BackHandler,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { AntDesign } from '@expo/vector-icons';
 import { useWamUpBrowser } from '~/hooks/useWarmUpBrowser';
 import { useAuth as ClerkUseAuth, useSSO, useUser } from '@clerk/clerk-expo';
@@ -20,6 +20,11 @@ import { useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import { useTheme } from '~/context/ThemeContext';
 import * as AuthSession from 'expo-auth-session';
+
+const redirectUri = AuthSession.makeRedirectUri({
+  scheme: 'emirouq-mobile',
+  path: 'redirect',
+});
 const SocialButtons = () => {
   useWamUpBrowser();
 
@@ -31,19 +36,19 @@ const SocialButtons = () => {
   const router = useRouter();
   const { user }: any = useUser();
   const oAuthLogin = useOAuthLogin();
-  const onPress = React.useCallback(async (strategy: any) => {
+  const [pendingOAuthLogin, setPendingOAuthLogin] = useState(false);
+
+  const onPress = useCallback(async (strategy: any) => {
     try {
       const { createdSessionId, setActive } = await startSSOFlow({
         strategy,
-        // Defaults to current path
-        // redirectUrl: AuthSession.makeRedirectUri(),
+        redirectUrl: redirectUri,
       });
 
       if (createdSessionId) {
         setLoading(true);
-        setActive!({ session: createdSessionId });
-      } else {
-        // Use signIn or signUp for next steps such as MFA
+        await setActive!({ session: createdSessionId });
+        setPendingOAuthLogin(true); // Now wait for `user` + this flag
       }
     } catch (err) {
       console.error('OAuth error', err);
@@ -55,24 +60,64 @@ const SocialButtons = () => {
     from_oauth_apple: 'apple',
   };
 
+  // useEffect(() => {
+  //   if (user?.firstName) {
+  //     const oauthId = user?.externalAccounts?.[0]?.provider;
+  //     const payload = {
+  //       firstName: user?.firstName,
+  //       lastName: user?.lastName,
+  //       fullName: user?.fullName,
+  //       email: user?.primaryEmailAddress?.emailAddress,
+  //       profileImage: user?.imageUrl,
+  //       oauthId,
+  //     };
+
+  //     setLoading(true);
+
+  //     oAuthLogin
+  //       .mutateAsync({ body: payload })
+  //       .then(async (res: any) => {
+  //         await setStorageItemAsync('accessToken', res?.accessToken);
+
+  //         getUser(() => {
+  //           if (!res?.newUser) {
+  //             router.replace(routes.tabs.profile?.profile as any);
+  //           } else {
+  //             router.replace(routes.tabs.home as any);
+  //           }
+  //           showToast('Login successful', 'success');
+  //           setLoading(false);
+  //         });
+  //       })
+  //       .catch((err) => {
+  //         console.log('OAuthLogin error:', err);
+  //         if (err.status === 500) {
+  //           showToast('User already exists!', 'error');
+  //         } else {
+  //           showToast(err?.message, 'error');
+  //         }
+  //         signOut();
+  //         setLoading(false);
+  //       });
+  //   }
+  // }, [user?.firstName]);
+
   useEffect(() => {
-    if (user?.firstName) {
+    if (pendingOAuthLogin && user?.primaryEmailAddress?.emailAddress) {
+      const oauthId = user?.externalAccounts?.[0]?.provider;
       const payload = {
         firstName: user?.firstName,
         lastName: user?.lastName,
         fullName: user?.fullName,
         email: user?.primaryEmailAddress?.emailAddress,
         profileImage: user?.imageUrl,
-        oauthId: verifications?.[user?.primaryEmailAddress?.verification?.strategy],
+        oauthId,
       };
-      setLoading(true);
+
       oAuthLogin
-        .mutateAsync({
-          body: payload,
-        })
+        .mutateAsync({ body: payload })
         .then(async (res: any) => {
           await setStorageItemAsync('accessToken', res?.accessToken);
-          console.log(res?.newUser, 'res?.newUser');
           getUser(() => {
             if (!res?.newUser) {
               router.replace(routes.tabs.profile?.profile as any);
@@ -81,19 +126,19 @@ const SocialButtons = () => {
             }
             showToast('Login successful', 'success');
             setLoading(false);
+            setPendingOAuthLogin(false); // ✅ Clear flag
           });
         })
         .catch((err) => {
-          if (err.status === 500) {
-            showToast('User already exists!', 'error');
-          } else {
-            showToast(err?.message, 'error');
-          }
+          console.log('OAuthLogin error:', err);
+          showToast(err?.message || 'Login failed', 'error');
           signOut();
           setLoading(false);
+          setPendingOAuthLogin(false); // ✅ Clear flag
         });
     }
-  }, [user?.firstName]);
+  }, [pendingOAuthLogin, user]);
+
   useEffect(() => {
     const backAction = () => {
       if (loading) {

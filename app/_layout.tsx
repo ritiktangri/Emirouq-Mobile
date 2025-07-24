@@ -10,7 +10,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider as CustomThemeProvider } from '~/context/ThemeContext';
 import { interMedium, poppinsBlack, poppinsBold, poppinsMedium, poppinsSemiBold } from '~/font';
 import { useFonts } from 'expo-font';
-import { AuthProvider } from '~/context/AuthContext';
+import { AuthProvider, useAuth } from '~/context/AuthContext';
 import { hideAsync, preventAutoHideAsync } from 'expo-splash-screen';
 import { Host } from 'react-native-portalize';
 import { PaperProvider } from 'react-native-paper';
@@ -24,7 +24,18 @@ import { ClerkLoaded, ClerkProvider } from '@clerk/clerk-expo';
 import { StripeProvider } from '@stripe/stripe-react-native';
 import 'react-native-get-random-values';
 import { MenuProvider } from 'react-native-popup-menu';
+import * as Notifications from 'expo-notifications';
+import { usePushNotifications } from '~/hooks/usePushNotification';
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldShowAlert: true,
+  }),
+});
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: 'index',
@@ -70,6 +81,8 @@ function InitialLayout() {
     'Inter-Medium': interMedium,
     ...FontAwesome.font,
   });
+  const { user } = useAuth();
+  usePushNotifications(user); // ✅ add this line
   // const { locale } = useLocale();
   // useEffect(() => {
   //   if (locale === 'ar' && !I18nManager.isRTL) {
