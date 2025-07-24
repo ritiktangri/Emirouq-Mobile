@@ -28,6 +28,9 @@ const LocationInput = forwardRef(({ control, errors, value }: any, ref: any) => 
           return (
             <GooglePlacesAutocomplete
               ref={ref}
+              debounce={200}
+              timeout={5000}
+              minLength={2}
               predefinedPlaces={[]}
               nearbyPlacesAPI="GooglePlacesSearch"
               placeholder="Select location"
@@ -35,7 +38,6 @@ const LocationInput = forwardRef(({ control, errors, value }: any, ref: any) => 
               keyboardShouldPersistTaps="handled"
               enablePoweredByContainer={false}
               isRowScrollable={false}
-              minLength={2}
               fetchDetails={true}
               onPress={(data, details = null) => {
                 if (details) {
@@ -75,7 +77,6 @@ const LocationInput = forwardRef(({ control, errors, value }: any, ref: any) => 
                 predefinedPlacesDescription: styles.predefinedPlacesDescription,
                 poweredContainer: styles.poweredContainer,
               }}
-              debounce={200}
             />
           );
         }}
