@@ -98,40 +98,38 @@ const AddPost = () => {
   const selectedSubCategory = watch('subCategory');
   //check if user is subscribed to the selected category
   const isSubscribed: any = useIsSubscribedForCategory(selectedCategory);
-  const [isEdit, setIsEdit] = useState(false);
   const params: any = useGlobalSearchParams();
   const locationRef: any = useRef(null);
   const { data: postDetails, refetch }: any = useGetSinglePosts(params?.postId);
+  const singlePost = postDetails?.data;
 
   useEffect(() => {
-    if (params?.postId) {
-      setIsEdit(true);
-      refetch()?.then((res: any) => {
-        const singlePost = res?.data?.data;
-
-        const updatedProperties = singlePost?.properties?.map((prop: any) => ({
-          ...prop,
-          value: prop.value,
-        }));
-
-        reset({
-          title: singlePost?.title || '',
-          category: singlePost?.category?.uuid || '',
-          subCategory: singlePost?.subCategory?.uuid || '',
-          condition: singlePost?.condition || '',
-          price: singlePost?.price?.toString() || '',
-          description: singlePost?.description || '',
-          timePeriod: '7 days',
-          images: singlePost?.file?.map((val: any) => ({ uri: val })) || [],
-          location: {
-            name: singlePost?.location?.name || '',
-            placeId: singlePost?.location?.placeId || '',
-          },
-          properties: updatedProperties || [],
-        });
+    if (singlePost) {
+      const updatedProperties = singlePost?.properties?.map((prop: any) => ({
+        ...prop,
+        value: prop.value,
+      }));
+      const currentText = locationRef.current.getAddressText();
+      if (currentText !== singlePost?.location?.name) {
+        locationRef.current.setAddressText(singlePost?.location?.name);
+      }
+      reset({
+        title: singlePost?.title || '',
+        category: singlePost?.category?.uuid || '',
+        subCategory: singlePost?.subCategory?.uuid || '',
+        condition: singlePost?.condition || '',
+        price: singlePost?.price?.toString() || '',
+        description: singlePost?.description || '',
+        timePeriod: '7 days',
+        images: singlePost?.file?.map((val: any) => ({ uri: val })) || [],
+        location: {
+          name: singlePost?.location?.name || '',
+          placeId: singlePost?.location?.placeId || '',
+        },
+        properties: updatedProperties || [],
       });
     }
-  }, [params?.postId]);
+  }, [params?.postId, singlePost]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -239,7 +237,7 @@ const AddPost = () => {
           categoryName: categories?.find((item: any) => item?.uuid === watch('category'))?.title,
           subCategoryName: subCategories?.find((item: any) => item?.uuid === watch('subCategory'))
             ?.title,
-          isEdit,
+          isEdit: !!postDetails?.data?.uuid,
           ...(postDetails && { uuid: postDetails?.data?.uuid }),
         }),
       },
@@ -249,8 +247,7 @@ const AddPost = () => {
     <View className="flex-1 bg-white px-4 py-6">
       <KeyboardAwareScrollView
         keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-        className="flex-1">
+        showsVerticalScrollIndicator={false}>
         <View className="mb-8">
           <Pressable
             className="items-center justify-center rounded-xl border-2 border-dashed border-gray-200 p-6"
@@ -447,6 +444,12 @@ const AddPost = () => {
             <Text className="mt-1 text-sm text-red-500">{errors.price.message}</Text>
           )}
         </View>
+        <LocationInput
+          value={watch('location')}
+          control={control}
+          errors={errors}
+          ref={locationRef}
+        />
 
         <View className="mb-6">
           <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
@@ -471,7 +474,6 @@ const AddPost = () => {
             <Text className="mt-1 text-sm text-red-500">{errors.description.message}</Text>
           )}
         </View>
-        <LocationInput control={control} errors={errors} ref={locationRef} />
         {/* <View className="mb-6">
           <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
             {i18n.t('post.location')}
@@ -572,7 +574,7 @@ const AddPost = () => {
                   subCategoryName: subCategories?.find(
                     (item: any) => item?.uuid === watch('subCategory')
                   )?.title,
-                  isEdit,
+                  isEdit: !!postDetails?.data?.uuid,
                   ...(postDetails && { uuid: postDetails?.data?.uuid }),
                 }),
               },

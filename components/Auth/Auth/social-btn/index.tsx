@@ -119,11 +119,11 @@ const SocialButtons = () => {
         .then(async (res: any) => {
           await setStorageItemAsync('accessToken', res?.accessToken);
           getUser(() => {
-            // if (!res?.newUser) {
-            //   router.replace(routes.tabs.profile?.profile as any);
-            // } else {
-            //   router.replace(routes.tabs.home as any);
-            // }
+            if (!res?.newUser) {
+              router.replace(routes.tabs.profile?.profile as any);
+            } else {
+              router.replace(routes.tabs.home as any);
+            }
             showToast('Login successful', 'success');
             setLoading(false);
             setPendingOAuthLogin(false); // ✅ Clear flag

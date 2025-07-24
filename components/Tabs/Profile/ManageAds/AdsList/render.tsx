@@ -88,11 +88,12 @@ const Render = ({ item, refetch }: any) => {
         <TouchableOpacity
           onPress={() => {
             router.push({
-              pathname: routes.tabs.post as Href,
+              pathname: routes.tabs.post,
               params: {
                 postId: item?.uuid,
+                title: `${item?.title}`,
               },
-            });
+            } as Href);
           }}
           className="mr-2 rounded-lg border border-primary px-4 py-2">
           <Text className="text-primary">{i18n.t('profile.edit')}</Text>
