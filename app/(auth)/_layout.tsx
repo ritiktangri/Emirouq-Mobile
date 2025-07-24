@@ -11,6 +11,7 @@ const _layout = () => {
       <Stack.Screen name="auth" />
       <Stack.Screen name="forgot-password" />
       <Stack.Screen name="verify-otp" />
+      <Stack.Screen name="oauth-callback" />
     </Stack>
   );
 };

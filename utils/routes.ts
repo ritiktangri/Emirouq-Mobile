@@ -7,6 +7,7 @@ export const routes = {
     onboard: '/(auth)/onboard',
     update_password: '/(auth)/update-password',
   },
+  'oauth-callback': '/oauth-callback',
   user: {
     profile: '/(hydrogen)/(profile)',
     account_settings: '/(hydrogen)/(accounts)',
