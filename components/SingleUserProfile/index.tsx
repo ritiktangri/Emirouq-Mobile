@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useGlobalSearchParams, useRouter } from 'expo-router';
 import { useGetSingleUser } from '~/hooks/auth/query';
 import dayjs from 'dayjs';
+import { useGetPosts } from '~/hooks/post/query';
 
 const AdItem = ({ item }: any) => {
   return (
@@ -51,6 +52,7 @@ const SingleUserProfile = ({ adsData }: any) => {
   const params = useGlobalSearchParams();
   const { data }: any = useGetSingleUser(params.userId);
   let user = data?.data;
+  const { isLoading, posts }: any = useGetPosts('', '', user?.uuid);
   const profileImageSource = user?.profileImage ? { uri: user.profileImage } : null;
 
   const i18n = {
@@ -134,11 +136,11 @@ const SingleUserProfile = ({ adsData }: any) => {
           </View>
         </View>
 
-        <TouchableOpacity className="mx-4 mt-4 items-center rounded-lg bg-primary py-3">
+        {/* <TouchableOpacity className="mx-4 mt-4 items-center rounded-lg bg-primary py-3">
           <Text className="text-lg font-semibold text-white">
             {i18n.t('profile.contactSeller')}
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <View className="mt-4 px-4">
           <Text className="mb-4 text-xl font-bold text-gray-800">Ads by {user?.firstName}</Text>
