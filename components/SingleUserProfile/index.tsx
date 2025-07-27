@@ -1,5 +1,13 @@
 import React from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  FlatList,
+  ActivityIndicator,
+} from 'react-native';
 import { FontAwesome, EvilIcons, Ionicons, Feather } from '@expo/vector-icons';
 // Assuming you have an ExpoImage component or replace with standard Image
 import { Image as ExpoImage } from 'expo-image';
@@ -16,32 +24,34 @@ const AdItem = ({ item }: any) => {
   return (
     <View className="mb-4 rounded-lg bg-white p-4">
       <View className="flex-row items-start">
-        <Image source={{ uri: item.imageUrl }} className="mr-4 h-24 w-24 rounded-lg" />
+        <Image source={{ uri: item?.file?.[0] }} className="mr-4 h-24 w-24 rounded-lg" />
         <View className="flex-1">
-          <Text className="text-lg font-semibold">{item.title}</Text>
+          <Text className="text-lg font-semibold">{item?.title}</Text>
           <Text className="text-sm text-gray-500">
-            {item.category} • {item.location}
+            {item?.category?.title} • {item?.location?.name}
           </Text>
           {/* Status (only if you want to show it on public profiles) */}
           <View style={{ alignSelf: 'flex-start' }}>
             <Text
               className={`mt-1 rounded-full px-2 py-1 text-xs ${
-                item.status === 'Active'
+                item?.status === 'active'
                   ? 'bg-green-100 text-green-600'
-                  : item.status === 'Pending'
+                  : item?.status === 'pending'
                     ? 'bg-yellow-100 text-yellow-600'
                     : 'bg-red-100 text-red-600'
               }`}>
-              {item.status}
+              {item?.status?.toUpperCase()}
             </Text>
           </View>
         </View>
       </View>
       <View className="mt-2 flex-row items-center">
-        <Ionicons name="eye-outline" size={16} color="gray" />
-        <Text className="ml-1 text-xs text-gray-500">{item.views || 0}</Text>
+        <Ionicons name="heart" size={16} color="gray" />
+        <Text className="ml-1 text-xs text-gray-500">{item?.likes?.length || 0}</Text>
         <Ionicons name="time-outline" size={16} color="gray" className="ml-4" />
-        <Text className="ml-1 text-xs text-gray-500">{item.timeAgo || 'N/A'}</Text>
+        <Text className="ml-1 text-xs text-gray-500">
+          {dayjs(item?.createdAt).fromNow() || 'N/A'}
+        </Text>
       </View>
     </View>
   );
@@ -52,7 +62,7 @@ const SingleUserProfile = ({ adsData }: any) => {
   const params = useGlobalSearchParams();
   const { data }: any = useGetSingleUser(params.userId);
   let user = data?.data;
-  const { isLoading, posts }: any = useGetPosts('', '', user?.uuid);
+  const { isLoading, data: posts }: any = useGetPosts('', 'active', user?.uuid);
   const profileImageSource = user?.profileImage ? { uri: user.profileImage } : null;
 
   const i18n = {
@@ -73,7 +83,9 @@ const SingleUserProfile = ({ adsData }: any) => {
       }
     },
   };
-
+  if (isLoading) {
+    return <ActivityIndicator color={'#FF5722'} />;
+  }
   return (
     <SafeAreaView className="flex-1 bg-white">
       <TouchableOpacity
@@ -123,11 +135,13 @@ const SingleUserProfile = ({ adsData }: any) => {
         {/* STATS - Reduced for Public View */}
         <View className="mx-4 mt-2 flex-row justify-around rounded-lg bg-white px-3 py-4">
           <View className="flex items-center">
-            <Text className="text-xl font-bold text-gray-800">45</Text>
+            <Text className="text-xl font-bold text-gray-800">
+              {posts?.pages?.[0]?.data?.length}
+            </Text>
             <Text className="text-sm text-gray-600">{i18n.t('profile.adsPosted')}</Text>
           </View>
           <View className="flex items-center">
-            <Text className="text-xl font-bold text-gray-800">38</Text>
+            <Text className="text-xl font-bold text-gray-800">0</Text>
             <Text className="text-sm text-gray-600">{i18n.t('profile.itemsSold')}</Text>
           </View>
           <View className="flex items-center">
@@ -144,9 +158,9 @@ const SingleUserProfile = ({ adsData }: any) => {
 
         <View className="mt-4 px-4">
           <Text className="mb-4 text-xl font-bold text-gray-800">Ads by {user?.firstName}</Text>
-          {adsData && adsData?.length > 0 ? (
+          {posts?.pages?.[0]?.data && posts?.pages?.[0]?.data?.length > 0 ? (
             <FlatList
-              data={adsData}
+              data={posts?.pages?.[0]?.data}
               renderItem={({ item }) => <AdItem item={item} />}
               keyExtractor={(item, index) => index?.toString()}
               scrollEnabled={false}

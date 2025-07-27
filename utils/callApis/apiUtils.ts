@@ -74,7 +74,7 @@ const callAxios = async (
       ...defHeaders,
     };
   }
-
+console.log(makeUrl({ ...uriEndPoint, pathParams, query }, apiHostUrl))
   return Axios({
     method: uriEndPoint.method,
     url: makeUrl({ ...uriEndPoint, pathParams, query }, apiHostUrl),

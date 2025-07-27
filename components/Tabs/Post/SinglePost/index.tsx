@@ -276,17 +276,19 @@ const SinglePost = () => {
                     <Text className="ml-1 text-sm text-gray-600">4.9 (234 reviews)</Text>
                   </View>
                 </View>
-                <TouchableOpacity
-                  onPress={() => {
-                    router.push({
-                      pathname: routes.tabs.single_user_profile,
-                      params: {
-                        userId: data?.data?.user?.uuid,
-                      },
-                    } as Href);
-                  }}>
-                  <Text className="text-primary">View Profile {'>'}</Text>
-                </TouchableOpacity>
+                {user?.uuid ? (
+                  <TouchableOpacity
+                    onPress={() => {
+                      router.push({
+                        pathname: routes.tabs.single_user_profile,
+                        params: {
+                          userId: data?.data?.user?.uuid,
+                        },
+                      } as Href);
+                    }}>
+                    <Text className="text-primary">View Profile {'>'}</Text>
+                  </TouchableOpacity>
+                ) : null}
               </View>
               <Text className="mt-1 text-sm text-gray-600">
                 <AntDesign name="clockcircleo" size={12} color="#4b5563" /> Member since{' '}

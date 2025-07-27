@@ -70,7 +70,6 @@ const CommentSheet = ({ visible, setVisible, postId, postComments }: any) => {
     }
     setNewComment('');
   }, [newComment, postId, addComment, user]);
-  console.log(postComments, 'postComments');
   return (
     <CustomBottomSheet
       visible={visible}
