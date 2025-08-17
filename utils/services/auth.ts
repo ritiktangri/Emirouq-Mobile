@@ -33,7 +33,7 @@ export async function register({ body }: SignUpInterface) {
   return callApi({
     uriEndPoint: { ...auth.register.v1 } as ApiEndpoint,
     body,
-    multipart:true
+    multipart: true,
   });
 }
 export async function verifyToken({ pathParams }: VerifyInterface) {
@@ -54,18 +54,19 @@ export async function forgotPasswordService({ body }: any) {
     body,
   });
 }
-export async function verifyOtp({ pathParams }: any) {
+export async function verifyOtp({ pathParams, body }: any) {
   return callApi({
     uriEndPoint: { ...auth.verifyOtp.v1 } as ApiEndpoint,
     pathParams,
+    body,
   });
 }
 
-export async function resetPassword({ pathParams,body }: any) {
+export async function resetPassword({ pathParams, body }: any) {
   return callApi({
     uriEndPoint: { ...auth.resetPassword.v1 } as ApiEndpoint,
     pathParams,
-    body
+    body,
   });
 }
 export async function oauthLogin({ body }: any) {

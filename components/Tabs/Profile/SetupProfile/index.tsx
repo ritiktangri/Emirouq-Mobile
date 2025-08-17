@@ -21,34 +21,32 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '~/components/Chat/ChatScreen/header';
 import { useGlobalSearchParams, useRouter } from 'expo-router';
 
-const profileSchema = z.object({
-  firstName: z.string().min(2, 'First name must be at least 2 characters'),
-  lastName: z.string().min(2, 'Last name must be at least 2 characters'),
-  phoneNumber: z.any(),
-  userHandle: z.string().min(3, 'Username must be at least 3 characters'),
-  email: z.string().email('Invalid email address'),
-  // location: z.string().min(2, 'Location is required'),
-  bio: z.string().max(150, 'Bio must be less than 150 characters').optional(),
-  interests: z.array(z.string()).min(1, 'Select at least one interest'),
-});
-
-type ProfileFormData = z.infer<typeof profileSchema>;
-
 const SetupProfile = () => {
   const [profileImage, setProfileImage] = useState<any>(null);
   const params: any = useGlobalSearchParams();
   const { locale } = useLocale();
   const { categories }: any = useCategory();
   const { showToast }: any = useTheme();
+  const { user, updateProfile, btnLoading } = useAuth();
+
   const router = useRouter();
+  const profileSchema = z.object({
+    firstName: z.string().min(2, 'First name must be at least 2 characters'),
+    lastName: z.string().min(2, 'Last name must be at least 2 characters'),
+    phoneNumber: z.any(),
+    userHandle: z.string().min(3, 'Username must be at least 3 characters'),
+    email: user?.isEmail ? z.string().email('Invalid email address') : z.any(),
+    // location: z.string().min(2, 'Location is required'),
+    bio: z.string().max(150, 'Bio must be less than 150 characters').optional(),
+    interests: z.array(z.string()).min(1, 'Select at least one interest'),
+  });
   const {
     control,
     handleSubmit,
     watch,
     formState: { errors },
     setValue,
-  } = useForm<ProfileFormData>({ resolver: zodResolver(profileSchema) });
-  const { user, updateProfile, btnLoading } = useAuth();
+  }: any = useForm<any>({ resolver: zodResolver(profileSchema) });
   useEffect(() => {
     if (user?.uuid) {
       setValue('firstName', user?.firstName);
@@ -129,6 +127,7 @@ const SetupProfile = () => {
       },
       (res: any) => {
         showToast('Profile Updated!', 'success');
+        router.back();
       },
       (err: any) => {
         showToast(err?.message, 'error');
@@ -292,7 +291,7 @@ const SetupProfile = () => {
                 containerClassName={`w-full rounded-lg border border-gray-200 bg-white px-4 ${Platform.OS === 'android' ? 'py-0' : 'py-3'}`}
                 onChangeText={!user?.isEmail ? onChange : () => {}}
                 value={value}
-                placeholder={i18n.t('createProfile.emailPlaceholder')}
+                placeholder={i18n.t('createProfile.emailAddressPlaceholder')}
                 keyboardType="email-address"
                 autoCapitalize="none"
               />

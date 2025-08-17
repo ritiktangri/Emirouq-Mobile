@@ -122,7 +122,12 @@ const Login = ({ checkinType }: any) => {
         </TouchableOpacity> */}
         <TouchableOpacity
           onPress={() => {
-            router.push(routes.auth.forgot_pwd);
+            router.push({
+              pathname: routes.auth.forgot_pwd,
+              params: {
+                isForgotPassword: 'true',
+              },
+            });
           }}>
           <Text className="text-primary">Forgot Password?</Text>
         </TouchableOpacity>

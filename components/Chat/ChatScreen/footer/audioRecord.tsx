@@ -221,7 +221,9 @@ const AudioRecorder = forwardRef(({ onRecordingComplete, audio }: any, ref: any)
   };
 
   const handlePressOut = () => {
-    hideTooltip();
+    setTimeout(() => {
+      hideTooltip();
+    }, 500);
     scale.value = withSpring(1, {
       damping: 5,
       stiffness: 150,

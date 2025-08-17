@@ -35,6 +35,7 @@ import {
 } from '~/hooks/useStorageState';
 import { io } from 'socket.io-client';
 import { saveConversationCache, saveMessageCache } from '~/hooks/chats/query';
+import { useTheme } from './ThemeContext';
 
 const storageTokenKeyName = 'accessToken';
 
@@ -85,6 +86,7 @@ const AuthProvider = ({ children }: any) => {
   const [subscriptionActive, setSubscriptionActive] = useState<boolean>(
     defaultProvider.subscriptionActive
   );
+  const { showToast } = useTheme();
   const [selectedSideBar, setSelectedSideBar] = useState('dashboard');
   const [loading, setLoading] = useState(defaultProvider.loading);
   const [forgotLoading, setForgotLoading] = useState(defaultProvider.forgotLoading);
@@ -213,7 +215,6 @@ const AuthProvider = ({ children }: any) => {
     register({ body })
       .then(async () => {
         setSignInLoading(false);
-        router.push(routes.auth.verifyOtp as any);
         // toast.success('An email has been sent to your email address');
         successCb && successCb();
       })
@@ -223,9 +224,9 @@ const AuthProvider = ({ children }: any) => {
       })
       .finally(() => {});
   };
-  const verify = ({ pathParams }: VerifyInterface, cb: any, errorCallback: any) => {
+  const verify = ({ pathParams, body }: any, cb: any, errorCallback: any) => {
     setVerifyOtpLoading(true);
-    verifyOtp({ pathParams })
+    verifyOtp({ pathParams, body })
       .then(async (response: any) => {
         setVerifyOtpLoading(false);
         cb && cb(response, 'success');
@@ -261,8 +262,7 @@ const AuthProvider = ({ children }: any) => {
       })
       .catch((err: any) => {
         setForgotLoading(false);
-
-        // toast.error(err?.message);
+        showToast(err?.message || 'Something went wrong', 'error');
 
         if (errorCallback) errorCallback(err);
       });

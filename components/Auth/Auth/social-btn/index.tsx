@@ -12,6 +12,7 @@ const redirectUri = AuthSession.makeRedirectUri({
   path: 'oauth-callback',
 });
 console.log(redirectUri, 'redirectUri');
+
 const SocialButtons = () => {
   useWamUpBrowser();
 

@@ -3,17 +3,18 @@ import React, { RefObject, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, ImageBackground, TouchableOpacity, TextInput, Image } from 'react-native';
 import theme from '~/utils/theme';
-import { Href, Link, useLocalSearchParams, useRouter } from 'expo-router';
+import { Href, Link, useGlobalSearchParams, useRouter } from 'expo-router';
 import { OTPInput } from '~/components/UI/OtpInput';
 import { useAuth } from '~/context/AuthContext';
 import { routes } from '~/utils/routes';
 import DynamicButton from '~/components/DynamicButton';
 import { Text } from '~/components/common/Text';
-import { logo } from '~/image';
+import { light_logo } from '~/image';
 import { useTheme } from '~/context/ThemeContext';
 
 const VerifyOtp = () => {
-  const { email, phone, isForgotPassword } = useLocalSearchParams();
+  const { email, phone, isForgotPassword } = useGlobalSearchParams();
+  console.log(isForgotPassword, 'isForgotPassword');
   const { isDarkTheme, showToast } = useTheme();
   const [codes, setCodes] = useState(['', '', '', ''] as any);
   const { verify, forgotPassword, verifyOtpLoading } = useAuth();
@@ -31,6 +32,7 @@ const VerifyOtp = () => {
       {
         body: {
           email,
+          isForgotPassword,
         },
       },
       () => {
@@ -53,19 +55,21 @@ const VerifyOtp = () => {
         pathParams: {
           token: btoa(encode),
         },
+        body: {
+          isForgotPassword: isForgotPassword === 'true',
+        },
       },
       (payload: any) => {
         showToast('Verified Successfully!', 'success');
-        if (isForgotPassword == 'true') {
-          router.push(routes?.auth?.update_password as Href);
-        } else {
-          router.push(routes?.auth?.auth as Href);
-        }
-        if (email) {
-          router.setParams({ email });
-        } else {
-          router.setParams({ phone: phone });
-        }
+
+        router.push({
+          pathname:
+            isForgotPassword === 'true' ? routes?.auth?.update_password : routes?.auth?.auth,
+          params: {
+            email,
+            phone,
+          },
+        } as Href);
       }
     );
   };
@@ -74,7 +78,7 @@ const VerifyOtp = () => {
     <ImageBackground className="flex-1 flex-col" source={isDarkTheme ? '' : ('' as any)}>
       <SafeAreaView edges={['top', 'left', 'right']} className="flex-1 flex-col bg-white">
         <View className="flex-row justify-end px-8 pt-4">
-          <Image source={logo} className="h-[70px] w-[70px]" resizeMode="contain" />
+          <Image source={light_logo} className="h-[100px] w-[100px]" resizeMode="contain" />
         </View>
         <View className="mt-12 flex-col gap-y-6 p-6">
           <Text className="text-3xl font-semibold dark:text-white">Enter the code!</Text>

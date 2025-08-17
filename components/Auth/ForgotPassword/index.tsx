@@ -1,4 +1,4 @@
-import { Href, Link, useRouter } from 'expo-router';
+import { Href, Link, useGlobalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { View, ImageBackground, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -20,21 +20,29 @@ const ForgotPassword = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const router = useRouter();
   const { showToast }: any = useTheme();
+  const { isForgotPassword } = useGlobalSearchParams();
+  console.log(isForgotPassword, 'isForgotPassword');
   const [selectedMethod, setSelectedMethod] = useState('email');
 
   const forgot = () => {
-    if (selectedMethod == 'email') {
+    if (selectedMethod === 'email') {
       if (email) {
         forgotPassword(
           {
             body: {
               email,
+              isForgotPassword,
             },
           },
           () => {
             // toast.success('Otp has been sent successfully to your email');
-            router.push(routes.auth.verifyOtp as Href);
-            router.setParams({ email, isForgotPassword: 'true' });
+            router.push({
+              pathname: routes.auth.verifyOtp,
+              params: {
+                email,
+                isForgotPassword,
+              },
+            } as Href);
           }
         );
       } else {
@@ -146,7 +154,11 @@ const ForgotPassword = () => {
               className="my-4"
             />
           )}
-          <TouchableOpacity onPress={() => {}} className="mb-8 items-center">
+          <TouchableOpacity
+            onPress={() => {
+              router.back();
+            }}
+            className="mb-8 items-center">
             <Text className="font-medium text-primary">Back to Login</Text>
           </TouchableOpacity>
           {/* Secure Info */}
