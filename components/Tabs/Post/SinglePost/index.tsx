@@ -31,6 +31,8 @@ import { useFetchPaymentSheet } from '~/hooks/stripe/query';
 import { initPaymentSheet, presentPaymentSheet } from '@stripe/stripe-react-native';
 import { useGetPostConversation } from '~/hooks/chats/query';
 import { useTheme } from '~/context/ThemeContext';
+import ImageCarousel from './imageCarousel';
+import ZoomImage from './zoomimage';
 
 const SinglePost = () => {
   const { id }: any = useLocalSearchParams();
@@ -192,7 +194,7 @@ const SinglePost = () => {
         </View>
 
         <ScrollView
-          className="mb-10"
+          className=" mb-10"
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
@@ -202,41 +204,44 @@ const SinglePost = () => {
               tintColor={theme.colors.primary}
             />
           }>
-          <FlatList
+          {/* <FlatList
             data={data?.data?.file}
             keyExtractor={(item, index) => index.toString()}
             horizontal
-            pagingEnabled
+            decelerationRate="fast"
+            snapToInterval={Dimensions.get('screen').width} // each item is screen width
             showsHorizontalScrollIndicator={false}
             onMomentumScrollEnd={(event) => {
-              const index = Math.round(
-                event.nativeEvent.contentOffset.x / Dimensions.get('screen').width
-              );
+              const screenWidth = Dimensions.get('screen').width;
+              const index = Math.round(event.nativeEvent.contentOffset.x / screenWidth);
+
               setSelectedImage({
                 uri: data?.data?.file[index],
                 index: index + 1,
               });
             }}
-            contentContainerClassName="mx-auto"
             renderItem={({ item }) => (
-              <Image
-                source={{ uri: item }}
-                style={{
-                  width: Dimensions.get('screen').width - 8,
-                  height: 300,
-                  resizeMode: 'cover',
-                  borderRadius: 10,
-                }}
-              />
+              <View style={{ width: Dimensions.get('screen').width, alignItems: 'center' }}>
+                <Image
+                  source={{ uri: item }}
+                  style={{
+                    width: '95%', // keeps border radius & margin
+                    height: 300,
+                    resizeMode: 'cover',
+                    borderRadius: 10,
+                  }}
+                />
+              </View>
             )}
           />
 
-          {/* Page indicator badge */}
           <View className="absolute right-4 top-10 rounded-full bg-gray-800 px-3 py-1">
             <Text className="text-white">
               {selectedImage?.index}/{data?.data?.file?.length}
             </Text>
-          </View>
+          </View> */}
+          <ImageCarousel data={data} />
+
           {/* Product Details */}
           <View className="p-4">
             <Text className="mb-2 text-2xl font-bold">{data?.data?.title}</Text>

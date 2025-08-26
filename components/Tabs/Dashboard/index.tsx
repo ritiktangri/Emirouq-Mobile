@@ -140,10 +140,13 @@ const Dashboard = () => {
   );
   return (
     <View className="flex-1 bg-white">
+      <View className="m-4">
+        <Search />
+      </View>
       <FlatList
         data={components}
         ListHeaderComponentClassName="m-4"
-        ListHeaderComponent={<Search />}
+        // ListHeaderComponent={<Search />}
         renderItem={({ item }) => <View className="flex-1">{item}</View>}
         keyExtractor={(item, index) => index.toString()}
         contentContainerStyle={{ flexGrow: 1 }}
