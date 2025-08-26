@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
 import { useState } from 'react';
-import { TouchableOpacity, Image } from 'react-native';
+import { TouchableOpacity, Image, FlatList } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { View } from '~/components/common/View';
@@ -16,6 +16,16 @@ import { useAudioPlayer } from '~/context/AudioPlayerContext';
 import LottieFilesAnimation from '~/components/LottieFiles';
 import { uploadingFiles } from '~/image';
 import CustomMenu from '~/components/common/PopoverMenu';
+
+const suggestionsList = [
+  'Hello 👋',
+  'How are you?',
+  'Good morning ☀️',
+  // "Let's meet up",
+  // 'See you soon',
+  // 'Thank you 🙏',
+];
+
 const schema = z.object({
   message: z.string().optional(),
   attachments: z
@@ -178,10 +188,7 @@ export default function Footer({
                 </View>
               );
             })
-          ) : (
-            <></>
-          )}
-          {watch('audio')?.sound ? (
+          ) : watch('audio')?.sound ? (
             <View className="max-w-[80%] flex-row items-center space-x-3 self-end rounded-2xl bg-[#DCF8C6] p-3 shadow-sm">
               {/* Left: Circular mic icon */}
               <View className="flex h-9 w-9 items-center justify-center rounded-full bg-white">
@@ -217,7 +224,31 @@ export default function Footer({
                 <Ionicons name="close" size={22} color="#D32F2F" />
               </TouchableOpacity>
             </View>
-          ) : null}
+          ) : (
+            <FlatList
+              data={suggestionsList}
+              nestedScrollEnabled
+              numColumns={3}
+              contentContainerStyle={{ gap: 2 }}
+              keyExtractor={(item, index) => index.toString()}
+              showsHorizontalScrollIndicator={false}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() => setValue('message', item)}
+                  style={{
+                    backgroundColor: '#eee',
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
+                    borderRadius: 20,
+                    marginRight: 8,
+                  }}>
+                  <Text>{item}</Text>
+                </TouchableOpacity>
+              )}
+              style={{ marginBottom: 8 }}
+            />
+          )}
         </View>
         {uploadLoading ? (
           <LottieFilesAnimation

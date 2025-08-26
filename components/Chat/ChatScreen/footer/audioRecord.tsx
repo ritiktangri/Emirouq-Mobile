@@ -78,7 +78,11 @@ const AudioRecorder = forwardRef(({ onRecordingComplete, audio }: any, ref: any)
       toValue: 0,
       duration: 150,
       useNativeDriver: true,
-    }).start(() => setVisible(false));
+    }).start(() => {
+      setTimeout(() => {
+        setVisible(false);
+      }, 1000);
+    });
   };
 
   const startRecording = async () => {

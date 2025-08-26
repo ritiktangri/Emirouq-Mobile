@@ -12,9 +12,10 @@ import {
   TextInputContentSizeChangeEventData,
   View,
   ViewStyle,
-  Image,
+  TouchableOpacity,
+  ScrollView,
 } from 'react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { FlatList, Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   clamp,
   interpolate,
