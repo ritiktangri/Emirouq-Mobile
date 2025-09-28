@@ -21,7 +21,6 @@ const ForgotPassword = () => {
   const router = useRouter();
   const { showToast }: any = useTheme();
   const { isForgotPassword } = useGlobalSearchParams();
-  console.log(isForgotPassword, 'isForgotPassword');
   const [selectedMethod, setSelectedMethod] = useState('email');
 
   const forgot = () => {

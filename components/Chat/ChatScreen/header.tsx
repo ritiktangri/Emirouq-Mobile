@@ -14,7 +14,6 @@ const Header = ({ data, status }: any) => {
   const { socketIo, user } = useAuth();
   const currentAppState = useAppState();
   const { clearAudioCache, stop } = useAudioPlayer();
-  console.log(socketIo?.connected);
   useEffect(() => {
     if (socketIo?.connected) {
       if (currentAppState !== 'active') {

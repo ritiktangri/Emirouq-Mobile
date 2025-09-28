@@ -1,11 +1,4 @@
-import {
-  AntDesign,
-  Feather,
-  FontAwesome,
-  FontAwesome5,
-  Ionicons,
-  SimpleLineIcons,
-} from '@expo/vector-icons';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import React from 'react';
 
 export const getIconsByScreenName = (theme: string, screenName: string, active: boolean) => {
@@ -17,9 +10,9 @@ export const getIconsByScreenName = (theme: string, screenName: string, active: 
         className={active ? '!text-primary' : '!text-bottom_inactive'}
       />
     ),
-    search: (
+    category: (
       <Ionicons
-        name="search-outline"
+        name="grid-outline"
         size={24}
         className={active ? '!text-primary' : '!text-bottom_inactive'}
       />

@@ -12,7 +12,6 @@ export default function CheckoutScreen({ id, categoryId, item, cb }: any) {
   const createSubscription = useCreateSubscription();
 
   const openPaymentSheet = async (subscriptionId: any) => {
-    console.log(1);
     const { error } = await presentPaymentSheet();
     if (error?.code === 'Canceled') {
       return;

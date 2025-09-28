@@ -11,7 +11,6 @@ const redirectUri = AuthSession.makeRedirectUri({
   scheme: 'emirouq-mobile',
   path: 'oauth-callback',
 });
-console.log(redirectUri, 'redirectUri');
 
 const SocialButtons = () => {
   useWamUpBrowser();

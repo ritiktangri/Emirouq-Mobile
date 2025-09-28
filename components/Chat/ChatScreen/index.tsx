@@ -34,7 +34,6 @@ const ChatScreen = () => {
   const uploadFile = useUploadFile();
   const router = useRouter();
   //here we are updating the seen message in the cache
-  console.log(params?.count, 'params?.count');
   useEffect(() => {
     //if unseen count is greater than 0 then emit the seen message
     if (socketIo?.connected && params?.conversationId && +params?.count > 0) {

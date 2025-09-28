@@ -11,7 +11,6 @@ const HelpSupport = () => {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
   const { data: tickets, refetch }: any = useGetSupportTickets({});
-  console.log('tickets', tickets);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

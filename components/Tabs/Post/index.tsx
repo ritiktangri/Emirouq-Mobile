@@ -87,7 +87,6 @@ const AddPost = () => {
       ],
     },
   });
-  console.log(JSON.stringify(watch(), null, 2));
   const router: any = useRouter();
   const { locale } = useLocale();
   const refRBSheet: any = useRef();

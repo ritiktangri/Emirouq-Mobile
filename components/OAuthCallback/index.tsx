@@ -44,7 +44,6 @@ export default function OAuthCallback() {
           });
         })
         .catch((err) => {
-          console.log('OAuthLogin error:', err);
           showToast(err?.message || 'Login failed', 'error');
           signOut();
           setLoading(false);

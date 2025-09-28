@@ -5,6 +5,7 @@ const login_form_background = require('./assets/login/login-form-background.png'
 const pwd_background = require('./assets/auth/password-background.png');
 const logo = require('./assets/splash/logo-dark.png');
 const light_logo = require('./assets/logo/Emi-logo.png');
+const newLogo = require('./assets/logo/newlogo.png');
 const splash_background = require('./assets/splash/splash-background-image.png');
 const background_logo = require('./assets/logo/white_logo.png');
 
@@ -39,6 +40,12 @@ const audioRecorder = require('./assets/lottify/audio-recorder.json');
 const uploadingFiles = require('./assets/lottify/uploading-files.json');
 
 const empty = require('./assets/empty.png');
+
+// dashboard category icons
+const phone = require('./assets/dashboard/category/phone.png');
+const car = require('./assets/dashboard/category/car.png');
+const property = require('./assets/dashboard/category/property.png');
+
 export {
   //login
   splash_background,
@@ -73,4 +80,9 @@ export {
   uploadingFiles,
   //empty state
   empty,
+  newLogo,
+  // dashboard category icons
+  phone,
+  car,
+  property,
 };

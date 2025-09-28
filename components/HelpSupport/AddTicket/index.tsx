@@ -47,14 +47,11 @@ const AddTicket = ({ modalVisible, setModalVisible, refetchTickets }: any) => {
     formData.append('image', formattedImage);
     createTicket({ body: formData })
       ?.then((res: any) => {
-        console.log('res', res);
         showToast('Ticket created successfully!', 'success');
         setModalVisible(false);
         refetchTickets();
       })
-      ?.catch((err) => {
-        console.log('err', err);
-      })
+      ?.catch((err) => {})
       ?.finally(() => {
         setLoading(false);
       });

@@ -2,7 +2,7 @@
   "hello": "مرحباً %{name}!",
   "tab": {
     "home": "الرئيسية",
-    "search": "بحث",
+    "category": "بحث",
     "post": "إعلان",
     "chat": "محادثة",
     "profile": "مظهر جانبي"

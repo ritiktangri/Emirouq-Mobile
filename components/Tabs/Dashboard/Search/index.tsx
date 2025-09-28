@@ -60,9 +60,8 @@ const Search = () => {
     await AsyncStorage.setItem('searchKeyword', JSON.stringify(keywords));
     setSearchHistory(keywords);
   };
-  console.log(keyword);
   return (
-    <View direction={locale} className="flex w-full items-center justify-between">
+    <View direction={locale} className="flex w-full items-center justify-between px-4">
       <View className="relative flex-1">
         <DefaultTextInput
           prefix={<Ionicons name="search" size={20} color="#000" />}
@@ -109,24 +108,18 @@ const Search = () => {
               borderRadius: 10,
             }}>
             <View className="max-h-[300px] w-full rounded-lg bg-white p-3  dark:bg-dashboard_card">
-              <FlatList
-                data={searchHistory}
-                keyboardShouldPersistTaps="handled"
-                keyExtractor={(_, index) => index.toString()}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    onPress={() => {
-                      console.log(1);
-                      setKeyword(item);
-                      setIsFocus(false);
-                      Keyboard.dismiss();
-                    }}
-                    className="py-2">
-                    <Text className="text-base">{item}</Text>
-                  </TouchableOpacity>
-                )}
-                ItemSeparatorComponent={() => <View className="h-1" />}
-              />
+              {searchHistory.map((item, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => {
+                    setKeyword(item);
+                    setIsFocus(false);
+                    Keyboard.dismiss();
+                  }}
+                  className="py-2">
+                  <Text className="text-base">{item}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
           </Animated.View>
         ) : null}
@@ -138,34 +131,7 @@ const Search = () => {
         }}>
         <Octicons name="filter" size={20} color="black" />
       </TouchableOpacity>
-      {user?.uuid && (
-        <>
-          <TouchableOpacity
-            className="relative"
-            onPress={() => {
-              router.push({
-                pathname: routes.tabs.favourites,
-                params: {
-                  headerTitle: 'createProfile.heading',
-                },
-              } as Href);
-            }}>
-            <AntDesign name="hearto" size={20} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="relative"
-            onPress={() => {
-              router.push({
-                pathname: routes.tabs.notification,
-                params: {
-                  headerTitle: 'notification.title',
-                },
-              } as Href);
-            }}>
-            <Ionicons name="notifications-outline" size={20} color="black" />
-          </TouchableOpacity>
-        </>
-      )}
+
       <Modal
         animationType="slide"
         visible={open}

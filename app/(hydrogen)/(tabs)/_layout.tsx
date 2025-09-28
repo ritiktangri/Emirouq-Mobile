@@ -5,7 +5,7 @@ import GlobalHeader from '~/components/GlobalHeader';
 import { QueryProvider } from '~/context/QueryContext';
 import { getIconsByScreenName } from '~/utils/get-icons-by-screen-name';
 import { Text } from '~/components/common/Text';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { cn } from '~/utils/helper';
 import { i18n } from '~/utils/i18n';
 import { useLocale } from '~/context/LocaleContext';
@@ -15,11 +15,16 @@ export default function TabLayout() {
 
   return (
     <QueryProvider>
-      <SafeAreaView edges={['bottom']} className={cn('flex-1 bg-white ')}>
+      <SafeAreaView
+        edges={['bottom']}
+        className={cn('flex-1 bg-white ')}
+        style={{
+          paddingTop: useSafeAreaInsets().top,
+        }}>
         <Tabs
           initialRouteName="home"
           screenOptions={{
-            headerShown: true,
+            headerShown: false,
             header: (route) => {
               return <GlobalHeader route={route} />;
             },
@@ -55,7 +60,7 @@ export default function TabLayout() {
             }}
           />
           <Tabs.Screen
-            name="search"
+            name="category"
             options={{
               tabBarLabel: (props) => (
                 <Text
@@ -64,10 +69,10 @@ export default function TabLayout() {
                     props.focused ? 'text-primary' : 'text-bottom_inactive '
                   )}
                   style={{ textAlign: locale === 'ar' ? 'right' : 'left' }}>
-                  {i18n.t('tab.search')}
+                  {i18n.t('tab.category')}
                 </Text>
               ),
-              tabBarIcon: (props) => getIconsByScreenName(theme, 'search', props.focused),
+              tabBarIcon: (props) => getIconsByScreenName(theme, 'category', props.focused),
             }}
           />
           <Tabs.Screen

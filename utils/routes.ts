@@ -19,6 +19,7 @@ export const routes = {
     singleSupport: (id: string) => `/(hydrogen)/(support-inbox)/details/${id}`,
     tags: '/(hydrogen)/(tags)',
     add_trade: '/(hydrogen)/(add-trade)',
+    search: '/(hydrogen)/search',
   },
   tabs: {
     tabs: '/(hydrogen)/(tabs)',

@@ -29,11 +29,11 @@ import { routes } from '~/utils/routes';
 import { View } from '~/components/common/View';
 import { useAuth as ClerkUseAuth } from '@clerk/clerk-expo';
 import { queryClient } from '~/app/_layout';
-import { useCurrentLocation } from '~/components/UserLocation';
+import { useLocation } from '~/context/LocationContext';
 
 const UserProfile = () => {
   const { getToken, signOut } = ClerkUseAuth();
-  const { address }: any = useCurrentLocation();
+  const { address }: any = useLocation();
   const { user } = useAuth();
 
   const { locale } = useLocale();

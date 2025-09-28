@@ -26,6 +26,7 @@ import 'react-native-get-random-values';
 import { MenuProvider } from 'react-native-popup-menu';
 import * as Notifications from 'expo-notifications';
 import { usePushNotifications } from '~/hooks/usePushNotification';
+import { LocationProvider } from '~/context/LocationContext';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -83,19 +84,6 @@ function InitialLayout() {
   });
   const { user } = useAuth();
   usePushNotifications(user); // ✅ add this line
-  // const { locale } = useLocale();
-  // useEffect(() => {
-  //   if (locale === 'ar' && !I18nManager.isRTL) {
-  //     I18nManager.forceRTL(true);
-  //     // You might need to reload the app here for changes to fully take effect.
-  //     // Consider using `Updates.reloadAsync()` from 'expo-updates' if in managed workflow.
-  //     // Otherwise, prompt the user to restart the app.
-  //   } else if (locale !== 'ar' && I18nManager.isRTL) {
-  //     I18nManager.forceRTL(false);
-  //     // Similarly, consider reloading the app here.
-  //   }
-  // }, [locale]);
-
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
@@ -141,8 +129,10 @@ export default function RootLayoutNav() {
                           <LocaleProvider>
                             <PaperProvider>
                               <MenuProvider>
-                                <SocketEventScreen />
-                                <InitialLayout />
+                                <LocationProvider>
+                                  <SocketEventScreen />
+                                  <InitialLayout />
+                                </LocationProvider>
                               </MenuProvider>
                               {/* The Slot component is where the current route will be rendered */}
                               {/* It is used to render the current route in the layout */}

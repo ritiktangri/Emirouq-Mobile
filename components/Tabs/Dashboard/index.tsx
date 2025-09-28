@@ -1,20 +1,18 @@
 /* eslint-disable import/order */
 /* eslint-disable no-unused-expressions */
-import React, { useCallback, useMemo } from 'react';
-import { View, FlatList, RefreshControl } from 'react-native';
-import Featured from './Featured';
-import HotDeals from './HotDeals';
+import React, { useCallback } from 'react';
+import { View, ScrollView } from 'react-native';
 import Search from './Search';
 import { useGetCategory } from '~/hooks/category/query';
 import { useGetPosts } from '~/hooks/post/query';
-import theme from '~/utils/theme';
 import { queryClient } from '~/app/_layout';
-import FeaturedListLoading from './Featured/loading';
-import Recent from './Recent';
-import Recommended from './Recommended';
 import { useAuth } from '~/context/AuthContext';
+import Header from './NewUi/header';
+import Categories from './NewUi/categorySection';
+import RecommendedSection from './NewUi/recommendationSection';
 
 const Dashboard = () => {
+  const { user } = useAuth();
   const { priceRange, selectedCategory, selectedSorting, keyword } = useAuth();
   const {
     isLoading: categoryLoading,
@@ -90,77 +88,13 @@ const Dashboard = () => {
     recommendedPostRefetch();
   }, [queryClient, categoryRefetch, categoryRefetch, recentPostRefetch, recommendedPostRefetch]);
 
-  const components = useMemo(
-    () => [
-      // categoryLoading ? (
-      //   <></>
-      // ) : (
-      //   <Category data={category?.pages.map((page: any) => page?.data).flat() || []} />
-      // ),
-      featuredPostLoading || featuredPostFetching ? (
-        <FeaturedListLoading />
-      ) : (featurePost?.pages.map((page: any) => page?.data).flat() || [])?.length ? (
-        <Featured data={featurePost?.pages.map((page: any) => page?.data).flat() || []} />
-      ) : (
-        <></>
-      ),
-      recentPostLoading || recentPostFetching ? (
-        <FeaturedListLoading />
-      ) : (
-        <Recent data={recentPost?.pages.map((page: any) => page?.data).flat() || []} />
-      ),
-      hotDealPostLoading || hotDealPostFetching ? (
-        <FeaturedListLoading />
-      ) : (
-        <HotDeals data={hotDealPost?.pages.map((page: any) => page?.data).flat() || []} />
-      ),
-      recommendedPostLoading || recommendedPostFetching ? (
-        <FeaturedListLoading />
-      ) : (
-        <Recommended data={recommendedPost?.pages.map((page: any) => page?.data).flat() || []} />
-      ),
-      // <UnlockFeature />,
-    ],
-    [
-      category?.pages,
-      featurePost?.pages,
-      categoryLoading,
-      featuredPostLoading,
-      hotDealPost?.pages,
-      hotDealPostLoading,
-      hotDealPostFetching,
-      featuredPostFetching,
-      recentPost?.pages,
-      recentPostLoading,
-      recentPostFetching,
-      recommendedPostLoading,
-      recommendedPostFetching,
-      recommendedPost?.pages,
-    ]
-  );
   return (
     <View className="flex-1 bg-white">
-      <View className="m-4">
-        <Search />
-      </View>
-      <FlatList
-        data={components}
-        ListHeaderComponentClassName="m-4"
-        // ListHeaderComponent={<Search />}
-        renderItem={({ item }) => <View className="flex-1">{item}</View>}
-        keyExtractor={(item, index) => index.toString()}
-        contentContainerStyle={{ flexGrow: 1 }}
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            colors={[theme.colors.primary]}
-            refreshing={false}
-            onRefresh={handleRefresh}
-            tintColor={theme.colors.primary}
-          />
-        }
-      />
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <Header user={user} />
+        <Categories />
+        <RecommendedSection />
+      </ScrollView>
     </View>
   );
 };

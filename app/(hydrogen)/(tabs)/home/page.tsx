@@ -1,7 +1,6 @@
 /* eslint-disable import/order */
 import { View } from 'react-native';
 import Dashboard from '~/components/Tabs/Dashboard';
-import { useCurrentLocation } from '~/components/UserLocation';
 import { cn } from '~/utils/helper';
 
 export default function Page() {

@@ -1,3 +1,5 @@
+/* eslint-disable import/order */
+import { FontAwesome, Ionicons, Feather } from '@expo/vector-icons';
 import React from 'react';
 import {
   View,
@@ -8,16 +10,15 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import { FontAwesome, EvilIcons, Ionicons, Feather } from '@expo/vector-icons';
 // Assuming you have an ExpoImage component or replace with standard Image
 import { Image as ExpoImage } from 'expo-image';
-import { useAuth } from '~/context/AuthContext';
-import { useGetCategory } from '~/hooks/category/query';
-import { useCurrentLocation } from '../UserLocation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useGlobalSearchParams, useRouter } from 'expo-router';
+
 import { useGetSingleUser } from '~/hooks/auth/query';
+
 import dayjs from 'dayjs';
+
 import { useGetPosts } from '~/hooks/post/query';
 
 const AdItem = ({ item }: any) => {

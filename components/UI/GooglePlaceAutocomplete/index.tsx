@@ -6,8 +6,6 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 const YOUR_GOOGLE_PLACES_API_KEY = 'AIzaSyBjSzyTvFszRwMz8sV-xBzKPnLDchDOVHY';
 
 const LocationInput = forwardRef(({ control, errors, value }: any, ref: any) => {
-  console.log(value, 'value');
-
   return (
     <View className="mb-6">
       <Text className="mb-2 text-base font-semibold text-gray-800 dark:text-gray-200">

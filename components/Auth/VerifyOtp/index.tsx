@@ -14,7 +14,6 @@ import { useTheme } from '~/context/ThemeContext';
 
 const VerifyOtp = () => {
   const { email, phone, isForgotPassword } = useGlobalSearchParams();
-  console.log(isForgotPassword, 'isForgotPassword');
   const { isDarkTheme, showToast } = useTheme();
   const [codes, setCodes] = useState(['', '', '', ''] as any);
   const { verify, forgotPassword, verifyOtpLoading } = useAuth();
