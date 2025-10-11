@@ -1,17 +1,9 @@
-// components/Categories.tsx
 import { ScrollView, Image, TouchableOpacity } from 'react-native';
+
 import { Text } from '~/components/common/Text';
 import { View } from '~/components/common/View';
-import { car, phone, property } from '~/image';
 
-const categories = [
-  { label: 'Phone', icon: phone },
-  { label: 'Vehicles', icon: car },
-  { label: 'Property', icon: property },
-  { label: 'Fashion', icon: phone },
-];
-
-export default function Categories() {
+export default function Categories({ data }: any) {
   return (
     <View className="mt-6 ">
       <View className="flex flex-row items-center">
@@ -19,17 +11,17 @@ export default function Categories() {
         <Text className="mb-3 px-5 font-poppinsMedium text-sm text-primary">See All</Text>
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {categories.map((cat, index) => (
+        {data?.map((cat: any, index: any) => (
           <TouchableOpacity key={index} className="mx-5 flex items-center justify-center">
             <View className="mb-1 h-16 w-16 items-center justify-center rounded-full bg-gray-100">
               <Image
-                source={cat.icon}
-                alt={cat.label}
+                source={{ uri: cat.logo }}
+                alt={cat.title}
                 className="h-16 w-16 rounded-full"
                 resizeMode="contain"
               />
             </View>
-            <Text className="ml-2 font-poppinsMedium text-gray-700">{cat.label}</Text>
+            <Text className="ml-2 font-poppinsMedium text-gray-700">{cat.title}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>

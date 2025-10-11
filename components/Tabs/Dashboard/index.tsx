@@ -76,6 +76,7 @@ const Dashboard = () => {
     selectedSorting
   );
   const handleRefresh = useCallback(() => {
+    console.log(1);
     queryClient.removeQueries({ queryKey: ['posts', ''] });
     queryClient.removeQueries({ queryKey: ['category'] });
     queryClient.removeQueries({ queryKey: ['posts', ''] });
@@ -87,13 +88,12 @@ const Dashboard = () => {
     hotDealRefetch();
     recommendedPostRefetch();
   }, [queryClient, categoryRefetch, categoryRefetch, recentPostRefetch, recommendedPostRefetch]);
-
   return (
     <View className="flex-1 bg-white">
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <Header user={user} />
-        <Categories />
-        <RecommendedSection />
+        <Categories data={category?.pages.map((page: any) => page?.data).flat() || []} />
+        <RecommendedSection handleRefresh={handleRefresh} />
       </ScrollView>
     </View>
   );

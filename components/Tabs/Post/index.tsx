@@ -1,11 +1,11 @@
 /* eslint-disable import/order */
-import { TextInput, Pressable, Image, Platform, Alert, TouchableOpacity } from 'react-native';
+import { TextInput, Pressable, Image, Platform, Alert, TouchableOpacity, View } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as ImagePicker from 'expo-image-picker';
-import React, { useEffect, useRef, useState } from 'react';
-import { Feather } from '@expo/vector-icons';
+import React, { useEffect, useRef } from 'react';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import SelectPicker from '~/components/UI/SelectPicker';
 import { useCategory } from '~/context/CategoryContext';
@@ -13,7 +13,6 @@ import { useAuth } from '~/context/AuthContext';
 import { useFocusEffect, useGlobalSearchParams, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import { useTheme } from '~/context/ThemeContext';
-import { View } from '~/components/common/View';
 import { Text } from '~/components/common/Text';
 import { useLocale } from '~/context/LocaleContext';
 import { i18n } from '~/utils/i18n';
@@ -21,7 +20,6 @@ import LocationInput from '~/components/UI/GooglePlaceAutocomplete';
 import { useGetSinglePosts } from '~/hooks/post/query';
 import { saveFileLocally, screenHeight } from '~/utils/helper';
 import { useIsSubscribedForCategory } from '~/hooks/stripe/query';
-import SubscriptionDropdownList from './dropdown';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import SubscriptionPlanList from '~/components/Stripe/subscriptionPlanList';
 
@@ -43,17 +41,9 @@ const schema = z.object({
       type: z.string().min(1, 'Image type is required'),
     })
   ),
-  properties: z.array(
-    z.object({
-      name: z.string().min(1, 'Property name is required'),
-      value: z.string().min(1, 'Property value is required'),
-    })
-  ),
 });
 
 type FormData = z.infer<typeof schema>;
-
-const timePeriods = ['7 days', '14 days', '30 days', '60 days', '90 days'];
 
 const AddPost = () => {
   const {
@@ -75,21 +65,11 @@ const AddPost = () => {
       location: '',
       timePeriod: '7 days',
       images: [],
-      properties: [
-        // { name: 'Brand', value: '1' },
-        // { name: 'Model', value: '1' },
-        // { name: 'Condition', value: '1' },
-        // { name: 'Operating System', value: '1' },
-        // { name: 'Screen Size', value: '1' },
-        // { name: 'Storage', value: '1' },
-        // { name: 'Network Type', value: '1' },
-        // { name: 'Seller Contact Info', value: '1' },
-      ],
     },
   });
   const router: any = useRouter();
   const { locale } = useLocale();
-  const refRBSheet: any = useRef();
+  const refRBSheet: any = useRef(null);
   const { showToast } = useTheme();
   const { categories, getSubCategoryList, subCategories }: any = useCategory();
   const { user }: any = useAuth();
@@ -99,15 +79,11 @@ const AddPost = () => {
   const isSubscribed: any = useIsSubscribedForCategory(selectedCategory);
   const params: any = useGlobalSearchParams();
   const locationRef: any = useRef(null);
-  const { data: postDetails, refetch }: any = useGetSinglePosts(params?.postId);
+  const { data: postDetails }: any = useGetSinglePosts(params?.postId);
   const singlePost = postDetails?.data;
 
   useEffect(() => {
     if (singlePost) {
-      const updatedProperties = singlePost?.properties?.map((prop: any) => ({
-        ...prop,
-        value: prop.value,
-      }));
       const currentText = locationRef.current.getAddressText();
       if (currentText !== singlePost?.location?.name) {
         locationRef.current.setAddressText(singlePost?.location?.name);
@@ -125,7 +101,6 @@ const AddPost = () => {
           name: singlePost?.location?.name || '',
           placeId: singlePost?.location?.placeId || '',
         },
-        properties: updatedProperties || [],
       });
     }
   }, [params?.postId, singlePost]);
@@ -193,16 +168,6 @@ const AddPost = () => {
     // }
   };
 
-  const handlePropertyChange = (name: string, text: string) => {
-    const updatedProperties = watch('properties').map((prop: any) => {
-      if (prop.name === name) {
-        return { ...prop, value: text };
-      }
-      return prop;
-    });
-    setValue('properties', updatedProperties);
-  };
-
   useEffect(() => {
     (async () => {
       if (Platform.OS !== 'web') {
@@ -243,7 +208,15 @@ const AddPost = () => {
     });
   };
   return (
-    <View className="flex-1 bg-white px-4 py-6">
+    <View className="flex-1 bg-white px-4 " style={{}}>
+      <TouchableOpacity
+        className="pb-4"
+        onPress={async () => {
+          // here we are leaving the conversation
+          router.back();
+        }}>
+        <Ionicons name="arrow-back-sharp" size={24} color="black" />
+      </TouchableOpacity>
       <KeyboardAwareScrollView
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
@@ -361,16 +334,7 @@ const AddPost = () => {
                       const selectedItem = subCategories.find(
                         (item: any) => item.uuid === selectedSubCategory
                       );
-                      if (selectedItem) {
-                        setValue(
-                          'properties',
-                          selectedItem?.properties?.map((ite: any) => {
-                            return { name: ite, value: '' };
-                          })
-                        );
-                      } else {
-                        setValue('properties', []);
-                      }
+
                       onChange(e);
                     }}
                   />
@@ -473,67 +437,6 @@ const AddPost = () => {
             <Text className="mt-1 text-sm text-red-500">{errors.description.message}</Text>
           )}
         </View>
-        {/* <View className="mb-6">
-          <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
-            {i18n.t('post.location')}
-          </Text>
-          <Controller
-            control={control}
-            name="location"
-            render={({ field: { onChange, value } }) => (
-              <CustomDropdown
-                value={value}
-                data={locations}
-                onChange={onChange}
-                placeholder={i18n.t('post.locationPlaceholder')}
-              />
-            )}
-          />
-          {errors.location && (
-            <Text className="mt-1 text-sm text-red-500">{errors.location.message}</Text>
-          )}
-        </View> */}
-        {/* 
-        <View className="mb-6">
-          <Text placement={locale} className="mb-2 text-base font-semibold text-gray-800">
-            {i18n.t('post.timePeriod')}
-          </Text>
-          <Controller
-            control={control}
-            name="timePeriod"
-            render={({ field: { onChange, value } }) => (
-              <SelectPicker
-                value={value}
-                data={timePeriods?.map((ite: any) => {
-                  return {
-                    label: ite,
-                    value: ite,
-                  };
-                })}
-                placeholder={`${i18n.t('post.timePeriodPlaceholder')}`}
-                onSelect={onChange}
-              />
-            )}
-          />
-          {errors.timePeriod && (
-            <Text className="mt-1 text-sm text-red-500">{errors.timePeriod.message}</Text>
-          )}
-        </View> */}
-        {watch('properties')?.length > 0 && (
-          <View className="mb-6">
-            {watch('properties')?.map((prop: any, index: number) => (
-              <View key={index} className="mb-4">
-                <Text className="mb-2 text-base font-semibold text-gray-800">{prop.name}</Text>
-                <TextInput
-                  className="rounded-lg border border-gray-200 bg-white p-4"
-                  onChangeText={(text) => handlePropertyChange(prop.name, text)}
-                  value={prop.value}
-                  placeholder={`Enter ${prop.name}`}
-                />
-              </View>
-            ))}
-          </View>
-        )}
       </KeyboardAwareScrollView>
       <View className=" flex-row gap-4">
         <TouchableOpacity

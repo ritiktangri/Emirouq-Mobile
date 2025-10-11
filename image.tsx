@@ -45,7 +45,7 @@ const empty = require('./assets/empty.png');
 const phone = require('./assets/dashboard/category/phone.png');
 const car = require('./assets/dashboard/category/car.png');
 const property = require('./assets/dashboard/category/property.png');
-
+const noData = require('./assets/dashboard/no-data.png');
 export {
   //login
   splash_background,
@@ -85,4 +85,5 @@ export {
   phone,
   car,
   property,
+  noData,
 };
