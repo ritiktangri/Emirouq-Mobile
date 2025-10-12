@@ -76,7 +76,6 @@ const Dashboard = () => {
     selectedSorting
   );
   const handleRefresh = useCallback(() => {
-    console.log(1);
     queryClient.removeQueries({ queryKey: ['posts', ''] });
     queryClient.removeQueries({ queryKey: ['category'] });
     queryClient.removeQueries({ queryKey: ['posts', ''] });

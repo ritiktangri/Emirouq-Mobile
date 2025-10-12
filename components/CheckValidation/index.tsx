@@ -1,7 +1,7 @@
-const CheckValidation = ({ isValid, children }: any) => {
+const CheckValidation = ({ isValid, children }: { isValid: boolean; children: any }) => {
   if (!isValid) return;
 
-  return { children };
+  return children;
 };
 
 export default CheckValidation;

@@ -5,12 +5,10 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 
 const YOUR_GOOGLE_PLACES_API_KEY = 'AIzaSyBjSzyTvFszRwMz8sV-xBzKPnLDchDOVHY';
 
-const LocationInput = forwardRef(({ control, errors, value }: any, ref: any) => {
+const LocationInput = forwardRef(({ control }: any, ref: any) => {
   return (
-    <View className="mb-6">
-      <Text className="mb-2 text-base font-semibold text-gray-800 dark:text-gray-200">
-        Location
-      </Text>
+    <View className="gap-1">
+      <Text className="text-base font-semibold text-gray-800 dark:text-gray-200">Location</Text>
       <Controller
         control={control}
         name="location"
@@ -22,68 +20,68 @@ const LocationInput = forwardRef(({ control, errors, value }: any, ref: any) => 
             return true;
           },
         }}
-        render={({ field: { onChange, value } }) => {
+        render={({ field: { onChange, value }, fieldState: { error } }) => {
           return (
-            <GooglePlacesAutocomplete
-              ref={ref}
-              debounce={200}
-              timeout={5000}
-              minLength={2}
-              predefinedPlaces={[]}
-              nearbyPlacesAPI="GooglePlacesSearch"
-              placeholder="Select location"
-              listViewDisplayed="auto"
-              keyboardShouldPersistTaps="handled"
-              enablePoweredByContainer={false}
-              isRowScrollable={false}
-              fetchDetails={true}
-              onPress={(data, details = null) => {
-                if (details) {
-                  onChange({
-                    name: data.description,
-                    placeId: details.place_id,
-                  });
-                } else {
-                  onChange({
-                    name: data.description,
-                    placeId: data.place_id,
-                  });
-                }
-              }}
-              query={{
-                key: YOUR_GOOGLE_PLACES_API_KEY,
-                language: 'en',
-              }}
-              textInputProps={{
-                onFocus: () => {},
-                onBlur: () => {},
-                onChangeText: (text) => {
-                  if (value?.placeId && text !== value?.name) {
-                    onChange({ name: text, placeId: null });
-                  } else if (!text && value) {
-                    onChange(null);
+            <>
+              <GooglePlacesAutocomplete
+                ref={ref}
+                debounce={200}
+                timeout={5000}
+                minLength={2}
+                predefinedPlaces={[]}
+                nearbyPlacesAPI="GooglePlacesSearch"
+                placeholder="Select location"
+                listViewDisplayed="auto"
+                keyboardShouldPersistTaps="handled"
+                enablePoweredByContainer={false}
+                isRowScrollable={false}
+                fetchDetails={true}
+                onPress={(data, details = null) => {
+                  if (details) {
+                    onChange({
+                      name: data.description,
+                      placeId: details.place_id,
+                    });
+                  } else {
+                    onChange({
+                      name: data.description,
+                      placeId: data.place_id,
+                    });
                   }
-                },
-                style: styles.textInput,
-                placeholderTextColor: '#A0A0A0',
-              }}
-              styles={{
-                container: styles.autocompleteContainer,
-                textInput: styles.textInput,
-                description: styles.description,
-                listView: styles.listView,
-                predefinedPlacesDescription: styles.predefinedPlacesDescription,
-                poweredContainer: styles.poweredContainer,
-              }}
-            />
+                }}
+                query={{
+                  key: YOUR_GOOGLE_PLACES_API_KEY,
+                  language: 'en',
+                }}
+                textInputProps={{
+                  onFocus: () => {},
+                  onBlur: () => {},
+                  onChangeText: (text) => {
+                    if (value?.placeId && text !== value?.name) {
+                      onChange({ name: text, placeId: null });
+                    } else if (!text && value) {
+                      onChange(null);
+                    }
+                  },
+                  style: styles.textInput,
+                  placeholderTextColor: '#A0A0A0',
+                }}
+                styles={{
+                  container: styles.autocompleteContainer,
+                  textInput: styles.textInput,
+                  description: styles.description,
+                  listView: styles.listView,
+                  predefinedPlacesDescription: styles.predefinedPlacesDescription,
+                  poweredContainer: styles.poweredContainer,
+                }}
+              />
+              {error && (
+                <Text className="mt-1 text-sm text-red-500 dark:text-red-400">{error.message}</Text>
+              )}
+            </>
           );
         }}
       />
-      {errors.location && (
-        <Text className="mt-1 text-sm text-red-500 dark:text-red-400">
-          {errors.location.message}
-        </Text>
-      )}
     </View>
   );
 });
