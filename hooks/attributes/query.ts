@@ -29,12 +29,12 @@ export const useGetAttributes = ({ subCategoryId, keyword }: any) =>
     enabled: !!subCategoryId,
   });
 
-export const useGetAttributeOptions = ({ attributeId }: any) =>
+export const useGetAttributeOptions = ({ attributeId, dependsOn }: any) =>
   useInfiniteQuery({
-    queryKey: ['attributes-options', attributeId],
+    queryKey: ['attributes-options', attributeId, dependsOn],
     queryFn: ({ pageParam }) =>
       getAttributeOptions({
-        query: { start: pageParam },
+        query: { start: pageParam, dependsOn },
         pathParams: { attributeId },
       }),
     getNextPageParam: (lastPage: any, allPages: any) => {

@@ -88,6 +88,7 @@ const AddPost = () => {
       properties: [],
     },
   });
+  console.log(watch('properties'), "watch('properties')");
   const router: any = useRouter();
   const { locale } = useLocale();
   const refRBSheet: any = useRef(null);
@@ -508,13 +509,12 @@ const AddPost = () => {
                 control={control}
                 attributeId={field.uuid}
                 parentId={
-                  watch('properties')?.find(
-                    (prop) => prop.value && prop.attributeKey === field.dependsOn
-                  )?.value
+                  watch('properties')?.find((prop) => prop.value && prop.label === field.dependsOn)
+                    ?.value
                 }
                 name={`properties.${index}.value`}
                 label={field.label}
-                data={data}
+                dependsOn={field.dependsOn}
               />
             </CheckValidation>
           </View>
