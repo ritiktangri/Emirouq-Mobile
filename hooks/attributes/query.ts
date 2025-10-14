@@ -29,12 +29,12 @@ export const useGetAttributes = ({ subCategoryId, keyword }: any) =>
     enabled: !!subCategoryId,
   });
 
-export const useGetAttributeOptions = ({ attributeId, dependsOn }: any) =>
+export const useGetAttributeOptions = ({ attributeId, keyword, dependsOn }: any) =>
   useInfiniteQuery({
-    queryKey: ['attributes-options', attributeId, dependsOn],
+    queryKey: ['attributes-options', attributeId, keyword],
     queryFn: ({ pageParam }) =>
       getAttributeOptions({
-        query: { start: pageParam, dependsOn },
+        query: { start: pageParam, ...(keyword && { keyword }) },
         pathParams: { attributeId },
       }),
     getNextPageParam: (lastPage: any, allPages: any) => {
@@ -49,14 +49,14 @@ export const useGetAttributeOptions = ({ attributeId, dependsOn }: any) =>
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    enabled: !!attributeId,
+    enabled: !!attributeId && !!dependsOn === false,
   });
-export const useGetParentAttributeOptions = ({ parentId }: any) =>
+export const useGetParentAttributeOptions = ({ parentId, keyword, dependsOn }: any) =>
   useInfiniteQuery({
-    queryKey: ['parent-attribute-options', parentId],
+    queryKey: ['parent-attribute-options', parentId, keyword],
     queryFn: ({ pageParam }) =>
       getParentAttributeOptions({
-        query: { start: pageParam },
+        query: { start: pageParam, ...(keyword && { keyword }) },
         pathParams: { parentId },
       }),
     getNextPageParam: (lastPage: any, allPages: any) => {
@@ -71,5 +71,5 @@ export const useGetParentAttributeOptions = ({ parentId }: any) =>
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    enabled: !!parentId,
+    enabled: !!parentId && !!dependsOn,
   });

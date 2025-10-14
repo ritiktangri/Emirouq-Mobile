@@ -52,10 +52,13 @@ const schema = z.object({
     z.object({
       uuid: z.string().min(1, 'UUID is required'),
       label: z.string().min(1, 'Label is required'),
-      value: z.string().min(1, 'Value is required'),
       filterType: z.string(),
       dependsOn: z.string().optional(),
       attributeKey: z.string(),
+      selectedValue: z.object({
+        value: z.string(),
+        id: z.string(),
+      }),
     })
   ),
 });
@@ -88,7 +91,6 @@ const AddPost = () => {
       properties: [],
     },
   });
-  console.log(watch('properties'), "watch('properties')");
   const router: any = useRouter();
   const { locale } = useLocale();
   const refRBSheet: any = useRef(null);
@@ -116,10 +118,13 @@ const AddPost = () => {
         attributes.map((attr: any) => ({
           uuid: attr.uuid,
           label: attr.label,
-          value: '', // start empty or use defaults
           filterType: attr.filterType,
           dependsOn: attr.dependsOn,
           attributeKey: attr.attributeKey,
+          selectedValue: {
+            value: '',
+            id: '',
+          },
         }))
       );
     }
@@ -492,27 +497,34 @@ const AddPost = () => {
             <CheckValidation isValid={['text', 'number'].includes(field.filterType)}>
               <Controller
                 control={control}
-                name={`properties.${index}.value`}
+                name={`properties.${index}.selectedValue`}
                 render={({ field: { onChange, value } }) => (
                   <TextInput
                     className="rounded-lg border border-gray-200 bg-white p-4"
-                    onChangeText={onChange}
-                    value={value}
+                    onChangeText={(value) => {
+                      onChange({
+                        value,
+                        id: value,
+                      });
+                    }}
+                    value={value.value}
                     placeholder={`Enter ${field.label}`}
                   />
                 )}
               />
             </CheckValidation>
 
-            <CheckValidation isValid={field.filterType === 'select'}>
+            <CheckValidation isValid={['select', 'checkbox']?.includes(field.filterType)}>
               <SelectField
                 control={control}
                 attributeId={field.uuid}
+                filterType={field.filterType}
                 parentId={
-                  watch('properties')?.find((prop) => prop.value && prop.label === field.dependsOn)
-                    ?.value
+                  watch('properties')?.find(
+                    (prop) => prop.selectedValue.value && prop.label === field.dependsOn
+                  )?.selectedValue.id
                 }
-                name={`properties.${index}.value`}
+                name={`properties.${index}.selectedValue`}
                 label={field.label}
                 dependsOn={field.dependsOn}
               />
