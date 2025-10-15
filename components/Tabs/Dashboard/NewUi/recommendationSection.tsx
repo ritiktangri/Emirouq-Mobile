@@ -7,9 +7,9 @@ import { View } from '~/components/common/View';
 import { noData } from '~/image';
 import { toCurrency } from '~/utils/helper';
 import { routes } from '~/utils/routes';
-
-export default function Marketplace({ data }: any) {
-  const renderProductCard = ({ item }: any) => (
+import AddToFavourite from '../AddToFavourite';
+const RenderProductCard = ({ item, user }: any) => {
+  return (
     <TouchableOpacity
       onPress={() => {
         router.push(routes.tabs.singlePost(item?.uuid) as Href);
@@ -21,9 +21,8 @@ export default function Marketplace({ data }: any) {
           className="h-28 w-full rounded-lg"
           resizeMode="stretch"
         />
-        <TouchableOpacity className="absolute right-2 top-2 rounded-full bg-white/90 p-1.5">
-          <Ionicons name="heart-outline" size={18} color="#666" />
-        </TouchableOpacity>
+        {user && <AddToFavourite item={item} />}
+
         {item.featuredAd.isFeatured && (
           <View className="absolute bottom-2 left-2 rounded-md bg-yellow-400 px-2 py-1">
             <Text className="text-xs font-medium text-black">Featured</Text>
@@ -45,41 +44,41 @@ export default function Marketplace({ data }: any) {
       </View>
     </TouchableOpacity>
   );
-
-  const renderSectionHeader = (title: string, categoryId: any) => (
-    <View className="mb-3 mt-6 flex-row items-center justify-between px-4">
-      <Text className="text-xl font-bold text-gray-900">{title}</Text>
-      <TouchableOpacity
-        onPress={() => {
-          console.log(categoryId, 'categoryId');
-          router.push({
-            pathname: routes.tabs.post_list,
-            params: { tag: 'search', category: categoryId },
-          } as Href);
-        }}>
-        <Text className="text-sm font-medium text-primary">See more</Text>
-      </TouchableOpacity>
-    </View>
-  );
-
-  const renderHorizontalSection = (section: any) => (
-    <View key={section.title} className="mb-2">
-      {renderSectionHeader(section.title, section.categoryId)}
-      <FlatList
-        data={section.data}
-        renderItem={renderProductCard}
-        keyExtractor={(item) => item.uuid}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        ItemSeparatorComponent={() => <View className="w-1" />}
-        ListEmptyComponent={() => (
-          <View className="flex w-screen flex-1 items-center justify-center ">
-            <Image source={noData} className=" flex h-56 w-56" />
-          </View>
-        )}
-      />
-    </View>
-  );
-
-  return data?.map((section: any) => renderHorizontalSection(section));
+};
+const renderSectionHeader = (title: string, categoryId: any) => (
+  <View className="mb-3 mt-6 flex-row items-center justify-between px-4">
+    <Text className="text-xl font-bold text-gray-900">{title}</Text>
+    <TouchableOpacity
+      onPress={() => {
+        console.log(categoryId, 'categoryId');
+        router.push({
+          pathname: routes.tabs.post_list,
+          params: { tag: 'search', category: categoryId },
+        } as Href);
+      }}>
+      <Text className="text-sm font-medium text-primary">See more</Text>
+    </TouchableOpacity>
+  </View>
+);
+const renderHorizontalSection = (section: any, user: any) => (
+  <View key={section.title} className="mb-2">
+    {renderSectionHeader(section.title, section.categoryId)}
+    <FlatList
+      data={section.data}
+      renderItem={({ item, index }) => <RenderProductCard item={item} user={user} />}
+      keyExtractor={(item) => item.uuid}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      ItemSeparatorComponent={() => <View className="w-1" />}
+      ListEmptyComponent={() => (
+        <View className="flex w-screen flex-1 items-center justify-center ">
+          <Image source={noData} className=" flex h-56 w-56" />
+        </View>
+      )}
+    />
+  </View>
+);
+export default function Marketplace({ data, user }: any) {
+  console.log(user);
+  return data?.map((section: any) => renderHorizontalSection(section, user));
 }
