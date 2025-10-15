@@ -1,7 +1,9 @@
+import { Href, router } from 'expo-router';
 import { ScrollView, Image, TouchableOpacity } from 'react-native';
 
 import { Text } from '~/components/common/Text';
 import { View } from '~/components/common/View';
+import { routes } from '~/utils/routes';
 
 export default function Categories({ data }: any) {
   return (
@@ -12,16 +14,24 @@ export default function Categories({ data }: any) {
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {data?.map((cat: any, index: any) => (
-          <TouchableOpacity key={index} className="mx-5 flex items-center justify-center">
+          <TouchableOpacity
+            onPress={() => {
+              router.push({
+                pathname: routes.tabs.post_list,
+                params: { tag: 'search', category: cat.uuid },
+              } as Href);
+            }}
+            key={index}
+            className="ml-3 flex items-center justify-center">
             <View className="mb-1 h-16 w-16 items-center justify-center rounded-full bg-gray-100">
               <Image
                 source={{ uri: cat.logo }}
                 alt={cat.title}
-                className="h-16 w-16 rounded-full"
+                className="h-10 w-10 rounded-full"
                 resizeMode="contain"
               />
             </View>
-            <Text className="ml-2 max-w-28 truncate font-poppinsMedium text-gray-700">
+            <Text className="ml-2 truncate font-poppinsMedium text-sm text-gray-700">
               {cat.title}
             </Text>
           </TouchableOpacity>

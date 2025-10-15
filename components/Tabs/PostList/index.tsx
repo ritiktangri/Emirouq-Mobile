@@ -16,6 +16,7 @@ const PostList = () => {
   const { isFetching, data, refetch }: any = useGetPosts({
     status: 'active',
     subCategory: params.subCategory,
+    category: params.category,
   });
   const handleRefresh = useCallback(() => {
     queryClient.removeQueries({ queryKey: ['posts'] });
