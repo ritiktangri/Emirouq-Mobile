@@ -63,7 +63,7 @@ const SingleUserProfile = ({ adsData }: any) => {
   const params = useGlobalSearchParams();
   const { data }: any = useGetSingleUser(params.userId);
   let user = data?.data;
-  const { isLoading, data: posts }: any = useGetPosts('', 'active', user?.uuid);
+  const { isLoading, data: posts }: any = useGetPosts({ status: 'active', userId: user?.uuid });
   const profileImageSource = user?.profileImage ? { uri: user.profileImage } : null;
 
   const i18n = {

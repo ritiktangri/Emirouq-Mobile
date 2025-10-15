@@ -1,9 +1,12 @@
 // components/Marketplace.tsx
 import { Ionicons } from '@expo/vector-icons';
+import { Href, router } from 'expo-router';
 import { Image, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
 import { Text } from '~/components/common/Text';
 import { View } from '~/components/common/View';
 import { noData } from '~/image';
+import { toCurrency } from '~/utils/helper';
+import { routes } from '~/utils/routes';
 import theme from '~/utils/theme';
 
 const sections = [
@@ -229,15 +232,23 @@ const sections = [
   },
 ];
 
-export default function Marketplace({ handleRefresh }: any) {
+export default function Marketplace({ data }: any) {
   const renderProductCard = ({ item }: any) => (
-    <TouchableOpacity className=" ml-4  w-56 overflow-hidden rounded-2xl border border-gray-300 bg-white  p-3">
+    <TouchableOpacity
+      onPress={() => {
+        router.push(routes.tabs.singlePost(item?.uuid) as Href);
+      }}
+      className=" ml-4  w-56 overflow-hidden rounded-2xl border border-gray-300 bg-white  p-3">
       <View className="relative">
-        <Image source={{ uri: item.image }} className="h-28 w-full " resizeMode="stretch" />
+        <Image
+          source={{ uri: item.file?.[0] }}
+          className="h-28 w-full rounded-lg"
+          resizeMode="stretch"
+        />
         <TouchableOpacity className="absolute right-2 top-2 rounded-full bg-white/90 p-1.5">
           <Ionicons name="heart-outline" size={18} color="#666" />
         </TouchableOpacity>
-        {item.featured && (
+        {item.featuredAd.isFeatured && (
           <View className="absolute bottom-2 left-2 rounded-md bg-yellow-400 px-2 py-1">
             <Text className="text-xs font-medium text-black">Featured</Text>
           </View>
@@ -245,15 +256,15 @@ export default function Marketplace({ handleRefresh }: any) {
       </View>
       <View className="p-3">
         <Text className="text-sm font-semibold text-gray-900" numberOfLines={1}>
-          {item.name}
+          {item.title}
         </Text>
-        <Text className="mt-1 text-base font-bold text-black">{item.price}</Text>
+        <Text className="mt-1 text-base font-bold text-black">{toCurrency(item.price)}</Text>
 
         <Text className="flex-1 font-interMedium text-xs text-gray-600" numberOfLines={1}>
-          {item.location}
+          {item.location.name}
         </Text>
-        <View className="mt-1 flex flex-row items-center self-start rounded-full bg-gray-300 px-2 py-1">
-          <Text className=" text-xs font-medium text-gray-600"> {item.condition}</Text>
+        <View className="mt-2 flex flex-row items-center self-start rounded-full bg-primary px-3 ">
+          <Text className=" text-sm font-medium uppercase text-white">{item.condition}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -268,21 +279,13 @@ export default function Marketplace({ handleRefresh }: any) {
     </View>
   );
 
-  const renderHorizontalSection = (section: any, handleRefresh: any) => (
+  const renderHorizontalSection = (section: any) => (
     <View key={section.title} className="mb-2">
       {renderSectionHeader(section.title)}
       <FlatList
         data={section.data}
         renderItem={renderProductCard}
-        refreshControl={
-          <RefreshControl
-            colors={[theme.colors.primary]}
-            refreshing={false}
-            onRefresh={handleRefresh}
-            tintColor={theme.colors.primary}
-          />
-        }
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.uuid}
         horizontal
         showsHorizontalScrollIndicator={false}
         ItemSeparatorComponent={() => <View className="w-1" />}
@@ -295,5 +298,5 @@ export default function Marketplace({ handleRefresh }: any) {
     </View>
   );
 
-  return sections.map((section) => renderHorizontalSection(section, handleRefresh));
+  return data?.map((section: any) => renderHorizontalSection(section));
 }

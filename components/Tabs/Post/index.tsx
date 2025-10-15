@@ -55,10 +55,18 @@ const schema = z.object({
       filterType: z.string(),
       dependsOn: z.string().optional(),
       attributeKey: z.string(),
-      selectedValue: z.object({
-        value: z.string(),
-        id: z.string(),
-      }),
+      selectedValue: z.union([
+        z.object({
+          value: z.string(),
+          id: z.string(),
+        }),
+        z.array(
+          z.object({
+            value: z.string(),
+            id: z.string(),
+          })
+        ),
+      ]),
     })
   ),
 });
@@ -99,20 +107,18 @@ const AddPost = () => {
   const { user }: any = useAuth();
   const selectedCategory = watch('category');
   const selectedSubCategory = watch('subCategory');
-
   //get attributes for the selected sub category
 
   const { data } = useGetAttributes({ subCategoryId: selectedSubCategory });
-
   const { fields, append, update, replace } = useFieldArray({
     control,
     name: 'properties',
   });
+  const params: any = useGlobalSearchParams();
 
   useEffect(() => {
-    if (data?.pages?.length && selectedSubCategory) {
+    if (data?.pages?.length && selectedSubCategory && !params?.postId) {
       const attributes = data.pages.flatMap((page: any) => page.data);
-
       // Replace existing properties with mapped attributes
       replace(
         attributes.map((attr: any) => ({
@@ -121,44 +127,49 @@ const AddPost = () => {
           filterType: attr.filterType,
           dependsOn: attr.dependsOn,
           attributeKey: attr.attributeKey,
-          selectedValue: {
-            value: '',
-            id: '',
-          },
+          selectedValue: attr.filterType === 'checkbox' ? [] : { value: '', id: '' },
         }))
       );
     }
-  }, [data && selectedSubCategory]);
+  }, [data && selectedSubCategory, params?.postId]);
+
   //check if user is subscribed to the selected category
   const isSubscribed: any = useIsSubscribedForCategory(selectedCategory);
-  const params: any = useGlobalSearchParams();
   const locationRef: any = useRef(null);
   const { data: postDetails }: any = useGetSinglePosts(params?.postId);
-  // const singlePost = postDetails?.data;
+  const singlePost = postDetails?.data;
 
-  // useEffect(() => {
-  //   if (singlePost) {
-  //     const currentText = locationRef.current.getAddressText();
-  //     if (currentText !== singlePost?.location?.name) {
-  //       locationRef.current.setAddressText(singlePost?.location?.name);
-  //     }
-  //     reset({
-  //       title: singlePost?.title || '',
-  //       category: singlePost?.category?.uuid || '',
-  //       subCategory: singlePost?.subCategory?.uuid || '',
-  //       condition: singlePost?.condition || '',
-  //       price: singlePost?.price?.toString() || '',
-  //       description: singlePost?.description || '',
-  //       timePeriod: '7 days',
-  //       images: singlePost?.file?.map((val: any) => ({ uri: val })) || [],
-  //       location: {
-  //         name: singlePost?.location?.name || '',
-  //         placeId: singlePost?.location?.placeId || '',
-  //       },
-  //     });
-  //   }
-  // }, [params?.postId, singlePost]);
+  useEffect(() => {
+    if (singlePost) {
+      const currentText = locationRef.current.getAddressText();
+      if (currentText !== singlePost?.location?.name) {
+        locationRef.current.setAddressText(singlePost?.location?.name);
+      }
 
+      const properties = singlePost.properties;
+      reset({
+        title: singlePost?.title || '',
+        category: singlePost?.category?.uuid || '',
+        subCategory: singlePost?.subCategory?.uuid || '',
+        condition: singlePost?.condition || '',
+        price: singlePost?.price?.toString() || '',
+        description: singlePost?.description || '',
+        timePeriod: '7 days',
+        images:
+          singlePost?.file?.map((val: any, index: any) => ({
+            uri: val,
+            uuid: val,
+            name: val,
+            type: val?.split('.')?.[val?.split('.')?.length - 1],
+          })) || [],
+        location: {
+          name: singlePost?.location?.name || '',
+          placeId: singlePost?.location?.placeId || '',
+        },
+        properties,
+      });
+    }
+  }, [params?.postId, singlePost]);
   useFocusEffect(
     React.useCallback(() => {
       if (!user?.uuid) {
@@ -394,6 +405,7 @@ const AddPost = () => {
                       // );
 
                       onChange(e);
+                      setValue('properties', []);
                     }}
                   />
                   {error && <Text className="mt-1 text-sm text-red-500">{error.message}</Text>}
@@ -507,7 +519,7 @@ const AddPost = () => {
                         id: value,
                       });
                     }}
-                    value={value.value}
+                    value={Array.isArray(value) ? '' : value.value}
                     placeholder={`Enter ${field.label}`}
                   />
                 )}
@@ -519,14 +531,37 @@ const AddPost = () => {
                 control={control}
                 attributeId={field.uuid}
                 filterType={field.filterType}
-                parentId={
-                  watch('properties')?.find(
-                    (prop) => prop.selectedValue.value && prop.label === field.dependsOn
-                  )?.selectedValue.id
-                }
+                parentId={(() => {
+                  const found = watch('properties')?.find((prop) => {
+                    const selectedValue = prop.selectedValue;
+                    if (Array.isArray(selectedValue)) {
+                      return selectedValue.length > 0 && prop.label === field.dependsOn;
+                    } else {
+                      return selectedValue.value && prop.label === field.dependsOn;
+                    }
+                  });
+                  if (!found) return undefined;
+                  if (Array.isArray(found.selectedValue)) {
+                    // Return the id of the first selected value if exists
+                    return found.selectedValue[0]?.id;
+                  }
+                  return found.selectedValue?.id;
+                })()}
                 name={`properties.${index}.selectedValue`}
                 label={field.label}
                 dependsOn={field.dependsOn}
+                onSelect={() => {
+                  const list: any = watch('properties')?.map((i) => {
+                    if (i?.dependsOn === field?.label) {
+                      return {
+                        ...i,
+                        selectedValue: {},
+                      };
+                    }
+                    return i;
+                  });
+                  setValue('properties', list);
+                }}
               />
             </CheckValidation>
           </View>

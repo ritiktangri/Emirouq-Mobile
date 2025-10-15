@@ -75,3 +75,9 @@ export async function getSimilarPostsService({ pathParams }: any) {
     pathParams,
   });
 }
+export async function getDashboardPost({ query }: any) {
+  return callApi({
+    uriEndPoint: { ...post.getDashboardPost.v1 } as ApiEndpoint,
+    query,
+  });
+}

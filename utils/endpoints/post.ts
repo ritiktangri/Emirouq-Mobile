@@ -80,6 +80,13 @@ const post: any = {
       uri: `${prefix}/:categoryId/similar`,
     },
   },
+  getDashboardPost: {
+    v1: {
+      ...defaults.methods.GET,
+      ...defaults.versions.v1,
+      uri: `${prefix}/get-dashboard-post`,
+    },
+  },
 };
 
 export default post;

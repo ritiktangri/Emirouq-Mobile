@@ -27,7 +27,6 @@ const PreviewPost = () => {
   if (!params?.data) {
     return;
   }
-
   const onSubmit = async (isDraft = false) => {
     if (data?.isEdit) {
       setSaveLoading(true);
@@ -166,16 +165,18 @@ const PreviewPost = () => {
           <Text placement={locale} className="mb-2 mt-3 text-lg font-semibold">
             {i18n.t('previewAd.properties')}
           </Text>
-          {data?.properties.map((property: any, index: any) =>
-            property?.value ? (
-              <View direction="row" key={index} className="mb-2  ">
-                <Text className="flex-1 text-gray-600">{property.name}:</Text>
-                <Text className="text-gray-800">{property.value}</Text>
-              </View>
-            ) : (
-              <View key={index} className=" " />
-            )
-          )}
+          {data?.properties.map((property: any, index: any) => (
+            <View direction="row" key={index} className="mb-2  ">
+              <Text className="flex-1 text-gray-600">{property.label}:</Text>
+              {property.selectedValue?.length > 0 ? (
+                <Text className="text-gray-800">
+                  {property.selectedValue?.map((j: any) => j?.value).join(', ')}
+                </Text>
+              ) : (
+                <Text className="text-gray-800">{property.selectedValue.value}</Text>
+              )}
+            </View>
+          ))}
 
           {/* Sub Category and Time Period*/}
           {data?.timePeriod ? (

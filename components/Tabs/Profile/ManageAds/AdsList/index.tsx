@@ -15,7 +15,10 @@ const AdsList = () => {
   const { status } = usePosts();
   const { user }: any = useAuth();
   const { isLoading, data, hasNextPage, fetchNextPage, isFetchingNextPage, refetch }: any =
-    useGetPosts('', status, user?.uuid);
+    useGetPosts({
+      status,
+      userId: user?.uuid,
+    });
   const handleRefresh = useCallback(() => {
     queryClient.removeQueries({ queryKey: ['posts', '', status] });
     refetch();

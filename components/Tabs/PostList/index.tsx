@@ -1,5 +1,5 @@
-import { View, Text, FlatList } from 'react-native';
-import React from 'react';
+import { View, Text, FlatList, RefreshControl } from 'react-native';
+import React, { useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { cn } from '~/utils/helper';
@@ -7,11 +7,21 @@ import { useGlobalSearchParams, useRouter } from 'expo-router';
 import { i18n } from '~/utils/i18n';
 import { useGetPosts } from '~/hooks/post/query';
 import Render from './render';
+import theme from '~/utils/theme';
+import { queryClient } from '~/app/_layout';
 
 const PostList = () => {
   const router = useRouter();
   const params = useGlobalSearchParams();
-  const { isFetching, loading, data, refetch }: any = useGetPosts('', 'active');
+  const { isFetching, data, refetch }: any = useGetPosts({
+    status: 'active',
+    subCategory: params.subCategory,
+  });
+  const handleRefresh = useCallback(() => {
+    queryClient.removeQueries({ queryKey: ['posts'] });
+
+    refetch();
+  }, [queryClient, refetch]);
 
   return (
     <View className="flex-1 bg-white">
@@ -38,6 +48,14 @@ const PostList = () => {
           paddingHorizontal: 8,
           paddingVertical: 8,
         }}
+        refreshControl={
+          <RefreshControl
+            colors={[theme.colors.primary]}
+            refreshing={false}
+            onRefresh={handleRefresh}
+            tintColor={theme.colors.primary}
+          />
+        }
         numColumns={2}
         showsVerticalScrollIndicator={false}
       />

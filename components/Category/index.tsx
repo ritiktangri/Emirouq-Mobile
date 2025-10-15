@@ -130,7 +130,7 @@ function Category() {
                   onPress={() => {
                     router.push({
                       pathname: routes.tabs.post_list,
-                      params: { tag: 'search' },
+                      params: { tag: 'search', subCategory: item.uuid },
                     } as Href);
                   }}>
                   <Text className="text-center text-sm font-semibold text-gray-800">

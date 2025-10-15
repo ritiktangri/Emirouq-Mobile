@@ -1,23 +1,24 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 import {
+  getDashboardPost,
   getFavourite,
   getPostService,
   getSimilarPostsService,
   getSinglePostService,
 } from '~/utils/services/post';
-
-export const useGetPosts = (
-  keyword = '',
-  status = '',
-  userId = null,
+export const useGetPosts = ({
+  keyword,
+  status,
+  userId,
   key = 'getPostList',
-  priceRange = null,
-  category = null,
-  sortBy = ''
-) =>
+  priceRange,
+  category,
+  subCategory,
+  sortBy,
+}: any) =>
   useInfiniteQuery({
-    queryKey: ['posts', keyword, status, userId, key, priceRange, category, sortBy],
+    queryKey: ['posts', keyword, status, userId, key, priceRange, category, sortBy, subCategory],
     queryFn: ({ pageParam }) =>
       getPostService({
         query: {
@@ -28,6 +29,7 @@ export const useGetPosts = (
           priceRange,
           category,
           sortBy,
+          subCategory,
         },
         key,
       }),
@@ -83,4 +85,13 @@ export const useGetSimilarPosts = (id: any) =>
       }),
     refetchOnWindowFocus: false,
     enabled: !!id,
+  });
+export const useGetDashboardPost = () =>
+  useQuery({
+    queryKey: ['dashboard-posts'],
+    queryFn: () =>
+      getDashboardPost({
+        query: {},
+      }),
+    refetchOnWindowFocus: false,
   });

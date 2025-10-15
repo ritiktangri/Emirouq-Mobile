@@ -21,7 +21,9 @@ export default function Categories({ data }: any) {
                 resizeMode="contain"
               />
             </View>
-            <Text className="ml-2 font-poppinsMedium text-gray-700">{cat.title}</Text>
+            <Text className="ml-2 max-w-28 truncate font-poppinsMedium text-gray-700">
+              {cat.title}
+            </Text>
           </TouchableOpacity>
         ))}
       </ScrollView>

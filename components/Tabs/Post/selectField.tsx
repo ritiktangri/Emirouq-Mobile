@@ -25,6 +25,7 @@ export function SelectField({
   parentId,
   dependsOn,
   filterType,
+  onSelect,
 }: any) {
   const [visible, setVisible] = useState(false);
   const [keyword, setKeyword] = useState('');
@@ -145,6 +146,7 @@ export function SelectField({
                               if (filterType === 'checkbox') {
                                 toggleValue(item);
                               } else {
+                                onSelect?.();
                                 onChange({ id: item.uuid, value: item.value });
                                 setVisible(false);
                               }

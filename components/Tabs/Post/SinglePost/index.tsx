@@ -50,7 +50,6 @@ const SinglePost = () => {
   const { user } = useAuth();
   const { isLoading, data, refetch }: any = useGetSinglePosts(id);
   const { data: similarPosts }: any = useGetSimilarPosts(data?.data?.category?.uuid);
-
   useEffect(() => {
     if (data?.data?.file?.length > 0) {
       //cache update
@@ -372,12 +371,12 @@ const SinglePost = () => {
           <View className="px-4 pb-1 pt-4">
             <Text className="text-lg font-semibold">{i18n.t('post.description')}</Text>
             <Text className="mt-1 text-gray-700">{data?.data?.description}</Text>
-            <View className="mt-2">
-              <View className="flex-row justify-between  py-2">
+            <View className="mt-2 gap-2">
+              <View className="flex-row justify-between ">
                 <Text className="text-gray-600">{i18n.t('post.condition')}</Text>
                 <Text className="text-gray-800">{data?.data?.condition}</Text>
               </View>
-              <View className="flex-row justify-between  py-2">
+              <View className="flex-row justify-between ">
                 <Text className="text-gray-600">{i18n.t('post.category')}</Text>
                 <Text className="text-gray-800">{data?.data?.category?.title}</Text>
               </View>
@@ -387,10 +386,22 @@ const SinglePost = () => {
                   {data?.data?.brand?.title}
                 </Text>
               </View> */}
-              <View className="flex-row justify-between py-2">
+              <View className="flex-row justify-between">
                 <Text className="text-gray-600">Posted</Text>
                 <Text className="text-gray-800">{getRelativeTime(data?.data?.createdAt)}</Text>
               </View>
+              {(data?.data?.properties || []).map((property: any, index: any) => (
+                <View direction="row" key={index} className=" ">
+                  <Text className="flex-1 text-gray-600">{property.label}:</Text>
+                  {property.selectedValue?.length > 0 ? (
+                    <Text className="text-gray-800">
+                      {property.selectedValue?.map((j: any) => j?.value).join(', ')}
+                    </Text>
+                  ) : (
+                    <Text className="text-gray-800">{property.selectedValue.value}</Text>
+                  )}
+                </View>
+              ))}
             </View>
           </View>
 

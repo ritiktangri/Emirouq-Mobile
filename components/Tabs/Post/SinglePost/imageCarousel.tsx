@@ -10,7 +10,7 @@ function ImageCarousel({ data }: any) {
   });
 
   return (
-    <View className="flex-1">
+    <View className="h-[300px] flex-1">
       <FlatList
         data={data?.data?.file}
         keyExtractor={(item, index) => index.toString()}
