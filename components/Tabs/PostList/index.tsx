@@ -1,4 +1,4 @@
-import { View, Text, FlatList, RefreshControl } from 'react-native';
+import { View, Text, FlatList, RefreshControl, Image } from 'react-native';
 import React, { useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +9,8 @@ import { useGetPosts } from '~/hooks/post/query';
 import Render from './render';
 import theme from '~/utils/theme';
 import { queryClient } from '~/app/_layout';
+import NoData from '~/components/common/NoData';
+import { noData } from '~/image';
 
 const PostList = () => {
   const router = useRouter();
@@ -17,13 +19,13 @@ const PostList = () => {
     status: 'active',
     subCategory: params.subCategory,
     category: params.category,
+    keyword: params.keyword,
   });
   const handleRefresh = useCallback(() => {
     queryClient.removeQueries({ queryKey: ['posts'] });
 
     refetch();
   }, [queryClient, refetch]);
-
   return (
     <View className="flex-1 bg-white">
       <SafeAreaView edges={['top']} className={cn('flex-row rounded-b-xl', 'bg-primary')}>
@@ -45,6 +47,7 @@ const PostList = () => {
         renderItem={({ item, index }) => <Render item={item} index={index} />}
         ItemSeparatorComponent={() => <View className="m-1.5" />}
         showsHorizontalScrollIndicator={false}
+        className="mb-5"
         contentContainerStyle={{
           paddingHorizontal: 8,
           paddingVertical: 8,
@@ -59,6 +62,15 @@ const PostList = () => {
         }
         numColumns={2}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={() => {
+          return (
+            <View className="mt-10 flex-1 items-center justify-center">
+              <Image source={noData} className=" flex h-56 w-56" />
+
+              <Text className="font-interMedium text-xl">No Product found</Text>
+            </View>
+          );
+        }}
       />
     </View>
   );

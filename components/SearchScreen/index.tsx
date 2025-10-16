@@ -13,16 +13,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View } from '../common/View';
 import { Text } from '../common/Text';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-
-const popularCategories = [
-  'Mobiles',
-  'Computer Accessories',
-  'Property for sale',
-  'Home Appliances',
-];
+import { Href, router } from 'expo-router';
+import { queryClient } from '~/app/_layout';
+import { routes } from '~/utils/routes';
 
 export default function SearchScreen() {
+  const categoryQuery = queryClient.getQueriesData({ queryKey: ['category'] });
+  const categoryData: any = categoryQuery.length ? categoryQuery[0][1] : null;
+
   const [keyword, setKeyword] = useState('');
   const [isFocus, setIsFocus] = useState(false);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
@@ -90,7 +88,10 @@ export default function SearchScreen() {
       await saveSearchKeyword(keyword.trim());
       setIsFocus(false);
       Keyboard.dismiss();
-      // Here you would typically navigate to search results
+      router.push({
+        pathname: routes.tabs.post_list,
+        params: { tag: 'search', keyword: keyword.trim() },
+      } as Href);
     }
   };
 
@@ -98,7 +99,10 @@ export default function SearchScreen() {
     setKeyword(item);
     setIsFocus(false);
     Keyboard.dismiss();
-    // Here you would typically navigate to search results
+    router.push({
+      pathname: routes.tabs.post_list,
+      params: { tag: 'search', keyword: item.trim() },
+    } as Href);
   };
 
   return (
@@ -172,14 +176,24 @@ export default function SearchScreen() {
         <View className="px-4">
           <Text className=" font-poppinsMedium text-lg text-black">Popular Categories</Text>
           <View className="mt-5 gap-4">
-            {popularCategories.map((category, index) => (
-              <TouchableOpacity
-                key={index}
-                className="flex-row items-center justify-between border-b border-gray-100 ">
-                <Text className="font-interMedium text-gray-700">{category}</Text>
-                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
-              </TouchableOpacity>
-            ))}
+            {categoryData?.pages
+              ?.map((i: any) => i?.data)
+              ?.flat()
+              ?.slice(0, 4)
+              .map((category: any, index: any) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    router.push({
+                      pathname: routes.tabs.post_list,
+                      params: { tag: 'search', category: category.uuid },
+                    } as Href);
+                  }}
+                  key={category.uuid}
+                  className="flex-row items-center justify-between border-b border-gray-100 ">
+                  <Text className="font-interMedium text-gray-700">{category.title}</Text>
+                  <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                </TouchableOpacity>
+              ))}
           </View>
         </View>
       </ScrollView>
