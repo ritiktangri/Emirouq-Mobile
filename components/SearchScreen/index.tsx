@@ -184,8 +184,8 @@ export default function SearchScreen() {
                 <TouchableOpacity
                   onPress={() => {
                     router.push({
-                      pathname: routes.tabs.post_list,
-                      params: { tag: 'search', category: category.uuid },
+                      pathname: routes.tabs.category,
+                      params: { category: category.uuid },
                     } as Href);
                   }}
                   key={category.uuid}

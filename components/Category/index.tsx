@@ -16,7 +16,6 @@ function Category() {
       setSelectedCategory(params.category);
     }
   }, [params.category]);
-  console.log(params.category);
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isFetching }: any =
     useGetCategory();
   const { data: subCategory, isFetching: subCategoryFetching }: any =

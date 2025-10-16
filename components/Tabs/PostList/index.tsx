@@ -8,6 +8,7 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -37,6 +38,7 @@ const PostList = () => {
   const params: any = useGlobalSearchParams();
   const inputRef: any = useRef(null);
   const refRBSheet: any = useRef(null);
+  const [searchAttributes, setSearchAttributes] = useState('');
   const [selectedSection, setSelectedSection] = useState('');
   const [sortBy, setSortBy] = useState('');
   const [appliedFilter, setAppliedFilter] = useState({} as any);
@@ -59,6 +61,10 @@ const PostList = () => {
     debounce((text: string) => setKeyword(text), 300),
     []
   );
+  const handleAttributeDebounceSearch = useCallback(
+    debounce((text: string) => setSearchAttributes(text), 300),
+    []
+  );
   useEffect(() => {
     if (inputRef.current?.getNativeRef && params.keyword) {
       // Get the actual native input and set its text
@@ -68,7 +74,10 @@ const PostList = () => {
   }, [params.keyword, inputRef]);
 
   const attributes: any = useGetAttributes({ id: params.subCategory });
-  const attributeOptions = useGetAttributeOptions({ attributeId: selectedSection });
+  const attributeOptions = useGetAttributeOptions({
+    attributeId: selectedSection,
+    keyword: searchAttributes,
+  });
 
   const onSelect = (value: any) => {
     setSelectedSectionOption((prev: any[]) => {
@@ -162,7 +171,9 @@ const PostList = () => {
         customModalProps={{
           animationType: 'fade',
         }}
-        onClose={() => {}}>
+        onClose={() => {
+          setSearchAttributes('');
+        }}>
         <>
           <View className="flex-1 flex-row items-center gap-5 ">
             {/* Category Tabs */}
@@ -199,73 +210,91 @@ const PostList = () => {
 
             {/* Filter Options */}
             {selectedSection ? (
-              <ScrollView contentContainerClassName="gap-2  pb-10 h-full px-3">
-                {!['price']?.includes(selectedSection) ? (
-                  <View className=" pt-3">
-                    <View className="flex w-full items-end justify-end">
-                      <TouchableOpacity onPress={() => {}} className="">
-                        <Text className={cn('font-poppinsMedium')}>Clear Filters</Text>
-                      </TouchableOpacity>
-                    </View>
-                    <Input
-                      className="mr-3 w-full rounded-lg"
-                      placeholder="Search.."
-                      prefix={<Ionicons name="search" className="!text-lg" />}
-                    />
-                  </View>
-                ) : (
-                  <></>
-                )}
-
-                <View className="mt-3 gap-3">
-                  {(attributeOptions?.data?.pages || [])
-                    ?.map((i: any) => i?.data)
-                    ?.flat()
-                    .map((section: any) => (
-                      <TouchableOpacity
-                        onPress={() => {
-                          onSelect(section.value);
-                        }}
-                        key={section.uuid}
-                        className={cn('flex flex-row items-center  rounded-lg  ')}>
-                        <Text
-                          className={cn(
-                            'flex-1 font-poppinsMedium',
-                            selectedSectionOption?.includes(section.value) ? 'text-primary' : ''
-                          )}>
-                          {section.value}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
+              <View className="flex-1">
+                <ScrollView
+                  stickyHeaderIndices={[0]}
+                  contentContainerClassName="gap-2 pb-10  px-3"
+                  onScroll={({ nativeEvent }) => {
+                    const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
+                    const isCloseToBottom =
+                      layoutMeasurement.height + contentOffset.y >= contentSize.height - 50;
+                    if (
+                      isCloseToBottom &&
+                      attributeOptions.hasNextPage &&
+                      !attributeOptions.isFetchingNextPage
+                    ) {
+                      attributeOptions.fetchNextPage();
+                    }
+                  }}
+                  scrollEventThrottle={400}>
                   {!['price']?.includes(selectedSection) ? (
-                    <></>
-                  ) : (
-                    SORT_OPTIONS.map((option) => (
-                      <TouchableOpacity
-                        key={option.value}
-                        className="my-1 flex-row items-center py-2"
-                        activeOpacity={0.7}
-                        onPress={() => {
-                          setSortBy(option.value);
-                        }}>
-                        <View
-                          className={`mr-3 flex h-6 w-6 items-center justify-center rounded-full border-2 ${
-                            sortBy === option.value ? 'border-orange-500' : 'border-gray-300'
-                          }`}>
-                          {sortBy === option.value && (
-                            <View className="h-3 w-3 rounded-full bg-orange-500" />
-                          )}
-                        </View>
+                    <View className="bg-white pt-3">
+                      <Input
+                        onChangeText={handleAttributeDebounceSearch}
+                        className="mr-3 w-full rounded-lg"
+                        placeholder="Search.."
+                        prefix={<Ionicons name="search" className="!text-lg" />}
+                      />
+                    </View>
+                  ) : null}
 
-                        <Text className="flex-1 text-base text-gray-700">{option.label}</Text>
-                      </TouchableOpacity>
-                    ))
-                  )}
-                </View>
-              </ScrollView>
+                  <View className="mt-3 gap-3">
+                    {(attributeOptions?.data?.pages || [])
+                      .map((i: any) => i?.data)
+                      .flat()
+                      .map((section: any) => (
+                        <TouchableOpacity
+                          onPress={() => {
+                            onSelect(section.value);
+                          }}
+                          key={section.uuid}
+                          className={cn('flex flex-row items-center rounded-lg')}>
+                          <Text
+                            className={cn(
+                              'flex-1 font-poppinsMedium',
+                              selectedSectionOption?.includes(section.value) ? 'text-primary' : ''
+                            )}>
+                            {section.value}
+                          </Text>
+                        </TouchableOpacity>
+                      ))}
+
+                    {!['price']?.includes(selectedSection)
+                      ? null
+                      : SORT_OPTIONS.map((option) => (
+                          <TouchableOpacity
+                            key={option.value}
+                            className="my-1 flex-row items-center py-2"
+                            activeOpacity={0.7}
+                            onPress={() => {
+                              setSortBy(option.value);
+                            }}>
+                            <View
+                              className={`mr-3 flex h-6 w-6 items-center justify-center rounded-full border-2 ${
+                                sortBy === option.value ? 'border-orange-500' : 'border-gray-300'
+                              }`}>
+                              {sortBy === option.value && (
+                                <View className="h-3 w-3 rounded-full bg-orange-500" />
+                              )}
+                            </View>
+
+                            <Text className="flex-1 text-base text-gray-700">{option.label}</Text>
+                          </TouchableOpacity>
+                        ))}
+
+                    {attributeOptions.isFetchingNextPage && (
+                      <ActivityIndicator
+                        size="small"
+                        color={theme.colors.primary}
+                        className="my-3"
+                      />
+                    )}
+                  </View>
+                </ScrollView>
+              </View>
             ) : (
-              <View className="flex w-screen flex-1 items-center justify-center ">
-                <Image source={noData} className=" flex h-56 w-56" />
+              <View className="flex w-screen flex-1 items-center justify-center">
+                <Image source={noData} className="flex h-56 w-56" />
               </View>
             )}
           </View>
