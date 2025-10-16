@@ -7,7 +7,7 @@ const attributes = {
     v1: {
       ...defaults.methods.GET,
       ...defaults.versions.v1,
-      uri: `${prefix}/:subCategoryId`,
+      uri: `${prefix}/:id`,
     },
   },
   getAttributeOptions: {

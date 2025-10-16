@@ -1,4 +1,4 @@
-import { View, Text, FlatList, RefreshControl } from 'react-native';
+import { View, Text, FlatList, RefreshControl, ActivityIndicator, Image } from 'react-native';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import GlobalHeader from '~/components/GlobalHeader';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,21 +10,28 @@ import { queryClient } from '~/app/_layout';
 import theme from '~/utils/theme';
 import { useGetFavouritePosts } from '~/hooks/post/query';
 import Render from './render';
+import { noData } from '~/image';
 
 const Favourites = () => {
   const {
-    isFetching: favouritePostsFetching,
-    loading: favouritePostsLoading,
-    data: favouritePosts,
-    refetch: favouritePostsRefetch,
+    isFetching,
+    isLoading,
+    data,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+    refetch,
   }: any = useGetFavouritePosts();
 
   const handleRefresh = useCallback(() => {
     queryClient.removeQueries({ queryKey: ['posts', ''] });
 
-    favouritePostsRefetch();
-  }, [queryClient, favouritePostsRefetch]);
+    refetch();
+  }, [queryClient, refetch]);
 
+  if (isFetching) {
+    return <View className="flex-1 bg-white"></View>;
+  }
   return (
     <View className="flex-1 bg-white">
       <SafeAreaView edges={['top']} className={cn('flex-row rounded-b-xl', 'bg-primary')}>
@@ -41,30 +48,44 @@ const Favourites = () => {
         </View>
       </SafeAreaView>
       <View className="flex-1 bg-white">
-        {favouritePostsLoading || favouritePostsFetching ? (
-          <Text>Loading...</Text>
-        ) : (
-          <FlatList
-            data={favouritePosts?.pages.map((page: any) => page?.data).flat() || []}
-            numColumns={2}
-            columnWrapperStyle={{ justifyContent: 'space-between' }}
-            keyExtractor={(item: any) => item?.uuid?.toString()}
-            renderItem={({ item }) => <Render item={item} />}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{
-              margin: 12,
-            }}
-            showsVerticalScrollIndicator={false}
-            refreshControl={
-              <RefreshControl
-                colors={[theme.colors.primary]}
-                refreshing={false}
-                onRefresh={handleRefresh}
-                tintColor={theme.colors.primary}
-              />
+        <FlatList
+          data={data?.pages.map((page: any) => page?.data).flat() || []}
+          numColumns={2}
+          columnWrapperStyle={{ justifyContent: 'space-between' }}
+          keyExtractor={(item: any) => item?.uuid?.toString()}
+          renderItem={({ item }) => <Render item={item} />}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            margin: 12,
+          }}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              colors={[theme.colors.primary]}
+              refreshing={false}
+              onRefresh={handleRefresh}
+              tintColor={theme.colors.primary}
+            />
+          }
+          onEndReached={() => {
+            if (hasNextPage && !isFetchingNextPage) {
+              fetchNextPage();
             }
-          />
-        )}
+          }}
+          onEndReachedThreshold={0.3}
+          ListFooterComponent={
+            isFetchingNextPage ? (
+              <ActivityIndicator color="#000" size="small" className="my-2" />
+            ) : null
+          }
+          ListEmptyComponent={() => (
+            <View className="mt-10 flex-1 items-center justify-center">
+              <Image source={noData} className=" flex h-56 w-56" />
+
+              <Text className="font-interMedium text-xl">No Product has been added</Text>
+            </View>
+          )}
+        />
       </View>
     </View>
   );

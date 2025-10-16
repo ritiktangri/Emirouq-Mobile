@@ -6,13 +6,13 @@ import {
   getParentAttributeOptions,
 } from '~/utils/services/attributes';
 
-export const useGetAttributes = ({ subCategoryId, keyword }: any) =>
+export const useGetAttributes = ({ id, keyword }: any) =>
   useInfiniteQuery({
-    queryKey: ['attributes', subCategoryId, keyword],
+    queryKey: ['attributes', id, keyword],
     queryFn: ({ pageParam }) =>
       getAttributes({
         query: { start: pageParam, keyword },
-        pathParams: { subCategoryId },
+        pathParams: { id },
       }),
     getNextPageParam: (lastPage: any, allPages: any) => {
       const currentStart = allPages?.length * 10;
@@ -26,7 +26,7 @@ export const useGetAttributes = ({ subCategoryId, keyword }: any) =>
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    enabled: !!subCategoryId,
+    enabled: !!id,
   });
 
 export const useGetAttributeOptions = ({ attributeId, keyword, dependsOn }: any) =>

@@ -34,7 +34,7 @@ export default function Header({ user }: any) {
             className="rounded-lg border border-gray-200 p-2">
             <AntDesign name="search1" size={20} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => {
               router.push({
                 pathname: routes.tabs.notification,
@@ -45,6 +45,18 @@ export default function Header({ user }: any) {
             }}
             className="rounded-lg border border-gray-200 p-2">
             <SimpleLineIcons name="bell" size={20} color="black" />
+          </TouchableOpacity> */}
+          <TouchableOpacity
+            onPress={() => {
+              router.push({
+                pathname: routes.tabs.favourites,
+                params: {
+                  headerTitle: 'notification.title',
+                },
+              } as Href);
+            }}
+            className="rounded-lg border border-gray-200 p-2">
+            <SimpleLineIcons name="heart" size={20} color="black" />
           </TouchableOpacity>
         </View>
       ) : null}

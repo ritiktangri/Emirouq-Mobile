@@ -24,6 +24,7 @@ export const routes = {
   tabs: {
     tabs: '/(hydrogen)/(tabs)',
     home: '/(hydrogen)/(tabs)/home',
+    category: '/(hydrogen)/(tabs)/category',
     // sell: '/(hydrogen)/(tabs)/sell',
     chat: '/(hydrogen)/(tabs)/chat',
     profile: {

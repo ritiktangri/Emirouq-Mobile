@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable import/order */
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -19,7 +20,7 @@ import { i18n } from '~/utils/i18n';
 import { routes } from '~/utils/routes';
 import { useAuth } from '~/context/AuthContext';
 import dayjs from 'dayjs';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useGetSimilarPosts, useGetSinglePosts } from '~/hooks/post/query';
 import theme from '~/utils/theme';
 import { queryClient } from '~/app/_layout';
@@ -123,23 +124,6 @@ const SinglePost = () => {
     initializePaymentSheet();
   }, [paymentSheet?.data]);
 
-  if (isLoading) {
-    return (
-      <SafeAreaView className="flex-1 bg-white  ">
-        <View className="px-3 py-2">
-          <Ionicons
-            name="arrow-back"
-            size={24}
-            color="black"
-            onPress={() => {
-              router.back();
-            }}
-          />
-        </View>
-        <Loading />
-      </SafeAreaView>
-    );
-  }
   const onLikePost = () => {
     if (id) {
       queryClient.setQueryData(['singlePost', id], (oldData: any) => {
@@ -177,9 +161,33 @@ const SinglePost = () => {
         });
     }
   };
-
+  if (isLoading) {
+    return (
+      <View
+        className="flex-1 bg-white  "
+        style={{
+          paddingTop: useSafeAreaInsets().top,
+        }}>
+        <View className="px-3 py-2">
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color="black"
+            onPress={() => {
+              router.back();
+            }}
+          />
+        </View>
+        <Loading />
+      </View>
+    );
+  }
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View
+      className="flex-1 bg-white"
+      style={{
+        paddingTop: useSafeAreaInsets().top,
+      }}>
       <View className="flex-1">
         <View className="px-3 pt-2">
           <Ionicons
@@ -581,7 +589,7 @@ const SinglePost = () => {
         postId={id}
         postComments={data?.data?.comments}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 

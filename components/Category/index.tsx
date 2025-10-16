@@ -1,23 +1,22 @@
+/* eslint-disable import/order */
 'use client';
 
 import { Ionicons } from '@expo/vector-icons';
-import { Href, router } from 'expo-router';
+import { Href, router, useGlobalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ActivityIndicator, FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useGetCategory, useGetSubCategory } from '~/hooks/category/query';
 import { routes } from '~/utils/routes';
 
 function Category() {
-  const [selectedCategory, setSelectedCategory] = useState('');
-
+  const params = useGlobalSearchParams();
+  const [selectedCategory, setSelectedCategory] = useState('' as any);
+  useEffect(() => {
+    if (params.category) {
+      setSelectedCategory(params.category);
+    }
+  }, [params.category]);
+  console.log(params.category);
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isFetching }: any =
     useGetCategory();
   const { data: subCategory, isFetching: subCategoryFetching }: any =
@@ -25,10 +24,10 @@ function Category() {
 
   // set default selected category if not set
   useEffect(() => {
-    if (!selectedCategory && data?.pages?.[0]?.data?.[0]?.uuid) {
+    if (data?.pages?.[0]?.data?.[0]?.uuid && !params.category) {
       setSelectedCategory(data.pages[0].data[0].uuid);
     }
-  }, [data, selectedCategory]);
+  }, [data?.pages?.[0]?.data?.[0]?.uuid, !params.category]);
   if (isFetching) {
     return (
       <ActivityIndicator

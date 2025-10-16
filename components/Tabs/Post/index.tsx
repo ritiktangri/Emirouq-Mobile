@@ -109,7 +109,7 @@ const AddPost = () => {
   const selectedSubCategory = watch('subCategory');
   //get attributes for the selected sub category
 
-  const { data } = useGetAttributes({ subCategoryId: selectedSubCategory });
+  const { data } = useGetAttributes({ id: selectedSubCategory });
   const { fields, append, update, replace } = useFieldArray({
     control,
     name: 'properties',

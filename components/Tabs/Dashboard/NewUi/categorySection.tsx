@@ -17,8 +17,8 @@ export default function Categories({ data }: any) {
           <TouchableOpacity
             onPress={() => {
               router.push({
-                pathname: routes.tabs.post_list,
-                params: { tag: 'search', category: cat.uuid },
+                pathname: routes.tabs.category,
+                params: { category: cat.uuid },
               } as Href);
             }}
             key={index}
