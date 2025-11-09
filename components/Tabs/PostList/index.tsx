@@ -40,8 +40,29 @@ const PostList = () => {
   const refRBSheet: any = useRef(null);
   const [searchAttributes, setSearchAttributes] = useState('');
   const [selectedSection, setSelectedSection] = useState('');
+  const [isAllFilterSelected, setIsAllFilterSelected] = useState(false);
   const [sortBy, setSortBy] = useState('');
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 0 });
   const [appliedFilter, setAppliedFilter] = useState({} as any);
+  const selectedFilterCount = React.useMemo(() => {
+    let count = 0;
+
+    Object.entries(appliedFilter).forEach(([key, value]) => {
+      if (key === 'price') return; // ✅ skip price here
+
+      if (Array.isArray(value)) {
+        count += value.length;
+      } else if (value) {
+        count += 1;
+      }
+    });
+
+    // ✅ Count price only once if applied
+    if (appliedFilter.price) count += 1;
+
+    return count;
+  }, [appliedFilter]);
+
   const [selectedSectionOption, setSelectedSectionOption] = useState([] as any);
   const [keyword, setKeyword] = useState('');
   const { isFetching, data, refetch }: any = useGetPosts({
@@ -51,7 +72,9 @@ const PostList = () => {
     keyword,
     sortBy: appliedFilter.sortBy,
     properties: appliedFilter?.properties,
+    priceRange: appliedFilter.price?.split('-'),
   });
+  console.log(appliedFilter.price?.split('-'), 'price');
   const handleRefresh = useCallback(() => {
     queryClient.removeQueries({ queryKey: ['posts'] });
 
@@ -117,13 +140,66 @@ const PostList = () => {
           placeholderTextColor="#999"
           autoFocus
         />
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => {
             refRBSheet.current.open();
           }}
           className="rounded-lg border border-gray-200 px-4 py-1">
           <Ionicons name="filter" className="!text-2xl" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+      </View>
+      <View className=" gap-4 px-3 py-2">
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerClassName=" gap-2 items-center">
+          <Ionicons name="filter" className="!text-xl" />
+          <Text className="font-poppinsMedium">Filters</Text>
+          {!!selectedFilterCount ? (
+            <View className="flex h-6 w-6 items-center justify-center rounded-full bg-primary">
+              <Text className=" font-poppinsMedium text-white">{selectedFilterCount}</Text>
+            </View>
+          ) : (
+            <></>
+          )}
+          <View className="ml-3 flex-row items-center gap-2">
+            {[
+              ...(attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || []),
+              { label: 'Price', uuid: 'price' },
+              { label: 'All Filters', uuid: 'all-filters' },
+            ].map((section: any) => (
+              <TouchableOpacity
+                onPress={() => {
+                  refRBSheet.current.open();
+                  if (section?.uuid === 'all-filters') {
+                    setIsAllFilterSelected(true);
+                    setSelectedSection(
+                      (attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || [])?.[0]?.uuid
+                    );
+                  } else {
+                    setSelectedSection(section.uuid);
+                  }
+                }}
+                key={section.uuid}
+                className={cn('flex flex-row items-center rounded-lg border-2  border-gray-200  ')}>
+                <Text
+                  className={cn(
+                    'px-3 font-poppinsMedium'
+                    // selectedSection === section.uuid ? 'text-primary' : ''
+                  )}>
+                  {section.label}
+                </Text>
+                <Ionicons
+                  className={cn(
+                    '!text-lg'
+                    // selectedSection === section.uuid ? '!text-primary' : ''
+                  )}
+                  name={selectedSection === section.uuid ? 'chevron-forward' : 'chevron-down'}
+                />
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
       </View>
       <FlatList
         data={data?.pages.map((page: any) => page?.data).flat() || []}
@@ -173,39 +249,43 @@ const PostList = () => {
         }}
         onClose={() => {
           setSearchAttributes('');
+          setIsAllFilterSelected(false);
         }}>
         <>
-          <View className="flex-1 flex-row items-center gap-5 ">
+          <View className="flex-1 flex-row items-center  ">
             {/* Category Tabs */}
-            <View className="flex h-full w-[30%] justify-start gap-5 px-3 pt-6">
-              {[
-                ...(attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || []),
-                { label: 'Price', uuid: 'price' },
-              ].map((section: any) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    setSelectedSection(section.uuid);
-                  }}
-                  key={section.uuid}
-                  className={cn('flex flex-row items-center  rounded-lg  ')}>
-                  <Text
-                    className={cn(
-                      'flex-1 font-poppinsMedium',
-                      selectedSection === section.uuid ? 'text-primary' : ''
-                    )}>
-                    {section.label}
-                  </Text>
-                  <Ionicons
-                    className={cn(
-                      '!text-lg',
-                      selectedSection === section.uuid ? '!text-primary' : ''
-                    )}
-                    name={selectedSection === section.uuid ? 'chevron-forward' : 'chevron-down'}
-                  />
-                </TouchableOpacity>
-              ))}
-            </View>
-
+            {isAllFilterSelected ? (
+              <View className="flex h-full w-[30%] justify-start gap-5 px-3 pt-6">
+                {[
+                  ...(attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || []),
+                  { label: 'Price', uuid: 'price' },
+                ].map((section: any) => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelectedSection(section.uuid);
+                    }}
+                    key={section.uuid}
+                    className={cn('flex flex-row items-center  rounded-lg  ')}>
+                    <Text
+                      className={cn(
+                        'flex-1 font-poppinsMedium',
+                        selectedSection === section.uuid ? 'text-primary' : ''
+                      )}>
+                      {section.label}
+                    </Text>
+                    <Ionicons
+                      className={cn(
+                        '!text-lg',
+                        selectedSection === section.uuid ? '!text-primary' : ''
+                      )}
+                      name={selectedSection === section.uuid ? 'chevron-forward' : 'chevron-down'}
+                    />
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ) : (
+              <></>
+            )}
             <View className="h-full w-[2px] bg-gray-100" />
 
             {/* Filter Options */}
@@ -259,7 +339,7 @@ const PostList = () => {
                         </TouchableOpacity>
                       ))}
 
-                    {!['price']?.includes(selectedSection)
+                    {/* {!['price']?.includes(selectedSection)
                       ? null
                       : SORT_OPTIONS.map((option) => (
                           <TouchableOpacity
@@ -280,7 +360,50 @@ const PostList = () => {
 
                             <Text className="flex-1 text-base text-gray-700">{option.label}</Text>
                           </TouchableOpacity>
-                        ))}
+                        ))} */}
+                    {selectedSection === 'price' ? (
+                      <View className="px-4 pt-4">
+                        <Text className="mb-2 font-poppinsMedium text-lg">
+                          Set your desired price range
+                        </Text>
+
+                        <View className="mb-4 flex-row items-center justify-between">
+                          {/* Min Price */}
+                          <View className="mr-2 flex-1 flex-row items-center rounded-lg border border-gray-300 px-2">
+                            <TextInput
+                              keyboardType="numeric"
+                              placeholder="0"
+                              value={priceRange.min?.toString()}
+                              onChangeText={(v) => setPriceRange({ ...priceRange, min: +v })}
+                              className="flex-1 py-2 text-base leading-5 text-gray-700"
+                            />
+                            <Text className="ml-2 font-poppinsMedium leading-5 text-gray-500">
+                              AED
+                            </Text>
+                          </View>
+
+                          {/* Dash separator */}
+                          <Text className="mx-3 font-poppinsMedium text-lg text-gray-600">-</Text>
+
+                          {/* Max Price */}
+                          <View className="ml-2 flex-1 flex-row items-center rounded-lg border border-gray-300 px-2">
+                            <TextInput
+                              keyboardType="numeric"
+                              placeholder="Any"
+                              value={priceRange.max?.toString()}
+                              onChangeText={(v) => setPriceRange({ ...priceRange, max: +v })}
+                              className="flex-1 py-2 text-base leading-5 text-gray-700"
+                              style={{ textAlignVertical: 'center' }}
+                            />
+                            <Text className="ml-2 font-poppinsMedium leading-5 text-gray-500">
+                              AED
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                    ) : (
+                      <></>
+                    )}
 
                     {attributeOptions.isFetchingNextPage && (
                       <ActivityIndicator
@@ -306,11 +429,17 @@ const PostList = () => {
               onPress={() => {
                 setSelectedSectionOption([]);
                 setSortBy('');
+                setIsAllFilterSelected(false);
+                setPriceRange({ min: 0, max: 0 });
               }}>
               <Text>Reset all</Text>
             </TouchableOpacity>
             <View className="flex-row items-center gap-2">
-              <TouchableOpacity className="rounded-lg border-[1px] border-primary px-3 py-2">
+              <TouchableOpacity
+                className="rounded-lg border-[1px] border-primary px-3 py-2"
+                onPress={() => {
+                  refRBSheet.current.close();
+                }}>
                 <Text className="text-dimgray text-center font-poppinsMedium dark:text-white">
                   Close
                 </Text>
@@ -323,8 +452,13 @@ const PostList = () => {
                     ...appliedFilter,
                     properties: selectedSectionOption || [],
                     sortBy,
+                    price:
+                      priceRange.min || priceRange.max
+                        ? `${priceRange.min || 0}-${priceRange.max || ''}`
+                        : undefined,
                   });
                   refRBSheet.current.close();
+                  setIsAllFilterSelected(false);
                 }}>
                 <Text className="font-poppinsMedium text-white">Apply filters</Text>
               </TouchableOpacity>
