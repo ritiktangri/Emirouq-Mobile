@@ -10,6 +10,8 @@ import Categories from './NewUi/categorySection';
 import RecommendedSection from './NewUi/recommendationSection';
 import { useGetDashboardPost } from '~/hooks/post/query';
 import theme from '~/utils/theme';
+import { Text } from '~/components/common/Text';
+import { ActivityIndicator } from 'react-native-paper';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -26,7 +28,11 @@ const Dashboard = () => {
     dashboardRefetch();
   }, [queryClient, categoryRefetch, categoryRefetch]);
   if (isFetching) {
-    return <></>;
+    return (
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size={30} color="#FF5722" />
+      </View>
+    );
   }
   return (
     <View className="flex-1 bg-white">

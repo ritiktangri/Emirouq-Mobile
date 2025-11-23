@@ -1,4 +1,5 @@
 'use client';
+import { router } from 'expo-router';
 import React, { useEffect } from 'react';
 
 import { useAuth } from '~/context/AuthContext';
@@ -32,6 +33,9 @@ function SocketEventScreen({ children }: any) {
       //when other user open's the app, fetch online users
       socketIo.on('fetchOnlineUsers', (user: any) => {
         setOnlineUsers(user);
+      });
+      socketIo.on('updateLastOnlineStatus', (payload: any) => {
+        router.setParams({ receiverLastOnlineTime: payload });
       });
       return () => {
         // remove the event listener when the component unmounts
