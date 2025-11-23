@@ -36,6 +36,7 @@ import {
 import { io } from 'socket.io-client';
 import { saveConversationCache, saveMessageCache } from '~/hooks/chats/query';
 import { useTheme } from './ThemeContext';
+import { queryClient } from '~/app/_layout';
 
 const storageTokenKeyName = 'accessToken';
 
@@ -183,6 +184,7 @@ const AuthProvider = ({ children }: any) => {
         //   </Text>
         // );
         getUser(() => {
+          // queryClient.invalidateQueries({ queryKey: ['conversation'] });
           router.replace(routes.tabs.home as any);
           setSignInLoading(false);
         });
@@ -200,9 +202,15 @@ const AuthProvider = ({ children }: any) => {
     socketIo?.disconnect();
     setActiveAccount([]);
     setUser(null);
+    setOnlineUsers([]);
     setPriceRange([0, 0]);
     setSelectedCategory('');
     setSelectedSorting('newest');
+    queryClient.clear();
+    // queryClient.resetQueries();
+    // queryClient.removeQueries({ queryKey: ['conversation'] });
+    // queryClient.removeQueries({ queryKey: ['message'] });
+    socketIo.emit('disconnect');
     await Promise.all([
       removeStorageItemAsync(storageTokenKeyName),
       removeStorageItemAsync('activeAccount'),

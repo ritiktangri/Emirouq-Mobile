@@ -8,6 +8,56 @@ import { routes } from '~/utils/routes';
 import { useAuth } from '~/context/AuthContext';
 import { useAppState } from '@react-native-community/hooks';
 import { useAudioPlayer } from '~/context/AudioPlayerContext';
+import dayjs from 'dayjs';
+
+export const formatLastSeen = (lastOnlineTime: any): string => {
+  if (!lastOnlineTime) return '';
+
+  const now = dayjs();
+  const last = dayjs(lastOnlineTime);
+
+  const diffSeconds = now.diff(last, 'second', true); // float seconds
+  const diffMinutes = now.diff(last, 'minute', true); // float minutes
+
+  // // Active right now (less than 1 second)
+  // if (diffSeconds < 1) {
+  //   return 'online';
+  // }
+
+  // A few seconds ago (like WhatsApp shows "last seen a few seconds ago")
+  if (diffSeconds < 10) {
+    return 'last seen a few seconds ago';
+  }
+
+  // Within the last minute
+  if (diffSeconds < 60) {
+    return 'last seen just now';
+  }
+
+  // Within N minutes (you previously used 10 minutes)
+  if (diffMinutes < 10) {
+    const minutes = Math.floor(diffMinutes);
+    return `last seen ${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
+  }
+
+  // Today
+  if (now.isSame(last, 'day')) {
+    return `last seen today at ${last.format('h:mm A')}`;
+  }
+
+  // Yesterday
+  if (now.subtract(1, 'day').isSame(last, 'day')) {
+    return `last seen yesterday at ${last.format('h:mm A')}`;
+  }
+
+  // Same year
+  if (now.isSame(last, 'year')) {
+    return `last seen on ${last.format('DD MMM [at] h:mm A')}`;
+  }
+
+  // Older
+  return `last seen on ${last.format('YYYY-MM-DD')}`;
+};
 
 const Header = ({ data, status }: any) => {
   const router = useRouter();
@@ -95,9 +145,11 @@ const Header = ({ data, status }: any) => {
             <View className="flex-row items-center gap-2">
               <Text className={cn('font-poppinsMedium text-green-500')}>Online</Text>
             </View>
-          ) : (
-            <></>
-          )}
+          ) : data?.receiverLastOnlineTime ? (
+            <Text className="font-poppinsMedium text-sm text-black">
+              {formatLastSeen(data.receiverLastOnlineTime)}
+            </Text>
+          ) : null}
         </View>
       </View>
       {/* <TouchableOpacity>

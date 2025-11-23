@@ -108,6 +108,8 @@ export const useGetConversations = (keyword = '', enabled = true) =>
         return undefined;
       }
     },
+    gcTime: 0,
+    staleTime: 0,
     initialPageParam: 0,
     refetchOnWindowFocus: false,
     refetchOnMount: false,

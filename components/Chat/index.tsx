@@ -58,7 +58,7 @@ export default function Chat() {
         />
       </View>
 
-      {isFetching || isLoading ? (
+      {isFetching ? (
         <Loading />
       ) : (
         <FlatList

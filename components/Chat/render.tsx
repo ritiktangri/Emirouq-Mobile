@@ -47,6 +47,7 @@ const Render = ({ item }: any) => {
             post: JSON.stringify(item?.post),
             sortConversation: !!item?.chatDetails?.count,
             count: item?.chatDetails?.count,
+            receiverLastOnlineTime: item?.receiverOnline?.lastOnlineTime,
           },
         } as unknown as Href);
       }}

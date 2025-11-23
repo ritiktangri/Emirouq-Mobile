@@ -29,7 +29,10 @@ const ChatScreen = () => {
     params?.conversationId
   );
   const { showToast } = useTheme();
-  const { refetch: conversationRefetch }: any = useGetConversations('', false);
+  const { data: conversationData, refetch: conversationRefetch }: any = useGetConversations(
+    '',
+    false
+  );
   const createConversation = useCreateConversation();
   const uploadFile = useUploadFile();
   const router = useRouter();
