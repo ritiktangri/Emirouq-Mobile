@@ -6,6 +6,7 @@ import { Href, router, useGlobalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useGetCategory, useGetSubCategory } from '~/hooks/category/query';
+import { getInitials } from '~/utils/helper';
 import { routes } from '~/utils/routes';
 
 function Category() {
@@ -47,7 +48,7 @@ function Category() {
 
       <View className="flex-1 flex-row">
         {/* Left - Category List */}
-        <View className="w-2/5 border-r border-gray-200 bg-white">
+        <View className="w-2/5 border-r border-gray-200 bg-gray-100">
           <FlatList
             data={data?.pages.flatMap((page: any) => page.data) || []}
             keyExtractor={(item) => item?.uuid}
@@ -56,7 +57,7 @@ function Category() {
               return (
                 <TouchableOpacity
                   className={`border-b border-gray-100 p-4 ${
-                    isSelected ? 'border-l-4 border-l-orange-500 bg-orange-50' : 'bg-white'
+                    isSelected ? 'border-l-4 border-l-orange-500 bg-white' : 'bg-gray-100'
                   }`}
                   onPress={() => setSelectedCategory(item?.uuid)}>
                   <Text
@@ -82,7 +83,7 @@ function Category() {
         </View>
 
         {/* Right - Subcategory Grid */}
-        <View className="flex-1 ">
+        <View className="flex-1 bg-white">
           {subCategoryFetching ? (
             <View className="flex-1 items-center justify-center">
               <ActivityIndicator size="large" color="#f97316" />
@@ -112,30 +113,36 @@ function Category() {
                 return null;
               }}
               columnWrapperStyle={{ justifyContent: 'space-between' }}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  className="mb-4 w-[48%] items-center rounded-lg  p-4 "
-                  style={{
-                    boxShadow: [
-                      {
-                        offsetX: 0,
-                        offsetY: 1,
-                        blurRadius: 3,
-                        color: 'rgba(0, 0, 0, 0.3)',
-                      },
-                    ],
-                  }}
-                  onPress={() => {
-                    router.push({
-                      pathname: routes.tabs.post_list,
-                      params: { tag: 'search', subCategory: item.uuid },
-                    } as Href);
-                  }}>
-                  <Text className="text-center text-sm font-semibold text-gray-800">
-                    {item.title}
-                  </Text>
-                </TouchableOpacity>
-              )}
+              renderItem={({ item }) => {
+                return (
+                  <TouchableOpacity
+                    className="mb-4 w-[48%] items-center rounded-lg"
+                    style={{
+                      shadowColor: '#000',
+                      shadowOpacity: 0.15,
+                      shadowRadius: 4,
+                      shadowOffset: { width: 0, height: 2 },
+                      elevation: 3,
+                    }}
+                    onPress={() => {
+                      router.push({
+                        pathname: routes.tabs.post_list,
+                        params: { tag: 'search', subCategory: item.uuid },
+                      } as Href);
+                    }}>
+                    <View className="mb-2 h-12 w-12 items-center justify-center rounded-full bg-gray-200">
+                      <Text className="text-xl font-bold text-gray-700">
+                        {getInitials(item.title)}
+                      </Text>
+                    </View>
+
+                    {/* Title */}
+                    <Text className="text-center text-sm font-semibold text-gray-800">
+                      {item.title}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              }}
               showsVerticalScrollIndicator={false}
               ListEmptyComponent={() => {
                 return (

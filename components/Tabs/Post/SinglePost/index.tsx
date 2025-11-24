@@ -201,7 +201,7 @@ const SinglePost = () => {
         </View>
 
         <ScrollView
-          className=" mb-10"
+          className="mb-2"
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
@@ -370,6 +370,23 @@ const SinglePost = () => {
                   }}>
                   <FontAwesome name="whatsapp" size={20} color="green" />
                   <Text className="ml-1 text-green-700">Chat</Text>
+                </TouchableOpacity>
+              )}
+              {data?.data?.user?.phoneNumber && (
+                <TouchableOpacity
+                  className="flex-row items-center"
+                  onPress={async () => {
+                    const phoneNumber = `${data?.data?.user?.countryCode || '+971'}${data?.data?.user?.phoneNumber}`;
+                    const url = `tel:${phoneNumber}`;
+                    const canOpen = await Linking.canOpenURL(url);
+                    if (canOpen) {
+                      Linking.openURL(url);
+                    } else {
+                      alert('Unable to open dialer');
+                    }
+                  }}>
+                  <FontAwesome name="phone" size={20} color="gray" />
+                  <Text className="ml-1 text-gray-600">Call</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -576,7 +593,7 @@ const SinglePost = () => {
               },
             } as unknown as Href)
           }
-          className="mx-4 mb-2 flex-row items-center justify-center gap-2 rounded-lg bg-primary py-3">
+          className="mx-4 mb-10 flex-row items-center justify-center gap-2 rounded-lg bg-primary py-3">
           <Feather name="message-circle" size={20} color="white" />
           <Text className=" font-poppinsMedium text-lg text-white">Chat with Seller</Text>
         </TouchableOpacity>
