@@ -62,7 +62,6 @@ const PostList = () => {
 
     return count;
   }, [appliedFilter]);
-  console.log(priceRange);
   const [selectedSectionOption, setSelectedSectionOption] = useState([] as any);
   const [keyword, setKeyword] = useState('');
   const { isFetching, data, refetch }: any = useGetPosts({
