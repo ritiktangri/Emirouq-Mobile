@@ -31,9 +31,7 @@ const Render = ({ item, refetch }: any) => {
         setModalVisible(false);
         refetch();
       },
-      (err: any) => {
-        console.log('err', err);
-      }
+      (err: any) => {}
     );
   };
 

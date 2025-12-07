@@ -17,6 +17,7 @@ export const useGetPosts = ({
   subCategory,
   sortBy,
   properties,
+  city,
 }: any) =>
   useInfiniteQuery({
     queryKey: [
@@ -30,6 +31,7 @@ export const useGetPosts = ({
       sortBy,
       subCategory,
       properties,
+      city,
     ],
     queryFn: ({ pageParam }) =>
       getPostService({
@@ -43,6 +45,7 @@ export const useGetPosts = ({
           sortBy,
           subCategory,
           properties,
+          city,
         },
         key,
       }),

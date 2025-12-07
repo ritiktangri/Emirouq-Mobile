@@ -58,6 +58,7 @@ const PostProvider = ({ children }: any) => {
     formData.append('subCategory', body?.subCategory);
     formData.append('locationName', body?.location?.name);
     formData.append('locationPlaceId', body?.location?.placeId);
+    formData.append('location', JSON.stringify(body.location));
     body?.isDraft && formData.append('isDraft', body?.isDraft);
     formData.append('properties', JSON.stringify(body?.properties));
 
@@ -93,12 +94,12 @@ const PostProvider = ({ children }: any) => {
     formData.append('description', body?.description);
     formData.append('price', body?.price);
     formData.append('condition', body?.condition);
-    formData.append('location', body?.location);
     formData.append('timePeriod', body?.timePeriod);
     formData.append('category', body?.category);
     formData.append('subCategory', body?.subCategory);
     formData.append('locationName', body?.locationName);
     formData.append('locationPlaceId', body?.locationPlaceId);
+    formData.append('location', JSON.stringify(body.location));
     body?.isDraft && formData.append('isDraft', body?.isDraft);
     formData.append('properties', JSON.stringify(body?.properties));
     const uploadedUrls = body?.images

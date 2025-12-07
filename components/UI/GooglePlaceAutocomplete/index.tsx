@@ -2,6 +2,7 @@ import React, { useEffect, forwardRef } from 'react';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import { Controller } from 'react-hook-form';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { extractAddressDetails } from '~/utils/helper';
 
 const YOUR_GOOGLE_PLACES_API_KEY = 'AIzaSyBjSzyTvFszRwMz8sV-xBzKPnLDchDOVHY';
 
@@ -35,17 +36,23 @@ const LocationInput = forwardRef(({ control }: any, ref: any) => {
                 keyboardShouldPersistTaps="handled"
                 enablePoweredByContainer={false}
                 isRowScrollable={false}
-                fetchDetails={true}
-                onPress={(data, details = null) => {
+                fetchDetails
+                onPress={(data, details: any) => {
                   if (details) {
                     onChange({
                       name: data.description,
                       placeId: details.place_id,
+                      ...extractAddressDetails(details.address_components),
+                      lat: details.geometry.location.lat,
+                      lng: details.geometry.location.lng,
                     });
                   } else {
                     onChange({
                       name: data.description,
                       placeId: data.place_id,
+                      ...extractAddressDetails(details.address_components),
+                      lat: details.geometry.location.lat,
+                      lng: details.geometry.location.lng,
                     });
                   }
                 }}

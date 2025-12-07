@@ -1,42 +1,83 @@
 import React, { useState } from 'react';
-import { View, FlatList, Dimensions, Text, TouchableOpacity } from 'react-native';
-
+import {
+  View,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  Image,
+  Modal,
+  Dimensions,
+  StyleSheet,
+} from 'react-native';
 import ZoomImage from './zoomimage';
 
+const screenWidth = Dimensions.get('screen').width;
+
 function ImageCarousel({ data }: any) {
-  const [selectedImage, setSelectedImage] = useState({
-    uri: data?.data?.file[0],
-    index: 1,
-  });
+  const [modalVisible, setModalVisible] = useState(false);
 
   return (
-    <View className="h-[300px] flex-1">
-      <FlatList
-        data={data?.data?.file}
-        keyExtractor={(item, index) => index.toString()}
-        horizontal
-        decelerationRate="fast"
-        snapToInterval={Dimensions.get('screen').width} // each item is screen width
-        showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={(event) => {
-          const screenWidth = Dimensions.get('screen').width;
-          const index = Math.round(event.nativeEvent.contentOffset.x / screenWidth);
+    <View style={{ flex: 1 }}>
+      <TouchableOpacity onPress={() => setModalVisible(true)} activeOpacity={0.8}>
+        <Image
+          source={{ uri: data?.data?.file[0] }}
+          style={{ width: '100%', height: 300 }}
+          resizeMode="cover"
+        />
+      </TouchableOpacity>
 
-          setSelectedImage({
-            uri: data?.data?.file[index],
-            index: index + 1,
-          });
-        }}
-        renderItem={({ item }) => <ZoomImage uri={item} />}
-      />
+      <Modal visible={modalVisible} animationType="slide" transparent>
+        <View style={{ flex: 1, backgroundColor: '#fff' }}>
+          {/* Close */}
+          <TouchableOpacity style={styles.closeBtn} onPress={() => setModalVisible(false)}>
+            <Text style={styles.closeText}>×</Text>
+          </TouchableOpacity>
 
-      <View className="absolute right-4 top-10 rounded-full bg-gray-800 px-3 py-1">
-        <Text className="text-white">
-          {selectedImage?.index}/{data?.data?.file?.length}
-        </Text>
-      </View>
+          <FlatList
+            data={data?.data?.file}
+            keyExtractor={(_, i) => i.toString()}
+            renderItem={({ item }) => <ZoomImage uri={item} />}
+          />
+        </View>
+      </Modal>
     </View>
   );
 }
 
 export default ImageCarousel;
+
+const styles = StyleSheet.create({
+  modalImage: {
+    width: screenWidth,
+    height: 260,
+    marginBottom: 10,
+  },
+  closeBtn: {
+    position: 'absolute',
+    right: 20,
+    top: 40,
+    zIndex: 10,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  closeText: {
+    color: '#fff',
+    fontSize: 24,
+    marginTop: -2,
+  },
+  zoomContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+  },
+  zoomCloseBtn: {
+    position: 'absolute',
+    right: 20,
+    top: 50,
+    zIndex: 20,
+  },
+});

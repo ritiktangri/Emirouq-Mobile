@@ -50,7 +50,6 @@ const renderSectionHeader = (title: string, categoryId: any) => (
     <Text className="text-xl font-bold text-gray-900">{title}</Text>
     <TouchableOpacity
       onPress={() => {
-        console.log(categoryId, 'categoryId');
         router.push({
           pathname: routes.tabs.post_list,
           params: { tag: 'search', category: categoryId },
@@ -79,6 +78,5 @@ const renderHorizontalSection = (section: any, user: any) => (
   </View>
 );
 export default function Marketplace({ data, user }: any) {
-  console.log(user);
   return data?.map((section: any) => renderHorizontalSection(section, user));
 }

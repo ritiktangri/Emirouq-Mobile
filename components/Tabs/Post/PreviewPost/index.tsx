@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Href, useGlobalSearchParams, useRouter } from 'expo-router';
 import Swiper from 'react-native-swiper';
 
-import { AntDesign, FontAwesome } from '@expo/vector-icons';
+import { AntDesign, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { routes } from '~/utils/routes';
 import { toCurrency } from '~/utils/helper';
 import { i18n } from '~/utils/i18n';
@@ -18,7 +18,6 @@ const PreviewPost = () => {
   const data = params?.data ? JSON.parse(params?.data) : {};
   const router: any = useRouter();
   const { showToast } = useTheme();
-  const [selectFeature, setSelectFeature] = useState('');
   const { createPost, updatePost } = usePosts();
   const [saveLoading, setSaveLoading] = useState(false);
   const [draftLoading, setDraftLoading] = useState(false);
@@ -35,6 +34,7 @@ const PreviewPost = () => {
           ...data,
           locationName: data?.location?.name,
           locationPlaceId: data?.location?.placeId,
+          location: JSON.stringify(data?.location),
           isDraft,
         },
         {
@@ -61,6 +61,7 @@ const PreviewPost = () => {
           ...data,
           locationName: data?.location?.name,
           locationPlaceId: data?.location?.placeId,
+          location: JSON.stringify(data?.location),
           isDraft,
         },
         () => {
@@ -84,7 +85,14 @@ const PreviewPost = () => {
   };
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 bg-white">
+      <TouchableOpacity
+        className=""
+        onPress={() => {
+          router.back();
+        }}>
+        <Ionicons name="chevron-back" className="!text-2xl" />
+      </TouchableOpacity>
       <ScrollView className="flex-1 bg-white">
         <View className="bg-blue-50 p-3">
           <Text placement={locale} className="flex-row items-center text-sm text-blue-500">

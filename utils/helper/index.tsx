@@ -114,6 +114,54 @@ const saveFileLocally = async (attachments: any) => {
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
+function extractAddressDetails(components: any[]) {
+  const result = {
+    street: '',
+    postalCode: '',
+    country: '',
+    countryCode: '',
+    state: '',
+    stateCode: '',
+    city: '',
+  };
+
+  let streetNumber = '';
+  let route = '';
+
+  components.forEach((component: { types: unknown; long_name: string; short_name: string }) => {
+    const types = component.types as string[];
+
+    if (types.includes('street_number')) {
+      streetNumber = component.long_name;
+    }
+
+    if (types.includes('route')) {
+      route = component.long_name;
+    }
+
+    if (types.includes('locality')) {
+      result.city = component.long_name;
+    }
+
+    if (types.includes('administrative_area_level_1')) {
+      result.state = component.long_name;
+      result.stateCode = component.short_name;
+    }
+
+    if (types.includes('country')) {
+      result.country = component.long_name;
+      result.countryCode = component.short_name;
+    }
+
+    if (types.includes('postal_code')) {
+      result.postalCode = component.long_name;
+    }
+  });
+
+  result.street = [streetNumber, route].filter(Boolean).join(' ');
+
+  return result;
+}
 export {
   millisToTime,
   toCurrency,
@@ -124,4 +172,5 @@ export {
   saveFileLocally,
   screenWidth,
   screenHeight,
+  extractAddressDetails,
 };

@@ -26,13 +26,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import { Divider } from 'react-native-paper';
 import Input from '~/components/UI/Input';
 import { useGetAttributeOptions, useGetAttributes } from '~/hooks/attributes/query';
-import { MemoizedSorting } from '../Dashboard/Search/FilterComponents/export';
-const SORT_OPTIONS = [
-  { value: 'newest', label: 'Newest First' },
-  { value: 'price_asc', label: 'Price: Low to High' },
-  { value: 'price_desc', label: 'Price: High to Low' },
-  // { value: 'relevant', label: 'Most Relevant' },
-];
+
 const PostList = () => {
   const router = useRouter();
   const params: any = useGlobalSearchParams();
@@ -42,6 +36,7 @@ const PostList = () => {
   const [selectedSection, setSelectedSection] = useState('');
   const [isAllFilterSelected, setIsAllFilterSelected] = useState(false);
   const [sortBy, setSortBy] = useState('');
+  const [city, setCity] = useState('');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 0 });
   const [appliedFilter, setAppliedFilter] = useState({} as any);
   const selectedFilterCount = React.useMemo(() => {
@@ -49,7 +44,7 @@ const PostList = () => {
 
     Object.entries(appliedFilter).forEach(([key, value]) => {
       if (key === 'price') return; // ✅ skip price here
-
+      if (key === 'city') return; // ✅ skip price here
       if (Array.isArray(value)) {
         count += value.length;
       } else if (value) {
@@ -57,12 +52,15 @@ const PostList = () => {
       }
     });
 
-    // ✅ Count price only once if applied
-    if (appliedFilter.price) count += 1;
+    if (appliedFilter.price) {
+      const [min, max] = appliedFilter.price.split('-').map(Number);
+      if (min > 0 || max > 0) count += 1;
+    }
+
+    if (!!appliedFilter.city === true) count += 1;
 
     return count;
   }, [appliedFilter]);
-
   const [selectedSectionOption, setSelectedSectionOption] = useState([] as any);
   const [keyword, setKeyword] = useState('');
   const { isFetching, data, refetch }: any = useGetPosts({
@@ -72,9 +70,9 @@ const PostList = () => {
     keyword,
     sortBy: appliedFilter.sortBy,
     properties: appliedFilter?.properties,
+    city: appliedFilter.city,
     priceRange: appliedFilter.price?.split('-'),
   });
-  console.log(appliedFilter.price?.split('-'), 'price');
   const handleRefresh = useCallback(() => {
     queryClient.removeQueries({ queryKey: ['posts'] });
 
@@ -111,7 +109,6 @@ const PostList = () => {
     });
   };
 
-  console.log(sortBy, 'selectedSectionOption');
   return (
     <View className="flex-1 bg-white">
       <View
@@ -153,17 +150,30 @@ const PostList = () => {
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerClassName=" gap-2 items-center">
-          <Ionicons name="filter" className="!text-xl" />
-          <Text className="font-poppinsMedium">Filters</Text>
-          {!!selectedFilterCount ? (
-            <View className="flex h-6 w-6 items-center justify-center rounded-full bg-primary">
-              <Text className=" font-poppinsMedium text-white">{selectedFilterCount}</Text>
-            </View>
-          ) : (
-            <></>
-          )}
+          <TouchableOpacity
+            activeOpacity={selectedFilterCount ? 0 : 0.8}
+            className="flex flex-row items-center gap-2"
+            onPress={() => {
+              if (!!selectedFilterCount === false) return;
+              refRBSheet.current.open();
+              setIsAllFilterSelected(true);
+              setSelectedSection(
+                (attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || [])?.[0]?.uuid
+              );
+            }}>
+            <Ionicons name="filter" className="!text-xl" />
+            <Text className="font-poppinsMedium">Filters</Text>
+            {!!selectedFilterCount === true ? (
+              <View className="flex h-6 w-6 items-center justify-center rounded-full bg-primary">
+                <Text className=" font-poppinsMedium text-white">{selectedFilterCount}</Text>
+              </View>
+            ) : (
+              <></>
+            )}
+          </TouchableOpacity>
           <View className="ml-3 flex-row items-center gap-2">
             {[
+              { label: 'City', uuid: 'city' },
               ...(attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || []),
               { label: 'Price', uuid: 'price' },
               { label: 'All Filters', uuid: 'all-filters' },
@@ -257,30 +267,33 @@ const PostList = () => {
             {isAllFilterSelected ? (
               <View className="flex h-full w-[30%] justify-start gap-5 px-3 pt-6">
                 {[
+                  { label: 'City', uuid: 'city' },
                   ...(attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || []),
                   { label: 'Price', uuid: 'price' },
                 ].map((section: any) => (
-                  <TouchableOpacity
-                    onPress={() => {
-                      setSelectedSection(section.uuid);
-                    }}
-                    key={section.uuid}
-                    className={cn('flex flex-row items-center  rounded-lg  ')}>
-                    <Text
-                      className={cn(
-                        'flex-1 font-poppinsMedium',
-                        selectedSection === section.uuid ? 'text-primary' : ''
-                      )}>
-                      {section.label}
-                    </Text>
-                    <Ionicons
-                      className={cn(
-                        '!text-lg',
-                        selectedSection === section.uuid ? '!text-primary' : ''
-                      )}
-                      name={selectedSection === section.uuid ? 'chevron-forward' : 'chevron-down'}
-                    />
-                  </TouchableOpacity>
+                  <View key={section.uuid}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setSelectedSection(section.uuid);
+                      }}
+                      className={cn('flex flex-row items-center  rounded-lg  ')}>
+                      <Text
+                        className={cn(
+                          'flex-1 font-poppinsMedium',
+                          selectedSection === section.uuid ? 'text-primary' : ''
+                        )}>
+                        {section.label}
+                      </Text>
+                      <Ionicons
+                        className={cn(
+                          '!text-lg',
+                          selectedSection === section.uuid ? '!text-primary' : ''
+                        )}
+                        name={selectedSection === section.uuid ? 'chevron-forward' : 'chevron-down'}
+                      />
+                    </TouchableOpacity>
+                    {/* <Text></Text> */}
+                  </View>
                 ))}
               </View>
             ) : (
@@ -307,7 +320,7 @@ const PostList = () => {
                     }
                   }}
                   scrollEventThrottle={400}>
-                  {!['price']?.includes(selectedSection) ? (
+                  {!['price', 'city']?.includes(selectedSection) ? (
                     <View className="bg-white pt-3">
                       <Input
                         onChangeText={handleAttributeDebounceSearch}
@@ -316,30 +329,60 @@ const PostList = () => {
                         prefix={<Ionicons name="search" className="!text-lg" />}
                       />
                     </View>
-                  ) : null}
+                  ) : (
+                    <View />
+                  )}
 
-                  <View className="mt-3 gap-3">
-                    {(attributeOptions?.data?.pages || [])
-                      .map((i: any) => i?.data)
-                      .flat()
-                      .map((section: any) => (
+                  {['city']?.includes(selectedSection) ? (
+                    <View className="gap-3 p-3">
+                      {[
+                        { value: 'Dubai', uuid: 'Dubai' },
+                        { value: 'Abu Dhabi', uuid: 'Abu Dhabi' },
+                        { value: 'Sharjah', uuid: 'Sharjah' },
+                        { value: 'Ajman', uuid: 'Ajman' },
+                        { value: 'Umm Al Quwain', uuid: 'Umm Al Quwain' },
+                        { value: 'Ras Al Khaimah', uuid: 'Ras Al Khaimah' },
+                        { value: 'Fujairah', uuid: 'Fujairah' },
+                      ].map((section: any) => (
                         <TouchableOpacity
                           onPress={() => {
-                            onSelect(section.value);
+                            setCity(section.value);
                           }}
                           key={section.uuid}
                           className={cn('flex flex-row items-center rounded-lg')}>
                           <Text
                             className={cn(
                               'flex-1 font-poppinsMedium',
-                              selectedSectionOption?.includes(section.value) ? 'text-primary' : ''
+                              city === section.value ? 'text-primary' : ''
                             )}>
                             {section.value}
                           </Text>
                         </TouchableOpacity>
                       ))}
+                    </View>
+                  ) : (
+                    <View className="mt-3 gap-3">
+                      {(attributeOptions?.data?.pages || [])
+                        .map((i: any) => i?.data)
+                        .flat()
+                        .map((section: any) => (
+                          <TouchableOpacity
+                            onPress={() => {
+                              onSelect(section.value);
+                            }}
+                            key={section.uuid}
+                            className={cn('flex flex-row items-center rounded-lg')}>
+                            <Text
+                              className={cn(
+                                'flex-1 font-poppinsMedium',
+                                selectedSectionOption?.includes(section.value) ? 'text-primary' : ''
+                              )}>
+                              {section.value}
+                            </Text>
+                          </TouchableOpacity>
+                        ))}
 
-                    {/* {!['price']?.includes(selectedSection)
+                      {/* {!['price']?.includes(selectedSection)
                       ? null
                       : SORT_OPTIONS.map((option) => (
                           <TouchableOpacity
@@ -361,58 +404,59 @@ const PostList = () => {
                             <Text className="flex-1 text-base text-gray-700">{option.label}</Text>
                           </TouchableOpacity>
                         ))} */}
-                    {selectedSection === 'price' ? (
-                      <View className="px-4 pt-4">
-                        <Text className="mb-2 font-poppinsMedium text-lg">
-                          Set your desired price range
-                        </Text>
+                      {selectedSection === 'price' ? (
+                        <View className="px-4 pt-4">
+                          <Text className="mb-2 font-poppinsMedium text-lg">
+                            Set your desired price range
+                          </Text>
 
-                        <View className="mb-4 flex-row items-center justify-between">
-                          {/* Min Price */}
-                          <View className="mr-2 flex-1 flex-row items-center rounded-lg border border-gray-300 px-2">
-                            <TextInput
-                              keyboardType="numeric"
-                              placeholder="0"
-                              value={priceRange.min?.toString()}
-                              onChangeText={(v) => setPriceRange({ ...priceRange, min: +v })}
-                              className="flex-1 py-2 text-base leading-5 text-gray-700"
-                            />
-                            <Text className="ml-2 font-poppinsMedium leading-5 text-gray-500">
-                              AED
-                            </Text>
-                          </View>
+                          <View className="mb-4 flex-row items-center justify-between">
+                            {/* Min Price */}
+                            <View className="mr-2 flex-1 flex-row items-center rounded-lg border border-gray-300 px-2">
+                              <TextInput
+                                keyboardType="numeric"
+                                placeholder="0"
+                                value={priceRange.min?.toString()}
+                                onChangeText={(v) => setPriceRange({ ...priceRange, min: +v })}
+                                className="flex-1 py-2 text-base leading-5 text-gray-700"
+                              />
+                              <Text className="ml-2 font-poppinsMedium leading-5 text-gray-500">
+                                AED
+                              </Text>
+                            </View>
 
-                          {/* Dash separator */}
-                          <Text className="mx-3 font-poppinsMedium text-lg text-gray-600">-</Text>
+                            {/* Dash separator */}
+                            <Text className="mx-3 font-poppinsMedium text-lg text-gray-600">-</Text>
 
-                          {/* Max Price */}
-                          <View className="ml-2 flex-1 flex-row items-center rounded-lg border border-gray-300 px-2">
-                            <TextInput
-                              keyboardType="numeric"
-                              placeholder="Any"
-                              value={priceRange.max?.toString()}
-                              onChangeText={(v) => setPriceRange({ ...priceRange, max: +v })}
-                              className="flex-1 py-2 text-base leading-5 text-gray-700"
-                              style={{ textAlignVertical: 'center' }}
-                            />
-                            <Text className="ml-2 font-poppinsMedium leading-5 text-gray-500">
-                              AED
-                            </Text>
+                            {/* Max Price */}
+                            <View className="ml-2 flex-1 flex-row items-center rounded-lg border border-gray-300 px-2">
+                              <TextInput
+                                keyboardType="numeric"
+                                placeholder="Any"
+                                value={priceRange.max?.toString()}
+                                onChangeText={(v) => setPriceRange({ ...priceRange, max: +v })}
+                                className="flex-1 py-2 text-base leading-5 text-gray-700"
+                                style={{ textAlignVertical: 'center' }}
+                              />
+                              <Text className="ml-2 font-poppinsMedium leading-5 text-gray-500">
+                                AED
+                              </Text>
+                            </View>
                           </View>
                         </View>
-                      </View>
-                    ) : (
-                      <></>
-                    )}
+                      ) : (
+                        <></>
+                      )}
 
-                    {attributeOptions.isFetchingNextPage && (
-                      <ActivityIndicator
-                        size="small"
-                        color={theme.colors.primary}
-                        className="my-3"
-                      />
-                    )}
-                  </View>
+                      {attributeOptions.isFetchingNextPage && (
+                        <ActivityIndicator
+                          size="small"
+                          color={theme.colors.primary}
+                          className="my-3"
+                        />
+                      )}
+                    </View>
+                  )}
                 </ScrollView>
               </View>
             ) : (
@@ -429,7 +473,8 @@ const PostList = () => {
               onPress={() => {
                 setSelectedSectionOption([]);
                 setSortBy('');
-                setIsAllFilterSelected(false);
+                // setIsAllFilterSelected(false);
+                setCity('');
                 setPriceRange({ min: 0, max: 0 });
               }}>
               <Text>Reset all</Text>
@@ -447,7 +492,6 @@ const PostList = () => {
               <TouchableOpacity
                 className="rounded-lg bg-primary px-3 py-2"
                 onPress={() => {
-                  console.log(appliedFilter);
                   setAppliedFilter({
                     ...appliedFilter,
                     properties: selectedSectionOption || [],
@@ -456,6 +500,7 @@ const PostList = () => {
                       priceRange.min || priceRange.max
                         ? `${priceRange.min || 0}-${priceRange.max || ''}`
                         : undefined,
+                    city,
                   });
                   refRBSheet.current.close();
                   setIsAllFilterSelected(false);

@@ -36,6 +36,15 @@ const schema = z.object({
   location: z.object({
     name: z.string().min(1, 'Location is required'),
     placeId: z.string().min(1, 'Place ID is required'),
+    street: z.string().optional(),
+    postalCode: z.string().optional(),
+    country: z.string().optional(),
+    countryCode: z.string().optional(),
+    state: z.string().min(1, 'State is required'),
+    stateCode: z.string().min(1, 'State Code is required'),
+    city: z.string().min(1, 'City is required'),
+    lat: z.number().min(1, 'Latitude is required'),
+    lng: z.number().min(1, 'Longitude is required'),
   }),
   timePeriod: z.any().optional(),
   images: z
@@ -70,7 +79,6 @@ const schema = z.object({
     })
   ),
 });
-
 type FormData = z.infer<typeof schema>;
 
 const AddPost = () => {
@@ -93,6 +101,15 @@ const AddPost = () => {
       location: {
         name: '',
         placeId: '',
+        street: '',
+        postalCode: '',
+        country: '',
+        countryCode: '',
+        state: '',
+        stateCode: '',
+        city: '',
+        lng: 0,
+        lat: 0,
       },
       timePeriod: '7 days',
       images: [],
@@ -108,7 +125,6 @@ const AddPost = () => {
   const selectedCategory = watch('category');
   const selectedSubCategory = watch('subCategory');
   //get attributes for the selected sub category
-
   const { data } = useGetAttributes({ id: selectedSubCategory });
   const { fields, append, update, replace } = useFieldArray({
     control,
@@ -138,7 +154,6 @@ const AddPost = () => {
   const locationRef: any = useRef(null);
   const { data: postDetails }: any = useGetSinglePosts(params?.postId);
   const singlePost = postDetails?.data;
-
   useEffect(() => {
     if (singlePost) {
       const currentText = locationRef.current.getAddressText();
@@ -165,6 +180,15 @@ const AddPost = () => {
         location: {
           name: singlePost?.location?.name || '',
           placeId: singlePost?.location?.placeId || '',
+          street: singlePost?.location?.street,
+          postalCode: singlePost?.location?.postalCode,
+          country: singlePost?.location?.country,
+          countryCode: singlePost?.location?.countryCode,
+          state: singlePost?.location?.state,
+          stateCode: singlePost?.location?.stateCode,
+          city: singlePost?.location?.city,
+          lng: singlePost?.geometry?.coordinates?.[0],
+          lat: singlePost?.geometry?.coordinates?.[1],
         },
         properties,
       });
