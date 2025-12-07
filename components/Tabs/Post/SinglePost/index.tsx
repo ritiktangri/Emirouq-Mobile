@@ -1,16 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable import/order */
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-  Dimensions,
-  FlatList,
-  Image,
-  Linking,
-  RefreshControl,
-  ScrollView,
-  Share,
-  TouchableOpacity,
-} from 'react-native';
+import { Image, Linking, RefreshControl, ScrollView, Share, TouchableOpacity } from 'react-native';
 import { AntDesign, Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { Href, router, useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
 import { View } from '~/components/common/View';
@@ -20,8 +11,8 @@ import { i18n } from '~/utils/i18n';
 import { routes } from '~/utils/routes';
 import { useAuth } from '~/context/AuthContext';
 import dayjs from 'dayjs';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useGetSimilarPosts, useGetSinglePosts } from '~/hooks/post/query';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useGetCountPost, useGetSimilarPosts, useGetSinglePosts } from '~/hooks/post/query';
 import theme from '~/utils/theme';
 import { queryClient } from '~/app/_layout';
 import Loading from './loading';
@@ -33,7 +24,6 @@ import { initPaymentSheet, presentPaymentSheet } from '@stripe/stripe-react-nati
 import { useGetPostConversation } from '~/hooks/chats/query';
 import { useTheme } from '~/context/ThemeContext';
 import ImageCarousel from './imageCarousel';
-import ZoomImage from './zoomimage';
 
 const SinglePost = () => {
   const { id }: any = useLocalSearchParams();
@@ -50,6 +40,8 @@ const SinglePost = () => {
   } as any);
   const { user } = useAuth();
   const { isLoading, data, refetch }: any = useGetSinglePosts(id);
+  const { data: countViewPost }: any = useGetCountPost(id);
+
   const { data: similarPosts }: any = useGetSimilarPosts(data?.data?.category?.uuid);
   useEffect(() => {
     if (data?.data?.file?.length > 0) {
@@ -252,14 +244,22 @@ const SinglePost = () => {
           {/* Product Details */}
           <View className="p-4">
             <Text className="mb-2 text-2xl font-bold">{data?.data?.title}</Text>
+
             <Text className="text-2xl font-semibold text-primary">
               {toCurrency(data?.data?.price)}
             </Text>
+
             <View className="mt-1 flex-row items-center">
               <Feather name="map-pin" size={16} color="gray" />
               <Text className="ml-1 text-gray-600">
                 {data?.data?.location?.name || 'New York, NY'}
               </Text>
+            </View>
+
+            {/* 👇 Add Views Count */}
+            <View className="mt-2 flex-row items-center">
+              <Feather name="eye" size={16} color="gray" />
+              <Text className="ml-1 text-gray-600">{countViewPost?.totalViews || 0} view(s)</Text>
             </View>
           </View>
 

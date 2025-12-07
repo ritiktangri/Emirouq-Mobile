@@ -81,3 +81,9 @@ export async function getDashboardPost({ query }: any) {
     query,
   });
 }
+export async function countViewPost({ pathParams }: any) {
+  return callApi({
+    uriEndPoint: { ...post.countViewPost.v1 } as ApiEndpoint,
+    pathParams,
+  });
+}

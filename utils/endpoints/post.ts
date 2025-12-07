@@ -87,6 +87,13 @@ const post: any = {
       uri: `${prefix}/get-dashboard-post`,
     },
   },
+  countViewPost: {
+    v1: {
+      ...defaults.methods.GET,
+      ...defaults.versions.v1,
+      uri: `${prefix}/count-view-post/:postId`,
+    },
+  },
 };
 
 export default post;

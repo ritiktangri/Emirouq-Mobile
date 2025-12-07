@@ -1,6 +1,7 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 import {
+  countViewPost,
   getDashboardPost,
   getFavourite,
   getPostService,
@@ -108,6 +109,15 @@ export const useGetDashboardPost = () =>
     queryFn: () =>
       getDashboardPost({
         query: {},
+      }),
+    refetchOnWindowFocus: false,
+  });
+export const useGetCountPost = (postId: any) =>
+  useQuery({
+    queryKey: ['count-posts', postId],
+    queryFn: () =>
+      countViewPost({
+        pathParams: { postId },
       }),
     refetchOnWindowFocus: false,
   });

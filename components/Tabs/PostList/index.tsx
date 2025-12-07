@@ -26,7 +26,8 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import { Divider } from 'react-native-paper';
 import Input from '~/components/UI/Input';
 import { useGetAttributeOptions, useGetAttributes } from '~/hooks/attributes/query';
-
+import MultiSlider from '@ptomasroos/react-native-multi-slider';
+import { width } from '~/constants/Colors';
 const PostList = () => {
   const router = useRouter();
   const params: any = useGlobalSearchParams();
@@ -61,6 +62,7 @@ const PostList = () => {
 
     return count;
   }, [appliedFilter]);
+  console.log(priceRange);
   const [selectedSectionOption, setSelectedSectionOption] = useState([] as any);
   const [keyword, setKeyword] = useState('');
   const { isFetching, data, refetch }: any = useGetPosts({
@@ -73,6 +75,17 @@ const PostList = () => {
     city: appliedFilter.city,
     priceRange: appliedFilter.price?.split('-'),
   });
+  useEffect(() => {
+    if (data?.pages?.[0]?.maxPrice) {
+      setPriceRange((prev) => {
+        return {
+          min: prev.min,
+          max: data?.pages?.[0]?.maxPrice || prev.max,
+        };
+      });
+    }
+  }, [data?.pages?.[0]?.maxPrice]);
+
   const handleRefresh = useCallback(() => {
     queryClient.removeQueries({ queryKey: ['posts'] });
 
@@ -443,6 +456,27 @@ const PostList = () => {
                               </Text>
                             </View>
                           </View>
+                          {data?.pages?.[0]?.maxPrice ? (
+                            <View className="flex items-center justify-center">
+                              <MultiSlider
+                                min={0}
+                                max={data?.pages?.[0]?.maxPrice}
+                                values={[priceRange.min, priceRange.max]}
+                                containerStyle={{}}
+                                sliderLength={isAllFilterSelected ? width * 0.5 : width * 0.8}
+                                // enableLabel
+                                onValuesChangeFinish={(value) => {
+                                  const [min, max] = value;
+                                  setPriceRange((prev) => ({
+                                    min,
+                                    max,
+                                  }));
+                                }}
+                              />
+                            </View>
+                          ) : (
+                            <></>
+                          )}
                         </View>
                       ) : (
                         <></>
