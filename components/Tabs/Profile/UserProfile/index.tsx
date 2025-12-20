@@ -105,7 +105,7 @@ const UserProfile = () => {
             </View>
           </View>
           {/* STATS */}
-          <View className="mt-2 flex-row justify-between rounded-lg bg-white px-3 py-3">
+          {/* <View className="mt-2 flex-row justify-between rounded-lg bg-white px-3 py-3">
             <View className="flex items-center">
               <Text className="text-xl font-semibold">45</Text>
               <Text>Ads Posted</Text>
@@ -118,7 +118,7 @@ const UserProfile = () => {
               <Text className="text-xl font-semibold">90%</Text>
               <Text>Response Rate</Text>
             </View>
-          </View>
+          </View> */}
           {/* PERSONAL INFORMATION */}
           <View className="mt-2 rounded-lg bg-white px-3 py-3 ">
             <Text className="text-xl font-semibold">{i18n.t('profile.personalInformation')}</Text>

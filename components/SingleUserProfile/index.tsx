@@ -134,7 +134,7 @@ const SingleUserProfile = ({ adsData }: any) => {
         </View>
 
         {/* STATS - Reduced for Public View */}
-        <View className="mx-4 mt-2 flex-row justify-around rounded-lg bg-white px-3 py-4">
+        {/* <View className="mx-4 mt-2 flex-row justify-around rounded-lg bg-white px-3 py-4">
           <View className="flex items-center">
             <Text className="text-xl font-bold text-gray-800">
               {posts?.pages?.[0]?.data?.length}
@@ -149,7 +149,7 @@ const SingleUserProfile = ({ adsData }: any) => {
             <Text className="text-xl font-bold text-gray-800">90%</Text>
             <Text className="text-sm text-gray-600">{i18n.t('profile.responseRate')}</Text>
           </View>
-        </View>
+        </View> */}
 
         {/* <TouchableOpacity className="mx-4 mt-4 items-center rounded-lg bg-primary py-3">
           <Text className="text-lg font-semibold text-white">

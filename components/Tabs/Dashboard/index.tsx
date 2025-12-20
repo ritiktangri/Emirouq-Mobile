@@ -49,7 +49,7 @@ const Dashboard = () => {
         showsVerticalScrollIndicator={false}>
         <Header user={user} />
         <Categories data={category?.pages.map((page: any) => page?.data).flat() || []} />
-        <RecommendedSection data={dashboardPost.data || []} user={user?.uuid} />
+        <RecommendedSection data={dashboardPost?.data || []} user={user?.uuid} />
       </ScrollView>
     </View>
   );
