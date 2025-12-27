@@ -156,7 +156,6 @@ const ChatScreen = () => {
       return;
     }
     if (!params?.postId) {
-      console.warn('No postId provided, cannot create conversation.');
       return;
     }
     try {
@@ -187,9 +186,7 @@ const ChatScreen = () => {
           return oldData;
         });
       }
-    } catch (error) {
-      console.error('Error creating conversation:', error);
-    }
+    } catch (error) {}
   };
   useEffect(() => {
     checkConversation();

@@ -27,9 +27,7 @@ const SocialButtons = () => {
       if (createdSessionId) {
         await setActive!({ session: createdSessionId });
       }
-    } catch (err) {
-      console.error('OAuth error', err);
-    }
+    } catch (err) {}
   }, []);
 
   return (

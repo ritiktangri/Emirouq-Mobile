@@ -46,9 +46,7 @@ const AddToFavourite = ({ item }: any) => {
             setIsFavourited(false);
           }
         });
-    } catch (err) {
-      console.error('Error updating favourites:', err);
-    }
+    } catch (err) {}
   };
   return (
     <Animated.View className="absolute right-2 top-2">

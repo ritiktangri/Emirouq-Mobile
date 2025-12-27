@@ -158,7 +158,6 @@ const AudioRecorder = forwardRef(({ onRecordingComplete, audio }: any, ref: any)
         durationRef.current++;
       }, 1000);
     } catch (err) {
-      console.error('Failed to start recording:', err);
       setRecording(false);
       showToast(`Error starting recording`, 'error', 1000);
     }
@@ -179,7 +178,6 @@ const AudioRecorder = forwardRef(({ onRecordingComplete, audio }: any, ref: any)
       const uri = recordingRef.current.getURI();
 
       if (elapsed < MIN_RECORDING_DURATION) {
-        console.warn('Recording too short, discarded.');
         showToast(`Please record for at least 2 seconds`, 'warning', 1000);
 
         if (uri) {
@@ -199,7 +197,6 @@ const AudioRecorder = forwardRef(({ onRecordingComplete, audio }: any, ref: any)
       }
     } catch (err) {
       showToast(`Error stopping recording`, 'error', 1000);
-      // console.error('Error stopping recording:', err);
     } finally {
       recordingRef.current = null;
       durationRef.current = 0;

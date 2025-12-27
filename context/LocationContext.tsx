@@ -36,7 +36,6 @@ export function LocationProvider({ children }: { children: ReactNode }) {
 
       setAddress(addressResult);
     } catch (error: any) {
-      console.error('Error getting location:', error);
       setErrorMsg(error.message);
     }
   };

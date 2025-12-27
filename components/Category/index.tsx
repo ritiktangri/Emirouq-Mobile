@@ -4,7 +4,15 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Href, router, useGlobalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useGetCategory, useGetSubCategory } from '~/hooks/category/query';
 import { getInitials } from '~/utils/helper';
 import { routes } from '~/utils/routes';
@@ -94,7 +102,7 @@ function Category() {
               data={subCategory?.pages.flatMap((page: any) => page.data) || []}
               keyExtractor={(item, index) => `${item.title}-${index}`}
               numColumns={2}
-              className="p-4"
+              className="p-2"
               ListHeaderComponent={() => {
                 if (subCategory?.pages?.[0]?.data?.length) {
                   return (
@@ -130,11 +138,22 @@ function Category() {
                         params: { tag: 'search', subCategory: item.uuid },
                       } as Href);
                     }}>
-                    <View className="mb-2 h-12 w-12 items-center justify-center rounded-full bg-gray-200">
-                      <Text className="text-xl font-bold text-gray-700">
-                        {getInitials(item.title)}
-                      </Text>
-                    </View>
+                    {item?.logo ? (
+                      <View className="mb-1 h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                        <Image
+                          source={{ uri: item?.logo }}
+                          alt={item?.title}
+                          className="h-10 w-10 rounded-full"
+                          resizeMode="contain"
+                        />
+                      </View>
+                    ) : (
+                      <View className="mb-2 h-12 w-12 items-center justify-center rounded-full bg-gray-200">
+                        <Text className="text-xl font-bold text-gray-700">
+                          {getInitials(item.title)}
+                        </Text>
+                      </View>
+                    )}
 
                     {/* Title */}
                     <Text className="text-center text-sm font-semibold text-gray-800">

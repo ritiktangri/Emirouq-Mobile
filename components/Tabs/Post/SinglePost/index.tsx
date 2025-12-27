@@ -76,7 +76,6 @@ const SinglePost = () => {
   const initializePaymentSheet = async () => {
     const { paymentIntent, customer } = paymentSheet?.data;
     if (!paymentIntent || !customer) {
-      console.error('Payment intent or customer not found');
       return;
     }
     const { error } = await initPaymentSheet({
@@ -92,7 +91,6 @@ const SinglePost = () => {
       returnURL: 'emirouq-mobile://payment-sheet',
     });
     if (error) {
-      console.error('Error initializing payment sheet:', error);
       return;
     }
   };
@@ -104,7 +102,6 @@ const SinglePost = () => {
       return;
     }
     if (error) {
-      console.error('Error presenting payment sheet:', error);
       return;
     }
     console.log('Payment successful');
@@ -347,9 +344,7 @@ const SinglePost = () => {
                     await Share.share({
                       message: 'Check out this app: https://emirouq.ae',
                     });
-                  } catch (error) {
-                    console.error('Error sharing:', error);
-                  }
+                  } catch (error) {}
                 }}>
                 <AntDesign name="sharealt" size={20} color="gray" />
                 <Text className="ml-1 text-gray-600">Share</Text>

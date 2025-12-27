@@ -107,7 +107,6 @@ const saveFileLocally = async (attachments: any) => {
       uri: `${FileSystem.documentDirectory}${attachment.name}`,
     }));
   } catch (error) {
-    console.error('Error saving file:', error);
     alert('Error saving file locally');
   }
 };

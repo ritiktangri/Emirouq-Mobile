@@ -85,7 +85,6 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
         }
       });
     } catch (err) {
-      console.error('Playback error:', err);
       currentlyPlayingRef.current = null;
       setProgress(0);
       setCurrentAudio({}); // Reset current audio state
@@ -124,7 +123,6 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
 
       currentlyPlayingRef.current = sound;
     } catch (err) {
-      console.error('Playback error:', err);
       currentlyPlayingRef.current = null;
     }
   }, []);
@@ -164,7 +162,6 @@ export const AudioPlayerProvider = ({ children }: { children: React.ReactNode })
       audioCacheRef.current.set(audioSrc, sound);
       return { sound };
     } catch (err) {
-      console.error('Failed to load audio:', err);
       throw err;
     }
   }, []);

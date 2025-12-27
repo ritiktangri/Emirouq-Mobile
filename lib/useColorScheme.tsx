@@ -13,9 +13,7 @@ function useColorScheme() {
     if (Platform.OS !== 'android') return;
     try {
       await setNavigationBar(colorScheme);
-    } catch (error) {
-      console.error('useColorScheme.tsx", "setColorScheme', error);
-    }
+    } catch (error) {}
   }
 
   function toggleColorScheme() {
@@ -38,9 +36,7 @@ function useInitialAndroidBarSync() {
   const { colorScheme } = useColorScheme();
   React.useEffect(() => {
     if (Platform.OS !== 'android') return;
-    setNavigationBar(colorScheme).catch((error) => {
-      console.error('useColorScheme.tsx", "useInitialColorScheme', error);
-    });
+    setNavigationBar(colorScheme).catch((error) => {});
   }, []);
 }
 

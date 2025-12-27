@@ -32,9 +32,7 @@ export default function SearchScreen() {
       if (stored) {
         setSearchHistory(JSON.parse(stored));
       }
-    } catch (error) {
-      console.error('Error loading search history:', error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -59,9 +57,7 @@ export default function SearchScreen() {
 
       await AsyncStorage.setItem('searchKeyword', JSON.stringify(keywords));
       setSearchHistory(keywords);
-    } catch (error) {
-      console.error('Error saving search keyword:', error);
-    }
+    } catch (error) {}
   };
 
   const removeSearchItem = async (itemToRemove: string) => {
@@ -69,18 +65,14 @@ export default function SearchScreen() {
       const updatedHistory = searchHistory.filter((item) => item !== itemToRemove);
       setSearchHistory(updatedHistory);
       await AsyncStorage.setItem('searchKeyword', JSON.stringify(updatedHistory));
-    } catch (error) {
-      console.error('Error removing search item:', error);
-    }
+    } catch (error) {}
   };
 
   const clearAllSearchHistory = async () => {
     try {
       setSearchHistory([]);
       await AsyncStorage.removeItem('searchKeyword');
-    } catch (error) {
-      console.error('Error clearing search history:', error);
-    }
+    } catch (error) {}
   };
 
   const handleSearchSubmit = async () => {
