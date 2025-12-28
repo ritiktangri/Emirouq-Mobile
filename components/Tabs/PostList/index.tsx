@@ -421,6 +421,9 @@ const PostList = () => {
                             )}>
                             {section.value}
                           </Text>
+                          {city === section.value ? (
+                            <Ionicons name="checkmark" color={'#FF5722'} size={20} />
+                          ) : null}
                         </TouchableOpacity>
                       ))}
                     </View>
@@ -445,6 +448,9 @@ const PostList = () => {
                               )}>
                               {section.value}
                             </Text>
+                            {selectedFilters[selectedSection]?.includes(section.value) ? (
+                              <Ionicons name="checkmark" color={'#FF5722'} size={20} />
+                            ) : null}
                           </TouchableOpacity>
                         ))}
 

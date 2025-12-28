@@ -388,40 +388,91 @@ const SinglePost = () => {
           )}
 
           {/* Description */}
-          <View className="px-4 pb-1 pt-4">
-            <Text className="text-lg font-semibold">{i18n.t('post.description')}</Text>
-            <Text className="mt-1 text-gray-700">{data?.data?.description}</Text>
-            <View className="mt-2 gap-2">
-              <View className="flex-row justify-between ">
-                <Text className="text-gray-600">{i18n.t('post.condition')}</Text>
-                <Text className="text-gray-800">{data?.data?.condition}</Text>
-              </View>
-              <View className="flex-row justify-between ">
-                <Text className="text-gray-600">{i18n.t('post.category')}</Text>
-                <Text className="text-gray-800">{data?.data?.category?.title}</Text>
-              </View>
-              {/* <View className="flex-row justify-between  py-1">
-                <Text className="text-gray-600">Brand</Text>
-                <Text className="text-gray-800">
-                  {data?.data?.brand?.title}
-                </Text>
-              </View> */}
-              <View className="flex-row justify-between">
-                <Text className="text-gray-600">Posted</Text>
-                <Text className="text-gray-800">{getRelativeTime(data?.data?.createdAt)}</Text>
-              </View>
-              {(data?.data?.properties || []).map((property: any, index: any) => (
-                <View direction="row" key={index} className=" ">
-                  <Text className="flex-1 text-gray-600">{property.label}:</Text>
-                  {property.selectedValue?.length > 0 ? (
-                    <Text className="text-gray-800">
-                      {property.selectedValue?.map((j: any) => j?.value).join(', ')}
-                    </Text>
-                  ) : (
-                    <Text className="text-gray-800">{property.selectedValue.value}</Text>
-                  )}
+          <View className="bg-white px-5 py-6">
+            {/* --- Header & Description --- */}
+            <View className="mb-3">
+              <Text className="text-xl font-bold tracking-tight text-gray-900">
+                {i18n.t('post.description')}
+              </Text>
+              <Text className="mt-3 text-base leading-7 text-gray-600">
+                {data?.data?.description}
+              </Text>
+            </View>
+            <Text className="mb-1 text-xl font-bold tracking-tight text-gray-900">Details</Text>
+            {/* --- Specifications Table --- */}
+            <View className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+              {/* Static Row: Condition */}
+              <View className="flex-row items-start border-b border-gray-100 bg-gray-50 px-4 py-3.5">
+                <View className="w-1/2 pr-2">
+                  <Text className="text-sm font-medium text-gray-500">
+                    {i18n.t('post.condition')}
+                  </Text>
                 </View>
-              ))}
+                <View className="w-1/2 pl-2">
+                  <Text className="text-left text-sm font-semibold capitalize text-gray-900">
+                    {data?.data?.condition}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Static Row: Category */}
+              <View className="flex-row items-start border-b border-gray-100 bg-white px-4 py-3.5">
+                <View className="w-1/2 pr-2">
+                  <Text className="text-sm font-medium text-gray-500">
+                    {i18n.t('post.category')}
+                  </Text>
+                </View>
+                <View className="w-1/2 pl-2">
+                  <Text className="text-left text-sm font-semibold text-gray-900">
+                    {data?.data?.category?.title}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Static Row: Posted */}
+              <View className="flex-row items-start border-b border-gray-100 bg-gray-50 px-4 py-3.5">
+                <View className="w-1/2 pr-2">
+                  <Text className="text-sm font-medium text-gray-500">Posted</Text>
+                </View>
+                <View className="w-1/2 pl-2">
+                  <Text className="text-left text-sm font-semibold text-gray-900">
+                    {getRelativeTime(data?.data?.createdAt)}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Dynamic Properties Loop */}
+              {(data?.data?.properties || []).map((property: any, index: number) => {
+                const isEven = index % 2 === 0;
+                const isLast = index === (data?.data?.properties || []).length - 1;
+
+                return (
+                  <View
+                    key={index}
+                    className={`flex-row items-start px-4 py-3.5 ${
+                      isEven ? 'bg-white' : 'bg-gray-50'
+                    } ${!isLast ? 'border-b border-gray-100' : ''}`}>
+                    {/* Label: Takes left 50% */}
+                    <View className="w-1/2 pr-2">
+                      <Text className="text-sm font-medium text-gray-500">{property.label}</Text>
+                    </View>
+
+                    {/* Value: Takes right 50% */}
+                    <View className="w-1/2 pl-2">
+                      {property.selectedValue?.length > 0 &&
+                      Array.isArray(property.selectedValue) ? (
+                        <Text className="text-left text-sm font-semibold leading-5 text-gray-900">
+                          {property.selectedValue?.map((j: any) => j?.value).join(', ')}
+                        </Text>
+                      ) : (
+                        <Text className="text-left text-sm font-semibold leading-5 text-gray-900">
+                          {property.selectedValue?.value}
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+                );
+              })}
             </View>
           </View>
 

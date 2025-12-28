@@ -1,4 +1,4 @@
-import React, { useEffect, forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import { Controller } from 'react-hook-form';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
@@ -59,6 +59,7 @@ const LocationInput = forwardRef(({ control }: any, ref: any) => {
                 query={{
                   key: YOUR_GOOGLE_PLACES_API_KEY,
                   language: 'en',
+                  components: 'country:ae',
                 }}
                 textInputProps={{
                   onFocus: () => {},
