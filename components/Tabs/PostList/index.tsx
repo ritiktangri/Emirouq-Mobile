@@ -39,30 +39,59 @@ const PostList = () => {
   const [sortBy, setSortBy] = useState('');
   const [city, setCity] = useState('');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 0 });
+  const [isPriceApplied, setIsPriceApplied] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
   const [appliedFilter, setAppliedFilter] = useState({} as any);
   const selectedFilterCount = React.useMemo(() => {
     let count = 0;
 
-    Object.entries(appliedFilter).forEach(([key, value]) => {
-      if (key === 'price') return; // ✅ skip price here
-      if (key === 'city') return; // ✅ skip price here
-      if (Array.isArray(value)) {
-        count += value.length;
-      } else if (value) {
+    Object.entries(appliedFilter || {}).forEach(([key, value]) => {
+      if (!value) return;
+
+      // 1️⃣ Properties: count attribute keys (NOT values)
+      if (key === 'properties' && typeof value === 'object') {
+        count += Object.keys(value).length;
+        return;
+      }
+
+      // 2️⃣ City: count as 1 if truthy
+      if (key === 'city' && typeof value === 'string' && value.trim()) {
+        count += 1;
+        return;
+      }
+
+      // 3️⃣ Price: count as 1 if meaningful
+      if (key === 'price' && isPriceApplied) {
+        if (typeof value === 'string') {
+          const [min, max] = value.split('-').map(Number);
+          if ((min && min > 0) || (max && max > 0)) {
+            count += 1;
+          }
+        }
+        return;
+      }
+
+      // 4️⃣ Any other applied primitive filter (e.g. sortBy)
+      if (typeof value === 'string' && value.trim()) {
         count += 1;
       }
     });
 
-    if (appliedFilter.price) {
-      const [min, max] = appliedFilter.price.split('-').map(Number);
-      if (min > 0 || max > 0) count += 1;
+    return count;
+  }, [appliedFilter, isPriceApplied]);
+
+  const isFilterApplied = (sectionUuid: string) => {
+    if (sectionUuid === 'city') {
+      return Boolean(appliedFilter.city);
     }
 
-    if (!!appliedFilter.city === true) count += 1;
+    if (sectionUuid === 'price') {
+      return Boolean(appliedFilter.price);
+    }
 
-    return count;
-  }, [appliedFilter]);
-  const [selectedSectionOption, setSelectedSectionOption] = useState([] as any);
+    return Boolean(appliedFilter?.properties?.[sectionUuid]);
+  };
+
   const [keyword, setKeyword] = useState('');
   const { isFetching, data, refetch }: any = useGetPosts({
     status: 'active',
@@ -70,7 +99,7 @@ const PostList = () => {
     category: params.category,
     keyword,
     sortBy: appliedFilter.sortBy,
-    properties: appliedFilter?.properties,
+    properties: Object.values(appliedFilter.properties || {})?.flat(),
     city: appliedFilter.city,
     priceRange: appliedFilter.price?.split('-'),
   });
@@ -112,12 +141,28 @@ const PostList = () => {
     keyword: searchAttributes,
   });
 
-  const onSelect = (value: any) => {
-    setSelectedSectionOption((prev: any[]) => {
-      if (prev.includes(value)) {
-        return prev.filter((v) => v !== value); // unselect if already selected
+  const onSelect = (attributeKey: string, value: string) => {
+    setSelectedFilters((prev) => {
+      const currentValues = prev[attributeKey] || [];
+
+      if (currentValues.includes(value)) {
+        const updatedValues = currentValues.filter((v) => v !== value);
+
+        if (updatedValues.length === 0) {
+          const { [attributeKey]: _, ...rest } = prev;
+          return rest;
+        }
+
+        return {
+          ...prev,
+          [attributeKey]: updatedValues,
+        };
       }
-      return [...prev, value]; // otherwise add
+
+      return {
+        ...prev,
+        [attributeKey]: [...currentValues, value],
+      };
     });
   };
 
@@ -157,38 +202,38 @@ const PostList = () => {
           <Ionicons name="filter" className="!text-2xl" />
         </TouchableOpacity> */}
       </View>
-      <View className=" gap-4 px-3 py-2">
+      <View className=" flex-row items-center gap-4 px-3 py-2">
+        <TouchableOpacity
+          activeOpacity={selectedFilterCount ? 0 : 0.8}
+          className="flex flex-row items-center gap-2"
+          onPress={() => {
+            // if (!!selectedFilterCount === false) return;
+            refRBSheet.current.open();
+            setIsAllFilterSelected(true);
+            setSelectedSection(
+              (attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || [])?.[0]?.uuid
+            );
+          }}>
+          <Ionicons name="filter" className="!text-xl" />
+          <Text className="font-poppinsMedium">Filters</Text>
+          {!!selectedFilterCount === true ? (
+            <View className="flex h-6 w-6 items-center justify-center rounded-full bg-primary">
+              <Text className=" font-poppinsMedium text-white">{selectedFilterCount}</Text>
+            </View>
+          ) : (
+            <></>
+          )}
+        </TouchableOpacity>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerClassName=" gap-2 items-center">
-          <TouchableOpacity
-            activeOpacity={selectedFilterCount ? 0 : 0.8}
-            className="flex flex-row items-center gap-2"
-            onPress={() => {
-              if (!!selectedFilterCount === false) return;
-              refRBSheet.current.open();
-              setIsAllFilterSelected(true);
-              setSelectedSection(
-                (attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || [])?.[0]?.uuid
-              );
-            }}>
-            <Ionicons name="filter" className="!text-xl" />
-            <Text className="font-poppinsMedium">Filters</Text>
-            {!!selectedFilterCount === true ? (
-              <View className="flex h-6 w-6 items-center justify-center rounded-full bg-primary">
-                <Text className=" font-poppinsMedium text-white">{selectedFilterCount}</Text>
-              </View>
-            ) : (
-              <></>
-            )}
-          </TouchableOpacity>
           <View className="ml-3 flex-row items-center gap-2">
             {[
-              { label: 'City', uuid: 'city' },
               ...(attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || []),
               { label: 'Price', uuid: 'price' },
-              { label: 'All Filters', uuid: 'all-filters' },
+              { label: 'City', uuid: 'city' },
+              // { label: 'All Filters', uuid: 'all-filters' },
             ].map((section: any) => (
               <TouchableOpacity
                 onPress={() => {
@@ -203,20 +248,20 @@ const PostList = () => {
                   }
                 }}
                 key={section.uuid}
-                className={cn('flex flex-row items-center rounded-lg border-2  border-gray-200  ')}>
+                className={cn(
+                  'flex flex-row items-center rounded-lg border-2    ',
+                  isFilterApplied(section.uuid) ? 'border-primary bg-primary/10' : 'border-gray-200'
+                )}>
                 <Text
                   className={cn(
-                    'px-3 font-poppinsMedium'
-                    // selectedSection === section.uuid ? 'text-primary' : ''
+                    'px-3 font-poppinsMedium',
+                    isFilterApplied(section.uuid) ? 'text-primary' : ''
                   )}>
                   {section.label}
                 </Text>
                 <Ionicons
-                  className={cn(
-                    '!text-lg'
-                    // selectedSection === section.uuid ? '!text-primary' : ''
-                  )}
-                  name={selectedSection === section.uuid ? 'chevron-forward' : 'chevron-down'}
+                  className={cn('!text-lg', isFilterApplied(section.uuid) ? '!text-primary' : '')}
+                  name={isFilterApplied(section.uuid) ? 'chevron-forward' : 'chevron-down'}
                 />
               </TouchableOpacity>
             ))}
@@ -279,32 +324,39 @@ const PostList = () => {
             {isAllFilterSelected ? (
               <View className="flex h-full w-[30%] justify-start gap-5 px-3 pt-6">
                 {[
-                  { label: 'City', uuid: 'city' },
                   ...(attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || []),
                   { label: 'Price', uuid: 'price' },
+                  { label: 'City', uuid: 'city' },
                 ].map((section: any) => (
                   <View key={section.uuid}>
                     <TouchableOpacity
                       onPress={() => {
+                        refRBSheet.current.open();
                         setSelectedSection(section.uuid);
                       }}
-                      className={cn('flex flex-row items-center  rounded-lg  ')}>
+                      key={section.uuid}
+                      className={cn(
+                        'flex flex-row items-center  rounded-lg border-2 p-2',
+                        isFilterApplied(section.uuid)
+                          ? 'border-primary bg-primary/10'
+                          : 'border-gray-200'
+                      )}>
                       <Text
                         className={cn(
-                          'flex-1 font-poppinsMedium',
-                          selectedSection === section.uuid ? 'text-primary' : ''
+                          ' flex-1 font-poppinsMedium',
+                          isFilterApplied(section.uuid) ? 'text-primary' : 'text-black'
                         )}>
                         {section.label}
                       </Text>
+
                       <Ionicons
+                        name={selectedSection === section.uuid ? 'chevron-forward' : 'chevron-down'}
                         className={cn(
                           '!text-lg',
-                          selectedSection === section.uuid ? '!text-primary' : ''
+                          isFilterApplied(section.uuid) ? '!text-primary' : '!text-gray-500'
                         )}
-                        name={selectedSection === section.uuid ? 'chevron-forward' : 'chevron-down'}
                       />
                     </TouchableOpacity>
-                    {/* <Text></Text> */}
                   </View>
                 ))}
               </View>
@@ -358,7 +410,7 @@ const PostList = () => {
                       ].map((section: any) => (
                         <TouchableOpacity
                           onPress={() => {
-                            setCity(section.value);
+                            setCity((prev) => (prev === section.value ? '' : section.value));
                           }}
                           key={section.uuid}
                           className={cn('flex flex-row items-center rounded-lg')}>
@@ -380,14 +432,16 @@ const PostList = () => {
                         .map((section: any) => (
                           <TouchableOpacity
                             onPress={() => {
-                              onSelect(section.value);
+                              onSelect(selectedSection, section.value);
                             }}
                             key={section.uuid}
                             className={cn('flex flex-row items-center rounded-lg')}>
                             <Text
                               className={cn(
                                 'flex-1 font-poppinsMedium',
-                                selectedSectionOption?.includes(section.value) ? 'text-primary' : ''
+                                selectedFilters[selectedSection]?.includes(section.value)
+                                  ? 'text-primary'
+                                  : 'text-black'
                               )}>
                               {section.value}
                             </Text>
@@ -429,7 +483,10 @@ const PostList = () => {
                                 keyboardType="numeric"
                                 placeholder="0"
                                 value={priceRange.min?.toString()}
-                                onChangeText={(v) => setPriceRange({ ...priceRange, min: +v })}
+                                onChangeText={(v) => {
+                                  setPriceRange({ ...priceRange, min: +v });
+                                  setIsPriceApplied(true);
+                                }}
                                 className="flex-1 py-2 text-base leading-5 text-gray-700"
                               />
                               <Text className="ml-2 font-poppinsMedium leading-5 text-gray-500">
@@ -446,7 +503,10 @@ const PostList = () => {
                                 keyboardType="numeric"
                                 placeholder="Any"
                                 value={priceRange.max?.toString()}
-                                onChangeText={(v) => setPriceRange({ ...priceRange, max: +v })}
+                                onChangeText={(v) => {
+                                  setPriceRange({ ...priceRange, max: +v });
+                                  setIsPriceApplied(true);
+                                }}
                                 className="flex-1 py-2 text-base leading-5 text-gray-700"
                                 style={{ textAlignVertical: 'center' }}
                               />
@@ -470,9 +530,22 @@ const PostList = () => {
                                     min,
                                     max,
                                   }));
+                                  setIsPriceApplied(true);
                                 }}
                               />
                             </View>
+                          ) : (
+                            <></>
+                          )}
+                          {isPriceApplied ? (
+                            <TouchableOpacity
+                              className="mt-4  flex flex-1 items-center justify-center rounded-lg bg-primary px-3 py-2"
+                              onPress={() => {
+                                setPriceRange({ min: 0, max: priceRange.max });
+                                setIsPriceApplied(false);
+                              }}>
+                              <Text className="text-right text-white">Clear Price</Text>
+                            </TouchableOpacity>
                           ) : (
                             <></>
                           )}
@@ -504,11 +577,11 @@ const PostList = () => {
           <View className="ios:mb-5 w-full flex-row items-center justify-between p-4">
             <TouchableOpacity
               onPress={() => {
-                setSelectedSectionOption([]);
+                setSelectedFilters({});
                 setSortBy('');
-                // setIsAllFilterSelected(false);
                 setCity('');
                 setPriceRange({ min: 0, max: 0 });
+                setIsPriceApplied(false);
               }}>
               <Text>Reset all</Text>
             </TouchableOpacity>
@@ -527,14 +600,15 @@ const PostList = () => {
                 onPress={() => {
                   setAppliedFilter({
                     ...appliedFilter,
-                    properties: selectedSectionOption || [],
+                    properties: selectedFilters,
                     sortBy,
                     price:
-                      priceRange.min || priceRange.max
+                      isPriceApplied && (priceRange.min || priceRange.max)
                         ? `${priceRange.min || 0}-${priceRange.max || ''}`
                         : undefined,
                     city,
                   });
+
                   refRBSheet.current.close();
                   setIsAllFilterSelected(false);
                 }}>
