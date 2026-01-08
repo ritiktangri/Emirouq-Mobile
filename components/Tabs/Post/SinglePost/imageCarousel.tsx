@@ -1,40 +1,35 @@
 import React, { useState } from 'react';
-import {
-  View,
-  FlatList,
-  Text,
-  TouchableOpacity,
-  Image,
-  Modal,
-  Dimensions,
-  StyleSheet,
-} from 'react-native';
+import { View, FlatList, Text, TouchableOpacity, Modal, StyleSheet } from 'react-native';
 import ZoomImage from './zoomimage';
-
-const screenWidth = Dimensions.get('screen').width;
+import ImageSlider from './imageSlider';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
 function ImageCarousel({ data }: any) {
   const [modalVisible, setModalVisible] = useState(false);
 
+  const images = data?.data?.file || [];
+
   return (
-    <View style={{ flex: 1 }}>
-      <TouchableOpacity onPress={() => setModalVisible(true)} activeOpacity={0.8}>
-        <Image
-          source={{ uri: data?.data?.file[0] }}
-          style={{ width: '100%', height: 300 }}
-          resizeMode="cover"
-        />
-      </TouchableOpacity>
-
+    <View>
+      <ImageSlider images={images} setModalVisible={setModalVisible} />
+      {/* Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
-        <View style={{ flex: 1, backgroundColor: '#fff' }}>
-          {/* Close */}
-          <TouchableOpacity style={styles.closeBtn} onPress={() => setModalVisible(false)}>
-            <Text style={styles.closeText}>×</Text>
+        <View style={{ flex: 1 }} className="bg-white">
+          <TouchableOpacity
+            onPress={() => setModalVisible(false)}
+            style={{
+              paddingTop: useSafeAreaInsets().top,
+            }}
+            className="p-3">
+            <Ionicons name="chevron-back" className="!text-3xl !text-black" />
           </TouchableOpacity>
-
           <FlatList
-            data={data?.data?.file}
+            ListHeaderComponent={() => <></>}
+            data={images}
+            stickyHeaderIndices={[0]}
+            showsVerticalScrollIndicator={false}
+            ListHeaderComponentStyle={{}}
             keyExtractor={(_, i) => i.toString()}
             renderItem={({ item }) => <ZoomImage uri={item} />}
           />
@@ -47,17 +42,26 @@ function ImageCarousel({ data }: any) {
 export default ImageCarousel;
 
 const styles = StyleSheet.create({
-  modalImage: {
-    width: screenWidth,
-    height: 260,
-    marginBottom: 10,
+  dotsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#bbb',
+    marginHorizontal: 4,
+  },
+  activeDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#000',
   },
   closeBtn: {
-    position: 'absolute',
-    right: 20,
-    top: 40,
-    zIndex: 10,
-    backgroundColor: 'rgba(255,255,255,0.3)',
+    backgroundColor: 'black',
     width: 32,
     height: 32,
     borderRadius: 16,
@@ -68,16 +72,5 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 24,
     marginTop: -2,
-  },
-  zoomContainer: {
-    flex: 1,
-    backgroundColor: '#000',
-    justifyContent: 'center',
-  },
-  zoomCloseBtn: {
-    position: 'absolute',
-    right: 20,
-    top: 50,
-    zIndex: 20,
   },
 });

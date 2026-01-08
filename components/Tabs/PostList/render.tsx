@@ -26,13 +26,13 @@ const Render = ({ item, index }: any) => {
       </View>
       {user?.uuid && <AddToFavourite item={item} />}
 
-      <View className="p-4">
+      <View className="p-2">
         <View className="mb-1 flex-row items-center justify-between">
-          <Text className="w-[98%] text-sm font-semibold text-gray-900">{item?.title}</Text>
+          <Text className=" font-interMedium text-sm text-gray-900">{item?.title}</Text>
         </View>
-        <Text className="mb-2 text-base font-bold text-orange-500">${item?.price || 0}</Text>
+        <Text className="mb-2 text-base font-bold text-orange-500">AED {item?.price || 0}</Text>
 
-        <View className="flex-row items-center">
+        <View className="flex-row p-1 ">
           <Entypo name="location-pin" size={16} color="#6b7280" />
           <Text className="ml-1 text-xs text-gray-500">{item?.location?.name || 'N/A'}</Text>
         </View>

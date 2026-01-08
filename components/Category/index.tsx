@@ -124,13 +124,22 @@ function Category() {
               renderItem={({ item }) => {
                 return (
                   <TouchableOpacity
-                    className="mb-4 w-[48%] items-center rounded-lg"
+                    className="mb-4 w-[48%] items-center rounded-lg p-2"
                     style={{
-                      shadowColor: '#000',
-                      shadowOpacity: 0.15,
-                      shadowRadius: 4,
-                      shadowOffset: { width: 0, height: 2 },
-                      elevation: 3,
+                      boxShadow: [
+                        {
+                          offsetX: 2,
+                          offsetY: 1,
+                          blurRadius: 9,
+                          color: '#A5BCD2C2',
+                        },
+                        {
+                          offsetX: -6,
+                          offsetY: -5,
+                          blurRadius: 18,
+                          color: '#FFFFFFAD',
+                        },
+                      ],
                     }}
                     onPress={() => {
                       router.push({
@@ -149,14 +158,19 @@ function Category() {
                       </View>
                     ) : (
                       <View className="mb-2 h-12 w-12 items-center justify-center rounded-full bg-gray-200">
-                        <Text className="text-xl font-bold text-gray-700">
+                        <Text
+                          allowFontScaling={false}
+                          className="font-poppinsMedium text-xl text-gray-700">
                           {getInitials(item.title)}
                         </Text>
                       </View>
                     )}
 
                     {/* Title */}
-                    <Text className="text-center text-sm font-semibold text-gray-800">
+                    <Text
+                      numberOfLines={1}
+                      allowFontScaling={false}
+                      className="text-center font-interMedium text-sm text-gray-800">
                       {item.title}
                     </Text>
                   </TouchableOpacity>

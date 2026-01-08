@@ -20,6 +20,7 @@ export const useGetPosts = ({
   properties,
   city,
   newProperties,
+  year,
 }: any) =>
   useInfiniteQuery({
     queryKey: [
@@ -35,6 +36,7 @@ export const useGetPosts = ({
       properties,
       city,
       newProperties,
+      year,
     ],
     queryFn: ({ pageParam }) =>
       getPostService({
@@ -50,6 +52,7 @@ export const useGetPosts = ({
           properties,
           city,
           newProperties,
+          year,
         },
         key,
       }),

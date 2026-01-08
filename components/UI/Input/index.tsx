@@ -76,6 +76,7 @@ const Input = ({
               // style={{ color: colors.text }}
               value={value?.toString()}
               placeholder={placeholder}
+              allowFontScaling={false}
               placeholderTextColor={colors.placeholder} // Placeholder color from theme
               onChangeText={onChangeText}
               onFocus={onFocus} // Handle onFocus

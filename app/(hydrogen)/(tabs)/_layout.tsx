@@ -12,7 +12,7 @@ import { useLocale } from '~/context/LocaleContext';
 export default function TabLayout() {
   const theme: any = useColorScheme();
   const { locale } = useLocale();
-
+  const bottom = useSafeAreaInsets().bottom;
   return (
     <QueryProvider>
       <SafeAreaView
@@ -23,8 +23,12 @@ export default function TabLayout() {
         }}>
         <Tabs
           initialRouteName="home"
+          safeAreaInsets={{
+            bottom: Platform.OS === 'android' ? 10 : bottom,
+          }}
           screenOptions={{
             headerShown: false,
+
             header: (route) => {
               return <GlobalHeader route={route} />;
             },

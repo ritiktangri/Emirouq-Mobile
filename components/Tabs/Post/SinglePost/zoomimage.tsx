@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from 'react';
-import { Modal, View, Pressable, Image, StyleSheet, ActivityIndicator } from 'react-native';
+import { Modal, View, Pressable, Image, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { fitContainer, ResumableZoom, useImageResolution } from 'react-native-zoom-toolkit';
+import { fitContainer, useImageResolution } from 'react-native-zoom-toolkit';
 import { screenWidth } from '~/utils/helper';
 import PinchZoom from './pinch-zoom';
 
@@ -19,7 +19,7 @@ const ZoomImage: React.FC<ZoomImageProps> = ({ uri, thumbHeight = 300 }) => {
       <Pressable onPress={() => setVisible(true)}>
         <Image
           source={{ uri }}
-          style={{ width: screenWidth, height: thumbHeight, borderRadius: 8 }}
+          style={{ width: screenWidth, height: thumbHeight }}
           resizeMode="cover"
         />
       </Pressable>

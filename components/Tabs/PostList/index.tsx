@@ -1,7 +1,6 @@
 /* eslint-disable import/order */
 import {
   View,
-  Text,
   FlatList,
   RefreshControl,
   Image,
@@ -28,6 +27,8 @@ import Input from '~/components/UI/Input';
 import { useGetAttributeOptions, useGetAttributes } from '~/hooks/attributes/query';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import { width } from '~/constants/Colors';
+import { Text } from '~/components/common/Text';
+import dayjs from 'dayjs';
 const PostList = () => {
   const router = useRouter();
   const params: any = useGlobalSearchParams();
@@ -39,7 +40,9 @@ const PostList = () => {
   const [sortBy, setSortBy] = useState('');
   const [city, setCity] = useState('');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 0 });
+  const [yearRange, setYearRange] = useState({ min: 1900, max: dayjs().year() });
   const [isPriceApplied, setIsPriceApplied] = useState(false);
+  const [yearApplied, setYearApplied] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
   const [appliedFilter, setAppliedFilter] = useState({} as any);
   const selectedFilterCount = React.useMemo(() => {
@@ -88,7 +91,6 @@ const PostList = () => {
     if (sectionUuid === 'price') {
       return Boolean(appliedFilter.price);
     }
-
     return Boolean(appliedFilter?.properties?.[sectionUuid]);
   };
 
@@ -104,15 +106,13 @@ const PostList = () => {
     priceRange: appliedFilter.price?.split('-'),
   });
   useEffect(() => {
-    if (data?.pages?.[0]?.maxPrice) {
-      setPriceRange((prev) => {
-        return {
-          min: prev.min,
-          max: data?.pages?.[0]?.maxPrice || prev.max,
-        };
+    if (data?.pages?.[0]?.maxPrice && !isPriceApplied) {
+      setPriceRange({
+        min: 0,
+        max: data.pages[0].maxPrice,
       });
     }
-  }, [data?.pages?.[0]?.maxPrice]);
+  }, [data?.pages?.[0]?.maxPrice, isPriceApplied]);
 
   const handleRefresh = useCallback(() => {
     queryClient.removeQueries({ queryKey: ['posts'] });
@@ -166,6 +166,20 @@ const PostList = () => {
     });
   };
 
+  const sections = React.useMemo(
+    () => [
+      ...(attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || []),
+      { label: 'Price', uuid: 'price' },
+      { label: 'City', uuid: 'city' },
+    ],
+    [attributes]
+  );
+  const yearData = (attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || [])?.find(
+    (j: any) => j.attributeKey?.toLowerCase() === 'year'
+  );
+  const yearId = yearData?.uuid;
+  const isYearSelected = yearData?.uuid === selectedSection;
+  const showSlider = isYearSelected || selectedSection === 'price';
   return (
     <View className="flex-1 bg-white">
       <View
@@ -294,7 +308,9 @@ const PostList = () => {
             <View className="mt-10 flex-1 items-center justify-center">
               <Image source={noData} className=" flex h-56 w-56" />
 
-              <Text className="font-interMedium text-xl">No Product found</Text>
+              <Text allowFontScaling={false} className="font-interMedium text-xl">
+                No Product found
+              </Text>
             </View>
           );
         }}
@@ -319,31 +335,33 @@ const PostList = () => {
           setIsAllFilterSelected(false);
         }}>
         <>
-          <View className="flex-1 flex-row items-center  ">
-            {/* Category Tabs */}
+          <View className="flex-1 flex-row">
             {isAllFilterSelected ? (
-              <View className="flex h-full w-[30%] justify-start gap-5 px-3 pt-6">
-                {[
-                  ...(attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || []),
-                  { label: 'Price', uuid: 'price' },
-                  { label: 'City', uuid: 'city' },
-                ].map((section: any) => (
-                  <View key={section.uuid}>
+              <View className="w-1/3">
+                <FlatList
+                  data={sections}
+                  keyExtractor={(item) => item.uuid}
+                  contentContainerStyle={{
+                    gap: 10,
+                    paddingHorizontal: 12,
+                    paddingTop: 24,
+                  }}
+                  className="h-full"
+                  renderItem={({ item: section }) => (
                     <TouchableOpacity
                       onPress={() => {
                         refRBSheet.current.open();
                         setSelectedSection(section.uuid);
                       }}
-                      key={section.uuid}
                       className={cn(
-                        'flex flex-row items-center  rounded-lg border-2 p-2',
+                        'flex flex-row items-center rounded-lg border-2 p-1',
                         isFilterApplied(section.uuid)
                           ? 'border-primary bg-primary/10'
                           : 'border-gray-200'
                       )}>
                       <Text
                         className={cn(
-                          ' flex-1 font-poppinsMedium',
+                          'flex-1 font-poppinsMedium text-sm',
                           isFilterApplied(section.uuid) ? 'text-primary' : 'text-black'
                         )}>
                         {section.label}
@@ -357,8 +375,8 @@ const PostList = () => {
                         )}
                       />
                     </TouchableOpacity>
-                  </View>
-                ))}
+                  )}
+                />
               </View>
             ) : (
               <></>
@@ -384,11 +402,11 @@ const PostList = () => {
                     }
                   }}
                   scrollEventThrottle={400}>
-                  {!['price', 'city']?.includes(selectedSection) ? (
+                  {!['price', 'city']?.includes(selectedSection) && !isYearSelected ? (
                     <View className="bg-white pt-3">
                       <Input
                         onChangeText={handleAttributeDebounceSearch}
-                        className="mr-3 w-full rounded-lg"
+                        className="mr-3 w-full rounded-lg !py-2"
                         placeholder="Search.."
                         prefix={<Ionicons name="search" className="!text-lg" />}
                       />
@@ -415,6 +433,7 @@ const PostList = () => {
                           key={section.uuid}
                           className={cn('flex flex-row items-center rounded-lg')}>
                           <Text
+                            allowFontScaling={false}
                             className={cn(
                               'flex-1 font-poppinsMedium',
                               city === section.value ? 'text-primary' : ''
@@ -429,96 +448,195 @@ const PostList = () => {
                     </View>
                   ) : (
                     <View className="mt-3 gap-3">
-                      {(attributeOptions?.data?.pages || [])
-                        .map((i: any) => i?.data)
-                        .flat()
-                        .map((section: any) => (
-                          <TouchableOpacity
-                            onPress={() => {
-                              onSelect(selectedSection, section.value);
-                            }}
-                            key={section.uuid}
-                            className={cn('flex flex-row items-center rounded-lg')}>
-                            <Text
-                              className={cn(
-                                'flex-1 font-poppinsMedium',
-                                selectedFilters[selectedSection]?.includes(section.value)
-                                  ? 'text-primary'
-                                  : 'text-black'
-                              )}>
-                              {section.value}
-                            </Text>
-                            {selectedFilters[selectedSection]?.includes(section.value) ? (
-                              <Ionicons name="checkmark" color={'#FF5722'} size={20} />
-                            ) : null}
-                          </TouchableOpacity>
-                        ))}
-
-                      {/* {!['price']?.includes(selectedSection)
-                      ? null
-                      : SORT_OPTIONS.map((option) => (
-                          <TouchableOpacity
-                            key={option.value}
-                            className="my-1 flex-row items-center py-2"
-                            activeOpacity={0.7}
-                            onPress={() => {
-                              setSortBy(option.value);
-                            }}>
-                            <View
-                              className={`mr-3 flex h-6 w-6 items-center justify-center rounded-full border-2 ${
-                                sortBy === option.value ? 'border-orange-500' : 'border-gray-300'
-                              }`}>
-                              {sortBy === option.value && (
-                                <View className="h-3 w-3 rounded-full bg-orange-500" />
-                              )}
-                            </View>
-
-                            <Text className="flex-1 text-base text-gray-700">{option.label}</Text>
-                          </TouchableOpacity>
-                        ))} */}
-                      {selectedSection === 'price' ? (
-                        <View className="px-4 pt-4">
-                          <Text className="mb-2 font-poppinsMedium text-lg">
-                            Set your desired price range
+                      {!showSlider &&
+                        (attributeOptions?.data?.pages || [])
+                          .map((i: any) => i?.data)
+                          .flat()
+                          .map((section: any) => (
+                            <TouchableOpacity
+                              onPress={() => {
+                                onSelect(selectedSection, section.value);
+                              }}
+                              key={section.uuid}
+                              className={cn('flex flex-row items-center rounded-lg')}>
+                              <Text
+                                allowFontScaling={false}
+                                className={cn(
+                                  'flex-1 font-poppinsMedium',
+                                  selectedFilters[selectedSection]?.includes(section.value)
+                                    ? 'text-primary'
+                                    : 'text-black'
+                                )}>
+                                {section.value}
+                              </Text>
+                              {selectedFilters[selectedSection]?.includes(section.value) ? (
+                                <Ionicons name="checkmark" color={'#FF5722'} size={20} />
+                              ) : null}
+                            </TouchableOpacity>
+                          ))}
+                      {isYearSelected ? (
+                        <View className="px-1 pt-4">
+                          <Text
+                            allowFontScaling={false}
+                            className="mb-2 font-poppinsMedium text-base">
+                            Set your desired year range
                           </Text>
 
-                          <View className="mb-4 flex-row items-center justify-between">
+                          <View className="mb-2 flex-row items-center justify-between">
                             {/* Min Price */}
-                            <View className="mr-2 flex-1 flex-row items-center rounded-lg border border-gray-300 px-2">
+                            <View className=" flex-1 flex-row items-center rounded-lg border border-gray-300 px-2">
                               <TextInput
                                 keyboardType="numeric"
                                 placeholder="0"
+                                allowFontScaling={false}
+                                value={yearRange.min?.toString()}
+                                maxLength={4}
+                                onChangeText={(v) => {
+                                  const onlyNumbers = v.replace(/[^0-9]/g, '');
+
+                                  // block if min > max
+                                  if (
+                                    onlyNumbers.length === 4 &&
+                                    yearRange.max &&
+                                    Number(onlyNumbers) > Number(yearRange.max)
+                                  ) {
+                                    return;
+                                  }
+
+                                  setYearRange({
+                                    ...yearRange,
+                                    min: onlyNumbers ? Number(onlyNumbers) : 0,
+                                  });
+
+                                  setYearApplied(true);
+                                }}
+                                className="flex-1 py-2 text-base leading-5 text-gray-700"
+                              />
+                            </View>
+
+                            {/* Dash separator */}
+                            <Text className="mx-1 font-poppinsMedium text-lg text-gray-600">-</Text>
+
+                            {/* Max Price */}
+                            <View className=" flex-1 flex-row items-center rounded-lg border border-gray-300 px-2">
+                              <TextInput
+                                keyboardType="numeric"
+                                placeholder="Any"
+                                value={yearRange.max?.toString()}
+                                onChangeText={(v) => {
+                                  const onlyNumbers = v.replace(/[^0-9]/g, '');
+
+                                  // max must be >= min
+                                  if (
+                                    onlyNumbers.length === 4 &&
+                                    yearRange.min &&
+                                    Number(onlyNumbers) < Number(yearRange.min)
+                                  ) {
+                                    return;
+                                  }
+
+                                  setYearRange({
+                                    ...yearRange,
+                                    max: onlyNumbers ? Number(onlyNumbers) : 0,
+                                  });
+
+                                  setYearApplied(true);
+                                }}
+                                allowFontScaling={false}
+                                className="flex-1 py-2 text-base leading-5 text-gray-700"
+                                style={{ textAlignVertical: 'center' }}
+                              />
+                            </View>
+                          </View>
+                          <View className="flex items-center justify-center ">
+                            <MultiSlider
+                              min={1900}
+                              max={dayjs().year()}
+                              values={[yearRange.min, yearRange.max]}
+                              containerStyle={{}}
+                              sliderLength={isAllFilterSelected ? width * 0.5 : width * 0.85}
+                              // enableLabel
+                              onValuesChangeFinish={(value) => {
+                                const [min, max] = value;
+                                setYearRange((prev) => ({
+                                  min,
+                                  max,
+                                }));
+                                setYearApplied(true);
+                              }}
+                            />
+                          </View>
+                          {yearApplied ? (
+                            <TouchableOpacity
+                              className="mt-4  flex flex-1 items-center justify-center rounded-lg bg-primary px-3 py-2"
+                              onPress={() => {
+                                setYearRange({ min: 1900, max: dayjs().year() });
+                                setYearApplied(false);
+                              }}>
+                              <Text className="text-right text-white">Clear</Text>
+                            </TouchableOpacity>
+                          ) : (
+                            <></>
+                          )}
+                        </View>
+                      ) : (
+                        <></>
+                      )}
+                      {selectedSection === 'price' ? (
+                        <View className="px-1 pt-4">
+                          <Text
+                            allowFontScaling={false}
+                            className="mb-2 font-poppinsMedium text-base">
+                            Set your desired price range
+                          </Text>
+
+                          <View className="mb-2 flex-row items-center justify-between">
+                            {/* Min Price */}
+                            <View className=" flex-1 flex-row items-center rounded-lg border border-gray-300 px-2">
+                              <TextInput
+                                keyboardType="numeric"
+                                placeholder="0"
+                                allowFontScaling={false}
                                 value={priceRange.min?.toString()}
                                 onChangeText={(v) => {
-                                  setPriceRange({ ...priceRange, min: +v });
+                                  const onlyNumbers = v.replace(/[^0-9]/g, '');
+
+                                  setPriceRange({
+                                    ...priceRange,
+                                    min: onlyNumbers ? Number(onlyNumbers) : 0,
+                                  });
+
                                   setIsPriceApplied(true);
                                 }}
                                 className="flex-1 py-2 text-base leading-5 text-gray-700"
                               />
-                              <Text className="ml-2 font-poppinsMedium leading-5 text-gray-500">
-                                AED
-                              </Text>
+                              <Text className="text-xs">AED</Text>
                             </View>
 
                             {/* Dash separator */}
-                            <Text className="mx-3 font-poppinsMedium text-lg text-gray-600">-</Text>
+                            <Text className="mx-1 font-poppinsMedium text-lg text-gray-600">-</Text>
 
                             {/* Max Price */}
-                            <View className="ml-2 flex-1 flex-row items-center rounded-lg border border-gray-300 px-2">
+                            <View className=" flex-1 flex-row items-center rounded-lg border border-gray-300 px-2">
                               <TextInput
                                 keyboardType="numeric"
                                 placeholder="Any"
                                 value={priceRange.max?.toString()}
                                 onChangeText={(v) => {
-                                  setPriceRange({ ...priceRange, max: +v });
+                                  const onlyNumbers = v.replace(/[^0-9]/g, '');
+
+                                  setPriceRange({
+                                    ...priceRange,
+                                    max: onlyNumbers ? Number(onlyNumbers) : 0,
+                                  });
+
                                   setIsPriceApplied(true);
                                 }}
+                                allowFontScaling={false}
                                 className="flex-1 py-2 text-base leading-5 text-gray-700"
                                 style={{ textAlignVertical: 'center' }}
                               />
-                              <Text className="ml-2 font-poppinsMedium leading-5 text-gray-500">
-                                AED
-                              </Text>
+                              <Text className="text-xs">AED</Text>
                             </View>
                           </View>
                           {data?.pages?.[0]?.maxPrice ? (
@@ -543,6 +661,7 @@ const PostList = () => {
                           ) : (
                             <></>
                           )}
+
                           {isPriceApplied ? (
                             <TouchableOpacity
                               className="mt-4  flex flex-1 items-center justify-center rounded-lg bg-primary px-3 py-2"
@@ -588,6 +707,8 @@ const PostList = () => {
                 setCity('');
                 setPriceRange({ min: 0, max: 0 });
                 setIsPriceApplied(false);
+                setYearApplied(false);
+                setYearRange({ min: 1900, max: dayjs().year() });
               }}>
               <Text>Reset all</Text>
             </TouchableOpacity>
@@ -606,12 +727,18 @@ const PostList = () => {
                 onPress={() => {
                   setAppliedFilter({
                     ...appliedFilter,
-                    properties: selectedFilters,
+                    properties: {
+                      ...selectedFilters,
+                      ...(yearApplied && {
+                        [yearId]: [yearRange?.min, yearRange?.max],
+                      }),
+                    },
                     sortBy,
                     price:
                       isPriceApplied && (priceRange.min || priceRange.max)
                         ? `${priceRange.min || 0}-${priceRange.max || ''}`
                         : undefined,
+
                     city,
                   });
 
