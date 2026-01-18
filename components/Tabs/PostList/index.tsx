@@ -86,15 +86,17 @@ const PostList = () => {
 
   const isFilterApplied = (sectionUuid: string) => {
     if (sectionUuid === 'city') {
-      return Boolean(appliedFilter.city);
+      return Boolean(appliedFilter.city) || Boolean(city);
     }
 
     if (sectionUuid === 'price') {
-      return Boolean(appliedFilter.price);
+      return Boolean(appliedFilter.price) || Boolean(isPriceApplied);
     }
-    return Boolean(appliedFilter?.properties?.[sectionUuid]);
+    return (
+      Boolean(appliedFilter?.properties?.[sectionUuid]) || Boolean(selectedFilters?.[sectionUuid])
+    );
   };
-
+  console.log(selectedFilters);
   const [keyword, setKeyword] = useState('');
   const { isFetching, data, refetch }: any = useGetPosts({
     status: 'active',
