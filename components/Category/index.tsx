@@ -125,22 +125,6 @@ function Category() {
                 return (
                   <TouchableOpacity
                     className="mb-4 w-[48%] items-center rounded-lg p-2"
-                    style={{
-                      boxShadow: [
-                        {
-                          offsetX: 2,
-                          offsetY: 1,
-                          blurRadius: 9,
-                          color: '#A5BCD2C2',
-                        },
-                        {
-                          offsetX: -6,
-                          offsetY: -5,
-                          blurRadius: 18,
-                          color: '#FFFFFFAD',
-                        },
-                      ],
-                    }}
                     onPress={() => {
                       router.push({
                         pathname: routes.tabs.post_list,
