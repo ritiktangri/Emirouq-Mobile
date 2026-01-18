@@ -343,6 +343,7 @@ const PostList = () => {
         onClose={() => {
           setSearchAttributes('');
           setIsAllFilterSelected(false);
+          setSelectedFilters({});
         }}>
         <>
           <View className="flex-1 flex-row">
