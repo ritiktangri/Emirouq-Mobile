@@ -1,11 +1,21 @@
 /* eslint-disable import/order */
-import { TextInput, Pressable, Image, Platform, Alert, TouchableOpacity, View } from 'react-native';
+import {
+  TextInput,
+  Pressable,
+  Image,
+  Platform,
+  Alert,
+  TouchableOpacity,
+  View,
+  ScrollView,
+  Modal,
+} from 'react-native';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as ImagePicker from 'expo-image-picker';
-import React, { useEffect, useRef } from 'react';
-import { Feather, Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useRef, useState } from 'react';
+import { AntDesign, Feather, Ionicons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import SelectPicker from '~/components/UI/SelectPicker';
 import { useCategory } from '~/context/CategoryContext';
@@ -25,6 +35,7 @@ import SubscriptionPlanList from '~/components/Stripe/subscriptionPlanList';
 import { useGetAttributes } from '~/hooks/attributes/query';
 import CheckValidation from '~/components/CheckValidation';
 import { SelectField } from './selectField';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const schema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -119,6 +130,7 @@ const AddPost = () => {
   const router: any = useRouter();
   const { locale } = useLocale();
   const refRBSheet: any = useRef(null);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
   const { showToast } = useTheme();
   const { categories, getSubCategoryList, subCategories }: any = useCategory();
   const { user }: any = useAuth();
@@ -207,8 +219,11 @@ const AddPost = () => {
             headerTitle: 'createProfile.heading',
           },
         });
+      } else if (user?._id && user?.userHandle && !params?.postId && !watch('category')) {
+        // Automatically open category selection for new posts on focus
+        setShowCategoryModal(true);
       }
-    }, [user])
+    }, [user, params?.postId, watch('category')])
   );
   useEffect(() => {
     if (selectedCategory) {
@@ -386,18 +401,40 @@ const AddPost = () => {
             name="category"
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <>
-                <SelectPicker
-                  value={value}
-                  data={categories?.map((ite: any) => {
-                    return {
-                      label: ite?.title,
-                      value: ite?.uuid,
-                      key: ite?.uuid,
-                    };
-                  })}
-                  placeholder={i18n.t('post.categoryPlaceholder')}
-                  onSelect={onChange}
-                />
+                {value ? (
+                  <View className="flex-row items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-4">
+                    <View className="flex-row items-center gap-2">
+                      <Image
+                        source={{
+                          uri: categories?.find((cat: any) => cat.uuid === value)?.logo,
+                        }}
+                        className="h-6 w-6"
+                        resizeMode="contain"
+                      />
+                      <Text className="font-poppinsSemiBold text-base text-black">
+                        {categories?.find((cat: any) => cat.uuid === value)?.title}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      onPress={() => setShowCategoryModal(true)}
+                      className="rounded-md bg-primary/10 px-3 py-1">
+                      <Text className="font-poppinsMedium text-sm text-primary">Change</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <SelectPicker
+                    value={value}
+                    data={categories?.map((ite: any) => {
+                      return {
+                        label: ite?.title,
+                        value: ite?.uuid,
+                        key: ite?.uuid,
+                      };
+                    })}
+                    placeholder={i18n.t('post.categoryPlaceholder')}
+                    onSelect={onChange}
+                  />
+                )}
                 {error && <Text className="mt-1 text-sm text-red-500">{error.message}</Text>}
               </>
             )}
@@ -449,11 +486,10 @@ const AddPost = () => {
             render={({ field: { onChange, value } }) => (
               <View className="flex-row gap-4">
                 <Pressable
-                  className={`flex-1 items-center rounded-xl py-3 ${
-                    value === 'new'
+                  className={`flex-1 items-center rounded-xl py-3 ${value === 'new'
                       ? 'border-[1px] border-primary bg-btn_bg'
                       : 'border-[1px] border-gray-200 bg-white'
-                  }`}
+                    }`}
                   onPress={() => onChange('new')}>
                   <Text
                     className={`font-poppinsSemiBold text-lg ${value === 'new' ? 'text-primary' : 'text-gray-600'}`}>
@@ -461,11 +497,10 @@ const AddPost = () => {
                   </Text>
                 </Pressable>
                 <Pressable
-                  className={`flex-1 items-center rounded-lg py-3 ${
-                    value === 'used'
+                  className={`flex-1 items-center rounded-lg py-3 ${value === 'used'
                       ? 'border-[1px] border-primary bg-btn_bg'
                       : 'border-[1px] border-gray-200 bg-white'
-                  }`}
+                    }`}
                   onPress={() => onChange('used')}>
                   <Text
                     className={`font-poppinsSemiBold text-lg ${value === 'used' ? 'text-primary' : 'text-gray-600'}`}>
@@ -608,6 +643,10 @@ const AddPost = () => {
           draggableIcon: {
             backgroundColor: '#000',
           },
+          container: {
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          },
         }}
         height={screenHeight * 0.6}
         customModalProps={{
@@ -638,6 +677,54 @@ const AddPost = () => {
           list={isSubscribed?.data?.subscriptionPlan || []}
         />
       </RBSheet>
+
+      <Modal
+        visible={showCategoryModal}
+        animationType="fade"
+        onRequestClose={() => {
+          setShowCategoryModal(false);
+        }}>
+        <View className="flex-1 bg-white p-4" style={{ marginTop: useSafeAreaInsets().top }}>
+          <View className="mb-4 flex-row items-center gap-4">
+            <TouchableOpacity
+              onPress={() => {
+                setShowCategoryModal(false);
+                if (!watch('category')) {
+                  router.canDismiss() && router.dismissAll();
+                  router.replace(routes.tabs.home);
+                }
+              }}>
+              <AntDesign name="arrowleft" size={24} color="black" />
+            </TouchableOpacity>
+            <Text className="font-poppinsSemiBold text-xl">Select Category</Text>
+          </View>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View className="flex-row flex-wrap justify-between gap-y-4 px-2">
+              {categories?.map((cat: any) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    setValue('category', cat.uuid);
+                    setValue('subCategory', '');
+                    setValue('properties', []);
+                    setShowCategoryModal(false);
+                  }}
+                  key={cat.uuid}
+                  style={{ width: '48%' }}
+                  className="items-center rounded-2xl bg-gray-50 p-4">
+                  <View className="mb-3 h-16 w-16 items-center justify-center rounded-2xl bg-white p-2 shadow-sm">
+                    <Image source={{ uri: cat.logo }} className="h-10 w-10" resizeMode="contain" />
+                  </View>
+                  <Text
+                    numberOfLines={2}
+                    className="text-center font-poppinsSemiBold text-sm text-gray-800">
+                    {cat.title}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
+        </View>
+      </Modal>
     </View>
   );
 };

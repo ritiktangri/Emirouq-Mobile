@@ -66,7 +66,7 @@ const CategoryProvider = ({ children }: any) => {
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
-    getCategoryList(signal, 10, 0, keyword, false);
+    getCategoryList(signal, 300, 0, keyword, false);
     // Cleanup function to abort the request if the component unmounts or dependencies change
     return () => {
       controller.abort();
