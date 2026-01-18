@@ -64,14 +64,14 @@ const defaultProvider = {
   activeAccount: {},
   verifyUser: () => Promise.resolve(),
   subscriptionActive: false,
-  getActiveAccount: () => { },
-  updateProfile: () => { },
-  userResetPassword: () => { },
+  getActiveAccount: () => {},
+  updateProfile: () => {},
+  userResetPassword: () => {},
   btnLoading: false,
   setSocketIo: () => null,
   socketIo: {},
   brokerData: [],
-  setBrokerData: () => { },
+  setBrokerData: () => {},
   city: '',
   setCity: () => null,
 };
@@ -173,7 +173,7 @@ const AuthProvider = ({ children }: any) => {
       });
   };
   useEffect(() => {
-    getUser(() => { });
+    getUser(() => {});
   }, []);
 
   const handleLogin = (params: any, cb: any, errorCallback: any) => {
@@ -187,6 +187,7 @@ const AuthProvider = ({ children }: any) => {
         //     {`${response?.data?.payload?.firstName} ${response?.data?.payload?.lastName}`}!
         //   </Text>
         // );
+        setCity('');
         getUser(() => {
           // queryClient.invalidateQueries({ queryKey: ['conversation'] });
           router.replace(routes.tabs.home as any);
@@ -234,7 +235,7 @@ const AuthProvider = ({ children }: any) => {
         setSignInLoading(false);
         if (errorCallback) errorCallback(err);
       })
-      .finally(() => { });
+      .finally(() => {});
   };
   const verify = ({ pathParams, body }: any, cb: any, errorCallback: any) => {
     setVerifyOtpLoading(true);
@@ -324,7 +325,7 @@ const AuthProvider = ({ children }: any) => {
         errCb && errCb(err);
         setBtnLoading(false);
       })
-      .finally(() => { });
+      .finally(() => {});
   };
   // reset password when user is logged in
   const userResetPassword = async ({ pathParams }: any, cb: any) => {
@@ -361,7 +362,7 @@ const AuthProvider = ({ children }: any) => {
       // if the user has reached the limit of accounts and subscription is active then show error
       if (
         user?.limits?.accounts ===
-        user?.accounts?.filter((i: any) => i?.status === 'active')?.length &&
+          user?.accounts?.filter((i: any) => i?.status === 'active')?.length &&
         isSubInActive === false
       ) {
         errCb && errCb();
@@ -371,7 +372,7 @@ const AuthProvider = ({ children }: any) => {
       // if the user has reached the limit of accounts and subscription is active then show the modal
       if (
         user?.limits?.accounts >=
-        user?.accounts?.filter((i: any) => i?.status === 'active')?.length &&
+          user?.accounts?.filter((i: any) => i?.status === 'active')?.length &&
         isSubInActive
       ) {
         errCb && errCb();

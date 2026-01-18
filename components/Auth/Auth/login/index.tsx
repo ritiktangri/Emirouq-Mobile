@@ -7,11 +7,9 @@ import DynamicButton from '~/components/DynamicButton';
 import Input from '~/components/UI/Input';
 import { useAuth } from '~/context/AuthContext';
 import { useTheme } from '~/context/ThemeContext';
-import SocialButtons from '../social-btn';
 import { routes } from '~/utils/routes';
 
 const Login = ({ checkinType }: any) => {
-  const [agreed, setAgreed] = useState(false);
   const { login, signInLoading } = useAuth();
   const router: any = useRouter();
   const [secureTextEntry, setSecureTextEntry] = useState(false);
