@@ -84,6 +84,17 @@ const PostList = () => {
     return count;
   }, [appliedFilter, isPriceApplied]);
 
+  const attributes: any = useGetAttributes({ id: params.subCategory });
+  const attributeOptions = useGetAttributeOptions({
+    attributeId: selectedSection,
+    keyword: searchAttributes,
+  });
+  const yearData = (attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || [])?.find(
+    (j: any) => j.attributeKey?.toLowerCase() === 'year'
+  );
+  const yearId = yearData?.uuid;
+  const isYearSelected = yearData?.uuid === selectedSection;
+  const showSlider = isYearSelected || selectedSection === 'price';
   const isFilterApplied = (sectionUuid: string) => {
     if (sectionUuid === 'city') {
       return Boolean(appliedFilter.city) || Boolean(city);
@@ -92,11 +103,11 @@ const PostList = () => {
     if (sectionUuid === 'price') {
       return Boolean(appliedFilter.price) || Boolean(isPriceApplied);
     }
+
     return (
       Boolean(appliedFilter?.properties?.[sectionUuid]) || Boolean(selectedFilters?.[sectionUuid])
     );
   };
-  console.log(selectedFilters);
   const [keyword, setKeyword] = useState('');
   const { isFetching, data, refetch }: any = useGetPosts({
     status: 'active',
@@ -141,12 +152,6 @@ const PostList = () => {
     }
   }, [params.keyword, inputRef]);
 
-  const attributes: any = useGetAttributes({ id: params.subCategory });
-  const attributeOptions = useGetAttributeOptions({
-    attributeId: selectedSection,
-    keyword: searchAttributes,
-  });
-
   const onSelect = (attributeKey: string, value: string) => {
     setSelectedFilters((prev) => {
       const currentValues = prev[attributeKey] || [];
@@ -180,12 +185,7 @@ const PostList = () => {
     ],
     [attributes]
   );
-  const yearData = (attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || [])?.find(
-    (j: any) => j.attributeKey?.toLowerCase() === 'year'
-  );
-  const yearId = yearData?.uuid;
-  const isYearSelected = yearData?.uuid === selectedSection;
-  const showSlider = isYearSelected || selectedSection === 'price';
+
   return (
     <View className="flex-1 bg-white">
       <View
@@ -345,6 +345,7 @@ const PostList = () => {
           setIsAllFilterSelected(false);
           setSelectedFilters({});
           setIsPriceApplied(false);
+          setYearApplied(false);
           setCity('');
         }}>
         <>
