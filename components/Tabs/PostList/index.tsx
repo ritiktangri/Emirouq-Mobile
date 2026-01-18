@@ -344,6 +344,8 @@ const PostList = () => {
           setSearchAttributes('');
           setIsAllFilterSelected(false);
           setSelectedFilters({});
+          setIsPriceApplied(false);
+          setCity('');
         }}>
         <>
           <View className="flex-1 flex-row">
