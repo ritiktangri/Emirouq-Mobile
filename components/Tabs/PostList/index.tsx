@@ -104,7 +104,7 @@ const PostList = () => {
       return Boolean(appliedFilter.price) || Boolean(isPriceApplied);
     }
 
-    if (sectionUuid === yearId) {
+    if (sectionUuid === yearId && yearApplied) {
       return yearApplied;
     }
     return (
