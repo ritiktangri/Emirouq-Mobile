@@ -69,10 +69,11 @@ export async function addCommentService({ pathParams, body }: any) {
     body,
   });
 }
-export async function getSimilarPostsService({ pathParams }: any) {
+export async function getSimilarPostsService({ pathParams, query }: any) {
   return callApi({
     uriEndPoint: { ...post.getSimilarPosts.v1 } as ApiEndpoint,
     pathParams,
+    query,
   });
 }
 export async function getDashboardPost({ query }: any) {

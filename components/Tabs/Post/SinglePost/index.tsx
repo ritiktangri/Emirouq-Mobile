@@ -38,11 +38,11 @@ const SinglePost = () => {
     uri: '',
     index: 1,
   } as any);
-  const { user } = useAuth();
+  const { user, city } = useAuth();
   const { isLoading, data, refetch }: any = useGetSinglePosts(id);
   const { data: countViewPost }: any = useGetCountPost(id);
 
-  const { data: similarPosts }: any = useGetSimilarPosts(data?.data?.category?.uuid);
+  const { data: similarPosts }: any = useGetSimilarPosts(data?.data?.category?.uuid, city);
   useEffect(() => {
     if (data?.data?.file?.length > 0) {
       //cache update
@@ -141,7 +141,7 @@ const SinglePost = () => {
         ?.mutateAsync({
           pathParams: { postId: id },
         })
-        ?.then((res: any) => {})
+        ?.then((res: any) => { })
         .catch((err: any) => {
           console.log('err', err);
           queryClient.setQueryData(['singlePost', id], (oldData: any) => {
@@ -344,7 +344,7 @@ const SinglePost = () => {
                     await Share.share({
                       message: 'Check out this app: https://emirouq.ae',
                     });
-                  } catch (error) {}
+                  } catch (error) { }
                 }}>
                 <AntDesign name="sharealt" size={20} color="gray" />
                 <Text className="ml-1 text-gray-600">Share</Text>
@@ -449,9 +449,8 @@ const SinglePost = () => {
                 return (
                   <View
                     key={index}
-                    className={`flex-row items-start px-4 py-3.5 ${
-                      isEven ? 'bg-white' : 'bg-gray-50'
-                    } ${!isLast ? 'border-b border-gray-100' : ''}`}>
+                    className={`flex-row items-start px-4 py-3.5 ${isEven ? 'bg-white' : 'bg-gray-50'
+                      } ${!isLast ? 'border-b border-gray-100' : ''}`}>
                     {/* Label: Takes left 50% */}
                     <View className="w-1/2 pr-2">
                       <Text className="text-sm font-medium text-gray-500">{property.label}</Text>
@@ -460,7 +459,7 @@ const SinglePost = () => {
                     {/* Value: Takes right 50% */}
                     <View className="w-1/2 pl-2">
                       {property.selectedValue?.length > 0 &&
-                      Array.isArray(property.selectedValue) ? (
+                        Array.isArray(property.selectedValue) ? (
                         <Text className="text-left text-sm font-semibold leading-5 text-gray-900">
                           {property.selectedValue?.map((j: any) => j?.value).join(', ')}
                         </Text>
@@ -491,8 +490,8 @@ const SinglePost = () => {
 
           {/* Boost Ad Section */}
           {data?.data?.subscriptionId &&
-          data?.data?.status === 'active' &&
-          !data?.data?.isFeaturedAdBoostUsed ? (
+            data?.data?.status === 'active' &&
+            !data?.data?.isFeaturedAdBoostUsed ? (
             <View className="mt-2 gap-3 bg-boostAd_bg p-4">
               <Text placement={locale} className="text-lg font-medium text-black">
                 {i18n.t('previewAd.boostAdHeading')}

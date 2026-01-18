@@ -4,8 +4,8 @@ import { createContext, useContext, useState, useMemo, useEffect, useCallback } 
 import { i18n } from '~/utils/i18n';
 const defaultProvider = {
   locale: 'en',
-  setLocale: () => {},
-  changeLocale: () => {},
+  setLocale: () => { },
+  changeLocale: () => { },
 };
 const LocaleContext = createContext(defaultProvider as any);
 export const useLocale = () => useContext(LocaleContext);
@@ -13,11 +13,11 @@ export const useLocale = () => useContext(LocaleContext);
 const LocaleProvider = ({ children }: any) => {
   const [locale, setLocale] = useState('' as any); // Initialize with current locale
 
-  async function changeLocale(lang: string) {
+  const changeLocale = useCallback(async (lang: string) => {
     await AsyncStorage.setItem('locale', lang);
     i18n.locale = lang;
     setLocale(lang); // Update the state with the new locale
-  }
+  }, []);
 
   useEffect(() => {
     async function fetchLocale() {
@@ -27,10 +27,7 @@ const LocaleProvider = ({ children }: any) => {
       }
     }
     fetchLocale();
-    return () => {
-      // Cleanup function if needed
-    };
-  }, []);
+  }, [changeLocale]);
 
   const value: any = useMemo(
     () => ({
@@ -38,7 +35,7 @@ const LocaleProvider = ({ children }: any) => {
       setLocale,
       changeLocale,
     }),
-    [changeLocale, locale, setLocale]
+    [changeLocale, locale]
   );
 
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;

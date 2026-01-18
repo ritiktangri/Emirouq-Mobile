@@ -11,8 +11,10 @@ import theme from '~/utils/theme';
 import { useGetFavouritePosts } from '~/hooks/post/query';
 import Render from './render';
 import { noData } from '~/image';
+import { useAuth } from '~/context/AuthContext';
 
 const Favourites = () => {
+  const { city } = useAuth();
   const {
     isFetching,
     isLoading,
@@ -21,13 +23,13 @@ const Favourites = () => {
     fetchNextPage,
     isFetchingNextPage,
     refetch,
-  }: any = useGetFavouritePosts();
+  }: any = useGetFavouritePosts(city);
 
   const handleRefresh = useCallback(() => {
-    queryClient.removeQueries({ queryKey: ['posts', ''] });
+    queryClient.removeQueries({ queryKey: ['favourite_posts', city] });
 
     refetch();
-  }, [queryClient, refetch]);
+  }, [queryClient, refetch, city]);
 
   if (isFetching) {
     return <View className="flex-1 bg-white"></View>;

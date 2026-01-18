@@ -81,12 +81,12 @@ export const useGetSinglePosts = (id: any) =>
     enabled: !!id,
   });
 
-export const useGetFavouritePosts = () =>
+export const useGetFavouritePosts = (city?: string) =>
   useInfiniteQuery({
-    queryKey: ['favourite_posts'],
+    queryKey: ['favourite_posts', city],
     queryFn: ({ pageParam }) =>
       getFavourite({
-        query: { start: pageParam },
+        query: { start: pageParam, city },
       }),
     getNextPageParam: (lastPage: any, allPages: any) => {
       const currentStart = allPages?.length * 10;
@@ -99,22 +99,23 @@ export const useGetFavouritePosts = () =>
     initialPageParam: 0,
     refetchOnReconnect: false,
   });
-export const useGetSimilarPosts = (id: any) =>
+export const useGetSimilarPosts = (id: any, city?: string) =>
   useQuery({
-    queryKey: ['similarPosts', id],
+    queryKey: ['similarPosts', id, city],
     queryFn: () =>
       getSimilarPostsService({
         pathParams: { categoryId: id },
+        query: { city },
       }),
     refetchOnWindowFocus: false,
     enabled: !!id,
   });
-export const useGetDashboardPost = () =>
+export const useGetDashboardPost = (city?: string) =>
   useQuery({
-    queryKey: ['dashboard-posts'],
+    queryKey: ['dashboard-posts', city],
     queryFn: () =>
       getDashboardPost({
-        query: {},
+        query: { city },
       }),
     refetchOnWindowFocus: false,
   });

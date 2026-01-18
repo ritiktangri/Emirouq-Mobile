@@ -60,33 +60,21 @@ const viewVariants = cva('bg-transparent', {
   },
 });
 
-const ViewClassContext = React.createContext<string | undefined>(undefined);
-
-function View({
-  className,
-  variant,
-  color,
-  rounded,
-  shadow,
-  direction, // Add direction to props
-  ...props
-}: ViewProps &
+const View = React.forwardRef<
+  RNView,
+  ViewProps &
   VariantProps<typeof viewVariants> & {
     direction?: 'en' | 'ar' | 'row' | 'column' | 'row-reverse' | 'column-reverse';
-  }) {
-  // Ensure direction is properly typed
-  const viewClassName = React.useContext(ViewClassContext);
-
+  }
+>(({ className, variant, color, rounded, shadow, direction, ...props }, ref) => {
   return (
     <RNView
-      className={cn(
-        viewVariants({ variant, color, rounded, shadow, direction }),
-        viewClassName,
-        className
-      )}
+      ref={ref}
+      className={cn(viewVariants({ variant, color, rounded, shadow, direction }), className)}
       {...props}
     />
   );
-}
+});
+View.displayName = 'View';
 
-export { View, ViewClassContext, viewVariants };
+export { View, viewVariants };

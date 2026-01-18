@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useGlobalSearchParams, useRouter } from 'expo-router';
 
 import { useGetSingleUser } from '~/hooks/auth/query';
+import { useAuth } from '~/context/AuthContext';
 
 import dayjs from 'dayjs';
 
@@ -34,13 +35,12 @@ const AdItem = ({ item }: any) => {
           {/* Status (only if you want to show it on public profiles) */}
           <View style={{ alignSelf: 'flex-start' }}>
             <Text
-              className={`mt-1 rounded-full px-2 py-1 text-xs ${
-                item?.status === 'active'
-                  ? 'bg-green-100 text-green-600'
-                  : item?.status === 'pending'
-                    ? 'bg-yellow-100 text-yellow-600'
-                    : 'bg-red-100 text-red-600'
-              }`}>
+              className={`mt-1 rounded-full px-2 py-1 text-xs ${item?.status === 'active'
+                ? 'bg-green-100 text-green-600'
+                : item?.status === 'pending'
+                  ? 'bg-yellow-100 text-yellow-600'
+                  : 'bg-red-100 text-red-600'
+                }`}>
               {item?.status?.toUpperCase()}
             </Text>
           </View>
@@ -61,9 +61,14 @@ const AdItem = ({ item }: any) => {
 const SingleUserProfile = ({ adsData }: any) => {
   const router = useRouter();
   const params = useGlobalSearchParams();
+  const { city } = useAuth();
   const { data }: any = useGetSingleUser(params.userId);
   let user = data?.data;
-  const { isLoading, data: posts }: any = useGetPosts({ status: 'active', userId: user?.uuid });
+  const { isLoading, data: posts }: any = useGetPosts({
+    status: 'active',
+    userId: user?.uuid,
+    city,
+  });
   const profileImageSource = user?.profileImage ? { uri: user.profileImage } : null;
 
   const i18n = {

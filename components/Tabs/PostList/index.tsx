@@ -19,6 +19,7 @@ import { useGetPosts } from '~/hooks/post/query';
 import Render from './render';
 import theme from '~/utils/theme';
 import { queryClient } from '~/app/_layout';
+import { useAuth } from '~/context/AuthContext';
 import { noData } from '~/image';
 import { debounce } from 'lodash';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -45,6 +46,7 @@ const PostList = () => {
   const [yearApplied, setYearApplied] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
   const [appliedFilter, setAppliedFilter] = useState({} as any);
+  const { city: globalCity, setCity: setGlobalCity } = useAuth();
   const selectedFilterCount = React.useMemo(() => {
     let count = 0;
 
@@ -105,6 +107,10 @@ const PostList = () => {
     city: appliedFilter.city,
     priceRange: appliedFilter.price?.split('-'),
   });
+
+  useEffect(() => {
+    setAppliedFilter((prev: any) => ({ ...prev, city: globalCity }));
+  }, [globalCity]);
   useEffect(() => {
     if (data?.pages?.[0]?.maxPrice && !isPriceApplied) {
       setPriceRange({
@@ -741,6 +747,7 @@ const PostList = () => {
 
                     city,
                   });
+                  setGlobalCity(city);
 
                   refRBSheet.current.close();
                   setIsAllFilterSelected(false);

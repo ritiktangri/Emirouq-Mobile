@@ -8,13 +8,13 @@ import { useGetFavouritePosts } from '~/hooks/post/query';
 import { usePathname } from 'expo-router';
 
 const AddToFavourite = ({ item }: any) => {
-  const { user, getUser } = useAuth();
+  const { user, getUser, city } = useAuth();
   const pathname = usePathname();
   const updateFavouriteStatus: any = useUpdateFavourite();
   const [isFavourited, setIsFavourited] = useState(user?.favourites?.includes(item?.uuid));
   const { showToast }: any = useTheme();
   const [scale] = useState(new Animated.Value(1));
-  const { refetch }: any = useGetFavouritePosts();
+  const { refetch }: any = useGetFavouritePosts(city);
   const toggleFavourite = async () => {
     Animated.sequence([
       Animated.timing(scale, {
@@ -46,7 +46,7 @@ const AddToFavourite = ({ item }: any) => {
             setIsFavourited(false);
           }
         });
-    } catch (err) {}
+    } catch (err) { }
   };
   return (
     <Animated.View className="absolute right-2 top-2">

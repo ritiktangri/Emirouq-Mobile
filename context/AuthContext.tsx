@@ -14,7 +14,7 @@ interface VerifyInterface {
   };
 }
 import { useRouter } from 'expo-router';
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { socketHostname } from '~/utils/callApis/apiUtils';
 import { routes } from '~/utils/routes';
 import {
@@ -64,14 +64,16 @@ const defaultProvider = {
   activeAccount: {},
   verifyUser: () => Promise.resolve(),
   subscriptionActive: false,
-  getActiveAccount: () => {},
-  updateProfile: () => {},
-  userResetPassword: () => {},
+  getActiveAccount: () => { },
+  updateProfile: () => { },
+  userResetPassword: () => { },
   btnLoading: false,
   setSocketIo: () => null,
   socketIo: {},
   brokerData: [],
-  setBrokerData: () => {},
+  setBrokerData: () => { },
+  city: '',
+  setCity: () => null,
 };
 const AuthContext = createContext(defaultProvider as any);
 export const useAuth = () => useContext(AuthContext);
@@ -101,6 +103,8 @@ const AuthProvider = ({ children }: any) => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSorting, setSelectedSorting] = useState('newest');
   const [keyword, setKeyword] = useState('');
+  const [city, setCity] = useState('');
+
   const getActiveAccount = async (response: any) => {
     const allAccountList = [...response?.accounts];
     let activeAccountsList: any = {};
@@ -169,7 +173,7 @@ const AuthProvider = ({ children }: any) => {
       });
   };
   useEffect(() => {
-    getUser(() => {});
+    getUser(() => { });
   }, []);
 
   const handleLogin = (params: any, cb: any, errorCallback: any) => {
@@ -230,7 +234,7 @@ const AuthProvider = ({ children }: any) => {
         setSignInLoading(false);
         if (errorCallback) errorCallback(err);
       })
-      .finally(() => {});
+      .finally(() => { });
   };
   const verify = ({ pathParams, body }: any, cb: any, errorCallback: any) => {
     setVerifyOtpLoading(true);
@@ -320,7 +324,7 @@ const AuthProvider = ({ children }: any) => {
         errCb && errCb(err);
         setBtnLoading(false);
       })
-      .finally(() => {});
+      .finally(() => { });
   };
   // reset password when user is logged in
   const userResetPassword = async ({ pathParams }: any, cb: any) => {
@@ -357,7 +361,7 @@ const AuthProvider = ({ children }: any) => {
       // if the user has reached the limit of accounts and subscription is active then show error
       if (
         user?.limits?.accounts ===
-          user?.accounts?.filter((i: any) => i?.status === 'active')?.length &&
+        user?.accounts?.filter((i: any) => i?.status === 'active')?.length &&
         isSubInActive === false
       ) {
         errCb && errCb();
@@ -367,7 +371,7 @@ const AuthProvider = ({ children }: any) => {
       // if the user has reached the limit of accounts and subscription is active then show the modal
       if (
         user?.limits?.accounts >=
-          user?.accounts?.filter((i: any) => i?.status === 'active')?.length &&
+        user?.accounts?.filter((i: any) => i?.status === 'active')?.length &&
         isSubInActive
       ) {
         errCb && errCb();
@@ -403,60 +407,119 @@ const AuthProvider = ({ children }: any) => {
     };
   }, [user]);
 
-  const values = {
-    user,
-    loading,
-    getUser,
-    forgotLoading,
-    signInLoading,
-    verifyOtpLoading,
-    setUser,
-    setLoading,
-    login: handleLogin,
-    logout: handleLogout,
-    signUp: handleSignUp,
-    verify,
-    createPassword,
-    forgotPassword,
-    resetPass,
-    setForgotLoading,
-    setVerifyOtpLoading,
-    setSignInLoading,
-    setSelectedSideBar,
-    selectedSideBar,
-    activeAccount,
-    setActiveAccount,
-    verifyUser,
-    subscriptionActive,
-    getActiveAccount,
-    updateProfile,
-    userResetPassword,
-    btnLoading,
-    setSocketIo,
-    socketIo,
-    setCsvSocketData,
-    csvSocketData,
-    brokerData,
-    setBrokerData,
-    setUnseenCount,
-    unSeenCount,
-    getUnSeenCount,
-    //subscription
-    isOpen,
-    setIsOpen,
-    isSubscriptionInActive,
-    checkSubscription,
-    setOnlineUsers,
-    onlineUsers,
-    priceRange,
-    setPriceRange,
-    selectedCategory,
-    setSelectedCategory,
-    selectedSorting,
-    setSelectedSorting,
-    setKeyword,
-    keyword,
-  };
+  const values = useMemo(
+    () => ({
+      user,
+      loading,
+      getUser,
+      forgotLoading,
+      signInLoading,
+      verifyOtpLoading,
+      setUser,
+      setLoading,
+      login: handleLogin,
+      logout: handleLogout,
+      signUp: handleSignUp,
+      verify,
+      createPassword,
+      forgotPassword,
+      resetPass,
+      setForgotLoading,
+      setVerifyOtpLoading,
+      setSignInLoading,
+      setSelectedSideBar,
+      selectedSideBar,
+      activeAccount,
+      setActiveAccount,
+      verifyUser,
+      subscriptionActive,
+      getActiveAccount,
+      updateProfile,
+      userResetPassword,
+      btnLoading,
+      setSocketIo,
+      socketIo,
+      setCsvSocketData,
+      csvSocketData,
+      brokerData,
+      setBrokerData,
+      setUnseenCount,
+      unSeenCount,
+      getUnSeenCount,
+      //subscription
+      isOpen,
+      setIsOpen,
+      isSubscriptionInActive,
+      checkSubscription,
+      setOnlineUsers,
+      onlineUsers,
+      priceRange,
+      setPriceRange,
+      selectedCategory,
+      setSelectedCategory,
+      selectedSorting,
+      setSelectedSorting,
+      setKeyword,
+      keyword,
+      city,
+      setCity,
+    }),
+    [
+      user,
+      loading,
+      getUser,
+      forgotLoading,
+      signInLoading,
+      verifyOtpLoading,
+      setUser,
+      setLoading,
+      handleLogin,
+      handleLogout,
+      handleSignUp,
+      verify,
+      createPassword,
+      forgotPassword,
+      resetPass,
+      setForgotLoading,
+      setVerifyOtpLoading,
+      setSignInLoading,
+      setSelectedSideBar,
+      selectedSideBar,
+      activeAccount,
+      setActiveAccount,
+      verifyUser,
+      subscriptionActive,
+      getActiveAccount,
+      updateProfile,
+      userResetPassword,
+      btnLoading,
+      setSocketIo,
+      socketIo,
+      setCsvSocketData,
+      csvSocketData,
+      brokerData,
+      setBrokerData,
+      setUnseenCount,
+      unSeenCount,
+      getUnSeenCount,
+      isOpen,
+      setIsOpen,
+      isSubscriptionInActive,
+      checkSubscription,
+      setOnlineUsers,
+      onlineUsers,
+      priceRange,
+      setPriceRange,
+      selectedCategory,
+      setSelectedCategory,
+      selectedSorting,
+      setSelectedSorting,
+      setKeyword,
+      keyword,
+      city,
+      setCity,
+    ]
+  );
 
   return <AuthContext.Provider value={values as any}>{children}</AuthContext.Provider>;
 };

@@ -5,7 +5,7 @@ import { View } from '../View';
 import { Text } from '../Text';
 
 const Divider = () => <View style={styles.divider} />;
-const CustomMenu = ({ icon, data, customStyles }: any) => {
+const CustomMenu = ({ icon, data, customStyles = { optionsContainer: {}, optionsWrapper: {} } }: any) => {
   return (
     <Menu>
       <MenuTrigger
