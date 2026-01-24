@@ -64,14 +64,31 @@ function Category() {
               const isSelected = selectedCategory === item?.uuid;
               return (
                 <TouchableOpacity
-                  className={`border-b border-gray-100 p-4 ${
-                    isSelected ? 'border-l-4 border-l-orange-500 bg-white' : 'bg-gray-100'
-                  }`}
+                  className={`border-b border-gray-100 p-4 ${isSelected ? 'border-l-4 border-l-orange-500 bg-white' : 'bg-gray-100'
+                    }`}
                   onPress={() => setSelectedCategory(item?.uuid)}>
-                  <Text
-                    className={`text-sm ${isSelected ? 'font-poppinsMedium text-orange-700' : 'font-interMedium text-gray-700'}`}>
-                    {item?.title}
-                  </Text>
+                  <View className="flex-row items-center gap-x-2">
+                    {item?.logo ? (
+                      <View className="h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm">
+                        <Image
+                          source={{ uri: item?.logo }}
+                          alt={item?.title}
+                          className="h-6 w-6 rounded-full"
+                          resizeMode="contain"
+                        />
+                      </View>
+                    ) : (
+                      <View className="h-8 w-8 items-center justify-center rounded-full bg-gray-200">
+                        <Text className="font-poppinsMedium text-xs text-gray-600">
+                          {getInitials(item.title)}
+                        </Text>
+                      </View>
+                    )}
+                    <Text
+                      className={`flex-1 text-sm ${isSelected ? 'font-poppinsMedium text-orange-700' : 'font-interMedium text-gray-700'}`}>
+                      {item?.title}
+                    </Text>
+                  </View>
                 </TouchableOpacity>
               );
             }}

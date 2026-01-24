@@ -141,7 +141,9 @@ const SinglePost = () => {
         ?.mutateAsync({
           pathParams: { postId: id },
         })
-        ?.then((res: any) => { })
+        ?.then((res: any) => {
+          console.log('res', res);
+        })
         .catch((err: any) => {
           console.log('err', err);
           queryClient.setQueryData(['singlePost', id], (oldData: any) => {
@@ -307,171 +309,197 @@ const SinglePost = () => {
           ) : (
             <></>
           )}
-          <View className="flex-row items-center gap-3 border-[1px] border-t border-gray-200 px-4 pb-3 pt-4">
-            <Text className="text-gray-600">
-              {data?.data?.likes?.length} {`${data?.data?.likes?.length === 1 ? 'Like' : 'Likes'}`}
-            </Text>
-            <View className="h-2 w-2 rounded-full bg-gray-400" />
-            <Text className="text-gray-600">
-              {' '}
-              {data?.data?.comments?.length}{' '}
-              {`${data?.data?.comments?.length === 1 ? 'Comment' : 'Comments'}`}
-            </Text>
+          <View className="px-2 py-2">
+            <View className="flex-row items-center self-start rounded-full border border-gray-100 bg-gray-50 px-4 py-2">
+              {/* Likes Count */}
+              <Text className="text-xs font-semibold text-gray-700">
+                {data?.data?.likes?.length || 0}
+                <Text className="font-medium text-gray-500">
+                  {' '}
+                  {data?.data?.likes?.length === 1 ? 'Like' : 'Likes'}
+                </Text>
+              </Text>
+
+              {/* Vertical Divider */}
+              <View className="mx-3 h-3 w-[1px] bg-gray-300" />
+
+              {/* Comments Count */}
+              <Text className="text-xs font-semibold text-gray-700">
+                {data?.data?.comments?.length || 0}
+                <Text className="font-medium text-gray-500">
+                  {' '}
+                  {data?.data?.comments?.length === 1 ? 'Comment' : 'Comments'}
+                </Text>
+              </Text>
+            </View>
           </View>
           {/* Interaction Buttons */}
           {user?.uuid && (
-            <View className="mt-2 flex-row  justify-around">
-              <TouchableOpacity className="flex-row items-center" onPress={onLikePost}>
-                {data?.data?.likes?.includes(user?.uuid) ? (
-                  <AntDesign name="heart" size={20} color="red" />
-                ) : (
-                  <Feather name="heart" size={20} color="gray" />
+            <View className="flex-row items-center justify-between border-t border-gray-50 bg-white px-6 py-2 shadow-sm">
+              {/* --- Social Actions Group --- */}
+              <View className="flex-row gap-6">
+                {/* Like Button */}
+                <TouchableOpacity
+                  className="items-center justify-center gap-1.5"
+                  onPress={onLikePost}>
+                  {data?.data?.likes?.includes(user?.uuid) ? (
+                    <AntDesign name="heart" size={22} color="#EF4444" />
+                  ) : (
+                    <Feather name="heart" size={22} color="#6B7280" />
+                  )}
+                  <Text className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                    Like
+                  </Text>
+                </TouchableOpacity>
+
+                {/* Comment Button */}
+                <TouchableOpacity
+                  className="items-center justify-center gap-1.5"
+                  onPress={() => setIsSheetOpen(true)}>
+                  <Feather name="message-square" size={22} color="#6B7280" />
+                  <Text className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                    Comment
+                  </Text>
+                </TouchableOpacity>
+
+                {/* Share Button */}
+                <TouchableOpacity
+                  className="items-center justify-center gap-1.5"
+                  onPress={async () => {
+                    try {
+                      await Share.share({
+                        message: 'Check out this app: https://emirouq.ae',
+                      });
+                    } catch (error) {}
+                  }}>
+                  <AntDesign name="sharealt" size={22} color="#6B7280" />
+                  <Text className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                    Share
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* --- Divider --- */}
+              {data?.data?.user?.phoneNumber && <View className="h-8 w-[1px] bg-gray-200" />}
+
+              {/* --- Contact Actions Group --- */}
+              <View className="flex-row gap-5">
+                {/* WhatsApp Chat */}
+                {data?.data?.user?.phoneNumber && (
+                  <TouchableOpacity
+                    className="items-center justify-center gap-1"
+                    onPress={async () => {
+                      const phoneNumber = `${data?.data?.user?.countryCode || '+971'}${data?.data?.user?.phoneNumber}`;
+                      const message = encodeURIComponent('Check out this app: https://emirouq.ae');
+                      const url = `whatsapp://send?phone=${phoneNumber}&text=${message}`;
+                      const canOpen = await Linking.canOpenURL(url);
+                      if (canOpen) {
+                        Linking.openURL(url);
+                      } else {
+                        alert('WhatsApp is not installed');
+                      }
+                    }}>
+                    {/* Icon Container for Emphasis */}
+                    <View className="h-10 w-10 items-center justify-center rounded-full bg-green-50">
+                      <FontAwesome name="whatsapp" size={20} color="#16A34A" />
+                    </View>
+                    <Text className="text-[10px] font-bold uppercase tracking-widest text-green-700">
+                      Chat
+                    </Text>
+                  </TouchableOpacity>
                 )}
-                <Text className="ml-1 text-gray-600">Like</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                className="flex-row items-center"
-                onPress={() => {
-                  setIsSheetOpen(true);
-                }}>
-                <Feather name="message-square" size={20} color="gray" />
-                <Text className="ml-1 text-gray-600">Comment</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                className="flex-row items-center"
-                onPress={async () => {
-                  try {
-                    await Share.share({
-                      message: 'Check out this app: https://emirouq.ae',
-                    });
-                  } catch (error) { }
-                }}>
-                <AntDesign name="sharealt" size={20} color="gray" />
-                <Text className="ml-1 text-gray-600">Share</Text>
-              </TouchableOpacity>
-              {data?.data?.user?.phoneNumber && (
-                <TouchableOpacity
-                  className="flex-row items-center"
-                  onPress={async () => {
-                    const phoneNumber = `${data?.data?.user?.countryCode || '+971'}${data?.data?.user?.phoneNumber}`;
-                    const message = encodeURIComponent('Check out this app: https://emirouq.ae');
-                    const url = `whatsapp://send?phone=${phoneNumber}&text=${message}`;
-                    const canOpen = await Linking.canOpenURL(url);
-                    if (canOpen) {
-                      Linking.openURL(url);
-                    } else {
-                      alert('WhatsApp is not installed');
-                    }
-                  }}>
-                  <FontAwesome name="whatsapp" size={20} color="green" />
-                  <Text className="ml-1 text-green-700">Chat</Text>
-                </TouchableOpacity>
-              )}
-              {data?.data?.user?.phoneNumber && (
-                <TouchableOpacity
-                  className="flex-row items-center"
-                  onPress={async () => {
-                    const phoneNumber = `${data?.data?.user?.countryCode || '+971'}${data?.data?.user?.phoneNumber}`;
-                    const url = `tel:${phoneNumber}`;
-                    const canOpen = await Linking.canOpenURL(url);
-                    if (canOpen) {
-                      Linking.openURL(url);
-                    } else {
-                      alert('Unable to open dialer');
-                    }
-                  }}>
-                  <FontAwesome name="phone" size={20} color="gray" />
-                  <Text className="ml-1 text-gray-600">Call</Text>
-                </TouchableOpacity>
-              )}
+
+                {/* Phone Call */}
+                {data?.data?.user?.phoneNumber && (
+                  <TouchableOpacity
+                    className="items-center justify-center gap-1"
+                    onPress={async () => {
+                      const phoneNumber = `${data?.data?.user?.countryCode || '+971'}${data?.data?.user?.phoneNumber}`;
+                      const url = `tel:${phoneNumber}`;
+                      const canOpen = await Linking.canOpenURL(url);
+                      if (canOpen) {
+                        Linking.openURL(url);
+                      } else {
+                        alert('Unable to open dialer');
+                      }
+                    }}>
+                    {/* Icon Container for Emphasis */}
+                    <View className="h-10 w-10 items-center justify-center rounded-full bg-blue-50">
+                      <Feather name="phone-call" size={18} color="#2563EB" />
+                    </View>
+                    <Text className="text-[10px] font-bold uppercase tracking-widest text-blue-700">
+                      Call
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
           )}
-
           {/* Description */}
-          <View className="bg-white px-5 py-6">
-            {/* --- Header & Description --- */}
-            <View className="mb-3">
-              <Text className="text-xl font-bold tracking-tight text-gray-900">
-                {i18n.t('post.description')}
-              </Text>
-              <Text className="mt-3 text-base leading-7 text-gray-600">
-                {data?.data?.description}
-              </Text>
-            </View>
-            <Text className="mb-1 text-xl font-bold tracking-tight text-gray-900">Details</Text>
-            {/* --- Specifications Table --- */}
-            <View className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-              {/* Static Row: Condition */}
-              <View className="flex-row items-start border-b border-gray-100 bg-gray-50 px-4 py-3.5">
-                <View className="w-1/2 pr-2">
-                  <Text className="text-sm font-medium text-gray-500">
+          <View className="bg-white px-6 py-6 pb-24">
+            {/* --- Specifications Grid --- */}
+            <View>
+              <View className="mb-4 flex-row items-center justify-between">
+                <Text className="font-serif text-lg font-bold text-gray-900">Details & Specs</Text>
+                <Text className="text-xs font-medium uppercase tracking-widest text-gray-400">
+                  Updated {getRelativeTime(data?.data?.createdAt)}
+                </Text>
+              </View>
+
+              {/* Grid Container */}
+              <View className="flex-row flex-wrap justify-between">
+                {/* 1. Condition Card */}
+                <View className="mb-3 w-[48%] rounded-2xl border border-gray-100 bg-gray-50 p-3.5">
+                  <Text className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">
                     {i18n.t('post.condition')}
                   </Text>
-                </View>
-                <View className="w-1/2 pl-2">
-                  <Text className="text-left text-sm font-semibold capitalize text-gray-900">
-                    {data?.data?.condition}
+                  <Text className="text-sm font-semibold capitalize text-gray-900">
+                    {data?.data?.condition || 'N/A'}
                   </Text>
                 </View>
-              </View>
 
-              {/* Static Row: Category */}
-              <View className="flex-row items-start border-b border-gray-100 bg-white px-4 py-3.5">
-                <View className="w-1/2 pr-2">
-                  <Text className="text-sm font-medium text-gray-500">
+                {/* 2. Category Card */}
+                <View className="mb-3 w-[48%] rounded-2xl border border-gray-100 bg-gray-50 p-3.5">
+                  <Text className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">
                     {i18n.t('post.category')}
                   </Text>
-                </View>
-                <View className="w-1/2 pl-2">
-                  <Text className="text-left text-sm font-semibold text-gray-900">
-                    {data?.data?.category?.title}
+                  <Text className="text-sm font-semibold text-gray-900" numberOfLines={1}>
+                    {data?.data?.category?.title || 'N/A'}
                   </Text>
                 </View>
-              </View>
 
-              {/* Static Row: Posted */}
-              <View className="flex-row items-start border-b border-gray-100 bg-gray-50 px-4 py-3.5">
-                <View className="w-1/2 pr-2">
-                  <Text className="text-sm font-medium text-gray-500">Posted</Text>
-                </View>
-                <View className="w-1/2 pl-2">
-                  <Text className="text-left text-sm font-semibold text-gray-900">
-                    {getRelativeTime(data?.data?.createdAt)}
-                  </Text>
-                </View>
-              </View>
-
-              {/* Dynamic Properties Loop */}
-              {(data?.data?.properties || []).map((property: any, index: number) => {
-                const isEven = index % 2 === 0;
-                const isLast = index === (data?.data?.properties || []).length - 1;
-
-                return (
+                {/* 3. Dynamic Properties Loop */}
+                {(data?.data?.properties || []).map((property: any, index: number) => (
                   <View
                     key={index}
-                    className={`flex-row items-start px-4 py-3.5 ${isEven ? 'bg-white' : 'bg-gray-50'
-                      } ${!isLast ? 'border-b border-gray-100' : ''}`}>
-                    {/* Label: Takes left 50% */}
-                    <View className="w-1/2 pr-2">
-                      <Text className="text-sm font-medium text-gray-500">{property.label}</Text>
-                    </View>
+                    className="mb-3 w-[48%] rounded-2xl border border-gray-100 bg-gray-50 p-3.5">
+                    <Text
+                      className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-400"
+                      numberOfLines={1}>
+                      {property.label}
+                    </Text>
 
-                    {/* Value: Takes right 50% */}
-                    <View className="w-1/2 pl-2">
-                      {property.selectedValue?.length > 0 &&
-                        Array.isArray(property.selectedValue) ? (
-                        <Text className="text-left text-sm font-semibold leading-5 text-gray-900">
-                          {property.selectedValue?.map((j: any) => j?.value).join(', ')}
-                        </Text>
-                      ) : (
-                        <Text className="text-left text-sm font-semibold leading-5 text-gray-900">
-                          {property.selectedValue?.value}
-                        </Text>
-                      )}
-                    </View>
+                    {property.selectedValue?.length > 0 && Array.isArray(property.selectedValue) ? (
+                      <Text className="text-sm font-semibold leading-5 text-gray-900">
+                        {property.selectedValue?.map((j: any) => j?.value).join(', ')}
+                      </Text>
+                    ) : (
+                      <Text className="text-sm font-semibold leading-5 text-gray-900">
+                        {property.selectedValue?.value || '-'}
+                      </Text>
+                    )}
                   </View>
-                );
-              })}
+                ))}
+              </View>
+            </View>
+            {/* --- Description Section --- */}
+            <View className="mb-8">
+              <Text className="mb-3 font-serif text-lg font-bold text-gray-900">
+                {i18n.t('post.description')}
+              </Text>
+              <Text className="text-base font-light leading-7 tracking-wide text-gray-600">
+                {data?.data?.description}
+              </Text>
             </View>
           </View>
 
@@ -490,8 +518,8 @@ const SinglePost = () => {
 
           {/* Boost Ad Section */}
           {data?.data?.subscriptionId &&
-            data?.data?.status === 'active' &&
-            !data?.data?.isFeaturedAdBoostUsed ? (
+          data?.data?.status === 'active' &&
+          !data?.data?.isFeaturedAdBoostUsed ? (
             <View className="mt-2 gap-3 bg-boostAd_bg p-4">
               <Text placement={locale} className="text-lg font-medium text-black">
                 {i18n.t('previewAd.boostAdHeading')}

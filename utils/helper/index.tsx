@@ -62,7 +62,7 @@ function formatDate(date?: Date, format: string = 'DD MMM, YYYY'): string {
   return dayjs(date).format(format);
 }
 
-export function getRelativeTime(date: Date): string {
+function getRelativeTime(date: Date): string {
   if (!date) return '';
   date = new Date(date);
   const now = new Date();
@@ -172,4 +172,6 @@ export {
   screenWidth,
   screenHeight,
   extractAddressDetails,
+  getRelativeTime,
+  formatDate,
 };

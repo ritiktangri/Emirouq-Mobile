@@ -16,7 +16,7 @@ import { noData } from '~/image';
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const { priceRange, selectedCategory, selectedSorting, keyword, city } = useAuth();
+  const { city } = useAuth();
   const { data: category, refetch: categoryRefetch }: any = useGetCategory();
 
   const {
