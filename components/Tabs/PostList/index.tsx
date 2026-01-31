@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -131,6 +132,62 @@ const PostList = () => {
       });
     }
   }, [data?.pages?.[0]?.maxPrice, isPriceApplied]);
+
+  // Load filters from AsyncStorage
+  useEffect(() => {
+    const loadFilters = async () => {
+      try {
+        if (!params.subCategory) return;
+
+        const key = 'post_list_filters';
+        const savedFiltersString = await AsyncStorage.getItem(key);
+
+        if (savedFiltersString) {
+          const savedData = JSON.parse(savedFiltersString);
+
+          // Validation: If saved subCategory doesn't match current, clear cache and reset
+          if (savedData.subCategory !== params.subCategory) {
+            await AsyncStorage.removeItem(key);
+            setSelectedFilters({});
+            setCity('');
+            setPriceRange({ min: 0, max: 0 });
+            setIsPriceApplied(false);
+            setYearRange({ min: 1900, max: dayjs().year() });
+            setYearApplied(false);
+            setSortBy('');
+            setAppliedFilter({});
+            return;
+          }
+
+          setSelectedFilters(savedData.selectedFilters || {});
+          setCity(savedData.city || '');
+          setPriceRange(savedData.priceRange || { min: 0, max: 0 });
+          setIsPriceApplied(savedData.isPriceApplied || false);
+          setYearRange(savedData.yearRange || { min: 1900, max: dayjs().year() });
+          setYearApplied(savedData.yearApplied || false);
+          setSortBy(savedData.sortBy || '');
+          setAppliedFilter(savedData.appliedFilter || {});
+
+          // If we have saved filters, we might want to ensure the API call uses them immediately
+          // The useGetPosts hook depends on appliedFilter, so setting it here should trigger the fetch
+        } else {
+          // Reset if no saved filters for this category
+          setSelectedFilters({});
+          setCity('');
+          setPriceRange({ min: 0, max: 0 });
+          setIsPriceApplied(false);
+          setYearRange({ min: 1900, max: dayjs().year() });
+          setYearApplied(false);
+          setSortBy('');
+          setAppliedFilter({});
+        }
+      } catch (error) {
+        console.error('Failed to load filters', error);
+      }
+    };
+
+    loadFilters();
+  }, [params.subCategory]);
 
   const handleRefresh = useCallback(() => {
     queryClient.removeQueries({ queryKey: ['posts'] });
@@ -346,10 +403,11 @@ const PostList = () => {
         onClose={() => {
           setSearchAttributes('');
           setIsAllFilterSelected(false);
-          setSelectedFilters({});
-          setIsPriceApplied(false);
-          setYearApplied(false);
-          setCity('');
+          // Don't reset filters on close, otherwise they are lost for the next Apply
+          // setSelectedFilters({});
+          // setIsPriceApplied(false);
+          // setYearApplied(false);
+          // setCity('');
         }}>
         <>
           <View className="flex-1 flex-row">
@@ -718,7 +776,7 @@ const PostList = () => {
 
           <View className="ios:mb-5 w-full flex-row items-center justify-between p-4">
             <TouchableOpacity
-              onPress={() => {
+              onPress={async () => {
                 setSelectedFilters({});
                 setSortBy('');
                 setCity('');
@@ -726,6 +784,9 @@ const PostList = () => {
                 setIsPriceApplied(false);
                 setYearApplied(false);
                 setYearRange({ min: 1900, max: dayjs().year() });
+                setAppliedFilter({});
+                await AsyncStorage.removeItem(`filters_${params.subCategory}`);
+                refRBSheet.current.close();
               }}>
               <Text>Reset all</Text>
             </TouchableOpacity>
@@ -742,9 +803,10 @@ const PostList = () => {
               <TouchableOpacity
                 className="rounded-lg bg-primary px-3 py-2"
                 onPress={() => {
-                  setAppliedFilter({
+                  const newAppliedFilter = {
                     ...appliedFilter,
                     properties: {
+                      ...appliedFilter.properties,
                       ...selectedFilters,
                       ...(yearApplied && {
                         [yearId]: [yearRange?.min, yearRange?.max],
@@ -757,7 +819,28 @@ const PostList = () => {
                         : undefined,
 
                     city,
-                  });
+                  };
+
+                  setAppliedFilter(newAppliedFilter);
+
+                  // Save to AsyncStorage
+                  try {
+                    const key = 'post_list_filters';
+                    const dataToSave = {
+                      selectedFilters,
+                      city,
+                      priceRange,
+                      isPriceApplied,
+                      yearRange,
+                      yearApplied,
+                      sortBy,
+                      appliedFilter: newAppliedFilter,
+                      subCategory: params.subCategory, // Save subCategory for validation
+                    };
+                    AsyncStorage.setItem(key, JSON.stringify(dataToSave));
+                  } catch (error) {
+                    console.error('Failed to save filters', error);
+                  }
 
                   refRBSheet.current.close();
                   setIsAllFilterSelected(false);
