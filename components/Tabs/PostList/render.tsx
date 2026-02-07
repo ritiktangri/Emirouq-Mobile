@@ -5,6 +5,10 @@ import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import AddToFavourite from '../Dashboard/AddToFavourite';
 import { useAuth } from '~/context/AuthContext';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 const Render = ({ item, index }: any) => {
   const router = useRouter();
@@ -28,7 +32,16 @@ const Render = ({ item, index }: any) => {
 
       <View className="p-2">
         <View className="mb-1 flex-row items-center justify-between">
-          <Text className=" font-interMedium text-sm text-gray-900">{item?.title}</Text>
+          <Text className="flex-1 font-interMedium text-sm text-gray-900" numberOfLines={2}>
+            {item?.title}
+          </Text>
+          {/* Timestamp */}
+          <View className="ml-1 flex-row items-center">
+            <Entypo name="clock" size={12} color="#9ca3af" />
+            <Text className="ml-0.5 text-[10px] text-gray-400">
+              {item?.createdAt ? dayjs(item?.createdAt).fromNow() : 'Now'}
+            </Text>
+          </View>
         </View>
         <Text className="mb-2 text-base font-bold text-orange-500">AED {item?.price || 0}</Text>
 

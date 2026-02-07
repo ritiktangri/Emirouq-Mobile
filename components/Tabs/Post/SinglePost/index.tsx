@@ -309,58 +309,68 @@ const SinglePost = () => {
           ) : (
             <></>
           )}
-          <View className="px-2 py-2">
-            <View className="flex-row items-center self-start rounded-full border border-gray-100 bg-gray-50 px-4 py-2">
-              {/* Likes Count */}
-              <Text className="text-xs font-semibold text-gray-700">
-                {data?.data?.likes?.length || 0}
-                <Text className="font-medium text-gray-500">
-                  {' '}
-                  {data?.data?.likes?.length === 1 ? 'Like' : 'Likes'}
-                </Text>
-              </Text>
+          {/* Likes & Comments Count - Hidden for motor vehicle category */}
+          {!data?.data?.category?.title?.toLowerCase()?.includes('motor') &&
+            !data?.data?.category?.title?.toLowerCase()?.includes('vehicle') && (
+              <View className="px-2 py-2">
+                <View className="flex-row items-center self-start rounded-full border border-gray-100 bg-gray-50 px-4 py-2">
+                  {/* Likes Count */}
+                  <Text className="text-xs font-semibold text-gray-700">
+                    {data?.data?.likes?.length || 0}
+                    <Text className="font-medium text-gray-500">
+                      {' '}
+                      {data?.data?.likes?.length === 1 ? 'Like' : 'Likes'}
+                    </Text>
+                  </Text>
 
-              {/* Vertical Divider */}
-              <View className="mx-3 h-3 w-[1px] bg-gray-300" />
+                  {/* Vertical Divider */}
+                  <View className="mx-3 h-3 w-[1px] bg-gray-300" />
 
-              {/* Comments Count */}
-              <Text className="text-xs font-semibold text-gray-700">
-                {data?.data?.comments?.length || 0}
-                <Text className="font-medium text-gray-500">
-                  {' '}
-                  {data?.data?.comments?.length === 1 ? 'Comment' : 'Comments'}
-                </Text>
-              </Text>
-            </View>
-          </View>
+                  {/* Comments Count */}
+                  <Text className="text-xs font-semibold text-gray-700">
+                    {data?.data?.comments?.length || 0}
+                    <Text className="font-medium text-gray-500">
+                      {' '}
+                      {data?.data?.comments?.length === 1 ? 'Comment' : 'Comments'}
+                    </Text>
+                  </Text>
+                </View>
+              </View>
+            )}
           {/* Interaction Buttons */}
           {user?.uuid && (
             <View className="flex-row items-center justify-between border-t border-gray-50 bg-white px-6 py-2 shadow-sm">
               {/* --- Social Actions Group --- */}
               <View className="flex-row gap-6">
-                {/* Like Button */}
-                <TouchableOpacity
-                  className="items-center justify-center gap-1.5"
-                  onPress={onLikePost}>
-                  {data?.data?.likes?.includes(user?.uuid) ? (
-                    <AntDesign name="heart" size={22} color="#EF4444" />
-                  ) : (
-                    <Feather name="heart" size={22} color="#6B7280" />
+                {/* Like Button - Hidden for car category */}
+                {!data?.data?.category?.title?.toLowerCase()?.includes('motor') &&
+                  !data?.data?.category?.title?.toLowerCase()?.includes('vehicle') && (
+                    <TouchableOpacity
+                      className="items-center justify-center gap-1.5"
+                      onPress={onLikePost}>
+                      {data?.data?.likes?.includes(user?.uuid) ? (
+                        <AntDesign name="heart" size={22} color="#EF4444" />
+                      ) : (
+                        <Feather name="heart" size={22} color="#6B7280" />
+                      )}
+                      <Text className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                        Like
+                      </Text>
+                    </TouchableOpacity>
                   )}
-                  <Text className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
-                    Like
-                  </Text>
-                </TouchableOpacity>
 
-                {/* Comment Button */}
-                <TouchableOpacity
-                  className="items-center justify-center gap-1.5"
-                  onPress={() => setIsSheetOpen(true)}>
-                  <Feather name="message-square" size={22} color="#6B7280" />
-                  <Text className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
-                    Comment
-                  </Text>
-                </TouchableOpacity>
+                {/* Comment Button - Hidden for car category */}
+                {!data?.data?.category?.title?.toLowerCase()?.includes('motor') &&
+                  !data?.data?.category?.title?.toLowerCase()?.includes('vehicle') && (
+                    <TouchableOpacity
+                      className="items-center justify-center gap-1.5"
+                      onPress={() => setIsSheetOpen(true)}>
+                      <Feather name="message-square" size={22} color="#6B7280" />
+                      <Text className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                        Comment
+                      </Text>
+                    </TouchableOpacity>
+                  )}
 
                 {/* Share Button */}
                 <TouchableOpacity
@@ -370,7 +380,7 @@ const SinglePost = () => {
                       await Share.share({
                         message: 'Check out this app: https://emirouq.ae',
                       });
-                    } catch (error) {}
+                    } catch (error) { }
                   }}>
                   <AntDesign name="sharealt" size={22} color="#6B7280" />
                   <Text className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
@@ -437,7 +447,7 @@ const SinglePost = () => {
           )}
           {/* Description */}
           <View className="bg-white px-6 py-6 pb-24">
-            {/* --- Specifications Grid --- */}
+            {/* --- Specifications Section --- */}
             <View>
               <View className="mb-4 flex-row items-center justify-between">
                 <Text className="font-serif text-lg font-bold text-gray-900">Details & Specs</Text>
@@ -446,50 +456,70 @@ const SinglePost = () => {
                 </Text>
               </View>
 
-              {/* Grid Container */}
-              <View className="flex-row flex-wrap justify-between">
-                {/* 1. Condition Card */}
-                <View className="mb-3 w-[48%] rounded-2xl border border-gray-100 bg-gray-50 p-3.5">
-                  <Text className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                    {i18n.t('post.condition')}
-                  </Text>
-                  <Text className="text-sm font-semibold capitalize text-gray-900">
-                    {data?.data?.condition || 'N/A'}
-                  </Text>
-                </View>
+              {/* Single Premium Card Container */}
+              <View
+                className="overflow-hidden rounded-3xl border border-gray-200 bg-white"
+                style={{
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.08,
+                  shadowRadius: 12,
+                  elevation: 4,
+                }}>
+                {/* Subtle gradient overlay */}
+                <View
+                  className="absolute inset-0 opacity-40"
+                  style={{
+                    backgroundColor: 'linear-gradient(135deg, rgba(255,87,34,0.02) 0%, rgba(255,87,34,0.06) 100%)',
+                  }}
+                />
 
-                {/* 2. Category Card */}
-                <View className="mb-3 w-[48%] rounded-2xl border border-gray-100 bg-gray-50 p-3.5">
-                  <Text className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                    {i18n.t('post.category')}
-                  </Text>
-                  <Text className="text-sm font-semibold text-gray-900" numberOfLines={1}>
-                    {data?.data?.category?.title || 'N/A'}
-                  </Text>
-                </View>
-
-                {/* 3. Dynamic Properties Loop */}
-                {(data?.data?.properties || []).map((property: any, index: number) => (
-                  <View
-                    key={index}
-                    className="mb-3 w-[48%] rounded-2xl border border-gray-100 bg-gray-50 p-3.5">
-                    <Text
-                      className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-400"
-                      numberOfLines={1}>
-                      {property.label}
+                {/* Content - Grid Layout */}
+                <View className="flex-row flex-wrap p-4">
+                  {/* Condition */}
+                  <View className="mb-4 w-[48%] pr-2">
+                    <Text className="mb-1.5 text-[11px] font-bold uppercase tracking-widest text-gray-500">
+                      {i18n.t('post.condition')}
                     </Text>
-
-                    {property.selectedValue?.length > 0 && Array.isArray(property.selectedValue) ? (
-                      <Text className="text-sm font-semibold leading-5 text-gray-900">
-                        {property.selectedValue?.map((j: any) => j?.value).join(', ')}
-                      </Text>
-                    ) : (
-                      <Text className="text-sm font-semibold leading-5 text-gray-900">
-                        {property.selectedValue?.value || '-'}
-                      </Text>
-                    )}
+                    <Text className="text-base font-semibold capitalize text-gray-900">
+                      {data?.data?.condition || 'N/A'}
+                    </Text>
                   </View>
-                ))}
+
+                  {/* Category */}
+                  <View className="mb-4 w-[48%] pl-2">
+                    <Text className="mb-1.5 text-[11px] font-bold uppercase tracking-widest text-gray-500">
+                      {i18n.t('post.category')}
+                    </Text>
+                    <Text className="text-base font-semibold text-gray-900" numberOfLines={2}>
+                      {data?.data?.category?.title || 'N/A'}
+                    </Text>
+                  </View>
+
+                  {/* Dynamic Properties */}
+                  {(data?.data?.properties || []).map((property: any, index: number) => (
+                    <View
+                      key={index}
+                      className="mb-4 w-[48%]"
+                      style={{
+                        paddingRight: index % 2 === 0 ? 8 : 0,
+                        paddingLeft: index % 2 === 1 ? 8 : 0,
+                      }}>
+                      <Text className="mb-1.5 text-[11px] font-bold uppercase tracking-widest text-gray-500" numberOfLines={1}>
+                        {property.label}
+                      </Text>
+                      {property.selectedValue?.length > 0 && Array.isArray(property.selectedValue) ? (
+                        <Text className="text-base font-semibold leading-6 text-gray-900">
+                          {property.selectedValue?.map((j: any) => j?.value).join(', ')}
+                        </Text>
+                      ) : (
+                        <Text className="text-base font-semibold leading-6 text-gray-900">
+                          {property.selectedValue?.value || '-'}
+                        </Text>
+                      )}
+                    </View>
+                  ))}
+                </View>
               </View>
             </View>
             {/* --- Description Section --- */}
@@ -497,9 +527,32 @@ const SinglePost = () => {
               <Text className="mb-3 font-serif text-lg font-bold text-gray-900">
                 {i18n.t('post.description')}
               </Text>
-              <Text className="text-base font-light leading-7 tracking-wide text-gray-600">
-                {data?.data?.description}
-              </Text>
+
+              {/* Premium Description Card */}
+              <View
+                className="overflow-hidden rounded-3xl border border-gray-200 bg-white"
+                style={{
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.08,
+                  shadowRadius: 12,
+                  elevation: 4,
+                }}>
+                {/* Subtle gradient overlay */}
+                <View
+                  className="absolute inset-0 opacity-40"
+                  style={{
+                    backgroundColor: 'linear-gradient(135deg, rgba(255,87,34,0.02) 0%, rgba(255,87,34,0.06) 100%)',
+                  }}
+                />
+
+                {/* Content */}
+                <View className="p-5">
+                  <Text className="text-base font-light leading-7 tracking-wide text-gray-600">
+                    {data?.data?.description}
+                  </Text>
+                </View>
+              </View>
             </View>
           </View>
 
@@ -518,8 +571,8 @@ const SinglePost = () => {
 
           {/* Boost Ad Section */}
           {data?.data?.subscriptionId &&
-          data?.data?.status === 'active' &&
-          !data?.data?.isFeaturedAdBoostUsed ? (
+            data?.data?.status === 'active' &&
+            !data?.data?.isFeaturedAdBoostUsed ? (
             <View className="mt-2 gap-3 bg-boostAd_bg p-4">
               <Text placement={locale} className="text-lg font-medium text-black">
                 {i18n.t('previewAd.boostAdHeading')}

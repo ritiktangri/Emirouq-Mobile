@@ -7,35 +7,52 @@ import { routes } from '~/utils/routes';
 
 export default function Categories({ data }: any) {
   return (
-    <View className="mt-6 ">
-      <View className="flex flex-row items-center">
-        <Text className="mb-3 flex-1 px-5 font-poppinsSemiBold text-lg">Browse Categories</Text>
-        <Text className="mb-3 px-5 font-poppinsMedium text-sm text-primary">See All</Text>
+    <View className="mt-3 px-2">
+      <View className="mb-4 flex flex-row items-center justify-between">
+        <Text className="font-poppinsSemiBold text-xl text-gray-900">Browse Categories</Text>
+        <TouchableOpacity>
+          <Text className="font-poppinsMedium text-sm text-primary">See All</Text>
+        </TouchableOpacity>
       </View>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {data?.map((cat: any, index: any) => (
-          <TouchableOpacity
-            onPress={() => {
-              router.push({
-                pathname: routes.tabs.category,
-                params: { category: cat.uuid },
-              } as Href);
-            }}
-            key={index}
-            className="ml-3 flex items-center justify-center">
-            <View className="mb-1 h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-              <Image
-                source={{ uri: cat.logo }}
-                alt={cat.title}
-                className="h-10 w-10 rounded-full"
-                resizeMode="contain"
-              />
-            </View>
-            <Text className="ml-2 truncate font-poppinsMedium text-sm text-gray-700">
-              {cat.title}
-            </Text>
-          </TouchableOpacity>
-        ))}
+
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 ml-[2px] px-2">
+        <View className="flex-row gap-x-3">
+          {data?.slice(0, 6).map((cat: any, index: any) => (
+            <TouchableOpacity
+              onPress={() => {
+                router.push({
+                  pathname: routes.tabs.category,
+                  params: { category: cat.uuid },
+                } as Href);
+              }}
+              key={index}
+              className="m-1 w-24 items-center justify-center rounded-2xl bg-gray-50 p-2"
+              style={{
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.05,
+                shadowRadius: 8,
+                elevation: 2,
+              }}>
+              {/* Icon Container */}
+              <View className="mb-3 h-16 w-16 items-center justify-center rounded-xl bg-orange-50">
+                <Image
+                  source={{ uri: cat.logo }}
+                  alt={cat.title}
+                  className="h-10 w-10"
+                  resizeMode="contain"
+                />
+              </View>
+
+              {/* Category Label */}
+              <Text
+                className="text-center font-poppinsMedium text-xs text-gray-700"
+                numberOfLines={2}>
+                {cat.title}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </ScrollView>
     </View>
   );

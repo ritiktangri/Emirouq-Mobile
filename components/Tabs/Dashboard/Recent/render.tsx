@@ -5,6 +5,10 @@ import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import AddToFavourite from '../AddToFavourite';
 import { useAuth } from '~/context/AuthContext';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 const Render = ({ item }: any) => {
   const router = useRouter();
@@ -26,18 +30,29 @@ const Render = ({ item }: any) => {
       </View>
       {user?.uuid && <AddToFavourite item={item} />}
       <View className="p-4">
-        <View className="mb-1 flex-row items-center justify-between">
-          <Text className="text-md w-[75%] font-semibold text-gray-900">{item?.title}</Text>
+        <View className="mb-1 flex-row items-start justify-between">
+          <Text className="text-md flex-1 font-semibold text-gray-900" numberOfLines={2}>{item?.title}</Text>
+          {/* Timestamp */}
+          <View className="ml-1 flex-row items-center">
+            <Entypo name="clock" size={12} color="#9ca3af" />
+            <Text className="ml-0.5 text-[10px] text-gray-400">
+              {item?.createdAt ? dayjs(item?.createdAt).fromNow() : 'Now'}
+            </Text>
+          </View>
+        </View>
+        <View className="mb-2 flex-row items-center justify-between">
+          <Text className="text-base font-bold text-orange-500">${item?.price || 0}</Text>
           <View className="rounded-full bg-orange-100 px-2 py-0.5">
             <Text className="text-xs font-semibold text-orange-500">Featured</Text>
           </View>
         </View>
-        <Text className="mb-2 text-base font-bold text-orange-500">${item?.price || 0}</Text>
 
         <View className="flex-row items-center">
           <Entypo name="location-pin" size={16} color="#6b7280" />
           <Text className="ml-1 text-sm text-gray-500">{item?.location?.name || 'N/A'}</Text>
         </View>
+
+
       </View>
     </TouchableOpacity>
   );

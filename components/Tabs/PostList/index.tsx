@@ -417,11 +417,11 @@ const PostList = () => {
                   data={sections}
                   keyExtractor={(item) => item.uuid}
                   contentContainerStyle={{
-                    gap: 10,
                     paddingHorizontal: 12,
                     paddingTop: 24,
                   }}
                   className="h-full"
+                  ItemSeparatorComponent={() => <Divider />}
                   renderItem={({ item: section }) => (
                     <TouchableOpacity
                       onPress={() => {
@@ -429,10 +429,8 @@ const PostList = () => {
                         setSelectedSection(section.uuid);
                       }}
                       className={cn(
-                        'flex flex-row items-center rounded-lg border-2 p-1',
-                        isFilterApplied(section.uuid)
-                          ? 'border-primary bg-primary/10'
-                          : 'border-gray-200'
+                        'flex flex-row items-center py-3',
+                        selectedSection === section.uuid ? 'bg-gray-50' : ''
                       )}>
                       <Text
                         className={cn(
@@ -491,7 +489,7 @@ const PostList = () => {
                   )}
 
                   {['city']?.includes(selectedSection) ? (
-                    <View className="gap-3 p-3">
+                    <View className="p-3">
                       {[
                         { value: 'Dubai', uuid: 'Dubai' },
                         { value: 'Abu Dhabi', uuid: 'Abu Dhabi' },
@@ -500,54 +498,58 @@ const PostList = () => {
                         { value: 'Umm Al Quwain', uuid: 'Umm Al Quwain' },
                         { value: 'Ras Al Khaimah', uuid: 'Ras Al Khaimah' },
                         { value: 'Fujairah', uuid: 'Fujairah' },
-                      ].map((section: any) => (
-                        <TouchableOpacity
-                          onPress={() => {
-                            setCity((prev) => (prev === section.value ? '' : section.value));
-                          }}
-                          key={section.uuid}
-                          className={cn('flex flex-row items-center rounded-lg')}>
-                          <Text
-                            allowFontScaling={false}
-                            className={cn(
-                              'flex-1 font-poppinsMedium',
-                              city === section.value ? 'text-primary' : ''
-                            )}>
-                            {section.value}
-                          </Text>
-                          {city === section.value ? (
-                            <Ionicons name="checkmark" color={'#FF5722'} size={20} />
-                          ) : null}
-                        </TouchableOpacity>
+                      ].map((section: any, index: number) => (
+                        <View key={section.uuid}>
+                          <TouchableOpacity
+                            onPress={() => {
+                              setCity((prev) => (prev === section.value ? '' : section.value));
+                            }}
+                            className={cn('flex flex-row items-center py-3')}>
+                            <Text
+                              allowFontScaling={false}
+                              className={cn(
+                                'flex-1 font-poppinsMedium',
+                                city === section.value ? 'text-primary' : ''
+                              )}>
+                              {section.value}
+                            </Text>
+                            {city === section.value ? (
+                              <Ionicons name="checkmark" color={'#FF5722'} size={20} />
+                            ) : null}
+                          </TouchableOpacity>
+                          {index < 6 && <Divider />}
+                        </View>
                       ))}
                     </View>
                   ) : (
-                    <View className="mt-3 gap-3">
+                    <View className="mt-3">
                       {!showSlider &&
                         (attributeOptions?.data?.pages || [])
                           .map((i: any) => i?.data)
                           .flat()
-                          .map((section: any) => (
-                            <TouchableOpacity
-                              onPress={() => {
-                                onSelect(selectedSection, section.value);
-                              }}
-                              key={section.uuid}
-                              className={cn('flex flex-row items-center rounded-lg')}>
-                              <Text
-                                allowFontScaling={false}
-                                className={cn(
-                                  'flex-1 font-poppinsMedium',
-                                  selectedFilters[selectedSection]?.includes(section.value)
-                                    ? 'text-primary'
-                                    : 'text-black'
-                                )}>
-                                {section.value}
-                              </Text>
-                              {selectedFilters[selectedSection]?.includes(section.value) ? (
-                                <Ionicons name="checkmark" color={'#FF5722'} size={20} />
-                              ) : null}
-                            </TouchableOpacity>
+                          .map((section: any, index: number, array: any[]) => (
+                            <View key={section.uuid}>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  onSelect(selectedSection, section.value);
+                                }}
+                                className={cn('flex flex-row items-center py-3 px-3')}>
+                                <Text
+                                  allowFontScaling={false}
+                                  className={cn(
+                                    'flex-1 font-poppinsMedium',
+                                    selectedFilters[selectedSection]?.includes(section.value)
+                                      ? 'text-primary'
+                                      : 'text-black'
+                                  )}>
+                                  {section.value}
+                                </Text>
+                                {selectedFilters[selectedSection]?.includes(section.value) ? (
+                                  <Ionicons name="checkmark" color={'#FF5722'} size={20} />
+                                ) : null}
+                              </TouchableOpacity>
+                              {index < array.length - 1 && <Divider />}
+                            </View>
                           ))}
                       {isYearSelected ? (
                         <View className="px-1 pt-4">
