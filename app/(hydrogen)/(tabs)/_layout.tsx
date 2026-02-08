@@ -9,6 +9,8 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { cn } from '~/utils/helper';
 import { i18n } from '~/utils/i18n';
 import { useLocale } from '~/context/LocaleContext';
+import { routes } from '~/utils/routes';
+
 export default function TabLayout() {
   const theme: any = useColorScheme();
   const { locale } = useLocale();
@@ -82,6 +84,11 @@ export default function TabLayout() {
           <Tabs.Screen
             name="post"
             options={{
+              href: {
+                pathname: routes.tabs.post as any,
+                params: { flow: 'create' },
+              },
+              tabBarStyle: { display: 'none' },
               tabBarLabel: (props) => (
                 <Text
                   className={cn(

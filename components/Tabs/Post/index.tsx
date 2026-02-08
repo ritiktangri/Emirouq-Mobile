@@ -34,8 +34,11 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import SubscriptionPlanList from '~/components/Stripe/subscriptionPlanList';
 import { useGetAttributes } from '~/hooks/attributes/query';
 import CheckValidation from '~/components/CheckValidation';
+import AddPostLoading from './loading';
 import { SelectField } from './selectField';
+import SuccessView from './SuccessView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { queryClient } from '~/app/_layout';
 
 const schema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -76,16 +79,22 @@ const schema = z.object({
       dependsOn: z.string().optional(),
       attributeKey: z.string(),
       selectedValue: z.union([
-        z.object({
-          value: z.string(),
-          id: z.string(),
-        }),
-        z.array(
-          z.object({
+        z
+          .object({
             value: z.string(),
             id: z.string(),
           })
-        ),
+          .refine((data) => data.id !== '', {
+            message: 'This field is required',
+          }),
+        z
+          .array(
+            z.object({
+              value: z.string(),
+              id: z.string(),
+            })
+          )
+          .min(1, 'Please select at least one option'),
       ]),
     })
   ),
@@ -143,7 +152,6 @@ const AddPost = () => {
     name: 'properties',
   });
   const params: any = useGlobalSearchParams();
-
   useEffect(() => {
     if (data?.pages?.length && selectedSubCategory && !params?.postId) {
       const attributes = data.pages.flatMap((page: any) => page.data);
@@ -164,10 +172,10 @@ const AddPost = () => {
   //check if user is subscribed to the selected category
   const isSubscribed: any = useIsSubscribedForCategory(selectedCategory);
   const locationRef: any = useRef(null);
-  const { data: postDetails }: any = useGetSinglePosts(params?.postId);
-  const singlePost = postDetails?.data;
+  const { data: postDetails, isFetching }: any = useGetSinglePosts(params?.postId);
   useEffect(() => {
-    if (singlePost) {
+    if (postDetails?.data && !isFetching && locationRef.current) {
+      const singlePost = postDetails?.data;
       const currentText = locationRef.current.getAddressText();
       if (currentText !== singlePost?.location?.name) {
         locationRef.current.setAddressText(singlePost?.location?.name);
@@ -202,10 +210,46 @@ const AddPost = () => {
           lng: singlePost?.geometry?.coordinates?.[0],
           lat: singlePost?.geometry?.coordinates?.[1],
         },
-        properties,
+        properties: properties.map((prop: any) => ({
+          ...prop,
+          selectedValue:
+            prop.selectedValue || (prop.filterType === 'checkbox' ? [] : { value: '', id: '' }),
+        })),
       });
     }
-  }, [params?.postId, singlePost]);
+  }, [params?.postId, postDetails?.data, isFetching]);
+  useEffect(() => {
+    if (!params?.postId) {
+      reset({
+        condition: 'new',
+        title: '',
+        category: '',
+        subCategory: '',
+        price: '',
+        description: '',
+        location: {
+          name: '',
+          placeId: '',
+          street: '',
+          postalCode: '',
+          country: '',
+          countryCode: '',
+          state: '',
+          stateCode: '',
+          city: '',
+          lng: 0,
+          lat: 0,
+        },
+        timePeriod: '7 days',
+        images: [],
+        properties: [],
+      });
+      if (locationRef.current) {
+        locationRef.current.setAddressText('');
+      }
+    }
+  }, [params?.postId, reset]);
+
   useFocusEffect(
     React.useCallback(() => {
       if (!user?.uuid) {
@@ -219,11 +263,11 @@ const AddPost = () => {
             headerTitle: 'createProfile.heading',
           },
         });
-      } else if (user?._id && user?.userHandle && !params?.postId && !watch('category')) {
+      } else if (user?._id && user?.userHandle && params.flow === 'create' && !watch('category')) {
         // Automatically open category selection for new posts on focus
         setShowCategoryModal(true);
       }
-    }, [user, params?.postId, watch('category')])
+    }, [user, params?.flow, watch('category')])
   );
   useEffect(() => {
     if (selectedCategory) {
@@ -311,6 +355,7 @@ const AddPost = () => {
       },
     });
   };
+
   return (
     <View className="flex-1 bg-white px-4 " style={{}}>
       <TouchableOpacity
@@ -318,314 +363,360 @@ const AddPost = () => {
         onPress={async () => {
           // here we are leaving the conversation
           router.back();
-          reset();
+          reset({
+            condition: 'new',
+            title: '',
+            category: '',
+            subCategory: '',
+            price: '',
+            description: '',
+            location: {
+              name: '',
+              placeId: '',
+              street: '',
+              postalCode: '',
+              country: '',
+              countryCode: '',
+              state: '',
+              stateCode: '',
+              city: '',
+              lng: 0,
+              lat: 0,
+            },
+            timePeriod: '7 days',
+            images: [],
+            properties: [],
+          });
+          if (params.postId) {
+            queryClient.invalidateQueries({ queryKey: ['singlePost', params.postId] });
+            locationRef.current.setAddressText('');
+          }
         }}>
         <Ionicons name="arrow-back-sharp" size={24} color="black" />
       </TouchableOpacity>
-      <KeyboardAwareScrollView
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-        contentContainerClassName="gap-3">
-        <View className="">
-          <Pressable
-            className="items-center justify-center rounded-xl border-2 border-dashed border-gray-200 p-6"
-            onPress={pickImages}>
-            <Feather name="camera" size={24} className="text-primary" />
-            <Text className="mb-4 mt-3 text-base text-gray-600">{i18n.t('post.uploadText')}</Text>
-            <View className="rounded-full border border-primary bg-white px-6 py-3">
-              <Text className="text-base font-semibold text-primary">
-                {i18n.t('post.chooseFile')}
-              </Text>
-            </View>
-          </Pressable>
-          {watch('images')?.length > 0 ? (
-            <View className="mt-4 flex-row flex-wrap gap-1">
-              {watch('images')?.map((uri: any, index: number) => (
-                <View key={index} className="relative h-[75px] w-[75px] rounded-full">
-                  <Feather
-                    name="x"
-                    size={16}
-                    className="absolute right-0 top-0 z-10 rounded-full bg-gray-200 p-1 text-gray-600"
-                    onPress={() => {
-                      const images = watch('images')?.filter((item: any) => item?.uri !== uri?.uri);
-                      setValue('images', images);
-                    }}
-                  />
+      {isFetching ? (
+        <AddPostLoading />
+      ) : (
+        <KeyboardAwareScrollView
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          contentContainerClassName="gap-3">
+          <View className="">
+            <Pressable
+              className="items-center justify-center rounded-xl border-2 border-dashed border-gray-200 p-6"
+              onPress={pickImages}>
+              <Feather name="camera" size={24} className="text-primary" />
+              <Text className="mb-4 mt-3 text-base text-gray-600">{i18n.t('post.uploadText')}</Text>
+              <View className="rounded-full border border-primary bg-white px-6 py-3">
+                <Text className="text-base font-semibold text-primary">
+                  {i18n.t('post.chooseFile')}
+                </Text>
+              </View>
+            </Pressable>
+            {watch('images')?.length > 0 ? (
+              <View className="mt-4 flex-row flex-wrap gap-1">
+                {watch('images')?.map((uri: any, index: number) => (
+                  <View key={index} className="relative h-[75px] w-[75px] rounded-full">
+                    <Feather
+                      name="x"
+                      size={16}
+                      className="absolute right-0 top-0 z-10 rounded-full bg-gray-200 p-1 text-gray-600"
+                      onPress={() => {
+                        const images = watch('images')?.filter(
+                          (item: any) => item?.uri !== uri?.uri
+                        );
+                        setValue('images', images);
+                      }}
+                    />
 
-                  <Image
-                    source={{ uri: uri?.uri }}
-                    resizeMode="cover"
-                    style={{
-                      width: 75,
-                      height: 75,
-                      borderRadius: 10,
-                    }}
-                  />
-                </View>
-              ))}
-            </View>
-          ) : (
-            <></>
-          )}
-          {errors.images && (
-            <Text className="mt-1 text-sm text-red-500">{errors.images.message}</Text>
-          )}
-        </View>
-
-        <View className="gap-1">
-          <Text placement={locale} className=" text-base font-semibold text-gray-800">
-            {i18n.t('post.title')}
-          </Text>
-          <Controller
-            control={control}
-            name="title"
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                className="rounded-lg border border-gray-200 bg-white p-4"
-                onChangeText={onChange}
-                value={value}
-                placeholder={i18n.t('post.titlePlaceholder')}
-              />
-            )}
-          />
-          {errors.title && (
-            <Text className="mt-1 text-sm text-red-500">{errors.title.message}</Text>
-          )}
-        </View>
-        <View className="gap-1">
-          <Text placement={locale} className=" text-base font-semibold text-gray-800">
-            {i18n.t('post.category')}
-          </Text>
-          <Controller
-            control={control}
-            name="category"
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-              <>
-                {value ? (
-                  <View className="flex-row items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-4">
-                    <View className="flex-row items-center gap-2">
-                      <Image
-                        source={{
-                          uri: categories?.find((cat: any) => cat.uuid === value)?.logo,
-                        }}
-                        className="h-6 w-6"
-                        resizeMode="contain"
-                      />
-                      <Text className="font-poppinsSemiBold text-base text-black">
-                        {categories?.find((cat: any) => cat.uuid === value)?.title}
-                      </Text>
-                    </View>
-                    <TouchableOpacity
-                      onPress={() => setShowCategoryModal(true)}
-                      className="rounded-md bg-primary/10 px-3 py-1">
-                      <Text className="font-poppinsMedium text-sm text-primary">Change</Text>
-                    </TouchableOpacity>
+                    <Image
+                      source={{ uri: uri?.uri }}
+                      resizeMode="cover"
+                      style={{
+                        width: 75,
+                        height: 75,
+                        borderRadius: 10,
+                      }}
+                    />
                   </View>
-                ) : (
-                  <SelectPicker
-                    value={value}
-                    data={categories?.map((ite: any) => {
-                      return {
-                        label: ite?.title,
-                        value: ite?.uuid,
-                        key: ite?.uuid,
-                      };
-                    })}
-                    placeholder={i18n.t('post.categoryPlaceholder')}
-                    onSelect={onChange}
-                  />
-                )}
-                {error && <Text className="mt-1 text-sm text-red-500">{error.message}</Text>}
-              </>
+                ))}
+              </View>
+            ) : (
+              <></>
             )}
-          />
-        </View>
-        {selectedCategory && subCategories?.length ? (
+            {errors.images && (
+              <Text className="mt-1 text-sm text-red-500">{errors.images.message}</Text>
+            )}
+          </View>
+
           <View className="gap-1">
             <Text placement={locale} className=" text-base font-semibold text-gray-800">
-              {i18n.t('post.subCategory')}
+              {i18n.t('post.title')}
             </Text>
             <Controller
               control={control}
-              name="subCategory"
+              name="title"
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  className="rounded-lg border border-gray-200 bg-white p-4"
+                  onChangeText={onChange}
+                  value={value}
+                  placeholder={i18n.t('post.titlePlaceholder')}
+                />
+              )}
+            />
+            {errors.title && (
+              <Text className="mt-1 text-sm text-red-500">{errors.title.message}</Text>
+            )}
+          </View>
+          <View className="gap-1">
+            <Text placement={locale} className=" text-base font-semibold text-gray-800">
+              {i18n.t('post.category')}
+            </Text>
+            <Controller
+              control={control}
+              name="category"
               render={({ field: { onChange, value }, fieldState: { error } }) => (
-                <View>
-                  <SelectPicker
-                    value={value}
-                    data={subCategories?.map((ite: any) => {
-                      return {
-                        label: ite?.title,
-                        value: ite?.uuid,
-                        key: ite?.uuid,
-                      };
-                    })}
-                    placeholder={i18n.t('post.subCategoryPlaceholder')}
-                    onSelect={(e: any) => {
-                      // const selectedItem = subCategories.find(
-                      //   (item: any) => item.uuid === selectedSubCategory
-                      // );
-
-                      onChange(e);
-                      setValue('properties', []);
-                    }}
-                  />
+                <>
+                  {value ? (
+                    <View className="flex-row items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-4">
+                      <View className="flex-row items-center gap-2">
+                        <Image
+                          source={{
+                            uri: categories?.find((cat: any) => cat.uuid === value)?.logo,
+                          }}
+                          className="h-6 w-6"
+                          resizeMode="contain"
+                        />
+                        <Text className="font-poppinsSemiBold text-base text-black">
+                          {categories?.find((cat: any) => cat.uuid === value)?.title}
+                        </Text>
+                      </View>
+                      <TouchableOpacity
+                        onPress={() => setShowCategoryModal(true)}
+                        className="rounded-md bg-primary/10 px-3 py-1">
+                        <Text className="font-poppinsMedium text-sm text-primary">Change</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <SelectPicker
+                      value={value}
+                      data={categories?.map((ite: any) => {
+                        return {
+                          label: ite?.title,
+                          value: ite?.uuid,
+                          key: ite?.uuid,
+                        };
+                      })}
+                      placeholder={i18n.t('post.categoryPlaceholder')}
+                      onSelect={onChange}
+                    />
+                  )}
                   {error && <Text className="mt-1 text-sm text-red-500">{error.message}</Text>}
+                </>
+              )}
+            />
+          </View>
+          {selectedCategory && subCategories?.length ? (
+            <View className="gap-1">
+              <Text placement={locale} className=" text-base font-semibold text-gray-800">
+                {i18n.t('post.subCategory')}
+              </Text>
+              <Controller
+                control={control}
+                name="subCategory"
+                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                  <View>
+                    <SelectPicker
+                      value={value}
+                      data={subCategories?.map((ite: any) => {
+                        return {
+                          label: ite?.title,
+                          value: ite?.uuid,
+                          key: ite?.uuid,
+                        };
+                      })}
+                      placeholder={i18n.t('post.subCategoryPlaceholder')}
+                      onSelect={(e: any) => {
+                        if (!e) return;
+                        // Only update and clear properties if the value actually changed
+                        if (e !== value) {
+                          onChange(e);
+                          setValue('properties', []);
+                        }
+                      }}
+                    />
+                    {error && <Text className="mt-1 text-sm text-red-500">{error.message}</Text>}
+                  </View>
+                )}
+              />
+            </View>
+          ) : null}
+
+          <View className="gap-1">
+            <Text placement={locale} className=" text-base font-semibold text-gray-800">
+              {i18n.t('post.condition')}
+            </Text>
+            <Controller
+              control={control}
+              name="condition"
+              render={({ field: { onChange, value } }) => (
+                <View className="flex-row gap-4">
+                  <Pressable
+                    className={`flex-1 items-center rounded-xl py-3 ${
+                      value === 'new'
+                        ? 'border-[1px] border-primary bg-btn_bg'
+                        : 'border-[1px] border-gray-200 bg-white'
+                    }`}
+                    onPress={() => onChange('new')}>
+                    <Text
+                      className={`font-poppinsSemiBold text-lg ${value === 'new' ? 'text-primary' : 'text-gray-600'}`}>
+                      {i18n.t('post.new')}
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    className={`flex-1 items-center rounded-lg py-3 ${
+                      value === 'used'
+                        ? 'border-[1px] border-primary bg-btn_bg'
+                        : 'border-[1px] border-gray-200 bg-white'
+                    }`}
+                    onPress={() => onChange('used')}>
+                    <Text
+                      className={`font-poppinsSemiBold text-lg ${value === 'used' ? 'text-primary' : 'text-gray-600'}`}>
+                      {i18n.t('post.used')}
+                    </Text>
+                  </Pressable>
                 </View>
               )}
             />
           </View>
-        ) : null}
 
-        <View className="gap-1">
-          <Text placement={locale} className=" text-base font-semibold text-gray-800">
-            {i18n.t('post.condition')}
-          </Text>
-          <Controller
-            control={control}
-            name="condition"
-            render={({ field: { onChange, value } }) => (
-              <View className="flex-row gap-4">
-                <Pressable
-                  className={`flex-1 items-center rounded-xl py-3 ${value === 'new'
-                      ? 'border-[1px] border-primary bg-btn_bg'
-                      : 'border-[1px] border-gray-200 bg-white'
-                    }`}
-                  onPress={() => onChange('new')}>
-                  <Text
-                    className={`font-poppinsSemiBold text-lg ${value === 'new' ? 'text-primary' : 'text-gray-600'}`}>
-                    {i18n.t('post.new')}
-                  </Text>
-                </Pressable>
-                <Pressable
-                  className={`flex-1 items-center rounded-lg py-3 ${value === 'used'
-                      ? 'border-[1px] border-primary bg-btn_bg'
-                      : 'border-[1px] border-gray-200 bg-white'
-                    }`}
-                  onPress={() => onChange('used')}>
-                  <Text
-                    className={`font-poppinsSemiBold text-lg ${value === 'used' ? 'text-primary' : 'text-gray-600'}`}>
-                    {i18n.t('post.used')}
-                  </Text>
-                </Pressable>
-              </View>
+          <View className="gap-1">
+            <Text placement={locale} className=" text-base font-semibold text-gray-800">
+              {i18n.t('post.price')}
+            </Text>
+            <Controller
+              control={control}
+              name="price"
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  className="rounded-lg border border-gray-200 bg-white p-4"
+                  onChangeText={onChange}
+                  value={value}
+                  placeholder="0.00"
+                  keyboardType="decimal-pad"
+                  textAlign="right"
+                />
+              )}
+            />
+            {errors.price && (
+              <Text className="mt-1 text-sm text-red-500">{errors.price.message}</Text>
             )}
-          />
-        </View>
-
-        <View className="gap-1">
-          <Text placement={locale} className=" text-base font-semibold text-gray-800">
-            {i18n.t('post.price')}
-          </Text>
-          <Controller
-            control={control}
-            name="price"
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                className="rounded-lg border border-gray-200 bg-white p-4"
-                onChangeText={onChange}
-                value={value}
-                placeholder="0.00"
-                keyboardType="decimal-pad"
-                textAlign="right"
-              />
-            )}
-          />
-          {errors.price && (
-            <Text className="mt-1 text-sm text-red-500">{errors.price.message}</Text>
-          )}
-        </View>
-        <LocationInput control={control} ref={locationRef} />
-
-        <View className=" mb-6 gap-1">
-          <Text placement={locale} className=" text-base font-semibold text-gray-800">
-            {i18n.t('post.description')}
-          </Text>
-          <Controller
-            control={control}
-            name="description"
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                className="h-32 rounded-lg border border-gray-200 bg-white p-3 text-base"
-                onChangeText={onChange}
-                value={value}
-                placeholder={i18n.t('post.descriptionPlaceholder')}
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
-              />
-            )}
-          />
-          {errors.description && (
-            <Text className="mt-1 text-sm text-red-500">{errors.description.message}</Text>
-          )}
-        </View>
-
-        {/* Dynamic Attributes will be shown here */}
-        {fields.map((field, index) => (
-          <View key={field.id} className="mb-2 gap-1">
-            <Text className="text-base font-semibold text-gray-800">{field.label}</Text>
-
-            <CheckValidation isValid={['text', 'number'].includes(field.filterType)}>
-              <Controller
-                control={control}
-                name={`properties.${index}.selectedValue`}
-                render={({ field: { onChange, value } }) => (
-                  <TextInput
-                    className="rounded-lg border border-gray-200 bg-white p-4"
-                    onChangeText={(value) => {
-                      onChange({
-                        value,
-                        id: value,
-                      });
-                    }}
-                    value={Array.isArray(value) ? '' : value.value}
-                    placeholder={`Enter ${field.label}`}
-                  />
-                )}
-              />
-            </CheckValidation>
-
-            <CheckValidation isValid={['select', 'checkbox']?.includes(field.filterType)}>
-              <SelectField
-                control={control}
-                attributeId={field.uuid}
-                filterType={field.filterType}
-                parentId={(() => {
-                  const found = watch('properties')?.find((prop) => {
-                    const selectedValue = prop.selectedValue;
-                    if (Array.isArray(selectedValue)) {
-                      return selectedValue.length > 0 && prop.label === field.dependsOn;
-                    } else {
-                      return selectedValue.value && prop.label === field.dependsOn;
-                    }
-                  });
-                  if (!found) return undefined;
-                  if (Array.isArray(found.selectedValue)) {
-                    // Return the id of the first selected value if exists
-                    return found.selectedValue[0]?.id;
-                  }
-                  return found.selectedValue?.id;
-                })()}
-                name={`properties.${index}.selectedValue`}
-                label={field.label}
-                dependsOn={field.dependsOn}
-                onSelect={() => {
-                  const list: any = watch('properties')?.map((i) => {
-                    if (i?.dependsOn === field?.label) {
-                      return {
-                        ...i,
-                        selectedValue: {},
-                      };
-                    }
-                    return i;
-                  });
-                  setValue('properties', list);
-                }}
-              />
-            </CheckValidation>
           </View>
-        ))}
-      </KeyboardAwareScrollView>
+          <LocationInput control={control} ref={locationRef} />
+
+          <View className=" mb-6 gap-1">
+            <Text placement={locale} className=" text-base font-semibold text-gray-800">
+              {i18n.t('post.description')}
+            </Text>
+            <Controller
+              control={control}
+              name="description"
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  className="h-32 rounded-lg border border-gray-200 bg-white p-3 text-base"
+                  onChangeText={onChange}
+                  value={value}
+                  placeholder={i18n.t('post.descriptionPlaceholder')}
+                  multiline
+                  numberOfLines={4}
+                  textAlignVertical="top"
+                />
+              )}
+            />
+            {errors.description && (
+              <Text className="mt-1 text-sm text-red-500">{errors.description.message}</Text>
+            )}
+          </View>
+
+          {/* Dynamic Attributes will be shown here */}
+          {fields.map((field, index) => (
+            <View key={field.id} className="mb-2 gap-1">
+              <Text className="text-base font-semibold text-gray-800">{field.label}</Text>
+
+              <CheckValidation isValid={['text', 'number'].includes(field.filterType)}>
+                <Controller
+                  control={control}
+                  name={`properties.${index}.selectedValue`}
+                  render={({ field: { onChange, value }, fieldState: { error } }) => (
+                    <View>
+                      <TextInput
+                        className="rounded-lg border border-gray-200 bg-white p-4"
+                        onChangeText={(value) => {
+                          onChange({
+                            value,
+                            id: value,
+                          });
+                        }}
+                        value={Array.isArray(value) ? '' : value.value}
+                        placeholder={`Enter ${field.label}`}
+                      />
+                      {error && <Text className="mt-1 text-sm text-red-500">{error.message}</Text>}
+                    </View>
+                  )}
+                />
+              </CheckValidation>
+
+              <CheckValidation isValid={['select', 'checkbox']?.includes(field.filterType)}>
+                <View>
+                  <SelectField
+                    control={control}
+                    attributeId={field.uuid}
+                    filterType={field.filterType}
+                    parentId={(() => {
+                      const found = watch('properties')?.find((prop) => {
+                        const selectedValue = prop.selectedValue;
+                        if (Array.isArray(selectedValue)) {
+                          return selectedValue.length > 0 && prop.label === field.dependsOn;
+                        } else {
+                          return selectedValue.value && prop.label === field.dependsOn;
+                        }
+                      });
+                      if (!found) return undefined;
+                      if (Array.isArray(found.selectedValue)) {
+                        // Return the id of the first selected value if exists
+                        return found.selectedValue[0]?.id;
+                      }
+                      return found.selectedValue?.id;
+                    })()}
+                    name={`properties.${index}.selectedValue`}
+                    label={field.label}
+                    dependsOn={field.dependsOn}
+                    onSelect={() => {
+                      const list: any = watch('properties')?.map((i) => {
+                        if (i?.dependsOn === field?.label) {
+                          return {
+                            ...i,
+                            selectedValue: {},
+                          };
+                        }
+                        return i;
+                      });
+                      setValue('properties', list);
+                    }}
+                  />
+                  {errors?.properties?.[index]?.selectedValue && (
+                    <Text className="mt-1 text-sm text-red-500">
+                      {errors.properties[index].selectedValue.message ||
+                        (errors.properties[index].selectedValue as any).id?.message}
+                    </Text>
+                  )}
+                </View>
+              </CheckValidation>
+            </View>
+          ))}
+        </KeyboardAwareScrollView>
+      )}
       <View className=" flex-row gap-4">
         <TouchableOpacity
           className="flex-1 flex-row items-center justify-center gap-1 rounded-lg bg-primary py-4"
@@ -703,6 +794,9 @@ const AddPost = () => {
               {categories?.map((cat: any) => (
                 <TouchableOpacity
                   onPress={() => {
+                    if (params.postId) {
+                      router.setParams({ postId: '' });
+                    }
                     setValue('category', cat.uuid);
                     setValue('subCategory', '');
                     setValue('properties', []);
