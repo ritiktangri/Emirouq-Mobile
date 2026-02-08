@@ -10,9 +10,6 @@ export default function Categories({ data }: any) {
     <View className="mt-3 px-2">
       <View className="mb-4 flex flex-row items-center justify-between">
         <Text className="font-poppinsSemiBold text-xl text-gray-900">Browse Categories</Text>
-        <TouchableOpacity>
-          <Text className="font-poppinsMedium text-sm text-primary">See All</Text>
-        </TouchableOpacity>
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 ml-[2px] px-2">

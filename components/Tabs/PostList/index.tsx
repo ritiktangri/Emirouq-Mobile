@@ -105,11 +105,16 @@ const PostList = () => {
       return Boolean(appliedFilter.price) || Boolean(isPriceApplied);
     }
 
-    if (sectionUuid === yearId && yearApplied) {
-      return yearApplied;
+    if (sectionUuid === yearId) {
+      return (
+        yearApplied ||
+        (appliedFilter.properties?.[yearId] && appliedFilter.properties[yearId].length > 0)
+      );
     }
     return (
-      Boolean(appliedFilter?.properties?.[sectionUuid]) || Boolean(selectedFilters?.[sectionUuid])
+      (appliedFilter?.properties?.[sectionUuid] &&
+        appliedFilter.properties[sectionUuid].length > 0) ||
+      (selectedFilters?.[sectionUuid] && selectedFilters[sectionUuid]?.length > 0)
     );
   };
   const [keyword, setKeyword] = useState('');
@@ -487,7 +492,35 @@ const PostList = () => {
                   ) : (
                     <View />
                   )}
-
+                  {/* Selected Tags */}
+                  {((selectedFilters[selectedSection] &&
+                    selectedFilters[selectedSection].length > 0) ||
+                    (selectedSection === 'city' && city)) && (
+                    <View className="flex-row flex-wrap gap-2 px-1 py-2">
+                      {selectedFilters[selectedSection]?.map((val) => (
+                        <TouchableOpacity
+                          key={val}
+                          className="flex-row items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-2 px-3 py-1 py-1.5">
+                          <Text className="font-poppinsMedium text-xs text-primary">{val}</Text>
+                          <Ionicons
+                            onPress={() => onSelect(selectedSection, val)}
+                            name="close-circle"
+                            size={16}
+                            color={theme.colors.primary}
+                            className="ml-1"
+                          />
+                        </TouchableOpacity>
+                      ))}
+                      {selectedSection === 'city' && city && (
+                        <TouchableOpacity
+                          onPress={() => setCity('')}
+                          className="flex-row items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5">
+                          <Text className="font-poppinsMedium text-xs text-primary">{city}</Text>
+                          <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  )}
                   {['city']?.includes(selectedSection) ? (
                     <View className="p-3">
                       {[
@@ -533,7 +566,7 @@ const PostList = () => {
                                 onPress={() => {
                                   onSelect(selectedSection, section.value);
                                 }}
-                                className={cn('flex flex-row items-center py-3 px-3')}>
+                                className={cn('flex flex-row items-center px-3 py-3')}>
                                 <Text
                                   allowFontScaling={false}
                                   className={cn(
@@ -787,7 +820,7 @@ const PostList = () => {
                 setYearApplied(false);
                 setYearRange({ min: 1900, max: dayjs().year() });
                 setAppliedFilter({});
-                await AsyncStorage.removeItem(`filters_${params.subCategory}`);
+                await AsyncStorage.removeItem('post_list_filters');
                 refRBSheet.current.close();
               }}>
               <Text>Reset all</Text>
@@ -808,7 +841,6 @@ const PostList = () => {
                   const newAppliedFilter = {
                     ...appliedFilter,
                     properties: {
-                      ...appliedFilter.properties,
                       ...selectedFilters,
                       ...(yearApplied && {
                         [yearId]: [yearRange?.min, yearRange?.max],
