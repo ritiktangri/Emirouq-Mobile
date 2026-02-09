@@ -173,6 +173,7 @@ const SinglePost = () => {
       </View>
     );
   }
+  console.log('data?.data?.properties', data?.data?.properties);
   return (
     <View
       className="flex-1 bg-white"
@@ -380,7 +381,7 @@ const SinglePost = () => {
                       await Share.share({
                         message: 'Check out this app: https://emirouq.ae',
                       });
-                    } catch (error) { }
+                    } catch (error) {}
                   }}>
                   <AntDesign name="sharealt" size={22} color="#6B7280" />
                   <Text className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
@@ -470,7 +471,8 @@ const SinglePost = () => {
                 <View
                   className="absolute inset-0 opacity-40"
                   style={{
-                    backgroundColor: 'linear-gradient(135deg, rgba(255,87,34,0.02) 0%, rgba(255,87,34,0.06) 100%)',
+                    backgroundColor:
+                      'linear-gradient(135deg, rgba(255,87,34,0.02) 0%, rgba(255,87,34,0.06) 100%)',
                   }}
                 />
 
@@ -496,34 +498,74 @@ const SinglePost = () => {
                     </Text>
                   </View>
 
-                  {/* Dynamic Properties */}
-                  {(data?.data?.properties || []).map((property: any, index: number) => (
-                    <View
-                      key={index}
-                      className="mb-4 w-[48%]"
-                      style={{
-                        paddingRight: index % 2 === 0 ? 8 : 0,
-                        paddingLeft: index % 2 === 1 ? 8 : 0,
-                      }}>
-                      <Text className="mb-1.5 text-[11px] font-bold uppercase tracking-widest text-gray-500" numberOfLines={1}>
-                        {property.label}
-                      </Text>
-                      {property.selectedValue?.length > 0 && Array.isArray(property.selectedValue) ? (
-                        <Text className="text-base font-semibold leading-6 text-gray-900">
-                          {property.selectedValue?.map((j: any) => j?.value).join(', ')}
+                  {/* Dynamic Single-Value Properties */}
+                  {(data?.data?.properties || [])
+                    .filter(
+                      (p: any) =>
+                        !Array.isArray(p.selectedValue) ||
+                        (Array.isArray(p.selectedValue) && p.selectedValue.length <= 1)
+                    )
+                    .map((property: any, index: number) => (
+                      <View
+                        key={index}
+                        className="mb-4 w-[48%]"
+                        style={{
+                          paddingRight: index % 2 === 0 ? 8 : 0,
+                          paddingLeft: index % 2 === 1 ? 8 : 0,
+                        }}>
+                        <Text
+                          className="mb-1.5 text-[11px] font-bold uppercase tracking-widest text-gray-500"
+                          numberOfLines={1}>
+                          {property.label}
                         </Text>
-                      ) : (
                         <Text className="text-base font-semibold leading-6 text-gray-900">
-                          {property.selectedValue?.value || '-'}
+                          {Array.isArray(property.selectedValue)
+                            ? property.selectedValue[0]?.value || '-'
+                            : property.selectedValue?.value || '-'}
                         </Text>
-                      )}
-                    </View>
-                  ))}
+                      </View>
+                    ))}
                 </View>
               </View>
+
+              {/* Dynamic Multi-Value Properties (e.g. Features) */}
+              {(data?.data?.properties || [])
+                .filter((p: any) => Array.isArray(p.selectedValue) && p.selectedValue.length > 1)
+                .map((property: any, index: number) => (
+                  <View key={index} className="mt-6">
+                    <Text className="mb-3 font-serif text-lg font-bold text-gray-900">
+                      {property.label}
+                    </Text>
+                    <View
+                      className="overflow-hidden rounded-3xl border border-gray-200 bg-white p-4"
+                      style={{
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.05,
+                        shadowRadius: 8,
+                        elevation: 3,
+                      }}>
+                      {property.selectedValue.map((item: any, idx: number) => {
+                        const isLast = idx === property.selectedValue.length - 1;
+                        return (
+                          <View
+                            key={idx}
+                            className={`flex-row items-center py-3.5 ${!isLast ? 'border-b border-gray-100' : ''}`}>
+                            <View className="mr-4 h-6 w-6 items-center justify-center rounded-full bg-[#f9ece8]">
+                              <Ionicons name="checkmark-circle" size={18} color="#FF5722" />
+                            </View>
+                            <Text className="flex-1 text-[16px] font-semibold leading-6 tracking-tight text-slate-800">
+                              {item.value}
+                            </Text>
+                          </View>
+                        );
+                      })}
+                    </View>
+                  </View>
+                ))}
             </View>
             {/* --- Description Section --- */}
-            <View className="mb-8">
+            <View className="my-4">
               <Text className="mb-3 font-serif text-lg font-bold text-gray-900">
                 {i18n.t('post.description')}
               </Text>
@@ -542,7 +584,8 @@ const SinglePost = () => {
                 <View
                   className="absolute inset-0 opacity-40"
                   style={{
-                    backgroundColor: 'linear-gradient(135deg, rgba(255,87,34,0.02) 0%, rgba(255,87,34,0.06) 100%)',
+                    backgroundColor:
+                      'linear-gradient(135deg, rgba(255,87,34,0.02) 0%, rgba(255,87,34,0.06) 100%)',
                   }}
                 />
 
@@ -571,9 +614,9 @@ const SinglePost = () => {
 
           {/* Boost Ad Section */}
           {data?.data?.subscriptionId &&
-            data?.data?.status === 'active' &&
-            !data?.data?.isFeaturedAdBoostUsed ? (
-            <View className="mt-2 gap-3 bg-boostAd_bg p-4">
+          data?.data?.status === 'active' &&
+          !data?.data?.isFeaturedAdBoostUsed ? (
+            <View className="mx-4 mt-2 gap-3 rounded-md bg-boostAd_bg p-4">
               <Text placement={locale} className="text-lg font-medium text-black">
                 {i18n.t('previewAd.boostAdHeading')}
               </Text>

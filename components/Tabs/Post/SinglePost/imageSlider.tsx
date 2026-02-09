@@ -29,16 +29,17 @@ const ImageSlider = ({ images, setModalVisible, fittedSize }: any) => {
         horizontal
         showsHorizontalScrollIndicator={false}
         keyExtractor={(_, i) => i.toString()}
-        snapToInterval={IMAGE_WIDTH + IMAGE_GAP}
+        snapToInterval={IMAGE_WIDTH - 20 + IMAGE_GAP}
         decelerationRate="fast"
         snapToAlignment="start"
         onMomentumScrollEnd={onScrollEnd}
+        contentContainerStyle={{ paddingHorizontal: 10 }}
         renderItem={({ item }) => (
           <TouchableOpacity activeOpacity={0.8} onPress={() => setModalVisible?.(true)}>
             <Image
               source={{ uri: item }}
               style={{
-                width: IMAGE_WIDTH,
+                width: IMAGE_WIDTH - 20,
                 height: IMAGE_WIDTH * 0.7,
                 borderRadius: 8,
                 marginRight: IMAGE_GAP,
