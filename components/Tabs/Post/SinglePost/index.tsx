@@ -591,7 +591,7 @@ const SinglePost = () => {
 
                 {/* Content */}
                 <View className="p-5">
-                  <Text className="text-base font-light leading-7 tracking-wide text-gray-600">
+                  <Text className="text-base font-light leading-7 tracking-wide text-gray-900">
                     {data?.data?.description}
                   </Text>
                 </View>

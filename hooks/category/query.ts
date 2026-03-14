@@ -2,12 +2,12 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { getCategories, getSubCategories } from '~/utils/services/category';
 
-export const useGetCategory = (keyword = '') =>
+export const useGetCategory = (keyword = '', limit: number) =>
   useInfiniteQuery({
     queryKey: ['category', keyword],
     queryFn: ({ pageParam }) =>
       getCategories({
-        query: { start: pageParam, keyword },
+        query: { start: pageParam, keyword, limit },
       }),
     getNextPageParam: (lastPage: any, allPages: any) => {
       const currentStart = allPages?.length * 10;

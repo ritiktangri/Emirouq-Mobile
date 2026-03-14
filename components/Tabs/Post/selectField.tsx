@@ -49,7 +49,7 @@ export function SelectField({
     ? specificAttributeOptions?.pages.flatMap((p: any) => p.data)
     : attributeOptions?.pages.flatMap((p: any) => p.data);
 
-  /** 🧠 Debounce input */
+  /** Debounce search input */
   const handleDebounce = useCallback(
     debounce((text: string) => setKeyword(text), 300),
     []
@@ -60,15 +60,10 @@ export function SelectField({
       control={control}
       name={name}
       render={({ field: { value, onChange } }) => {
-        // Helper for checkbox: toggle selection
+        // Toggle selection for checkbox type
         const toggleValue = (item: any) => {
           if (!Array.isArray(value)) {
-            onChange([
-              {
-                value: item?.value,
-                id: item.uuid,
-              },
-            ]);
+            onChange([{ value: item?.value, id: item.uuid }]);
           } else {
             const exists = value.find((v) => v.id === item.uuid);
             if (exists) {
@@ -79,10 +74,49 @@ export function SelectField({
           }
         };
 
-        const isSelected = (item: any) =>
-          filterType === 'checkbox' && Array.isArray(value)
-            ? value.some((v) => v.id === item.uuid)
-            : value?.id === item.uuid;
+        const isChecked = (item: any) =>
+          Array.isArray(value) ? value.some((v) => v.id === item.uuid) : false;
+
+        // ── CHECKBOX: render options inline as a checklist, no modal ──────────
+        if (filterType === 'checkbox') {
+          return (
+            <View className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+              {options && options.length > 0 ? (
+                options.map((item: any, idx: number) => {
+                  const selected = isChecked(item);
+                  return (
+                    <TouchableOpacity
+                      key={item.uuid}
+                      onPress={() => toggleValue(item)}
+                      activeOpacity={0.7}
+                      className={`flex-row items-center px-4 py-3 ${
+                        idx < options.length - 1 ? 'border-b border-gray-100' : ''
+                      } ${selected ? 'bg-primary/5' : 'bg-white'}`}>
+                      {/* Checkbox box */}
+                      <View
+                        className={`mr-3 h-5 w-5 items-center justify-center rounded ${
+                          selected ? 'bg-primary' : 'border border-gray-300 bg-white'
+                        }`}>
+                        {selected && <Ionicons name="checkmark" size={13} color="#fff" />}
+                      </View>
+                      <Text
+                        className={`flex-1 text-base ${
+                          selected ? 'font-semibold text-primary' : 'text-gray-800'
+                        }`}>
+                        {item.value}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })
+              ) : (
+                <Text className="px-4 py-4 text-center text-gray-400">No options available</Text>
+              )}
+            </View>
+          );
+        }
+
+        // ── SELECT: existing bottom-sheet modal ───────────────────────────────
+        const isSelected = (item: any) => value?.id === item.uuid;
 
         return (
           <>
@@ -90,13 +124,7 @@ export function SelectField({
             <TouchableOpacity
               className="rounded-xl border border-gray-300 bg-white p-4"
               onPress={() => setVisible(true)}>
-              <Text className="text-gray-700">
-                {filterType === 'checkbox'
-                  ? value?.length
-                    ? value.map((v: any) => v.value).join(', ')
-                    : `Select ${label}`
-                  : value?.value || `Select ${label}`}
-              </Text>
+              <Text className="text-gray-700">{value?.value || `Select ${label}`}</Text>
             </TouchableOpacity>
 
             {/* Modal */}
@@ -120,7 +148,7 @@ export function SelectField({
                         </Pressable>
                       </View>
 
-                      {/* Search Field */}
+                      {/* Search */}
                       <View className="px-5 py-3">
                         <TextInput
                           placeholder="Search..."
@@ -143,13 +171,9 @@ export function SelectField({
                               isSelected(item) ? 'bg-primary/50' : ''
                             }`}
                             onPress={() => {
-                              if (filterType === 'checkbox') {
-                                toggleValue(item);
-                              } else {
-                                onSelect?.();
-                                onChange({ id: item.uuid, value: item.value });
-                                setVisible(false);
-                              }
+                              onSelect?.();
+                              onChange({ id: item.uuid, value: item.value });
+                              setVisible(false);
                             }}>
                             <Text className="text-base text-gray-800">{item.value}</Text>
                           </TouchableOpacity>
