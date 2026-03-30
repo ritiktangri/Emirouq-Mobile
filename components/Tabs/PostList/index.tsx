@@ -376,7 +376,6 @@ const PostList = () => {
             tintColor={theme.colors.primary}
           />
         }
-        numColumns={2}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={() => {
           return (

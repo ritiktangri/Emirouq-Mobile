@@ -29,6 +29,8 @@ const SinglePost = () => {
   const { id }: any = useLocalSearchParams();
   const { removeChatButton = false } = useGlobalSearchParams();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
+  const [expandedFeatures, setExpandedFeatures] = useState<Record<number, boolean>>({});
   const likePost: any = useLikePost();
   const { locale } = useLocale();
   const [selectFeature, setSelectFeature] = useState('featured');
@@ -267,7 +269,7 @@ const SinglePost = () => {
 
           {user?.uuid !== data?.data?.userId ? (
             <View className="px-4 py-2">
-              <View className="flex-row items-center">
+              <View className="flex-row ">
                 <Image
                   source={{
                     uri:
@@ -283,10 +285,14 @@ const SinglePost = () => {
                     </Text>
                     <FontAwesome name="check-circle" size={16} color="#FF5722" />
                   </View>
-                  <View className="flex-row items-center">
+                  <Text className="mt-1 text-sm text-gray-600">
+                    <AntDesign name="clockcircleo" size={12} color="#4b5563" /> Member since{' '}
+                    {dayjs(data?.data?.user?.createdAt)?.format('YYYY')}
+                  </Text>
+                  {/* <View className="flex-row items-center">
                     <FontAwesome name="star" size={12} color="gold" />
                     <Text className="ml-1 text-sm text-gray-600">4.9 (234 reviews)</Text>
-                  </View>
+                  </View> */}
                 </View>
                 {user?.uuid ? (
                   <TouchableOpacity
@@ -302,10 +308,6 @@ const SinglePost = () => {
                   </TouchableOpacity>
                 ) : null}
               </View>
-              <Text className="mt-1 text-sm text-gray-600">
-                <AntDesign name="clockcircleo" size={12} color="#4b5563" /> Member since{' '}
-                {dayjs(data?.data?.user?.createdAt)?.format('YYYY')}
-              </Text>
             </View>
           ) : (
             <></>
@@ -499,70 +501,122 @@ const SinglePost = () => {
                   </View>
 
                   {/* Dynamic Single-Value Properties */}
-                  {(data?.data?.properties || [])
-                    .filter(
+                  {(() => {
+                    const singleValueProps = (data?.data?.properties || []).filter(
                       (p: any) =>
                         !Array.isArray(p.selectedValue) ||
                         (Array.isArray(p.selectedValue) && p.selectedValue.length <= 1)
-                    )
-                    .map((property: any, index: number) => (
-                      <View
-                        key={index}
-                        className="mb-4 w-[48%]"
-                        style={{
-                          paddingRight: index % 2 === 0 ? 8 : 0,
-                          paddingLeft: index % 2 === 1 ? 8 : 0,
-                        }}>
-                        <Text
-                          className="mb-1.5 text-[11px] font-bold uppercase tracking-widest text-gray-500"
-                          numberOfLines={1}>
-                          {property.label}
-                        </Text>
-                        <Text className="text-base font-semibold leading-6 text-gray-900">
-                          {Array.isArray(property.selectedValue)
-                            ? property.selectedValue[0]?.value || '-'
-                            : property.selectedValue?.value || '-'}
-                        </Text>
-                      </View>
-                    ))}
+                    );
+                    const displayedProps = isDetailsExpanded
+                      ? singleValueProps
+                      : singleValueProps.slice(0, 4);
+
+                    return (
+                      <>
+                        {displayedProps.map((property: any, index: number) => (
+                          <View
+                            key={index}
+                            className="mb-4 w-[48%]"
+                            style={{
+                              paddingRight: index % 2 === 0 ? 8 : 0,
+                              paddingLeft: index % 2 === 1 ? 8 : 0,
+                            }}>
+                            <Text
+                              className="mb-1.5 text-[11px] font-bold uppercase tracking-widest text-gray-500"
+                              numberOfLines={1}>
+                              {property.label}
+                            </Text>
+                            <Text className="text-base font-semibold leading-6 text-gray-900">
+                              {Array.isArray(property.selectedValue)
+                                ? property.selectedValue[0]?.value || '-'
+                                : property.selectedValue?.value || '-'}
+                            </Text>
+                          </View>
+                        ))}
+
+                        {singleValueProps.length > 4 && (
+                          <TouchableOpacity
+                            className="mt-2 w-full flex-row items-center justify-center border-t border-gray-100 pt-4"
+                            onPress={() => setIsDetailsExpanded(!isDetailsExpanded)}>
+                            <Text className="mr-1 font-bold text-primary">
+                              {isDetailsExpanded ? 'View Less' : 'View More'}
+                            </Text>
+                            <Feather
+                              name={isDetailsExpanded ? 'chevron-up' : 'chevron-down'}
+                              size={16}
+                              color={theme.colors.primary}
+                            />
+                          </TouchableOpacity>
+                        )}
+                      </>
+                    );
+                  })()}
                 </View>
               </View>
 
               {/* Dynamic Multi-Value Properties (e.g. Features) */}
               {(data?.data?.properties || [])
                 .filter((p: any) => Array.isArray(p.selectedValue) && p.selectedValue.length > 1)
-                .map((property: any, index: number) => (
-                  <View key={index} className="mt-6">
-                    <Text className="mb-3 font-serif text-lg font-bold text-gray-900">
-                      {property.label}
-                    </Text>
-                    <View
-                      className="overflow-hidden rounded-3xl border border-gray-200 bg-white p-4"
-                      style={{
-                        shadowColor: '#000',
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.05,
-                        shadowRadius: 8,
-                        elevation: 3,
-                      }}>
-                      {property.selectedValue.map((item: any, idx: number) => {
-                        const isLast = idx === property.selectedValue.length - 1;
-                        return (
-                          <View
-                            key={idx}
-                            className={`flex-row items-center py-3.5 ${!isLast ? 'border-b border-gray-100' : ''}`}>
-                            <View className="mr-4 h-6 w-6 items-center justify-center rounded-full bg-[#f9ece8]">
-                              <Ionicons name="checkmark-circle" size={18} color="#FF5722" />
+                .map((property: any, index: number) => {
+                  const isExpanded = expandedFeatures[index] || false;
+                  const displayItems = isExpanded
+                    ? property.selectedValue
+                    : property.selectedValue.slice(0, 4);
+
+                  return (
+                    <View key={index} className="mt-6">
+                      <Text className="mb-3 font-serif text-lg font-bold text-gray-900">
+                        {property.label}
+                      </Text>
+                      <View
+                        className="overflow-hidden rounded-3xl border border-gray-200 bg-white p-4"
+                        style={{
+                          shadowColor: '#000',
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: 0.05,
+                          shadowRadius: 8,
+                          elevation: 3,
+                        }}>
+                        {displayItems.map((item: any, idx: number) => {
+                          const isLast =
+                            idx === displayItems.length - 1 &&
+                            (!property.selectedValue ||
+                              property.selectedValue.length <= 4 ||
+                              isExpanded);
+                          return (
+                            <View
+                              key={idx}
+                              className={`flex-row items-center py-3.5 ${!isLast ? 'border-b border-gray-100' : ''}`}>
+                              <View className="mr-4 h-6 w-6 items-center justify-center rounded-full bg-[#f9ece8]">
+                                <Ionicons name="checkmark-circle" size={18} color="#FF5722" />
+                              </View>
+                              <Text className="flex-1 text-[16px] font-semibold leading-6 tracking-tight text-slate-800">
+                                {item.value}
+                              </Text>
                             </View>
-                            <Text className="flex-1 text-[16px] font-semibold leading-6 tracking-tight text-slate-800">
-                              {item.value}
+                          );
+                        })}
+
+                        {property.selectedValue.length > 4 && (
+                          <TouchableOpacity
+                            className="mt-2 w-full flex-row items-center justify-center pt-3"
+                            onPress={() =>
+                              setExpandedFeatures((prev) => ({ ...prev, [index]: !isExpanded }))
+                            }>
+                            <Text className="mr-1 font-bold text-primary">
+                              {isExpanded ? 'View Less' : 'View More'}
                             </Text>
-                          </View>
-                        );
-                      })}
+                            <Feather
+                              name={isExpanded ? 'chevron-up' : 'chevron-down'}
+                              size={16}
+                              color={theme.colors.primary}
+                            />
+                          </TouchableOpacity>
+                        )}
+                      </View>
                     </View>
-                  </View>
-                ))}
+                  );
+                })}
             </View>
             {/* --- Description Section --- */}
             <View className="my-4">
@@ -591,7 +645,7 @@ const SinglePost = () => {
 
                 {/* Content */}
                 <View className="p-5">
-                  <Text className="text-base font-light leading-7 tracking-wide text-gray-900">
+                  <Text className="text-base font-bold leading-7 tracking-wide text-gray-900">
                     {data?.data?.description}
                   </Text>
                 </View>
