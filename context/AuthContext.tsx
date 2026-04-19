@@ -27,8 +27,14 @@ import {
   verifyToken,
 } from '~/utils/services/auth';
 import { unSeenCountService } from '~/utils/services/dashboard';
-import { getCurrentUser, resetPasswordService, updateProfileService } from '~/utils/services/user';
 import {
+  getCurrentUser,
+  logoutService,
+  resetPasswordService,
+  updateProfileService,
+} from '~/utils/services/user';
+import {
+  getStorageAsync,
   getStorageItemAsync,
   removeStorageItemAsync,
   setStorageItemAsync,
@@ -203,6 +209,12 @@ const AuthProvider = ({ children }: any) => {
       });
   };
   const handleLogout = async (cb: any) => {
+    const deviceId = await getStorageAsync('notificationDeviceId');
+    if (deviceId) {
+      try {
+        await logoutService({ body: { deviceId } });
+      } catch (error) {}
+    }
     setUser(null);
     socketIo?.disconnect();
     setActiveAccount([]);
@@ -219,6 +231,7 @@ const AuthProvider = ({ children }: any) => {
     await Promise.all([
       removeStorageItemAsync(storageTokenKeyName),
       removeStorageItemAsync('activeAccount'),
+      removeStorageItemAsync('notificationDeviceId'),
     ] as any);
     cb && cb();
     // router.push(routes.auth.auth as any);

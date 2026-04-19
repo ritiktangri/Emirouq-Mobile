@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import * as Notifications from 'expo-notifications';
+import { setStorageItemAsync } from './useStorageState';
 import { registerForPushNotificationsAsync } from '~/utils/notification.utils';
 import { saveNotificationToken } from '~/utils/services/user';
 
@@ -12,12 +13,17 @@ export function usePushNotifications(user: any) {
     let responseSubscription: Notifications.Subscription;
 
     (async () => {
-      const { token, device, deviceId, deviceName }: any =
-        await registerForPushNotificationsAsync();
+      const notificationDevice: any = await registerForPushNotificationsAsync();
+      if (!notificationDevice?.token) {
+        return;
+      }
+
+      const { token, device, deviceId, deviceName } = notificationDevice;
       if (token) {
         await saveNotificationToken({
           body: { token, device, deviceId, deviceName },
         });
+        await setStorageItemAsync('notificationDeviceId', deviceId);
       }
 
       subscription = Notifications.addNotificationReceivedListener((notification) => {

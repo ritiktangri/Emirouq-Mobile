@@ -25,6 +25,13 @@ export const saveNotificationToken = async ({ body }: any) =>
     } as ApiEndpoint,
     body,
   });
+export const logoutService = async ({ body }: any) =>
+  callApi({
+    uriEndPoint: {
+      ...user.logout.v1,
+    } as ApiEndpoint,
+    body,
+  });
 export const updateProfileService = async ({ body }: any) => {
   return callApi({
     uriEndPoint: { ...user.updateProfile.v1 } as ApiEndpoint,

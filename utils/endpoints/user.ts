@@ -22,6 +22,13 @@ const user = {
       uri: '/user/save-notification-token',
     },
   },
+  logout: {
+    v1: {
+      ...defaults.methods.POST,
+      ...defaults.versions.v1,
+      uri: '/user/logout',
+    },
+  },
   updateProfile: {
     v1: {
       ...defaults.methods.PUT,
