@@ -186,6 +186,7 @@ const AuthProvider = ({ children }: any) => {
     setSignInLoading(true);
     login(params)
       .then(async (response: any) => {
+        console.log('response', response);
         await setStorageItemAsync(storageTokenKeyName, response?.accessToken);
         // toast.success(
         //   <Text as="b">

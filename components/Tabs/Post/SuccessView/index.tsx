@@ -6,6 +6,8 @@ import { useRouter } from 'expo-router';
 import { View } from '~/components/common/View';
 import { Text } from '~/components/common/Text';
 import { i18n } from '~/utils/i18n';
+import { routes } from '~/utils/routes';
+import { Href } from 'expo-router';
 
 const SuccessView = () => {
   const router = useRouter();
@@ -66,7 +68,14 @@ const SuccessView = () => {
       </View>
       <View className="mb-10">
         {/* Track Status Button */}
-        <TouchableOpacity className="mx-3 items-center rounded-lg bg-green-500 p-4">
+        <TouchableOpacity
+          className="mx-3 items-center rounded-lg bg-green-500 p-4"
+          onPress={() => {
+            router.push({
+              pathname: routes.tabs.profile.profile,
+              params: { tab: 'manageAds' },
+            } as Href);
+          }}>
           <Text className="font-poppinsMedium text-lg text-white">
             {i18n.t('success_page.trackStatus')}
           </Text>

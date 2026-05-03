@@ -1,6 +1,7 @@
 /* eslint-disable import/order */
 import { View, KeyboardAvoidingView, Platform } from 'react-native';
 import React, { useEffect, useMemo, useState } from 'react';
+import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import TabLayout from './tabbar';
 import UserProfile from './UserProfile';
@@ -11,7 +12,15 @@ import { useAuth } from '~/context/AuthContext';
 import LoggedOutView from './LoggedOutView';
 
 const Profile = () => {
+  const { tab }: any = useLocalSearchParams();
   const [activeTab, setActiveTab] = useState(0);
+
+  useEffect(() => {
+    if (tab === 'manageAds') {
+      setActiveTab(1);
+    }
+  }, [tab]);
+
   const { user } = useAuth();
 
   const render: any = useMemo(() => {

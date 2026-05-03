@@ -154,7 +154,9 @@ const AddPost = () => {
   const params: any = useGlobalSearchParams();
   useEffect(() => {
     if (data?.pages?.length && selectedSubCategory && !params?.postId) {
-      const attributes = data.pages.flatMap((page: any) => page.data);
+      const attributes = data.pages
+        .flatMap((page: any) => page.data)
+        .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
       // Replace existing properties with mapped attributes
       replace(
         attributes.map((attr: any) => ({
@@ -210,11 +212,13 @@ const AddPost = () => {
           lng: singlePost?.geometry?.coordinates?.[0],
           lat: singlePost?.geometry?.coordinates?.[1],
         },
-        properties: properties.map((prop: any) => ({
-          ...prop,
-          selectedValue:
-            prop.selectedValue || (prop.filterType === 'checkbox' ? [] : { value: '', id: '' }),
-        })),
+        properties: properties
+          .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
+          .map((prop: any) => ({
+            ...prop,
+            selectedValue:
+              prop.selectedValue || (prop.filterType === 'checkbox' ? [] : { value: '', id: '' }),
+          })),
       });
     }
   }, [params?.postId, postDetails?.data, isFetching]);
@@ -642,7 +646,7 @@ const AddPost = () => {
           {/* Dynamic Attributes will be shown here */}
           {fields.map((field, index) => (
             <View key={field.id} className="mb-2 gap-1">
-              <Text className="text-base font-semibold text-gray-800">{field.label}</Text>
+              <Text className="text-base font-semibold text-gray-800">{field.label?.trim()}</Text>
 
               <CheckValidation isValid={['text', 'number'].includes(field.filterType)}>
                 <Controller

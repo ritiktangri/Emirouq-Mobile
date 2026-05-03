@@ -9,18 +9,19 @@ import { getRelativeTime, toCurrency } from '~/utils/helper';
 import { routes } from '~/utils/routes';
 import AddToFavourite from '../AddToFavourite';
 const RenderProductCard = ({ item, user }: any) => {
+  const regionalSpec = item?.properties?.find(
+    (p: any) => p.attributeKey === 'regional_specification'
+  )?.selectedValue?.value;
+  const mileage = item?.properties?.find((p: any) => p.attributeKey === 'mileage')?.selectedValue
+    ?.value;
   return (
     <TouchableOpacity
       onPress={() => {
         router.push(routes.tabs.singlePost(item?.uuid) as Href);
       }}
-      className="ml-4 w-72 overflow-hidden rounded-2xl border border-gray-300 bg-white  p-3">
+      className="ml-4 w-72 overflow-hidden rounded-2xl border border-gray-300 bg-white p-3">
       <View className="relative">
-        <Image
-          source={{ uri: item.file?.[0] }}
-          className="h-40 w-full rounded-lg"
-          resizeMode="stretch"
-        />
+        <Image source={{ uri: item.file?.[0] }} className="h-40 w-full rounded-lg" />
         {user && <AddToFavourite item={item} />}
 
         {item.featuredAd.isFeatured && (
@@ -33,7 +34,24 @@ const RenderProductCard = ({ item, user }: any) => {
         <Text className="text-sm font-semibold text-gray-900" numberOfLines={1}>
           {item.title}
         </Text>
-        <Text className="mt-1 text-base font-bold text-black">{toCurrency(item.price)}</Text>
+        <View className="mt-1 flex-row items-center justify-between">
+          <Text className="text-base font-semibold text-black">{toCurrency(item.price)}</Text>
+
+          {(regionalSpec || mileage) && (
+            <View className="flex-row items-center gap-1">
+              {regionalSpec && (
+                <View className="rounded bg-gray-100 px-1.5 py-0.5">
+                  <Text className="text-[10px] font-medium text-gray-600">{regionalSpec}</Text>
+                </View>
+              )}
+              {mileage && (
+                <View className="rounded bg-gray-100 px-1.5 py-0.5">
+                  <Text className="text-[10px] font-medium text-gray-600">{mileage} km</Text>
+                </View>
+              )}
+            </View>
+          )}
+        </View>
 
         <Text className="mt-1 flex-1 font-interMedium text-xs text-gray-500" numberOfLines={1}>
           {item.location.name}

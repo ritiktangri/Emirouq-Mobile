@@ -479,60 +479,64 @@ const SinglePost = () => {
                 />
 
                 {/* Content - Grid Layout */}
-                <View className="flex-row flex-wrap p-4">
+                <View className="flex-row flex-wrap">
                   {/* Condition */}
-                  <View className="mb-4 w-[48%] pr-2">
-                    <Text className="mb-1.5 text-[11px] font-bold uppercase tracking-widest text-gray-500">
+                  <View className="w-[50%] border-b border-r border-gray-100 p-4">
+                    <Text className="mb-1.5 text-[11px] font-bold uppercase tracking-widest text-gray-400">
                       {i18n.t('post.condition')}
                     </Text>
-                    <Text className="text-base font-semibold capitalize text-gray-900">
+                    <Text className="text-[15px] font-bold capitalize text-gray-900">
                       {data?.data?.condition || 'N/A'}
                     </Text>
                   </View>
 
                   {/* Category */}
-                  <View className="mb-4 w-[48%] pl-2">
-                    <Text className="mb-1.5 text-[11px] font-bold uppercase tracking-widest text-gray-500">
+                  <View className="w-[50%] border-b border-gray-100 p-4">
+                    <Text className="mb-1.5 text-[11px] font-bold uppercase tracking-widest text-gray-400">
                       {i18n.t('post.category')}
                     </Text>
-                    <Text className="text-base font-semibold text-gray-900" numberOfLines={2}>
+                    <Text className="text-[15px] font-bold text-gray-900" numberOfLines={2}>
                       {data?.data?.category?.title || 'N/A'}
                     </Text>
                   </View>
 
                   {/* Dynamic Single-Value Properties */}
                   {(() => {
-                    const singleValueProps = (data?.data?.properties || []).filter(
-                      (p: any) =>
-                        !Array.isArray(p.selectedValue) ||
-                        (Array.isArray(p.selectedValue) && p.selectedValue.length <= 1)
-                    );
+                    const singleValueProps = (data?.data?.properties || [])
+                      .filter(
+                        (p: any) =>
+                          !Array.isArray(p.selectedValue) ||
+                          (Array.isArray(p.selectedValue) && p.selectedValue.length <= 1)
+                      )
+                      .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
                     const displayedProps = isDetailsExpanded
                       ? singleValueProps
                       : singleValueProps.slice(0, 4);
 
                     return (
                       <>
-                        {displayedProps.map((property: any, index: number) => (
-                          <View
-                            key={index}
-                            className="mb-4 w-[48%]"
-                            style={{
-                              paddingRight: index % 2 === 0 ? 8 : 0,
-                              paddingLeft: index % 2 === 1 ? 8 : 0,
-                            }}>
-                            <Text
-                              className="mb-1.5 text-[11px] font-bold uppercase tracking-widest text-gray-500"
-                              numberOfLines={1}>
-                              {property.label}
-                            </Text>
-                            <Text className="text-base font-semibold leading-6 text-gray-900">
-                              {Array.isArray(property.selectedValue)
-                                ? property.selectedValue[0]?.value || '-'
-                                : property.selectedValue?.value || '-'}
-                            </Text>
-                          </View>
-                        ))}
+                        {displayedProps.map((property: any, index: number) => {
+                          const isLeft = index % 2 === 0;
+                          const isLastRow =
+                            index >= displayedProps.length - (displayedProps.length % 2 || 2);
+
+                          return (
+                            <View
+                              key={index}
+                              className={`mb-0 w-[50%] p-4 ${isLeft ? 'border-r' : ''} ${!isLastRow ? 'border-b' : ''} border-gray-100`}>
+                              <Text
+                                className="mb-1.5 text-[11px] font-bold uppercase tracking-widest text-gray-400"
+                                numberOfLines={1}>
+                                {property.label?.trim()}
+                              </Text>
+                              <Text className="text-[15px] font-bold leading-5 text-gray-900">
+                                {Array.isArray(property.selectedValue)
+                                  ? property.selectedValue[0]?.value || '-'
+                                  : property.selectedValue?.value || '-'}
+                              </Text>
+                            </View>
+                          );
+                        })}
 
                         {singleValueProps.length > 4 && (
                           <TouchableOpacity
@@ -557,6 +561,7 @@ const SinglePost = () => {
               {/* Dynamic Multi-Value Properties (e.g. Features) */}
               {(data?.data?.properties || [])
                 .filter((p: any) => Array.isArray(p.selectedValue) && p.selectedValue.length > 1)
+                .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
                 .map((property: any, index: number) => {
                   const isExpanded = expandedFeatures[index] || false;
                   const displayItems = isExpanded
@@ -566,7 +571,7 @@ const SinglePost = () => {
                   return (
                     <View key={index} className="mt-6">
                       <Text className="mb-3 font-serif text-lg font-bold text-gray-900">
-                        {property.label}
+                        {property.label?.trim()}
                       </Text>
                       <View
                         className="overflow-hidden rounded-3xl border border-gray-200 bg-white p-4"

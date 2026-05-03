@@ -22,6 +22,12 @@ const Render = ({ item, refetch }: any) => {
   const { showToast }: any = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
 
+  const regionalSpec = item?.properties?.find(
+    (p: any) => p.attributeKey === 'regional_specification'
+  )?.selectedValue?.value;
+  const mileage = item?.properties?.find((p: any) => p.attributeKey === 'mileage')?.selectedValue
+    ?.value;
+
   const onDeletePost = () => {
     if (btnLoading) return;
     deletePost(
@@ -46,23 +52,42 @@ const Render = ({ item, refetch }: any) => {
             },
           } as Href);
         }}
-        className="flex-row  gap-4">
-        <View className=" h-[80px] w-[80px]">
+        className="flex-col gap-2">
+        <View className="h-44 w-full overflow-hidden rounded-t-lg">
           <Image
             source={{ uri: item?.file?.[0] }}
             style={{
               height: '100%',
               width: '100%',
-              borderRadius: 10,
             }}
-            className=" h-24 w-24 rounded-lg"
+            className="h-full w-full"
           />
         </View>
-        <View className="flex-1">
-          <Text className="text-lg font-semibold">{item?.title}</Text>
-          <Text className="text-sm text-gray-500">
-            {item?.category?.title} • {item.location?.name}
-          </Text>
+        <View className="flex-1 px-2">
+          <View className="flex-row items-start justify-between">
+            <View className="flex-1">
+              <Text className="text-lg font-semibold">{item?.title}</Text>
+              <Text className="text-sm text-gray-500">
+                {item?.category?.title} • {item.location?.name}
+              </Text>
+            </View>
+
+            {(regionalSpec || mileage) && (
+              <View className="ml-2 mt-1 flex-row items-center gap-1.5">
+                {regionalSpec && (
+                  <View className="rounded-md bg-gray-100 px-2 py-0.5">
+                    <Text className="text-[10px] font-medium text-gray-600">{regionalSpec}</Text>
+                  </View>
+                )}
+                {mileage && (
+                  <View className="rounded-md bg-gray-100 px-2 py-0.5">
+                    <Text className="text-[10px] font-medium text-gray-600">{mileage} km</Text>
+                  </View>
+                )}
+              </View>
+            )}
+          </View>
+
           <Text
             className={`mt-1 self-start rounded-full px-2 py-1  ${
               item.status === 'active'
