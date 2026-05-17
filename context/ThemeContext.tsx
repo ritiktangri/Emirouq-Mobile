@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import { createContext, useContext, useEffect, useState, useMemo, useRef } from 'react';
+import { createContext, useContext, useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { Appearance, Platform } from 'react-native';
 import Toast from '~/components/UI/Toast';
 import { getStorageItemAsync, setStorageItemAsync } from '~/hooks/useStorageState';
@@ -34,9 +34,9 @@ const ThemeProvider = ({ children }: any) => {
     setColorIndex(+index);
   };
 
-  const showToast = (message: string, type: string, duration: any) => {
+  const showToast = useCallback((message: string, type: string, duration: any) => {
     toastRef.current.toast(message, type, duration);
-  };
+  }, []);
 
   useEffect(() => {
     (async () => {

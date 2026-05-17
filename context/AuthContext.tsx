@@ -152,7 +152,7 @@ const AuthProvider = ({ children }: any) => {
     return false;
   };
 
-  const getUser = async (cb?: any) => {
+  const getUser = useCallback(async (cb?: any) => {
     setLoading(true);
     getCurrentUser()
       .then(async (response: any) => {
@@ -177,7 +177,7 @@ const AuthProvider = ({ children }: any) => {
           setLoading(false);
         }, 2000);
       });
-  };
+  }, []);
   useEffect(() => {
     getUser(() => {});
   }, []);
