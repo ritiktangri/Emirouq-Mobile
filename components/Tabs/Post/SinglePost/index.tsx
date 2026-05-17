@@ -517,8 +517,10 @@ const SinglePost = () => {
                       <>
                         {displayedProps.map((property: any, index: number) => {
                           const isLeft = index % 2 === 0;
-                          const isLastRow =
-                            index >= displayedProps.length - (displayedProps.length % 2 || 2);
+                          const lastRowStart = displayedProps.length % 2 === 0
+                            ? displayedProps.length - 2
+                            : displayedProps.length - 1;
+                          const isLastRow = index >= lastRowStart;
 
                           return (
                             <View

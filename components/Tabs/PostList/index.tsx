@@ -719,7 +719,7 @@ const PostList = () => {
                                 }}
                                 className="flex-1 py-2 text-base leading-5 text-gray-700"
                               />
-                              <Text className="text-xs">AED</Text>
+                              <Text className="text-xs">Đ</Text>
                             </View>
 
                             {/* Dash separator */}
@@ -745,7 +745,7 @@ const PostList = () => {
                                 className="flex-1 py-2 text-base leading-5 text-gray-700"
                                 style={{ textAlignVertical: 'center' }}
                               />
-                              <Text className="text-xs">AED</Text>
+                              <Text className="text-xs">Đ</Text>
                             </View>
                           </View>
                           {data?.pages?.[0]?.maxPrice ? (

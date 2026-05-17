@@ -1,8 +1,8 @@
 /* eslint-disable import/order */
 import { View, Text, TouchableOpacity, Image, Alert, Modal, ActivityIndicator } from 'react-native';
 import React, { useState } from 'react';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { getRelativeTime } from '~/utils/helper';
+import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { getRelativeTime, toCurrency } from '~/utils/helper';
 import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import { i18n } from '~/utils/i18n';
@@ -67,6 +67,9 @@ const Render = ({ item, refetch }: any) => {
           <View className="flex-row items-start justify-between">
             <View className="flex-1">
               <Text className="text-lg font-semibold">{item?.title}</Text>
+              <Text className="text-base font-bold text-orange-500">
+                {toCurrency(item?.price || 0)}
+              </Text>
               <Text className="text-sm text-gray-500">
                 {item?.category?.title} • {item.location?.name}
               </Text>
@@ -75,13 +78,15 @@ const Render = ({ item, refetch }: any) => {
             {(regionalSpec || mileage) && (
               <View className="ml-2 mt-1 flex-row items-center gap-1.5">
                 {regionalSpec && (
-                  <View className="rounded-md bg-gray-100 px-2 py-0.5">
-                    <Text className="text-[10px] font-medium text-gray-600">{regionalSpec}</Text>
+                  <View className="flex-row items-center rounded-lg border border-[#e1f2e8] bg-[#f3faf6] px-2 py-0.5">
+                    <Ionicons name="shield-checkmark" size={12} color="#16a34a" />
+                    <Text className="ml-1 text-[10px] font-semibold text-green-600">{regionalSpec}</Text>
                   </View>
                 )}
                 {mileage && (
-                  <View className="rounded-md bg-gray-100 px-2 py-0.5">
-                    <Text className="text-[10px] font-medium text-gray-600">{mileage} km</Text>
+                  <View className="flex-row items-center rounded-lg border border-[#d2e3fc] bg-[#f4f8fe] px-2 py-0.5">
+                    <MaterialCommunityIcons name="speedometer" size={12} color="#2563eb" />
+                    <Text className="ml-1 text-[10px] font-semibold text-blue-600">{mileage} km</Text>
                   </View>
                 )}
               </View>

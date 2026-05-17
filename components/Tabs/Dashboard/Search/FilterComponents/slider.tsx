@@ -10,7 +10,7 @@ export default function PriceRangeSlider({ value, onChange }: any) {
       <View className="mb-2 flex-row items-center justify-between">
         <Text className="text-base font-semibold">{i18n.t('home.price_range')}</Text>
         <Text className="text-sm text-gray-500">
-          AED {value?.[0]} - {value?.[1]}
+          Đ {value?.[0]} - {value?.[1]}
         </Text>
       </View>
 

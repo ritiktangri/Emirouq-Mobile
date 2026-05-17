@@ -1,6 +1,6 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import React from 'react';
-import { Entypo, Ionicons } from '@expo/vector-icons';
+import { Entypo, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Href, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import AddToFavourite from '../Dashboard/AddToFavourite';
@@ -54,13 +54,15 @@ const Render = ({ item }: any) => {
           {(regionalSpec || mileage) && (
             <View className="ml-2 mt-1 flex-row items-center gap-1.5">
               {regionalSpec && (
-                <View className="rounded-md bg-gray-100 px-2 py-0.5">
-                  <Text className="text-[12px] font-medium text-gray-600">{regionalSpec}</Text>
+                <View className="flex-row items-center rounded-lg border border-[#e1f2e8] bg-[#f3faf6] px-2.5 py-1">
+                  <Ionicons name="shield-checkmark" size={14} color="#16a34a" />
+                  <Text className="ml-1.5 text-[11px] font-semibold text-green-600">{regionalSpec}</Text>
                 </View>
               )}
               {mileage && (
-                <View className="rounded-md bg-gray-100 px-2 py-0.5">
-                  <Text className="text-[12px] font-medium text-gray-600">{mileage} km</Text>
+                <View className="flex-row items-center rounded-lg border border-[#d2e3fc] bg-[#f4f8fe] px-2.5 py-1">
+                  <MaterialCommunityIcons name="speedometer" size={14} color="#2563eb" />
+                  <Text className="ml-1.5 text-[11px] font-semibold text-blue-600">{mileage} km</Text>
                 </View>
               )}
             </View>

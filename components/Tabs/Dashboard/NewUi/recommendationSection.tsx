@@ -1,5 +1,5 @@
 // components/Marketplace.tsx
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Href, router } from 'expo-router';
 import { Image, FlatList, TouchableOpacity } from 'react-native';
 import { Text } from '~/components/common/Text';
@@ -38,15 +38,17 @@ const RenderProductCard = ({ item, user }: any) => {
           <Text className="text-base font-semibold text-black">{toCurrency(item.price)}</Text>
 
           {(regionalSpec || mileage) && (
-            <View className="flex-row items-center gap-1">
+            <View className="flex-row items-center gap-1.5">
               {regionalSpec && (
-                <View className="rounded bg-gray-100 px-1.5 py-0.5">
-                  <Text className="text-[10px] font-medium text-gray-600">{regionalSpec}</Text>
+                <View className="flex-row items-center rounded-lg border border-[#e1f2e8] bg-[#f3faf6] px-2 py-[3px]">
+                  <Ionicons name="shield-checkmark" size={12} color="#16a34a" />
+                  <Text className="ml-1 text-[10px] font-semibold text-green-600">{regionalSpec}</Text>
                 </View>
               )}
               {mileage && (
-                <View className="rounded bg-gray-100 px-1.5 py-0.5">
-                  <Text className="text-[10px] font-medium text-gray-600">{mileage} km</Text>
+                <View className="flex-row items-center rounded-lg border border-[#d2e3fc] bg-[#f4f8fe] px-2 py-[3px]">
+                  <MaterialCommunityIcons name="speedometer" size={12} color="#2563eb" />
+                  <Text className="ml-1 text-[10px] font-semibold text-blue-600">{mileage} km</Text>
                 </View>
               )}
             </View>

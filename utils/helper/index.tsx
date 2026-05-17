@@ -5,6 +5,7 @@ import { twMerge } from 'tailwind-merge';
 import { clsx, ClassValue } from 'clsx';
 import * as FileSystem from 'expo-file-system';
 import { Dimensions } from 'react-native';
+import CurrencySymbol from '~/components/common/CurrencySymbol';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -26,7 +27,14 @@ function toCurrency(
     minimumFractionDigits: disableDecimal ? 0 : decimalPlaces,
     maximumFractionDigits: disableDecimal ? 0 : decimalPlaces,
   });
-  return formatter.format(+number);
+  const formatted = formatter.format(+number);
+  if (currency === 'AED') {
+    // If we are in a context that can render JSX, we could return a component,
+    // but to avoid breaking string-based usages, we use the Unicode character Đ
+    // which is the common text-based representation for the new symbol.
+    return formatted.replace('AED', 'Đ');
+  }
+  return formatted;
 }
 
 function cn(...inputs: ClassValue[]) {
@@ -174,4 +182,5 @@ export {
   extractAddressDetails,
   getRelativeTime,
   formatDate,
+  CurrencySymbol,
 };
