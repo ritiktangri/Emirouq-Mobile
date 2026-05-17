@@ -288,6 +288,8 @@ const AddPost = () => {
       allowsMultipleSelection: true,
     });
     if (result.canceled) return;
+    const getAssetKey = (item: any) => item?.assetId || item?.uuid || item?.fileName || item?.name;
+    const existingImages = watch('images') || [];
     const formattedAssets = result?.assets?.map((item: any) => {
       return {
         uuid: item?.assetId || item?.fileName,
@@ -296,28 +298,16 @@ const AddPost = () => {
         uri: item?.uri,
       };
     });
-    //if image already exists in the array, then do not add it
-    // const assetIds = result?.assets?.map((item: any) => item?.assetId || item?.fileName);
-    // const isIncluded = watch('images')?.some((item: any) =>
-    //   assetIds?.includes(item?.assetId || item?.fileName)
-    // );
-
-    // if (isIncluded) {
-    //   const filterImages = watch('images')?.filter(
-    //     (item: any) => !assetIds?.includes(item?.uuid || item?.name)
-    //   );
-    //   setValue('images', [...filterImages, ...formattedAssets]);
-    // } else {
+    const existingKeys = new Set(existingImages.map(getAssetKey));
+    const uniqueAssets = formattedAssets.filter((item: any) => !existingKeys.has(getAssetKey(item)));
 
     if (Platform.OS === 'ios') {
-      setValue('images', [...watch('images'), ...formattedAssets]);
+      setValue('images', [...existingImages, ...uniqueAssets]);
     }
     if (Platform.OS === 'android') {
-      const res = await saveFileLocally(formattedAssets);
-      setValue('images', res);
+      const res = await saveFileLocally(uniqueAssets);
+      setValue('images', [...existingImages, ...res]);
     }
-
-    // }
   };
 
   useEffect(() => {
