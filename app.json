@@ -29,14 +29,6 @@
         }
       ],
       [
-        "expo-build-properties",
-        {
-          "android": {
-            "AsyncStorage_db_size_in_MB": "500"
-          }
-        }
-      ],
-      [
         "expo-splash-screen",
         {
           "backgroundColor": "#000000",
@@ -58,21 +50,12 @@
         }
       ],
       [
-        "expo-audio",
-        {
-          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
-        }
-      ],
-      [
         "expo-web-browser",
         {
           "experimentalLauncherActivity": true
         }
       ],
       "expo-localization",
-      "expo-video",
-      "expo-audio",
-      "expo-secure-store",
       "expo-web-browser"
     ],
     "experiments": {
