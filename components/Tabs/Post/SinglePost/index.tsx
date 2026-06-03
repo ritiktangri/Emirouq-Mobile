@@ -175,7 +175,6 @@ const SinglePost = () => {
       </View>
     );
   }
-  console.log('data?.data?.properties', data?.data?.properties);
   return (
     <View
       className="flex-1 bg-white"
@@ -383,7 +382,7 @@ const SinglePost = () => {
                       await Share.share({
                         message: 'Check out this app: https://emirouq.ae',
                       });
-                    } catch (error) {}
+                    } catch (error) { }
                   }}>
                   <AntDesign name="sharealt" size={22} color="#6B7280" />
                   <Text className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
@@ -675,9 +674,10 @@ const SinglePost = () => {
 
           {/* Boost Ad Section */}
           {data?.data?.subscriptionId &&
-          data?.data?.status === 'active' &&
-          !data?.data?.isFeaturedAdBoostUsed ? (
-            <View className="mx-4 mt-2 gap-3 rounded-md bg-boostAd_bg p-4">
+            data?.data?.user?.uuid === user?.uuid &&
+            data?.data?.status === 'active' &&
+            !data?.data?.isFeaturedAdBoostUsed ? (
+            <View className="mx-4  gap-3 rounded-md bg-boostAd_bg p-4">
               <Text placement={locale} className="text-lg font-medium text-black">
                 {i18n.t('previewAd.boostAdHeading')}
               </Text>

@@ -355,8 +355,13 @@ const PostList = () => {
                 </TouchableOpacity>
               ))}
           </View>
+
         </ScrollView>
+
       </View>
+      {selectedFilterCount ? <Text className='text-center font-poppinsMedium text-xl'>
+        {data?.pages?.[0]?.count} Post Found
+      </Text> : <></>}
       <FlatList
         data={data?.pages.map((page: any) => page?.data).flat() || []}
         keyExtractor={(item) => item?.uuid?.toString()}
@@ -389,6 +394,7 @@ const PostList = () => {
           );
         }}
       />
+
       <RBSheet
         ref={refRBSheet}
         // useNativeDriver
@@ -495,31 +501,31 @@ const PostList = () => {
                   {((selectedFilters[selectedSection] &&
                     selectedFilters[selectedSection].length > 0) ||
                     (selectedSection === 'city' && city)) && (
-                    <View className="flex-row flex-wrap gap-2 px-1 py-2">
-                      {selectedFilters[selectedSection]?.map((val) => (
-                        <TouchableOpacity
-                          key={val}
-                          className="flex-row items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-2 px-3 py-1 py-1.5">
-                          <Text className="font-poppinsMedium text-xs text-primary">{val}</Text>
-                          <Ionicons
-                            onPress={() => onSelect(selectedSection, val)}
-                            name="close-circle"
-                            size={16}
-                            color={theme.colors.primary}
-                            className="ml-1"
-                          />
-                        </TouchableOpacity>
-                      ))}
-                      {selectedSection === 'city' && city && (
-                        <TouchableOpacity
-                          onPress={() => setCity('')}
-                          className="flex-row items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5">
-                          <Text className="font-poppinsMedium text-xs text-primary">{city}</Text>
-                          <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
-                        </TouchableOpacity>
-                      )}
-                    </View>
-                  )}
+                      <View className="flex-row flex-wrap gap-2 px-1 py-2">
+                        {selectedFilters[selectedSection]?.map((val) => (
+                          <TouchableOpacity
+                            key={val}
+                            className="flex-row items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-2 px-3 py-1 py-1.5">
+                            <Text className="font-poppinsMedium text-xs text-primary">{val}</Text>
+                            <Ionicons
+                              onPress={() => onSelect(selectedSection, val)}
+                              name="close-circle"
+                              size={16}
+                              color={theme.colors.primary}
+                              className="ml-1"
+                            />
+                          </TouchableOpacity>
+                        ))}
+                        {selectedSection === 'city' && city && (
+                          <TouchableOpacity
+                            onPress={() => setCity('')}
+                            className="flex-row items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5">
+                            <Text className="font-poppinsMedium text-xs text-primary">{city}</Text>
+                            <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
+                          </TouchableOpacity>
+                        )}
+                      </View>
+                    )}
                   {['city']?.includes(selectedSection) ? (
                     <View className="p-3">
                       {[

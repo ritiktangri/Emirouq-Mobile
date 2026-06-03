@@ -18,7 +18,6 @@ const Render = ({ item }: any) => {
   const regionalSpec = item?.properties?.find(
     (p: any) => p.attributeKey === 'regional_specification'
   )?.selectedValue?.value;
-  console.log('item?.properties', item?.properties);
   const mileage = item?.properties?.find((p: any) => p.attributeKey === 'mileage')?.selectedValue
     ?.value;
 

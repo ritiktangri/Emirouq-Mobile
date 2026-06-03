@@ -17,7 +17,7 @@ const SubscriptionPlanList = ({ list, categoryId, cb }: any) => {
           data={list}
           ListHeaderComponent={() => (
             <>
-              <Text className="mb-3 text-center text-3xl font-bold text-gray-800">
+              <Text className="mb-3 text-center text-2xl font-bold text-gray-800">
                 Choose Your Subscription Plan
               </Text>
               {/* <Text className="mb-8 text-center text-base leading-relaxed text-gray-600">
@@ -29,62 +29,66 @@ const SubscriptionPlanList = ({ list, categoryId, cb }: any) => {
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.uuid}
           ItemSeparatorComponent={() => <View className="my-2" />}
-          renderItem={({ item }) => (
-            <View className="w-full rounded-2xl border border-gray-200 bg-white p-6">
-              <View className="mb-6 flex-row items-start justify-between">
-                <View>
-                  <View className="mb-2 self-start rounded-full bg-orange-100 px-3 py-1">
-                    <Text className="text-xs font-medium text-orange-600">
-                      {item?.duration} days
+          renderItem={({ item }) => {
+
+            return (
+              <View className="w-full rounded-2xl border border-gray-200 bg-white p-6">
+                <View className="mb-6 flex-row items-start justify-between">
+                  <View>
+                    <View className="mb-2 self-start rounded-full bg-orange-100 px-3 py-1">
+                      <Text className="text-xs font-medium text-orange-600">
+                        {item?.duration} days
+                      </Text>
+                    </View>
+                    <Text className="text-xl font-bold text-gray-800">{item?.name} Plan</Text>
+                  </View>
+
+                  <View className="items-end">
+                    <Text className="text-3xl font-bold text-gray-800">
+                      {toCurrency(item?.amount)}
                     </Text>
                   </View>
-                  <Text className="text-xl font-bold text-gray-800">{item?.name} Plan</Text>
                 </View>
 
-                <View className="items-end">
-                  <Text className="text-3xl font-bold text-gray-800">
-                    {toCurrency(item?.amount)}
-                  </Text>
-                </View>
-              </View>
-
-              <View className="mb-6 gap-3">
-                <View className="flex-row items-center">
-                  <Ionicons name="checkmark-circle" size={20} color="#F97316" />
-                  <Text className="ml-2 text-base text-gray-700">
-                    <Text className="font-semibold text-primary">
-                      {item?.numberOfAds > 1000 ? 'Unlimited' : item?.numberOfAds}{' '}
-                    </Text>
-                    ads{' '}
-                    {item?.name !== 'Business' ? (
-                      <Text>
-                        for {item?.duration} {item?.duration > 1 ? 'days' : 'day'}
+                <View className="mb-6 gap-3">
+                  <View className="flex-row items-center">
+                    <Ionicons name="checkmark-circle" size={20} color="#F97316" />
+                    <Text className="ml-2 text-base text-gray-700">
+                      <Text className="font-semibold text-primary">
+                        {item?.numberOfAds > 1000 ? 'Unlimited' : item?.numberOfAds}{' '}
                       </Text>
-                    ) : (
-                      <></>
-                    )}
-                  </Text>
-                </View>
-                <View className="flex-row items-center">
-                  <Ionicons name="checkmark-circle" size={20} color="#F97316" />
-                  <Text className="ml-2 text-base text-gray-700">
-                    <Text className="font-semibold text-primary">{item?.featuredAdBoosts}</Text>{' '}
-                    Featured Ads
-                  </Text>
-                </View>
-                <View className="flex-row items-center">
-                  <Ionicons name="checkmark-circle" size={20} color="#F97316" />
-                  {item?.additionalBenefits?.map((item: any) => (
-                    <View key={item}>
-                      <Text className="font-semibold text-primary">{item}</Text>
-                    </View>
-                  ))}
-                </View>
-              </View>
+                      ads{' '}
+                      {item?.name !== 'Business' ? (
+                        <Text>
+                          for {item?.duration} {item?.duration > 1 ? 'days' : 'day'}
+                        </Text>
+                      ) : (
+                        <></>
+                      )}
+                    </Text>
+                  </View>
+                  <View className="flex-row items-center">
+                    <Ionicons name="checkmark-circle" size={20} color="#F97316" />
+                    <Text className="ml-2 text-base text-gray-700">
+                      <Text className="font-semibold text-primary">{item?.featuredAdBoosts}</Text>{' '}
+                      Featured Ads
+                    </Text>
+                  </View>
+                  {item?.additionalBenefits?.filter((i: any) => !!i)?.length ? <View className="flex-row items-center">
+                    <Ionicons name="checkmark-circle" size={20} color="#F97316" />
+                    {item?.additionalBenefits?.map((item: any) => (
+                      <View key={item}>
+                        <Text className="font-semibold text-primary">{item}</Text>
+                      </View>
+                    ))}
+                  </View> : <></>}
 
-              <CheckoutScreen id={item?.uuid} item={item} cb={cb} categoryId={categoryId} />
-            </View>
-          )}
+                </View>
+
+                <CheckoutScreen id={item?.uuid} item={item} cb={cb} categoryId={categoryId} />
+              </View>
+            )
+          }}
         />
       </SafeAreaView>
     </View>
