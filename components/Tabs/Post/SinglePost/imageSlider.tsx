@@ -1,101 +1,234 @@
+import React from 'react';
 import {
-  View,
-  FlatList,
-  TouchableOpacity,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
   Image,
   StyleSheet,
+  View,
+  type ImageStyle,
+  type NativeSyntheticEvent,
+  type NativeScrollEvent,
+  type StyleProp,
+  type ViewStyle,
 } from 'react-native';
-import React, { useState } from 'react';
-import { width } from '~/constants/Colors';
+import { FlatList, Pressable } from 'react-native-gesture-handler';
 
-const ImageSlider = ({ images, setModalVisible, fittedSize }: any) => {
-  const [activeIndex, setActiveIndex] = useState(0);
+import { width as screenWidth } from '~/constants/Colors';
 
-  const IMAGE_WIDTH = width;
-  const IMAGE_GAP = 10;
+type ImageSliderProps = {
+  images?: string[];
+  setModalVisible?: (visible: boolean) => void;
+  width?: number;
+  height?: number;
+  showPagination?: boolean;
+  containerStyle?: StyleProp<ViewStyle>;
+  imageStyle?: StyleProp<ImageStyle>;
+  dotColor?: string;
+  activeDotColor?: string;
+  onSwipeStart?: () => void;
+  onSwipeEnd?: () => void;
+};
 
-  const onScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const offsetX = e.nativeEvent.contentOffset.x;
-    const index = Math.round(offsetX / (IMAGE_WIDTH + IMAGE_GAP));
-    setActiveIndex(index);
+const ImageSlider = ({
+  images = [],
+  setModalVisible,
+  width = screenWidth - 20,
+  height = Math.round(screenWidth * 0.7),
+  showPagination = true,
+  containerStyle,
+  imageStyle,
+  dotColor = '#D1D5DB',
+  activeDotColor = '#111827',
+  onSwipeStart,
+  onSwipeEnd,
+}: ImageSliderProps) => {
+  const normalizedImages = React.useMemo(() => images.filter(Boolean), [images]);
+  const hasMultipleImages = normalizedImages.length > 1;
+  const [activeIndex, setActiveIndex] = React.useState(0);
+  const listRef = React.useRef<any>(null);
+  const isAdjustingRef = React.useRef(false);
+  const loopedImages = React.useMemo(() => {
+    if (!hasMultipleImages) {
+      return normalizedImages;
+    }
+
+    return [
+      normalizedImages[normalizedImages.length - 1],
+      ...normalizedImages,
+      normalizedImages[0],
+    ];
+  }, [hasMultipleImages, normalizedImages]);
+
+  React.useEffect(() => {
+    setActiveIndex(0);
+    isAdjustingRef.current = false;
+
+    if (!listRef.current) {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      listRef.current?.scrollToOffset({
+        offset: hasMultipleImages ? width : 0,
+        animated: false,
+      });
+    });
+  }, [hasMultipleImages, normalizedImages, width]);
+
+  const handleScrollStart = () => {
+    if (hasMultipleImages) {
+      onSwipeStart?.();
+    }
   };
 
+  const handleScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (!hasMultipleImages) {
+      onSwipeEnd?.();
+      return;
+    }
+
+    if (isAdjustingRef.current) {
+      isAdjustingRef.current = false;
+      onSwipeEnd?.();
+      return;
+    }
+
+    const nextIndex = Math.round(event.nativeEvent.contentOffset.x / width);
+
+    if (nextIndex <= 0) {
+      isAdjustingRef.current = true;
+      listRef.current?.scrollToOffset({
+        offset: width * normalizedImages.length,
+        animated: false,
+      });
+      setActiveIndex(normalizedImages.length - 1);
+      onSwipeEnd?.();
+      setTimeout(() => {
+        isAdjustingRef.current = false;
+      }, 50);
+      return;
+    }
+
+    if (nextIndex >= loopedImages.length - 1) {
+      isAdjustingRef.current = true;
+      listRef.current?.scrollToOffset({
+        offset: width,
+        animated: false,
+      });
+      setActiveIndex(0);
+      onSwipeEnd?.();
+      setTimeout(() => {
+        isAdjustingRef.current = false;
+      }, 50);
+      return;
+    }
+
+    setActiveIndex(Math.max(0, Math.min(nextIndex - 1, normalizedImages.length - 1)));
+    onSwipeEnd?.();
+  };
+
+  if (!normalizedImages.length) {
+    return <View style={[styles.fallback, { width, height }, containerStyle]} />;
+  }
+
   return (
-    <>
+    <View style={[styles.container, { width, height }, containerStyle]}>
       <FlatList
-        data={images}
+        ref={listRef}
+        data={loopedImages}
+        keyExtractor={(item, index) => `${item}-${index}`}
         horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(_, i) => i.toString()}
-        snapToInterval={IMAGE_WIDTH - 20 + IMAGE_GAP}
+        pagingEnabled
         decelerationRate="fast"
-        snapToAlignment="start"
-        onMomentumScrollEnd={onScrollEnd}
-        contentContainerStyle={{ paddingHorizontal: 10 }}
-        renderItem={({ item }) => (
-          <TouchableOpacity activeOpacity={0.8} onPress={() => setModalVisible?.(true)}>
-            <Image
-              source={{ uri: item }}
-              style={{
-                width: IMAGE_WIDTH - 20,
-                height: IMAGE_WIDTH * 0.7,
-                borderRadius: 8,
-                marginRight: IMAGE_GAP,
-              }}
-              resizeMode="cover"
-            />
-          </TouchableOpacity>
-        )}
+        disableIntervalMomentum
+        nestedScrollEnabled
+        showsHorizontalScrollIndicator={false}
+        bounces={false}
+        overScrollMode="never"
+        scrollEventThrottle={16}
+        initialScrollIndex={hasMultipleImages ? 1 : 0}
+        getItemLayout={(_, index) => ({
+          length: width,
+          offset: width * index,
+          index,
+        })}
+        onScrollBeginDrag={handleScrollStart}
+        onMomentumScrollEnd={handleScrollEnd}
+        onScrollEndDrag={handleScrollEnd}
+        renderItem={({ item }) => {
+          const image = (
+            <Image source={{ uri: item }} style={[styles.image, imageStyle]} resizeMode="cover" />
+          );
+
+          return (
+            <View style={{ width, height }}>
+              {setModalVisible ? (
+                <Pressable
+                  onPress={() => setModalVisible(true)}
+                  style={styles.slidePressable}
+                  android_ripple={{ color: 'transparent' }}>
+                  {image}
+                </Pressable>
+              ) : (
+                image
+              )}
+            </View>
+          );
+        }}
       />
 
-      {/* Dots */}
-      <View style={styles.dotsContainer}>
-        {images.map((_, index) => (
-          <View key={index} style={[styles.dot, index === activeIndex && styles.activeDot]} />
-        ))}
-      </View>
-    </>
+      {showPagination && hasMultipleImages ? (
+        <View pointerEvents="none" style={styles.pagination}>
+          {normalizedImages.map((_, index) => {
+            const isActive = index === activeIndex;
+            return (
+              <View
+                key={`${index}`}
+                style={[
+                  styles.dot,
+                  {
+                    backgroundColor: isActive ? activeDotColor : dotColor,
+                    opacity: isActive ? 1 : 0.55,
+                    width: isActive ? 10 : 5,
+                  },
+                ]}
+              />
+            );
+          })}
+        </View>
+      ) : null}
+    </View>
   );
 };
 
 export default ImageSlider;
 
 const styles = StyleSheet.create({
-  dotsContainer: {
+  container: {
+    overflow: 'hidden',
+    alignSelf: 'center',
+  },
+  slidePressable: {
+    flex: 1,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 8,
+  },
+  fallback: {
+    backgroundColor: '#E5E7EB',
+  },
+  pagination: {
+    position: 'absolute',
+    bottom: 8,
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 10,
+    alignItems: 'center',
   },
   dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#bbb',
-    marginHorizontal: 4,
-  },
-  activeDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#000',
-  },
-  closeBtn: {
-    position: 'absolute',
-    right: 20,
-    top: 40,
-    zIndex: 10,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  closeText: {
-    color: '#fff',
-    fontSize: 24,
-    marginTop: -2,
+    height: 5,
+    borderRadius: 999,
+    marginHorizontal: 3,
   },
 });

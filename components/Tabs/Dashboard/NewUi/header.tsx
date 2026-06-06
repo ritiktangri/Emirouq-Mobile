@@ -4,6 +4,7 @@ import { Href, router } from 'expo-router';
 import React, { useRef } from 'react';
 import { TouchableOpacity, ScrollView } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
+
 import { Text } from '~/components/common/Text';
 import { View } from '~/components/common/View';
 import { useAuth } from '~/context/AuthContext';
@@ -56,6 +57,13 @@ export default function Header({ user }: any) {
             }}
             className="rounded-lg border border-gray-200 p-2">
             <AntDesign name="search1" size={20} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              router.push(routes.tabs.notification as Href);
+            }}
+            className="rounded-lg border border-gray-200 p-2">
+            <Ionicons name="notifications-outline" size={20} color="black" />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
@@ -123,7 +131,7 @@ export default function Header({ user }: any) {
                     )}>
                     {item.label}
                   </Text>
-                  {city === item.value && <Ionicons name="checkmark" color={'#FF5722'} size={20} />}
+                  {city === item.value && <Ionicons name="checkmark" color="#FF5722" size={20} />}
                 </TouchableOpacity>
               ))}
             </View>

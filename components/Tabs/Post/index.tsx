@@ -299,7 +299,9 @@ const AddPost = () => {
       };
     });
     const existingKeys = new Set(existingImages.map(getAssetKey));
-    const uniqueAssets = formattedAssets.filter((item: any) => !existingKeys.has(getAssetKey(item)));
+    const uniqueAssets = formattedAssets.filter(
+      (item: any) => !existingKeys.has(getAssetKey(item))
+    );
 
     if (Platform.OS === 'ios') {
       setValue('images', [...existingImages, ...uniqueAssets]);

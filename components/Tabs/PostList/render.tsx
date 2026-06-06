@@ -1,19 +1,26 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native';
-import React from 'react';
 import { Entypo, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Href, useRouter } from 'expo-router';
-import { routes } from '~/utils/routes';
-import AddToFavourite from '../Dashboard/AddToFavourite';
-import { useAuth } from '~/context/AuthContext';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { Href, useRouter } from 'expo-router';
+import React, { useRef } from 'react';
+import { Platform, View, Text } from 'react-native';
+import { Pressable } from 'react-native-gesture-handler';
+
+import AddToFavourite from '../Dashboard/AddToFavourite';
+import ImageSlider from '../Post/SinglePost/imageSlider';
+
+import { width } from '~/constants/Colors';
+import { useAuth } from '~/context/AuthContext';
 import { toCurrency } from '~/utils/helper';
+import { routes } from '~/utils/routes';
 
 dayjs.extend(relativeTime);
 
 const Render = ({ item }: any) => {
   const router = useRouter();
   const { user } = useAuth();
+  const swipeInProgressRef = useRef(false);
+  const lastSwipeAtRef = useRef(0);
 
   const regionalSpec = item?.properties?.find(
     (p: any) => p.attributeKey === 'regional_specification'
@@ -21,18 +28,54 @@ const Render = ({ item }: any) => {
   const mileage = item?.properties?.find((p: any) => p.attributeKey === 'mileage')?.selectedValue
     ?.value;
 
+  const handleSwipeStart = () => {
+    swipeInProgressRef.current = true;
+    lastSwipeAtRef.current = Date.now();
+  };
+
+  const handleSwipeEnd = () => {
+    swipeInProgressRef.current = false;
+    lastSwipeAtRef.current = Date.now();
+  };
+
   return (
-    <TouchableOpacity
-      className="mb-4 w-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm shadow-slate-200"
+    <Pressable
+      className="mb-4 w-full overflow-hidden rounded-2xl border border-gray-800 bg-white shadow-sm shadow-slate-200"
+      style={[
+        {
+          borderWidth: 1,
+          borderColor: '#E5E7EB',
+          borderRadius: 16,
+          backgroundColor: '#FFFFFF',
+          overflow: 'hidden',
+        },
+        Platform.OS === 'android'
+          ? { elevation: 0 }
+          : {
+              shadowColor: '#0F172A',
+              shadowOpacity: 0.05,
+              shadowRadius: 8,
+              shadowOffset: { width: 0, height: 2 },
+            },
+      ]}
       onPress={() => {
-        router.push({
-          pathname: routes.tabs.singlePost(item?.uuid),
-          params: { title: `${item?.title}` },
-        } as Href);
+        if (!(swipeInProgressRef.current || Date.now() - lastSwipeAtRef.current < 300)) {
+          router.push({
+            pathname: routes.tabs.singlePost(item?.uuid),
+            params: { title: `${item?.title}` },
+          } as Href);
+        }
       }}>
       {/* Image Section */}
-      <View className="relative h-56 w-full overflow-hidden bg-gray-50">
-        <Image source={{ uri: item?.file?.[0] }} className="h-full w-full" resizeMode="cover" />
+      <View className="relative w-full bg-gray-50">
+        <ImageSlider
+          images={item?.file || []}
+          width={width - 16}
+          height={224}
+          containerStyle={{ width: width - 16, height: 224 }}
+          onSwipeStart={handleSwipeStart}
+          onSwipeEnd={handleSwipeEnd}
+        />
         {user?.uuid && <AddToFavourite item={item} />}
       </View>
 
@@ -55,13 +98,17 @@ const Render = ({ item }: any) => {
               {regionalSpec && (
                 <View className="flex-row items-center rounded-lg border border-[#e1f2e8] bg-[#f3faf6] px-2.5 py-1">
                   <Ionicons name="shield-checkmark" size={14} color="#16a34a" />
-                  <Text className="ml-1.5 text-[11px] font-semibold text-green-600">{regionalSpec}</Text>
+                  <Text className="ml-1.5 text-[11px] font-semibold text-green-600">
+                    {regionalSpec}
+                  </Text>
                 </View>
               )}
               {mileage && (
                 <View className="flex-row items-center rounded-lg border border-[#d2e3fc] bg-[#f4f8fe] px-2.5 py-1">
                   <MaterialCommunityIcons name="speedometer" size={14} color="#2563eb" />
-                  <Text className="ml-1.5 text-[11px] font-semibold text-blue-600">{mileage} km</Text>
+                  <Text className="ml-1.5 text-[11px] font-semibold text-blue-600">
+                    {mileage} km
+                  </Text>
                 </View>
               )}
             </View>
@@ -79,7 +126,7 @@ const Render = ({ item }: any) => {
           </Text>
         </View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

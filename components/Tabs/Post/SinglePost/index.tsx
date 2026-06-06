@@ -2,7 +2,13 @@
 /* eslint-disable import/order */
 import React, { useCallback, useEffect, useState } from 'react';
 import { Image, Linking, RefreshControl, ScrollView, Share, TouchableOpacity } from 'react-native';
-import { AntDesign, Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
+import {
+  AntDesign,
+  Feather,
+  FontAwesome,
+  Ionicons,
+  MaterialCommunityIcons,
+} from '@expo/vector-icons';
 import { Href, router, useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
 import { View } from '~/components/common/View';
 import { Text } from '~/components/common/Text';
@@ -54,6 +60,13 @@ const SinglePost = () => {
       });
     }
   }, [data]);
+
+  const regionalSpec = data?.data?.properties?.find(
+    (property: any) => property.attributeKey === 'regional_specification'
+  )?.selectedValue?.value;
+  const mileage = data?.data?.properties?.find(
+    (property: any) => property.attributeKey === 'mileage'
+  )?.selectedValue?.value;
 
   const handleRefresh = useCallback(() => {
     queryClient.removeQueries({ queryKey: ['singlePost', id] });
@@ -244,9 +257,34 @@ const SinglePost = () => {
 
           {/* Product Details */}
           <View className="p-4">
-            <Text className="mb-2 text-2xl font-bold">{data?.data?.title}</Text>
+            <View className="flex-row items-start justify-between gap-3">
+              <Text className="flex-1 text-2xl font-bold" numberOfLines={2}>
+                {data?.data?.title}
+              </Text>
 
-            <Text className="text-2xl font-semibold text-primary">
+              {(regionalSpec || mileage) && (
+                <View className="flex-row flex-wrap items-center justify-end gap-2 pt-1">
+                  {regionalSpec && (
+                    <View className="flex-row items-center rounded-lg border border-[#e1f2e8] bg-[#f3faf6] px-2.5 py-1">
+                      <Ionicons name="shield-checkmark" size={14} color="#16a34a" />
+                      <Text className="ml-1.5 text-[11px] font-semibold text-green-600">
+                        {regionalSpec}
+                      </Text>
+                    </View>
+                  )}
+                  {mileage && (
+                    <View className="flex-row items-center rounded-lg border border-[#d2e3fc] bg-[#f4f8fe] px-2.5 py-1">
+                      <MaterialCommunityIcons name="speedometer" size={14} color="#2563eb" />
+                      <Text className="ml-1.5 text-[11px] font-semibold text-blue-600">
+                        {mileage} km
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              )}
+            </View>
+
+            <Text className="mt-2 text-2xl font-semibold text-primary">
               {toCurrency(data?.data?.price)}
             </Text>
 
@@ -516,9 +554,10 @@ const SinglePost = () => {
                       <>
                         {displayedProps.map((property: any, index: number) => {
                           const isLeft = index % 2 === 0;
-                          const lastRowStart = displayedProps.length % 2 === 0
-                            ? displayedProps.length - 2
-                            : displayedProps.length - 1;
+                          const lastRowStart =
+                            displayedProps.length % 2 === 0
+                              ? displayedProps.length - 2
+                              : displayedProps.length - 1;
                           const isLastRow = index >= lastRowStart;
 
                           return (

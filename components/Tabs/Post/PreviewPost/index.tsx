@@ -185,9 +185,10 @@ const PreviewPost = () => {
                         {displayedProps.map((property: any, index: number) => {
                           const isLeft = index % 2 === 0;
                           const totalWithStatic = index + 2; // account for Condition & Category rows
-                          const lastRowStart = displayedProps.length % 2 === 0
-                            ? displayedProps.length - 2
-                            : displayedProps.length - 1;
+                          const lastRowStart =
+                            displayedProps.length % 2 === 0
+                              ? displayedProps.length - 2
+                              : displayedProps.length - 1;
                           const isLastRow = index >= lastRowStart;
 
                           return (

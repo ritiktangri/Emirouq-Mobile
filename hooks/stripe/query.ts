@@ -4,6 +4,7 @@ import {
   checkSubscription,
   fetchPaymentSheetService,
   getPlansService,
+  getMySubscriptionsService,
   isCategorySubscribed,
 } from '~/utils/services/stripe';
 
@@ -40,6 +41,14 @@ export const useCheckSubscription = (id: any, refetchInterval: any) =>
       }
       return refetchInterval;
     },
+  });
+
+export const useGetMySubscriptions = (userId: any) =>
+  useQuery({
+    queryKey: ['my-subscriptions', userId],
+    queryFn: () => getMySubscriptionsService(),
+    refetchOnWindowFocus: false,
+    enabled: !!userId,
   });
 
 export const useIsSubscribedForCategory = (categoryId: any) =>

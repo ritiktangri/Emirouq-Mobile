@@ -25,13 +25,36 @@ const Login = ({ checkinType }: any) => {
   const scrollViewRef = useRef<ScrollView>(null);
 
   const handleLogin = () => {
+    const email = form.email.trim();
+    const phoneNumber = form.phoneNumber.trim();
+    const password = form.password.trim();
+
+    if (checkinType === 'email') {
+      if (!email) {
+        showToast('Please enter your email address.', 'error');
+        return;
+      }
+      if (!/^\S+@\S+\.\S+$/.test(email)) {
+        showToast('Please enter a valid email address.', 'error');
+        return;
+      }
+    } else if (!phoneNumber) {
+      showToast('Please enter your phone number.', 'error');
+      return;
+    }
+
+    if (!password) {
+      showToast('Please enter your password.', 'error');
+      return;
+    }
+
     const body: any = {
-      password: form.password,
+      password,
     };
     if (checkinType === 'email') {
-      body.email = form.email;
+      body.email = email;
     } else {
-      body.phoneNumber = form.phoneNumber;
+      body.phoneNumber = phoneNumber;
     }
     login(
       body,
@@ -39,7 +62,10 @@ const Login = ({ checkinType }: any) => {
         showToast('Login Successful!', 'success', 600);
       },
       (err: any) => {
-        showToast(err?.message, 'error');
+        showToast(
+          err?.message || 'Invalid email or password. Please check your details and try again.',
+          'error'
+        );
       }
     );
   };

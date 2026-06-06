@@ -1,11 +1,12 @@
-import { TouchableOpacity, Animated } from 'react-native';
-import React, { useState } from 'react';
 import { AntDesign } from '@expo/vector-icons';
-import { useAuth } from '~/context/AuthContext';
-import { useUpdateFavourite } from '~/hooks/post/mutation';
-import { useTheme } from '~/context/ThemeContext';
-import { useGetFavouritePosts } from '~/hooks/post/query';
 import { usePathname } from 'expo-router';
+import React, { useState } from 'react';
+import { Animated, TouchableOpacity } from 'react-native';
+
+import { useAuth } from '~/context/AuthContext';
+import { useTheme } from '~/context/ThemeContext';
+import { useUpdateFavourite } from '~/hooks/post/mutation';
+import { useGetFavouritePosts } from '~/hooks/post/query';
 
 const AddToFavourite = ({ item }: any) => {
   const { user, getUser, city } = useAuth();
@@ -34,22 +35,27 @@ const AddToFavourite = ({ item }: any) => {
     try {
       updateFavouriteStatus
         ?.mutateAsync({ pathParams: { id: item?.uuid } })
-        ?.then((res: any) => {
+        ?.then(() => {
           showToast('Favourites updated!', 'success');
           getUser();
-          if (pathname == '/favourites/page') {
+          if (pathname === '/favourites/page') {
             refetch();
           }
         })
-        ?.catch((err: any) => {
-          if (err) {
-            setIsFavourited(false);
-          }
+        ?.catch(() => {
+          setIsFavourited(false);
         });
-    } catch (err) { }
+    } catch {
+      setIsFavourited(false);
+    }
   };
   return (
-    <Animated.View className="absolute right-2 top-2">
+    <Animated.View
+      className="absolute right-2 top-2"
+      style={{
+        zIndex: 50,
+        elevation: 50,
+      }}>
       <TouchableOpacity
         className="h-10 w-10 items-center justify-center rounded-full bg-white p-2"
         onPress={(e) => {

@@ -104,3 +104,9 @@ export const isCategorySubscribed = async ({ pathParams }: any) => {
     pathParams,
   });
 };
+export const getMySubscriptionsService = async () => {
+  // Ensure uriEndPoint conforms to the expected UriEndPoint interface/type
+  return callApi({
+    uriEndPoint: { ...stripe.mySubscriptions.v1 } as ApiEndpoint,
+  });
+};

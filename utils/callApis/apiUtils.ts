@@ -28,6 +28,21 @@ export const getDefaultHeaders = async (multipart: boolean) => {
     'Content-Type': contentType,
   };
 };
+
+const normalizeApiError = (err: any) => {
+  const responseError = err?.response?.data?.error;
+  const responseMessage = err?.response?.data?.message;
+  const rawError = responseError ?? responseMessage ?? err?.message ?? 'Something went wrong';
+  const message =
+    typeof rawError === 'string' ? rawError : rawError?.message || 'Something went wrong';
+
+  const normalizedError: any = new Error(message);
+  normalizedError.status = rawError?.status || err?.response?.status || err?.status;
+  normalizedError.raw = rawError;
+  normalizedError.response = err?.response;
+
+  return normalizedError;
+};
 /**
  * Returns true if the input apiResponse has errors.
  * @param {*} apiResponse
@@ -151,16 +166,7 @@ export const callApi = (
         resolve(response?.data);
       })
       .catch((err) => {
-        if (!err?.response?.data?.error) {
-          reject(err);
-          return;
-        }
-        if (err?.response?.status === 401) {
-          reject(err?.response?.data?.error);
-        }
-        if (err?.response) {
-          reject(err?.response?.data?.error);
-        }
+        reject(normalizeApiError(err));
       });
   });
 interface CallApiType {

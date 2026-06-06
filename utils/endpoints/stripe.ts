@@ -94,6 +94,13 @@ const stripe = {
       uri: prefix + '/check-subscription/:id',
     },
   },
+  mySubscriptions: {
+    v1: {
+      ...defaults.methods.GET,
+      ...defaults.versions.v1,
+      uri: prefix + '/my-subscriptions',
+    },
+  },
   isCategorySubscribed: {
     v1: {
       ...defaults.methods.GET,
