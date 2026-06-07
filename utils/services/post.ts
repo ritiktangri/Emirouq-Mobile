@@ -88,3 +88,9 @@ export async function countViewPost({ pathParams }: any) {
     pathParams,
   });
 }
+export async function getPostCount({ query }: any) {
+  return callApi({
+    uriEndPoint: { ...post.getPostCount.v1 } as ApiEndpoint,
+    query,
+  });
+}

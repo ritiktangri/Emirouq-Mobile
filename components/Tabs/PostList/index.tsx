@@ -16,7 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { cn, screenHeight } from '~/utils/helper';
 import { useGlobalSearchParams, useRouter } from 'expo-router';
 import { i18n } from '~/utils/i18n';
-import { useGetPosts } from '~/hooks/post/query';
+import { useGetPostShowResultCount, useGetPosts } from '~/hooks/post/query';
 import Render from './render';
 import theme from '~/utils/theme';
 import { queryClient } from '~/app/_layout';
@@ -50,40 +50,30 @@ const PostList = () => {
   const selectedFilterCount = React.useMemo(() => {
     let count = 0;
 
-    Object.entries(appliedFilter || {}).forEach(([key, value]) => {
-      if (!value) return;
-
-      // 1️⃣ Properties: count attribute keys (NOT values)
-      if (key === 'properties' && typeof value === 'object') {
-        count += Object.keys(value).length;
-        return;
-      }
-
-      // 2️⃣ City: count as 1 if truthy
-      if (key === 'city' && typeof value === 'string' && value.trim()) {
-        count += 1;
-        return;
-      }
-
-      // 3️⃣ Price: count as 1 if meaningful
-      if (key === 'price' && isPriceApplied) {
-        if (typeof value === 'string') {
-          const [min, max] = value.split('-').map(Number);
-          if ((min && min > 0) || (max && max > 0)) {
-            count += 1;
-          }
-        }
-        return;
-      }
-
-      // 4️⃣ Any other applied primitive filter (e.g. sortBy)
-      if (typeof value === 'string' && value.trim()) {
+    Object.keys(selectedFilters || {}).forEach((key) => {
+      if ((selectedFilters?.[key] || []).length > 0) {
         count += 1;
       }
     });
 
+    if (city.trim()) {
+      count += 1;
+    }
+
+    if (isPriceApplied && (priceRange.min > 0 || priceRange.max > 0)) {
+      count += 1;
+    }
+
+    if (yearApplied) {
+      count += 1;
+    }
+
+    if (sortBy.trim()) {
+      count += 1;
+    }
+
     return count;
-  }, [appliedFilter, isPriceApplied]);
+  }, [city, isPriceApplied, priceRange.max, priceRange.min, selectedFilters, sortBy, yearApplied]);
 
   const attributes: any = useGetAttributes({ id: params.subCategory });
   const attributeOptions = useGetAttributeOptions({
@@ -118,6 +108,36 @@ const PostList = () => {
     );
   };
   const [keyword, setKeyword] = useState('');
+  const liveCountQuery = React.useMemo(
+    () => ({
+      status: 'active',
+      subCategory: params.subCategory,
+      category: params.category,
+      keyword,
+      properties: [
+        ...Object.values(selectedFilters || {})?.flat(),
+        ...(yearApplied ? [yearRange.min?.toString(), yearRange.max?.toString()] : []),
+      ].filter(Boolean),
+      city: city || undefined,
+      priceRange:
+        isPriceApplied && (priceRange.min > 0 || priceRange.max > 0)
+          ? [priceRange.min?.toString(), priceRange.max?.toString()]
+          : undefined,
+    }),
+    [
+      city,
+      isPriceApplied,
+      keyword,
+      params.category,
+      params.subCategory,
+      priceRange.max,
+      priceRange.min,
+      selectedFilters,
+      yearApplied,
+      yearRange.max,
+      yearRange.min,
+    ]
+  );
   const { isFetching, data, refetch }: any = useGetPosts({
     status: 'active',
     subCategory: params.subCategory,
@@ -127,6 +147,9 @@ const PostList = () => {
     properties: Object.values(appliedFilter.properties || {})?.flat(),
     city: appliedFilter.city,
     priceRange: appliedFilter.price?.split('-'),
+  });
+  const { data: getPostCount, refetch: refetchPostCount }: any = useGetPostShowResultCount({
+    query: liveCountQuery,
   });
 
   useEffect(() => {
@@ -196,11 +219,13 @@ const PostList = () => {
 
   const handleRefresh = useCallback(() => {
     queryClient.removeQueries({ queryKey: ['posts'] });
+    queryClient.removeQueries({ queryKey: ['show-result-count'] });
 
     refetch();
+    refetchPostCount();
     attributes.refetch();
     attributeOptions.refetch();
-  }, [queryClient, refetch]);
+  }, [attributeOptions, attributes, refetch, refetchPostCount]);
   const handleDebounce = useCallback(
     debounce((text: string) => setKeyword(text), 300),
     []
@@ -250,7 +275,6 @@ const PostList = () => {
     ],
     [attributes]
   );
-
   return (
     <View className="flex-1 bg-white">
       <View
@@ -355,13 +379,15 @@ const PostList = () => {
                 </TouchableOpacity>
               ))}
           </View>
-
         </ScrollView>
-
       </View>
-      {selectedFilterCount ? <Text className='text-center font-poppinsMedium text-xl'>
-        {data?.pages?.[0]?.count} Post Found
-      </Text> : <></>}
+      {/* {selectedFilterCount ? (
+        <Text className="text-center font-poppinsMedium text-xl">
+          {data?.pages?.[0]?.count} Post Found
+        </Text>
+      ) : (
+        <></>
+      )} */}
       <FlatList
         data={data?.pages.map((page: any) => page?.data).flat() || []}
         keyExtractor={(item) => item?.uuid?.toString()}
@@ -501,31 +527,31 @@ const PostList = () => {
                   {((selectedFilters[selectedSection] &&
                     selectedFilters[selectedSection].length > 0) ||
                     (selectedSection === 'city' && city)) && (
-                      <View className="flex-row flex-wrap gap-2 px-1 py-2">
-                        {selectedFilters[selectedSection]?.map((val) => (
-                          <TouchableOpacity
-                            key={val}
-                            className="flex-row items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-2 px-3 py-1 py-1.5">
-                            <Text className="font-poppinsMedium text-xs text-primary">{val}</Text>
-                            <Ionicons
-                              onPress={() => onSelect(selectedSection, val)}
-                              name="close-circle"
-                              size={16}
-                              color={theme.colors.primary}
-                              className="ml-1"
-                            />
-                          </TouchableOpacity>
-                        ))}
-                        {selectedSection === 'city' && city && (
-                          <TouchableOpacity
-                            onPress={() => setCity('')}
-                            className="flex-row items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5">
-                            <Text className="font-poppinsMedium text-xs text-primary">{city}</Text>
-                            <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
-                          </TouchableOpacity>
-                        )}
-                      </View>
-                    )}
+                    <View className="flex-row flex-wrap gap-2 px-1 py-2">
+                      {selectedFilters[selectedSection]?.map((val) => (
+                        <TouchableOpacity
+                          key={val}
+                          className="flex-row items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-2 px-3 py-1 py-1.5">
+                          <Text className="font-poppinsMedium text-xs text-primary">{val}</Text>
+                          <Ionicons
+                            onPress={() => onSelect(selectedSection, val)}
+                            name="close-circle"
+                            size={16}
+                            color={theme.colors.primary}
+                            className="ml-1"
+                          />
+                        </TouchableOpacity>
+                      ))}
+                      {selectedSection === 'city' && city && (
+                        <TouchableOpacity
+                          onPress={() => setCity('')}
+                          className="flex-row items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5">
+                          <Text className="font-poppinsMedium text-xs text-primary">{city}</Text>
+                          <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  )}
                   {['city']?.includes(selectedSection) ? (
                     <View className="p-3">
                       {[
@@ -884,7 +910,9 @@ const PostList = () => {
                   refRBSheet.current.close();
                   setIsAllFilterSelected(false);
                 }}>
-                <Text className="font-poppinsMedium text-white">Apply filters</Text>
+                <Text className="font-poppinsMedium text-white">
+                  Show {getPostCount || 0} result
+                </Text>
               </TouchableOpacity>
             </View>
           </View>

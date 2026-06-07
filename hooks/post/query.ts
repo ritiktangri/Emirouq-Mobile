@@ -4,6 +4,7 @@ import {
   countViewPost,
   getDashboardPost,
   getFavourite,
+  getPostCount,
   getPostService,
   getSimilarPostsService,
   getSinglePostService,
@@ -125,6 +126,15 @@ export const useGetCountPost = (postId: any) =>
     queryFn: () =>
       countViewPost({
         pathParams: { postId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+export const useGetPostShowResultCount = ({ query }: any) =>
+  useQuery({
+    queryKey: ['show-result-count', query],
+    queryFn: () =>
+      getPostCount({
+        query,
       }),
     refetchOnWindowFocus: false,
   });

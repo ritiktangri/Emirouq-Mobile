@@ -17,6 +17,13 @@ const post: any = {
       uri: `${prefix}/list`,
     },
   },
+  getPostCount: {
+    v1: {
+      ...defaults.methods.GET,
+      ...defaults.versions.v1,
+      uri: `${prefix}/count`,
+    },
+  },
   getFeaturedAds: {
     v1: {
       ...defaults.methods.GET,
