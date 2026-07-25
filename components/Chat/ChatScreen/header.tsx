@@ -64,6 +64,7 @@ const Header = ({ data, status }: any) => {
   const { socketIo, user } = useAuth();
   const currentAppState = useAppState();
   const { clearAudioCache, stop } = useAudioPlayer();
+
   useEffect(() => {
     if (socketIo?.connected) {
       if (currentAppState !== 'active') {
@@ -152,9 +153,6 @@ const Header = ({ data, status }: any) => {
           ) : null}
         </View>
       </View>
-      {/* <TouchableOpacity>
-        <Ionicons name="ellipsis-vertical" size={24} color="black" />
-      </TouchableOpacity> */}
     </View>
   );
 };

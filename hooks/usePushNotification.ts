@@ -1,6 +1,10 @@
-import { useEffect } from 'react';
 import * as Notifications from 'expo-notifications';
+import { router } from 'expo-router';
+import { useEffect } from 'react';
+
 import { setStorageItemAsync } from './useStorageState';
+
+import { getNotificationTarget } from '~/utils/notification-routing';
 import { registerForPushNotificationsAsync } from '~/utils/notification.utils';
 import { saveNotificationToken } from '~/utils/services/user';
 
@@ -31,7 +35,12 @@ export function usePushNotifications(user: any) {
       });
 
       responseSubscription = Notifications.addNotificationResponseReceivedListener((response) => {
-        // console.log("Notification tapped:", response);
+        const notificationData: any = response?.notification?.request?.content?.data || {};
+        const target = getNotificationTarget(notificationData);
+
+        if (target) {
+          router.push(target as any);
+        }
       });
     })();
 

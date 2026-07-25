@@ -20,7 +20,6 @@ import { useGetPostShowResultCount, useGetPosts } from '~/hooks/post/query';
 import Render from './render';
 import theme from '~/utils/theme';
 import { queryClient } from '~/app/_layout';
-import { useAuth } from '~/context/AuthContext';
 import { noData } from '~/image';
 import { debounce } from 'lodash';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -41,8 +40,10 @@ const PostList = () => {
   const [isAllFilterSelected, setIsAllFilterSelected] = useState(false);
   const [sortBy, setSortBy] = useState('');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 0 });
+  const [mileageRange, setMileageRange] = useState({ min: 0, max: 0 });
   const [yearRange, setYearRange] = useState({ min: 1900, max: dayjs().year() });
   const [isPriceApplied, setIsPriceApplied] = useState(false);
+  const [isMileageApplied, setIsMileageApplied] = useState(false);
   const [yearApplied, setYearApplied] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
   const [appliedFilter, setAppliedFilter] = useState({} as any);
@@ -64,6 +65,10 @@ const PostList = () => {
       count += 1;
     }
 
+    if (isMileageApplied && (mileageRange.min > 0 || mileageRange.max > 0)) {
+      count += 1;
+    }
+
     if (yearApplied) {
       count += 1;
     }
@@ -73,8 +78,18 @@ const PostList = () => {
     }
 
     return count;
-  }, [city, isPriceApplied, priceRange.max, priceRange.min, selectedFilters, sortBy, yearApplied]);
-
+  }, [
+    city,
+    isMileageApplied,
+    isPriceApplied,
+    mileageRange.max,
+    mileageRange.min,
+    priceRange.max,
+    priceRange.min,
+    selectedFilters,
+    sortBy,
+    yearApplied,
+  ]);
   const attributes: any = useGetAttributes({ id: params.subCategory });
   const attributeOptions = useGetAttributeOptions({
     attributeId: selectedSection,
@@ -83,9 +98,14 @@ const PostList = () => {
   const yearData = (attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || [])?.find(
     (j: any) => j.attributeKey?.toLowerCase() === 'year'
   );
+  const mileageData = (attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || [])?.find(
+    (j: any) => j.attributeKey?.toLowerCase() === 'mileage'
+  );
   const yearId = yearData?.uuid;
+  const mileageId = mileageData?.uuid;
   const isYearSelected = yearData?.uuid === selectedSection;
-  const showSlider = isYearSelected || selectedSection === 'price';
+  const isMileageSelected = selectedSection === 'mileage' || selectedSection === mileageId;
+  const showSlider = isYearSelected || selectedSection === 'price' || isMileageSelected;
   const isFilterApplied = (sectionUuid: string) => {
     if (sectionUuid === 'city') {
       return Boolean(appliedFilter.city) || Boolean(city);
@@ -93,6 +113,10 @@ const PostList = () => {
 
     if (sectionUuid === 'price') {
       return Boolean(appliedFilter.price) || Boolean(isPriceApplied);
+    }
+
+    if (sectionUuid === 'mileage' || sectionUuid === mileageId) {
+      return Boolean(appliedFilter.mileageRange) || Boolean(isMileageApplied);
     }
 
     if (sectionUuid === yearId) {
@@ -123,13 +147,20 @@ const PostList = () => {
         isPriceApplied && (priceRange.min > 0 || priceRange.max > 0)
           ? [priceRange.min?.toString(), priceRange.max?.toString()]
           : undefined,
+      mileageRange:
+        isMileageApplied && (mileageRange.min > 0 || mileageRange.max > 0)
+          ? [mileageRange.min?.toString(), mileageRange.max?.toString()]
+          : undefined,
     }),
     [
       city,
+      isMileageApplied,
       isPriceApplied,
       keyword,
       params.category,
       params.subCategory,
+      mileageRange.max,
+      mileageRange.min,
       priceRange.max,
       priceRange.min,
       selectedFilters,
@@ -147,6 +178,7 @@ const PostList = () => {
     properties: Object.values(appliedFilter.properties || {})?.flat(),
     city: appliedFilter.city,
     priceRange: appliedFilter.price?.split('-'),
+    mileageRange: appliedFilter.mileageRange?.split('-'),
   });
   const { data: getPostCount, refetch: refetchPostCount }: any = useGetPostShowResultCount({
     query: liveCountQuery,
@@ -160,6 +192,15 @@ const PostList = () => {
       });
     }
   }, [data?.pages?.[0]?.maxPrice, isPriceApplied]);
+
+  useEffect(() => {
+    if (data?.pages?.[0]?.maxMileage && !isMileageApplied) {
+      setMileageRange({
+        min: 0,
+        max: data.pages[0].maxMileage,
+      });
+    }
+  }, [data?.pages?.[0]?.maxMileage, isMileageApplied]);
 
   // Load filters from AsyncStorage
   useEffect(() => {
@@ -180,6 +221,8 @@ const PostList = () => {
             setCity('');
             setPriceRange({ min: 0, max: 0 });
             setIsPriceApplied(false);
+            setMileageRange({ min: 0, max: 0 });
+            setIsMileageApplied(false);
             setYearRange({ min: 1900, max: dayjs().year() });
             setYearApplied(false);
             setSortBy('');
@@ -191,6 +234,8 @@ const PostList = () => {
           setCity(savedData.city || '');
           setPriceRange(savedData.priceRange || { min: 0, max: 0 });
           setIsPriceApplied(savedData.isPriceApplied || false);
+          setMileageRange(savedData.mileageRange || { min: 0, max: 0 });
+          setIsMileageApplied(savedData.isMileageApplied || false);
           setYearRange(savedData.yearRange || { min: 1900, max: dayjs().year() });
           setYearApplied(savedData.yearApplied || false);
           setSortBy(savedData.sortBy || '');
@@ -204,6 +249,8 @@ const PostList = () => {
           setCity('');
           setPriceRange({ min: 0, max: 0 });
           setIsPriceApplied(false);
+          setMileageRange({ min: 0, max: 0 });
+          setIsMileageApplied(false);
           setYearRange({ min: 1900, max: dayjs().year() });
           setYearApplied(false);
           setSortBy('');
@@ -269,11 +316,14 @@ const PostList = () => {
 
   const sections = React.useMemo(
     () => [
-      ...(attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || []),
+      ...((attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || [])?.filter(
+        (item: any) => item?.attributeKey?.toLowerCase() !== 'mileage'
+      ) || []),
       { label: 'Price', uuid: 'price' },
+      { label: 'Mileage KM', uuid: mileageId || 'mileage', visibleInFilter: true },
       { label: 'City', uuid: 'city' },
     ],
-    [attributes]
+    [attributes, mileageId]
   );
   return (
     <View className="flex-1 bg-white">
@@ -339,8 +389,11 @@ const PostList = () => {
           contentContainerClassName=" gap-2 items-center">
           <View className="ml-3 flex-row items-center gap-2">
             {[
-              ...(attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || []),
+              ...((attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || [])?.filter(
+                (item: any) => item?.attributeKey?.toLowerCase() !== 'mileage'
+              ) || []),
               { label: 'Price', uuid: 'price', visibleInFilter: true },
+              { label: 'Mileage KM', uuid: mileageId || 'mileage', visibleInFilter: true },
               { label: 'City', uuid: 'city', visibleInFilter: true },
               // { label: 'All Filters', uuid: 'all-filters' },
             ]
@@ -511,7 +564,9 @@ const PostList = () => {
                     }
                   }}
                   scrollEventThrottle={400}>
-                  {!['price', 'city']?.includes(selectedSection) && !isYearSelected ? (
+                  {!['price', 'city']?.includes(selectedSection) &&
+                  !isYearSelected &&
+                  !isMileageSelected ? (
                     <View className="bg-white pt-3">
                       <Input
                         onChangeText={handleAttributeDebounceSearch}
@@ -578,7 +633,7 @@ const PostList = () => {
                               {section.value}
                             </Text>
                             {city === section.value ? (
-                              <Ionicons name="checkmark" color={'#FF5722'} size={20} />
+                              <Ionicons name="checkmark" color="#FF5722" size={20} />
                             ) : null}
                           </TouchableOpacity>
                           {index < 6 && <Divider />}
@@ -609,7 +664,7 @@ const PostList = () => {
                                   {section.value}
                                 </Text>
                                 {selectedFilters[selectedSection]?.includes(section.value) ? (
-                                  <Ionicons name="checkmark" color={'#FF5722'} size={20} />
+                                  <Ionicons name="checkmark" color="#FF5722" size={20} />
                                 ) : null}
                               </TouchableOpacity>
                               {index < array.length - 1 && <Divider />}
@@ -820,6 +875,99 @@ const PostList = () => {
                         <></>
                       )}
 
+                      {isMileageSelected ? (
+                        <View className="px-1 pt-4">
+                          <Text
+                            allowFontScaling={false}
+                            className="mb-2 font-poppinsMedium text-base">
+                            Set your desired mileage range
+                          </Text>
+
+                          <View className="mb-2 flex-row items-center justify-between">
+                            <View className=" flex-1 flex-row items-center rounded-lg border border-gray-300 px-2">
+                              <TextInput
+                                keyboardType="numeric"
+                                placeholder="0"
+                                allowFontScaling={false}
+                                value={mileageRange.min?.toString()}
+                                onChangeText={(v) => {
+                                  const onlyNumbers = v.replace(/[^0-9]/g, '');
+
+                                  setMileageRange({
+                                    ...mileageRange,
+                                    min: onlyNumbers ? Number(onlyNumbers) : 0,
+                                  });
+
+                                  setIsMileageApplied(true);
+                                }}
+                                className="flex-1 py-2 text-base leading-5 text-gray-700"
+                              />
+                              <Text className="text-xs">km</Text>
+                            </View>
+
+                            <Text className="mx-1 font-poppinsMedium text-lg text-gray-600">-</Text>
+
+                            <View className=" flex-1 flex-row items-center rounded-lg border border-gray-300 px-2">
+                              <TextInput
+                                keyboardType="numeric"
+                                placeholder="Any"
+                                value={mileageRange.max?.toString()}
+                                onChangeText={(v) => {
+                                  const onlyNumbers = v.replace(/[^0-9]/g, '');
+
+                                  setMileageRange({
+                                    ...mileageRange,
+                                    max: onlyNumbers ? Number(onlyNumbers) : 0,
+                                  });
+
+                                  setIsMileageApplied(true);
+                                }}
+                                allowFontScaling={false}
+                                className="flex-1 py-2 text-base leading-5 text-gray-700"
+                                style={{ textAlignVertical: 'center' }}
+                              />
+                              <Text className="text-xs">km</Text>
+                            </View>
+                          </View>
+                          {data?.pages?.[0]?.maxMileage ? (
+                            <View className="flex items-center justify-center">
+                              <MultiSlider
+                                min={0}
+                                max={data?.pages?.[0]?.maxMileage}
+                                values={[mileageRange.min, mileageRange.max]}
+                                containerStyle={{}}
+                                sliderLength={isAllFilterSelected ? width * 0.5 : width * 0.8}
+                                onValuesChangeFinish={(value) => {
+                                  const [min, max] = value;
+                                  setMileageRange((prev) => ({
+                                    min,
+                                    max,
+                                  }));
+                                  setIsMileageApplied(true);
+                                }}
+                              />
+                            </View>
+                          ) : (
+                            <></>
+                          )}
+
+                          {isMileageApplied ? (
+                            <TouchableOpacity
+                              className="mt-4 flex flex-1 items-center justify-center rounded-lg bg-primary px-3 py-2"
+                              onPress={() => {
+                                setMileageRange({ min: 0, max: mileageRange.max });
+                                setIsMileageApplied(false);
+                              }}>
+                              <Text className="text-right text-white">Clear Mileage</Text>
+                            </TouchableOpacity>
+                          ) : (
+                            <></>
+                          )}
+                        </View>
+                      ) : (
+                        <></>
+                      )}
+
                       {attributeOptions.isFetchingNextPage && (
                         <ActivityIndicator
                           size="small"
@@ -848,6 +996,8 @@ const PostList = () => {
                 setCity('');
                 setPriceRange({ min: 0, max: 0 });
                 setIsPriceApplied(false);
+                setMileageRange({ min: 0, max: 0 });
+                setIsMileageApplied(false);
                 setYearApplied(false);
                 setYearRange({ min: 1900, max: dayjs().year() });
                 setAppliedFilter({});
@@ -882,6 +1032,10 @@ const PostList = () => {
                       isPriceApplied && (priceRange.min || priceRange.max)
                         ? `${priceRange.min || 0}-${priceRange.max || ''}`
                         : undefined,
+                    mileageRange:
+                      isMileageApplied && (mileageRange.min || mileageRange.max)
+                        ? `${mileageRange.min || 0}-${mileageRange.max || ''}`
+                        : undefined,
 
                     city,
                   };
@@ -896,6 +1050,8 @@ const PostList = () => {
                       city,
                       priceRange,
                       isPriceApplied,
+                      mileageRange,
+                      isMileageApplied,
                       yearRange,
                       yearApplied,
                       sortBy,

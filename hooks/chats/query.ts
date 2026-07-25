@@ -25,6 +25,27 @@ export const saveMessageCache = async (payload: any) => {
     };
   });
 };
+
+export const removeMessageCache = async (payload: any) => {
+  if (!payload?.conversationId || !payload?.messageId) return;
+
+  return queryClient.setQueryData(['messages', payload.conversationId], (oldData: any) => {
+    if (!oldData?.pages?.length) {
+      return oldData;
+    }
+
+    const updatedPages = oldData.pages.map((page: any) => ({
+      ...page,
+      data: (page?.data || []).filter((item: any) => item?.uuid !== payload.messageId),
+    }));
+
+    return {
+      ...oldData,
+      pages: updatedPages,
+    };
+  });
+};
+
 export const handleSeenMessage = async (payload: any) => {
   if (!payload?.conversationId) return;
 

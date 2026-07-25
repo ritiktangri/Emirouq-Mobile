@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { queryClient } from '~/app/_layout';
+
 import { createConversationService, uploadFilesService } from '~/utils/services/conversation';
 
 export const useCreateConversation = () => {

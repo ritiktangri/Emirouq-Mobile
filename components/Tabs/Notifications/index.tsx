@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { useRouter } from 'expo-router';
+import { Href, useRouter } from 'expo-router';
 import React from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,6 +12,7 @@ import { useAuth } from '~/context/AuthContext';
 import { useGetMyNotifications } from '~/hooks/notification/query';
 import { cn } from '~/utils/helper';
 import { i18n } from '~/utils/i18n';
+import { getNotificationTarget } from '~/utils/notification-routing';
 
 dayjs.extend(relativeTime);
 
@@ -121,9 +122,20 @@ const Notifications = () => {
     const isUnread = !item?.isRead;
     const timeLabel = item?.createdAt ? dayjs(item.createdAt).fromNow() : '--';
     const contextLabel = formatContextLabel(item?.contextType || item?.eventType);
+    const target = getNotificationTarget(item);
+
+    const handlePress = () => {
+      if (!target) {
+        return;
+      }
+
+      router.push(target as Href);
+    };
 
     return (
-      <View
+      <TouchableOpacity
+        activeOpacity={0.85}
+        onPress={handlePress}
         className={cn(
           'mb-2 rounded-2xl border border-slate-100 bg-white px-5 py-4',
           isUnread ? 'bg-blue-50/30' : '' // Subtle background tint for unread
@@ -172,7 +184,7 @@ const Notifications = () => {
             )}
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 

@@ -27,6 +27,10 @@ const Render = ({ item }: any) => {
   )?.selectedValue?.value;
   const mileage = item?.properties?.find((p: any) => p.attributeKey === 'mileage')?.selectedValue
     ?.value;
+  const year = item?.properties?.find((p: any) => p.attributeKey === 'year')?.selectedValue?.value;
+  const isVehicleCategory =
+    item?.category?.title?.toLowerCase()?.includes('motor') ||
+    item?.category?.title?.toLowerCase()?.includes('vehicle');
 
   const handleSwipeStart = () => {
     swipeInProgressRef.current = true;
@@ -93,7 +97,7 @@ const Render = ({ item }: any) => {
             </Text>
           </View>
 
-          {(regionalSpec || mileage) && (
+          {(regionalSpec || mileage || (isVehicleCategory && year)) && (
             <View className="ml-2 mt-1 flex-row items-center gap-1.5">
               {regionalSpec && (
                 <View className="flex-row items-center rounded-lg border border-[#e1f2e8] bg-[#f3faf6] px-2.5 py-1">
@@ -101,6 +105,12 @@ const Render = ({ item }: any) => {
                   <Text className="ml-1.5 text-[11px] font-semibold text-green-600">
                     {regionalSpec}
                   </Text>
+                </View>
+              )}
+              {isVehicleCategory && year && (
+                <View className="flex-row items-center rounded-lg  bg-[#faf5ff] px-2.5 py-1">
+                  <Ionicons name="calendar-outline" size={14} color="#7c3aed" />
+                  <Text className="ml-1.5 text-[11px] font-semibold text-violet-700">{year}</Text>
                 </View>
               )}
               {mileage && (

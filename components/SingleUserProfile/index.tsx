@@ -13,18 +13,27 @@ import {
 // Assuming you have an ExpoImage component or replace with standard Image
 import { Image as ExpoImage } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useGlobalSearchParams, useRouter } from 'expo-router';
+import { Href, useGlobalSearchParams, useRouter } from 'expo-router';
 
 import { useGetSingleUser } from '~/hooks/auth/query';
 import { useAuth } from '~/context/AuthContext';
+import { routes } from '~/utils/routes';
 
 import dayjs from 'dayjs';
 
 import { useGetPosts } from '~/hooks/post/query';
 
 const AdItem = ({ item }: any) => {
+  const router = useRouter();
+
   return (
-    <View className="mb-4 rounded-lg bg-white p-4">
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={() => {
+        if (!item?.uuid) return;
+        router.push(routes.tabs.singlePost(item.uuid) as Href);
+      }}
+      className="mb-4 rounded-lg bg-white p-4">
       <View className="flex-row items-start">
         <Image source={{ uri: item?.file?.[0] }} className="mr-4 h-24 w-24 rounded-lg" />
         <View className="flex-1">
@@ -35,12 +44,13 @@ const AdItem = ({ item }: any) => {
           {/* Status (only if you want to show it on public profiles) */}
           <View style={{ alignSelf: 'flex-start' }}>
             <Text
-              className={`mt-1 rounded-full px-2 py-1 text-xs ${item?.status === 'active'
-                ? 'bg-green-100 text-green-600'
-                : item?.status === 'pending'
-                  ? 'bg-yellow-100 text-yellow-600'
-                  : 'bg-red-100 text-red-600'
-                }`}>
+              className={`mt-1 rounded-full px-2 py-1 text-xs ${
+                item?.status === 'active'
+                  ? 'bg-green-100 text-green-600'
+                  : item?.status === 'pending'
+                    ? 'bg-yellow-100 text-yellow-600'
+                    : 'bg-red-100 text-red-600'
+              }`}>
               {item?.status?.toUpperCase()}
             </Text>
           </View>
@@ -54,7 +64,7 @@ const AdItem = ({ item }: any) => {
           {dayjs(item?.createdAt).fromNow() || 'N/A'}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -63,7 +73,7 @@ const SingleUserProfile = ({ adsData }: any) => {
   const params = useGlobalSearchParams();
   const { city } = useAuth();
   const { data }: any = useGetSingleUser(params.userId);
-  let user = data?.data;
+  const user = data?.data;
   const { isLoading, data: posts }: any = useGetPosts({
     status: 'active',
     userId: user?.uuid,
@@ -90,7 +100,7 @@ const SingleUserProfile = ({ adsData }: any) => {
     },
   };
   if (isLoading) {
-    return <ActivityIndicator color={'#FF5722'} />;
+    return <ActivityIndicator color="#FF5722" />;
   }
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -183,7 +193,7 @@ const SingleUserProfile = ({ adsData }: any) => {
           )}
         </View>
 
-        <View className="h-10"></View>
+        <View className="h-10" />
       </ScrollView>
     </SafeAreaView>
   );

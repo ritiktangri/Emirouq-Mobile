@@ -1,11 +1,18 @@
 /* eslint-disable import/order */
 import React, { useCallback, useEffect } from 'react';
-import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from 'react-native';
+import {
+  Alert,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Product from './product';
 import {
   handleSeenMessage,
+  removeMessageCache,
   saveMessageCache,
   useGetConversations,
   useGetMessages,
@@ -19,23 +26,54 @@ import { v4 as uuidV4 } from 'uuid';
 import ChatBubbleSkeleton from './loading';
 import { View } from '~/components/common/View';
 import { useTheme } from '~/context/ThemeContext';
-import _ from 'lodash';
 
 const ChatScreen = () => {
   const params: any = useLocalSearchParams();
   const insets = useSafeAreaInsets();
   const { socketIo, user, onlineUsers } = useAuth();
-  const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isFetching }: any = useGetMessages(
-    params?.conversationId
-  );
+  const { data, isFetching }: any = useGetMessages(params?.conversationId);
   const { showToast } = useTheme();
-  const { data: conversationData, refetch: conversationRefetch }: any = useGetConversations(
-    '',
-    false
-  );
+  const { refetch: conversationRefetch }: any = useGetConversations('', false);
   const createConversation = useCreateConversation();
   const uploadFile = useUploadFile();
   const router = useRouter();
+  const handleDeleteMessage = useCallback(
+    (message: any) => {
+      if (!message?.uuid || !params?.conversationId || !socketIo?.connected) {
+        return;
+      }
+
+      Alert.alert('Delete message', 'This message will be deleted for both sides.', [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            socketIo.emit(
+              'delete_message',
+              {
+                conversationId: params?.conversationId,
+                messageId: message?.uuid,
+              },
+              (response: any) => {
+                if (response?.success) {
+                  removeMessageCache({
+                    conversationId: params?.conversationId,
+                    messageId: message?.uuid,
+                  });
+                  showToast('Message deleted successfully', 'success');
+                  return;
+                }
+
+                showToast(response?.message || 'Unable to delete message', 'error');
+              }
+            );
+          },
+        },
+      ]);
+    },
+    [params?.conversationId, showToast, socketIo]
+  );
   //here we are updating the seen message in the cache
   useEffect(() => {
     //if unseen count is greater than 0 then emit the seen message
@@ -186,7 +224,7 @@ const ChatScreen = () => {
           return oldData;
         });
       }
-    } catch (error) {}
+    } catch {}
   };
   useEffect(() => {
     checkConversation();
@@ -227,6 +265,7 @@ const ChatScreen = () => {
             <Chat
               data={data?.pages.map((page: any) => page?.data).flat()}
               sendMessage={sendMessage}
+              onDeleteMessage={handleDeleteMessage}
               isFetching={isFetching}
               uploadFileLoading={uploadFile?.isPending}
               usersInConversation={params?.usersInConversation?.split(',')}

@@ -1,6 +1,11 @@
 /* eslint-disable import/order */
 import { createContext, useContext, useMemo, useEffect } from 'react';
-import { handleSeenMessage, saveConversationCache, saveMessageCache } from '~/hooks/chats/query';
+import {
+  handleSeenMessage,
+  removeMessageCache,
+  saveConversationCache,
+  saveMessageCache,
+} from '~/hooks/chats/query';
 
 import { useAuth } from './AuthContext';
 
@@ -28,14 +33,19 @@ const ConversationProvider = ({ children }: any) => {
         //save the message to the cache
         handleSeenMessage({ conversationId, seenBy });
       };
+      const handleMessageDeletedHandler = ({ conversationId, messageId }: any) => {
+        removeMessageCache({ conversationId, messageId });
+      };
       socketIo.on('message', handleMessageCacheHandler);
       socketIo?.on('update_conversation_cache', handleUpdateConversationCacheHandler);
       socketIo?.on('seen_message', handleSeenMessageHandler);
+      socketIo?.on('message_deleted', handleMessageDeletedHandler);
 
       return () => {
         socketIo?.off('message', handleMessageCacheHandler);
         socketIo?.off('update_conversation_cache', handleUpdateConversationCacheHandler);
         socketIo?.off('seen_message', handleSeenMessageHandler);
+        socketIo?.off('message_deleted', handleMessageDeletedHandler);
       };
     }
   }, [socketIo]);

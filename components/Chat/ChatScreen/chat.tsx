@@ -1,8 +1,8 @@
 /* eslint-disable import/order */
-import { Entypo, FontAwesome, Ionicons } from '@expo/vector-icons';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import { BlurView } from 'expo-blur';
-import _, { debounce, isEqual } from 'lodash';
+import { debounce, isEqual } from 'lodash';
 import * as React from 'react';
 import {
   Dimensions,
@@ -13,12 +13,10 @@ import {
   View,
   ViewStyle,
   TouchableOpacity,
-  ScrollView,
 } from 'react-native';
-import { FlatList, Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   clamp,
-  interpolate,
   SharedValue,
   useAnimatedStyle,
   useSharedValue,
@@ -30,34 +28,11 @@ import { useAuth } from '~/context/AuthContext';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { cn } from '~/utils/helper';
 import Footer from './footer';
-import SkeletonLoading from 'expo-skeleton-loading';
 import dayjs from 'dayjs';
-import ChatBubbleSkeleton from './loading';
 import ImagePopup from '~/components/ImagePopUp';
 import VideoPlayer from './videoPlayer';
 import VoiceMessage from './voice-message';
-
-const SkeletonBox = ({ height, width, className = '' }: any) => (
-  <SkeletonLoading background="#d3d3d3" highlight="#e0e0e0">
-    <View className={`rounded-lg bg-gray-200 ${height} ${width} ${className}`} />
-  </SkeletonLoading>
-);
-
-const IncomingMessageSkeleton = () => {
-  return (
-    <View className="mb-2 flex-row justify-start">
-      <SkeletonBox height="h-8" width="w-40" className="rounded-2xl" />
-    </View>
-  );
-};
-
-const OutgoingMessageSkeleton = () => {
-  return (
-    <View className="mb-2 flex-row justify-end">
-      <SkeletonBox height="h-8" width="w-40" className="rounded-2xl" />
-    </View>
-  );
-};
+import { downloadAttachment } from './download';
 const HEADER_HEIGHT = Platform.select({ ios: 88, default: 64 });
 
 const dimensions = Dimensions.get('window');
@@ -71,12 +46,10 @@ const SPRING_CONFIG = {
   restSpeedThreshold: 0.01,
 };
 
-// Note: For few messages to start at top, use a FlatList instead of the FlashList
-// Add `contentContainerStyle={{ justifyContent: 'flex-end', flexGrow: 1 }}` to the FlatList (it is not possible with FlashList atm)
-
 export default function Chat({
   data,
   sendMessage,
+  onDeleteMessage,
   onEndReached,
   uploadFileLoading,
   isFetching,
@@ -85,6 +58,7 @@ export default function Chat({
 }: {
   data: any;
   sendMessage: any;
+  onDeleteMessage?: (message: any) => void;
   onEndReached: any;
   uploadFileLoading: any;
   isFetching: any;
@@ -207,6 +181,7 @@ export default function Chat({
                 <ChatBubble
                   isSameNextSender={isSameNextSender}
                   item={item}
+                  onDeleteMessage={onDeleteMessage}
                   translateX={translateX}
                   uploadLoading={uploadFileLoading}
                   usersInConversation={usersInConversation}
@@ -226,16 +201,6 @@ export default function Chat({
   );
 }
 
-function DateSeparator({ date }: { date: string }) {
-  return (
-    <View className="items-center px-4 pb-3 pt-5">
-      <Text variant="caption2" className="text-muted-foreground font-medium">
-        {date}
-      </Text>
-    </View>
-  );
-}
-
 const BORDER_CURVE: ViewStyle = {
   borderCurve: 'continuous',
 };
@@ -243,162 +208,183 @@ const BORDER_CURVE: ViewStyle = {
 function ChatBubble({
   item,
   isSameNextSender,
+  onDeleteMessage,
   translateX,
   usersInConversation,
 }: {
   item: any;
   isSameNextSender: boolean;
+  onDeleteMessage?: (message: any) => void;
   translateX: SharedValue<number>;
   uploadLoading: boolean;
   usersInConversation: any;
 }) {
   const { user }: any = useAuth();
-  const contextMenuRef = React.useRef<any>(null);
-  const { colors } = useColorScheme();
+  const isOwnMessage = item?.user === user?.uuid;
   const rootStyle = useAnimatedStyle(() => {
     return {
       transform: [{ translateX: translateX.value }],
     };
   });
 
-  const dateStyle = useAnimatedStyle(() => {
-    return {
-      width: 75,
-      position: 'absolute',
-      right: 0,
-      paddingLeft: 8,
-      transform: [{ translateX: interpolate(translateX.value, [-75, 0], [0, 75]) }],
-    };
-  });
+  const handleDeleteMessage = () => {
+    if (!isOwnMessage) {
+      return;
+    }
+
+    onDeleteMessage?.(item);
+  };
+
+  const renderAttachment = (attachment: any, index: number) => {
+    const attachmentContent = ['image/jpeg', 'image/png', 'image/jpg'].includes(
+      attachment?.type
+    ) ? (
+      <ImagePopup uri={attachment.uri} />
+    ) : ['application/pdf'].includes(attachment?.type) ? (
+      <Pressable
+        onPress={() => downloadAttachment(attachment)}
+        className="flex h-20 w-20 items-center justify-center rounded-xl bg-[#FFF5F2]">
+        <FontAwesome name="file-pdf-o" size={28} color="#FF5733" />
+      </Pressable>
+    ) : ['video/mp4'].includes(attachment?.type) ? (
+      <View className="overflow-hidden rounded-xl">
+        <VideoPlayer source={attachment?.uri} />
+      </View>
+    ) : (
+      <Pressable
+        onPress={() => downloadAttachment(attachment)}
+        className="flex h-20 w-20 items-center justify-center rounded-xl bg-gray-100">
+        <FontAwesome name="file-o" size={24} color="#FF5733" />
+      </Pressable>
+    );
+
+    return (
+      <Pressable
+        key={attachment?.uuid || `${attachment?.name || attachment?.uri}-${index}`}
+        onLongPress={handleDeleteMessage}
+        delayLongPress={250}
+        className="relative">
+        {attachmentContent}
+        <TouchableOpacity
+          onPress={() => downloadAttachment(attachment)}
+          onLongPress={handleDeleteMessage}
+          className="absolute right-1 top-1 z-20 h-7 w-7 items-center justify-center rounded-full bg-black/55">
+          <Ionicons name="download-outline" size={16} color="#fff" />
+        </TouchableOpacity>
+      </Pressable>
+    );
+  };
   return (
     <View
       className={cn(
         'flex justify-center px-2 pb-3.5',
         isSameNextSender ? 'pb-1' : 'pb-3.5',
-        item?.user === user?.uuid ? 'items-end pl-16' : 'items-start pr-16'
+        isOwnMessage ? 'items-end pl-16' : 'items-start pr-16'
       )}>
-      <Animated.View style={item?.user === user?.uuid ? rootStyle : undefined}>
-        {item?.attachments?.length > 0 ? (
-          <View
-            className={cn(
-              'mt-2 flex-row items-center gap-4',
-              item?.user === user?.uuid && 'flex-row-reverse'
-            )}>
-            {item?.attachments?.length === 1 ? (
-              <View ref={contextMenuRef} style={{ borderRadius: 12 }}>
-                <Pressable>
-                  {['image/jpeg', 'image/png', 'image/jpg'].includes(
-                    item?.attachments?.[0]?.type
-                  ) ? (
-                    // <Image
-                    //   source={{ uri: item?.attachments[0].uri }}
-                    //   style={{ width: 200, height: 200, resizeMode: 'cover' }}
-                    //   borderRadius={12}
-                    // />
-                    <ImagePopup uri={item?.attachments[0].uri} />
-                  ) : ['application/pdf'].includes(item?.attachments?.[0]?.type) ? (
-                    <FontAwesome name="file-pdf-o" size={24} color="#FF5733" />
-                  ) : ['video/mp4'].includes(item?.attachments?.[0]?.type) ? (
-                    <VideoPlayer source={item?.attachments[0]?.uri} />
-                  ) : (
-                    <FontAwesome name="file-o" size={24} color="#FF5733" />
-                  )}
-                </Pressable>
-              </View>
-            ) : (
-              <Pressable className="">
-                <View
-                  className={cn(
-                    'flex-row flex-wrap items-center gap-2',
-                    item?.user === user?.uuid && 'flex-row-reverse'
-                  )}>
-                  {item?.attachments?.map((attachment: any, index: number) =>
-                    ['image/jpeg', 'image/png', 'image/jpg'].includes(attachment?.type) ? (
-                      // <Image
-                      //   key={index}
-                      //   source={{ uri: attachment.uri }}
-                      //   style={{ width: 100, height: 100, resizeMode: 'cover' }}
-                      //   borderRadius={12}
-                      // />
-                      <ImagePopup key={index} uri={attachment.uri} />
-                    ) : ['application/pdf'].includes(attachment?.type) ? (
-                      <FontAwesome name="file-pdf-o" size={24} color="#FF5733" />
-                    ) : ['video/mp4'].includes(attachment?.type) ? (
-                      <VideoPlayer source={attachment?.uri} />
-                    ) : (
-                      <FontAwesome name="file-o" size={24} color="#FF5733" />
-                    )
-                  )}
-                </View>
-              </Pressable>
-            )}
-          </View>
-        ) : (
-          <></>
-        )}
-        {item?.audio?.uri ? <VoiceMessage audio={item?.audio} /> : <></>}
-        {item?.message ? (
-          <Pressable className={cn(!!item?.attachments?.length && item?.message ? 'py-2' : 'mt-2')}>
+      <Pressable
+        onLongPress={handleDeleteMessage}
+        delayLongPress={250}
+        disabled={!isOwnMessage}
+        className="w-full">
+        <Animated.View style={isOwnMessage ? rootStyle : undefined}>
+          {item?.attachments?.length > 0 ? (
             <View
-              style={[
-                BORDER_CURVE,
-                {
-                  shadowColor: '#000',
-                  shadowOffset: {
-                    width: 0,
-                    height: 1,
-                  },
-                  shadowOpacity: 0.1,
-                  shadowRadius: 1.0,
-                  elevation: 0.5,
-                },
-              ]}
               className={cn(
-                'min-w-[80px] px-3 pb-1 pt-2',
-                Platform.OS === 'ios' && item?.user !== user?.uuid && 'dark:bg-muted',
-                item?.user === user?.uuid
-                  ? 'self-end rounded-l-xl rounded-br-md rounded-tr-xl bg-primary dark:bg-primary'
-                  : 'dark:bg-muted-foreground self-start rounded-r-xl rounded-bl-md rounded-tl-xl bg-[#F0F0F0]'
+                'mt-2 flex-row items-center gap-4',
+                isOwnMessage && 'flex-row-reverse'
               )}>
-              <Text
-                className={cn(
-                  'text-base',
-                  item?.user === user?.uuid ? 'text-white' : 'text-black dark:text-white'
-                )}>
-                {item?.message}
-              </Text>
-            </View>
-          </Pressable>
-        ) : (
-          <></>
-        )}
-        <View className="flex-row items-center justify-end pt-1">
-          <Text
-            className={cn(
-              'font-regular   text-xs',
-              item?.user === user?.uuid ? 'text-gray-600' : 'text-gray-600 dark:text-gray-400'
-            )}>
-            {dayjs(item?.createdAt).format('HH:mm A')}
-          </Text>
-          {item?.user === user?.uuid ? (
-            <Ionicons
-              name={
-                isEqual((usersInConversation || [])?.sort(), (item?.seenBy || [])?.sort())
-                  ? 'checkmark-done-outline'
-                  : 'checkmark-done-outline'
-              }
-              className={cn(
-                'ml-2 !text-xl',
-                isEqual((usersInConversation || [])?.sort()?.sort(), (item?.seenBy || [])?.sort())
-                  ? '!text-primary'
-                  : '!text-gray-600'
+              {item?.attachments?.length === 1 ? (
+                renderAttachment(item?.attachments?.[0], 0)
+              ) : (
+                <View className="">
+                  <View
+                    className={cn(
+                      'flex-row flex-wrap items-center gap-2',
+                      isOwnMessage && 'flex-row-reverse'
+                    )}>
+                    {item?.attachments?.map((attachment: any, index: number) =>
+                      renderAttachment(attachment, index)
+                    )}
+                  </View>
+                </View>
               )}
-            />
+            </View>
           ) : (
             <></>
           )}
-        </View>
-      </Animated.View>
+          {item?.audio?.uri ? (
+            <View className="mt-2">
+              <VoiceMessage audio={item?.audio} />
+            </View>
+          ) : (
+            <></>
+          )}
+          {item?.message ? (
+            <Pressable
+              className={cn(!!item?.attachments?.length && item?.message ? 'py-2' : 'mt-2')}
+              onLongPress={handleDeleteMessage}
+              delayLongPress={250}>
+              <View
+                style={[
+                  BORDER_CURVE,
+                  {
+                    shadowColor: '#000',
+                    shadowOffset: {
+                      width: 0,
+                      height: 1,
+                    },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 1.0,
+                    elevation: 0.5,
+                  },
+                ]}
+                className={cn(
+                  'min-w-[80px] px-3 pb-1 pt-2',
+                  Platform.OS === 'ios' && !isOwnMessage && 'dark:bg-muted',
+                  isOwnMessage
+                    ? 'self-end rounded-l-xl rounded-br-md rounded-tr-xl bg-primary dark:bg-primary'
+                    : 'dark:bg-muted-foreground self-start rounded-r-xl rounded-bl-md rounded-tl-xl bg-[#F0F0F0]'
+                )}>
+                <Text
+                  className={cn(
+                    'text-base',
+                    isOwnMessage ? 'text-white' : 'text-black dark:text-white'
+                  )}>
+                  {item?.message}
+                </Text>
+              </View>
+            </Pressable>
+          ) : (
+            <></>
+          )}
+          <View className="flex-row items-center justify-end pt-1">
+            <Text
+              className={cn(
+                'font-regular   text-xs',
+                isOwnMessage ? 'text-gray-600' : 'text-gray-600 dark:text-gray-400'
+              )}>
+              {dayjs(item?.createdAt).format('HH:mm A')}
+            </Text>
+            {isOwnMessage ? (
+              <Ionicons
+                name={
+                  isEqual((usersInConversation || [])?.sort(), (item?.seenBy || [])?.sort())
+                    ? 'checkmark-done-outline'
+                    : 'checkmark-done-outline'
+                }
+                className={cn(
+                  'ml-2 !text-xl',
+                  isEqual((usersInConversation || [])?.sort()?.sort(), (item?.seenBy || [])?.sort())
+                    ? '!text-primary'
+                    : '!text-gray-600'
+                )}
+              />
+            ) : (
+              <></>
+            )}
+          </View>
+        </Animated.View>
+      </Pressable>
     </View>
   );
 }
@@ -413,7 +399,6 @@ function Composer({
   uploadLoading: boolean;
 }) {
   const { colors, isDarkColorScheme } = useColorScheme();
-  const insets = useSafeAreaInsets();
 
   function onContentSizeChange(event: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) {
     textInputHeight.value = Math.max(

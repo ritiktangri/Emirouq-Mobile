@@ -7,7 +7,7 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useAuth } from '~/context/AuthContext';
 import { Image as ExpoImage } from 'expo-image';
 import {
@@ -24,7 +24,7 @@ import { useLocale } from '~/context/LocaleContext';
 import { arabic, english } from '~/image';
 import { i18n } from '~/utils/i18n';
 import { Text } from '~/components/common/Text';
-import { Href, useRouter } from 'expo-router';
+import { Href, useLocalSearchParams, useRouter } from 'expo-router';
 import { routes } from '~/utils/routes';
 import { View } from '~/components/common/View';
 import { useAuth as ClerkUseAuth } from '@clerk/clerk-expo';
@@ -36,10 +36,13 @@ const UserProfile = () => {
   const { signOut } = ClerkUseAuth();
   const { address }: any = useLocation();
   const { user } = useAuth();
+  const { section }: any = useLocalSearchParams();
   const { data: subscriptionsResponse, isLoading: isSubscriptionsLoading }: any =
     useGetMySubscriptions(user?.uuid);
   const { locale } = useLocale();
   const router = useRouter();
+  const scrollRef = useRef<ScrollView>(null);
+  const subscriptionsSectionY = useRef(0);
   const profileImage = {
     uri:
       user?.profileImage ||
@@ -104,8 +107,23 @@ const UserProfile = () => {
   };
 
   const addressStr = `${address?.name ? `${address?.name},` : ''} ${address?.district ? `${address?.district},` : ''} ${address?.city ? `${address?.city},` : ''} ${address?.country || ''}`;
+
+  useEffect(() => {
+    if (String(section || '').toLowerCase() !== 'subscriptions') {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      scrollRef.current?.scrollTo({
+        y: Math.max(0, subscriptionsSectionY.current - 20),
+        animated: true,
+      });
+    });
+  }, [section]);
+
   return (
     <ScrollView
+      ref={scrollRef}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ flexGrow: 1 }}
       keyboardShouldPersistTaps="handled">
@@ -266,7 +284,20 @@ const UserProfile = () => {
             </View> */}
           </View>
           {/* SUBSCRIPTIONS */}
-          <View className="mt-3 overflow-hidden rounded-[32px] bg-white shadow-[0px_16px_40px_rgba(15,23,42,0.05)]">
+          <View
+            onLayout={(event) => {
+              subscriptionsSectionY.current = event.nativeEvent.layout.y;
+
+              if (String(section || '').toLowerCase() === 'subscriptions') {
+                requestAnimationFrame(() => {
+                  scrollRef.current?.scrollTo({
+                    y: Math.max(0, subscriptionsSectionY.current - 20),
+                    animated: true,
+                  });
+                });
+              }
+            }}
+            className="mt-3 overflow-hidden rounded-[32px] bg-white shadow-[0px_16px_40px_rgba(15,23,42,0.05)]">
             <View className="bg-[#FFF7F3] px-5 py-5">
               <View className="flex-row items-start gap-4">
                 <View className="h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-[0px_8px_18px_rgba(15,23,42,0.04)]">

@@ -11,11 +11,11 @@ export const useGetAttributes = ({ id, keyword }: any) =>
     queryKey: ['attributes', id, keyword],
     queryFn: ({ pageParam }) =>
       getAttributes({
-        query: { start: pageParam, keyword },
+        query: { start: pageParam, keyword, limit: 50 },
         pathParams: { id },
       }),
     getNextPageParam: (lastPage: any, allPages: any) => {
-      const currentStart = allPages?.length * 10;
+      const currentStart = allPages?.length * 50;
       if (currentStart < lastPage?.count) {
         return currentStart;
       } else {

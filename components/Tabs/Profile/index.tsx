@@ -1,35 +1,28 @@
 /* eslint-disable import/order */
 import { View, KeyboardAvoidingView, Platform } from 'react-native';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import TabLayout from './tabbar';
 import UserProfile from './UserProfile';
 import ManageAds from './ManageAds';
-import AdsDashboard from './AdsDashboard';
 import { usePosts } from '~/context/PostContext';
 import { useAuth } from '~/context/AuthContext';
 import LoggedOutView from './LoggedOutView';
 
-const Profile = () => {
-  const { tab }: any = useLocalSearchParams();
-  const [activeTab, setActiveTab] = useState(0);
+const Profile = ({ initialTab }: { initialTab?: string }) => {
+  const activeTabParam = Array.isArray(initialTab) ? initialTab[0] : initialTab;
+  const [activeTab, setActiveTab] = useState(() => (activeTabParam === 'profile' ? 1 : 0));
 
-  useFocusEffect(
-    React.useCallback(() => {
-      if (tab === 'manageAds') {
-        setActiveTab(1);
-      }
-    }, [tab])
-  );
+  useEffect(() => {
+    setActiveTab(activeTabParam === 'profile' ? 1 : 0);
+  }, [activeTabParam]);
 
   const { user } = useAuth();
 
   const render: any = useMemo(() => {
     return {
-      '0': <UserProfile />,
-      // '1': <AdsDashboard />,
-      '1': <ManageAds />,
+      '0': <ManageAds />,
+      '1': <UserProfile />,
     };
   }, [activeTab]);
 
