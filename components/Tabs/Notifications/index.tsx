@@ -10,6 +10,7 @@ import { Text } from '~/components/common/Text';
 import { View } from '~/components/common/View';
 import { useAuth } from '~/context/AuthContext';
 import { useGetMyNotifications } from '~/hooks/notification/query';
+import { useMarkNotificationRead } from '~/hooks/notification/mutation';
 import { cn } from '~/utils/helper';
 import { i18n } from '~/utils/i18n';
 import { getNotificationTarget } from '~/utils/notification-routing';
@@ -91,6 +92,7 @@ const Notifications = () => {
   });
 
   const notifications = notificationsResponse?.data ?? [];
+  const { mutate: markAsRead } = useMarkNotificationRead();
 
   const renderEmptyState = () => {
     if (isLoading) {
@@ -125,6 +127,10 @@ const Notifications = () => {
     const target = getNotificationTarget(item);
 
     const handlePress = () => {
+      if (isUnread && item?.uuid) {
+        markAsRead({ id: item.uuid });
+      }
+
       if (!target) {
         return;
       }

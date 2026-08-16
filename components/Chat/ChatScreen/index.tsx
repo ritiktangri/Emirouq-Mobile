@@ -1,12 +1,6 @@
 /* eslint-disable import/order */
 import React, { useCallback, useEffect } from 'react';
-import {
-  Alert,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Product from './product';
@@ -261,21 +255,19 @@ const ChatScreen = () => {
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           className="flex-1"
           keyboardVerticalOffset={Platform.OS === 'ios' ? insets.bottom : 0}>
-          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            <Chat
-              data={data?.pages.map((page: any) => page?.data).flat()}
-              sendMessage={sendMessage}
-              onDeleteMessage={handleDeleteMessage}
-              isFetching={isFetching}
-              uploadFileLoading={uploadFile?.isPending}
-              usersInConversation={params?.usersInConversation?.split(',')}
-              onEndReached={() => {
-                // if (hasNextPage && !isFetchingNextPage) {
-                //   fetchNextPage();
-                // }
-              }}
-            />
-          </TouchableWithoutFeedback>
+          <Chat
+            data={data?.pages.map((page: any) => page?.data).flat()}
+            sendMessage={sendMessage}
+            onDeleteMessage={handleDeleteMessage}
+            isFetching={isFetching}
+            uploadFileLoading={uploadFile?.isPending}
+            usersInConversation={params?.usersInConversation?.split(',')}
+            onEndReached={() => {
+              // if (hasNextPage && !isFetchingNextPage) {
+              //   fetchNextPage();
+              // }
+            }}
+          />
         </KeyboardAvoidingView>
       )}
     </View>

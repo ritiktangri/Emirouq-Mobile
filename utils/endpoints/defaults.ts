@@ -11,6 +11,9 @@ const defaults = {
     PUT: {
       method: 'PUT' as Method,
     },
+    PATCH: {
+      method: 'PATCH' as Method,
+    },
     DELETE: {
       method: 'DELETE' as Method,
     },
