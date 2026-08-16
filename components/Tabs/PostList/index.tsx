@@ -47,7 +47,7 @@ const PostList = () => {
   const [yearApplied, setYearApplied] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
   const [appliedFilter, setAppliedFilter] = useState({} as any);
-  const [city, setCity] = useState('');
+  const [city, setCity] = useState<string[]>([]);
   const selectedFilterCount = React.useMemo(() => {
     let count = 0;
 
@@ -57,7 +57,7 @@ const PostList = () => {
       }
     });
 
-    if (city.trim()) {
+    if (city.length > 0) {
       count += 1;
     }
 
@@ -108,7 +108,7 @@ const PostList = () => {
   const showSlider = isYearSelected || selectedSection === 'price' || isMileageSelected;
   const isFilterApplied = (sectionUuid: string) => {
     if (sectionUuid === 'city') {
-      return Boolean(appliedFilter.city) || Boolean(city);
+      return (appliedFilter.city?.length || 0) > 0 || city.length > 0;
     }
 
     if (sectionUuid === 'price') {
@@ -120,10 +120,7 @@ const PostList = () => {
     }
 
     if (sectionUuid === yearId) {
-      return (
-        yearApplied ||
-        (appliedFilter.properties?.[yearId] && appliedFilter.properties[yearId].length > 0)
-      );
+      return yearApplied || Boolean(appliedFilter.yearRange);
     }
     return (
       (appliedFilter?.properties?.[sectionUuid] &&
@@ -138,11 +135,8 @@ const PostList = () => {
       subCategory: params.subCategory,
       category: params.category,
       keyword,
-      properties: [
-        ...Object.values(selectedFilters || {})?.flat(),
-        ...(yearApplied ? [yearRange.min?.toString(), yearRange.max?.toString()] : []),
-      ].filter(Boolean),
-      city: city || undefined,
+      properties: Object.values(selectedFilters || {})?.flat().filter(Boolean),
+      city: city.length ? city : undefined,
       priceRange:
         isPriceApplied && (priceRange.min > 0 || priceRange.max > 0)
           ? [priceRange.min?.toString(), priceRange.max?.toString()]
@@ -151,6 +145,9 @@ const PostList = () => {
         isMileageApplied && (mileageRange.min > 0 || mileageRange.max > 0)
           ? [mileageRange.min?.toString(), mileageRange.max?.toString()]
           : undefined,
+      yearRange: yearApplied
+        ? [yearRange.min?.toString(), yearRange.max?.toString()]
+        : undefined,
     }),
     [
       city,
@@ -179,6 +176,7 @@ const PostList = () => {
     city: appliedFilter.city,
     priceRange: appliedFilter.price?.split('-'),
     mileageRange: appliedFilter.mileageRange?.split('-'),
+    yearRange: appliedFilter.yearRange,
   });
   const { data: getPostCount, refetch: refetchPostCount }: any = useGetPostShowResultCount({
     query: liveCountQuery,
@@ -218,7 +216,7 @@ const PostList = () => {
           if (savedData.subCategory !== params.subCategory) {
             await AsyncStorage.removeItem(key);
             setSelectedFilters({});
-            setCity('');
+            setCity([]);
             setPriceRange({ min: 0, max: 0 });
             setIsPriceApplied(false);
             setMileageRange({ min: 0, max: 0 });
@@ -231,7 +229,13 @@ const PostList = () => {
           }
 
           setSelectedFilters(savedData.selectedFilters || {});
-          setCity(savedData.city || '');
+          setCity(
+            Array.isArray(savedData.city)
+              ? savedData.city
+              : savedData.city
+                ? [savedData.city]
+                : []
+          );
           setPriceRange(savedData.priceRange || { min: 0, max: 0 });
           setIsPriceApplied(savedData.isPriceApplied || false);
           setMileageRange(savedData.mileageRange || { min: 0, max: 0 });
@@ -246,7 +250,7 @@ const PostList = () => {
         } else {
           // Reset if no saved filters for this category
           setSelectedFilters({});
-          setCity('');
+          setCity([]);
           setPriceRange({ min: 0, max: 0 });
           setIsPriceApplied(false);
           setMileageRange({ min: 0, max: 0 });
@@ -317,7 +321,8 @@ const PostList = () => {
   const sections = React.useMemo(
     () => [
       ...((attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || [])?.filter(
-        (item: any) => item?.attributeKey?.toLowerCase() !== 'mileage'
+        (item: any) =>
+          !['mileage', 'city'].includes(item?.attributeKey?.toLowerCase())
       ) || []),
       { label: 'Price', uuid: 'price' },
       { label: 'Mileage KM', uuid: mileageId || 'mileage', visibleInFilter: true },
@@ -390,7 +395,8 @@ const PostList = () => {
           <View className="ml-3 flex-row items-center gap-2">
             {[
               ...((attributes?.data?.pages?.map((i: any) => i?.data)?.flat() || [])?.filter(
-                (item: any) => item?.attributeKey?.toLowerCase() !== 'mileage'
+                (item: any) =>
+                  !['mileage', 'city'].includes(item?.attributeKey?.toLowerCase())
               ) || []),
               { label: 'Price', uuid: 'price', visibleInFilter: true },
               { label: 'Mileage KM', uuid: mileageId || 'mileage', visibleInFilter: true },
@@ -581,7 +587,7 @@ const PostList = () => {
                   {/* Selected Tags */}
                   {((selectedFilters[selectedSection] &&
                     selectedFilters[selectedSection].length > 0) ||
-                    (selectedSection === 'city' && city)) && (
+                    (selectedSection === 'city' && city.length > 0)) && (
                     <View className="flex-row flex-wrap gap-2 px-1 py-2">
                       {selectedFilters[selectedSection]?.map((val) => (
                         <TouchableOpacity
@@ -597,14 +603,16 @@ const PostList = () => {
                           />
                         </TouchableOpacity>
                       ))}
-                      {selectedSection === 'city' && city && (
-                        <TouchableOpacity
-                          onPress={() => setCity('')}
-                          className="flex-row items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5">
-                          <Text className="font-poppinsMedium text-xs text-primary">{city}</Text>
-                          <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
-                        </TouchableOpacity>
-                      )}
+                      {selectedSection === 'city' &&
+                        city.map((val) => (
+                          <TouchableOpacity
+                            key={val}
+                            onPress={() => setCity((prev) => prev.filter((c) => c !== val))}
+                            className="flex-row items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5">
+                            <Text className="font-poppinsMedium text-xs text-primary">{val}</Text>
+                            <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
+                          </TouchableOpacity>
+                        ))}
                     </View>
                   )}
                   {['city']?.includes(selectedSection) ? (
@@ -621,18 +629,22 @@ const PostList = () => {
                         <View key={section.uuid}>
                           <TouchableOpacity
                             onPress={() => {
-                              setCity((prev) => (prev === section.value ? '' : section.value));
+                              setCity((prev) =>
+                                prev.includes(section.value)
+                                  ? prev.filter((c) => c !== section.value)
+                                  : [...prev, section.value]
+                              );
                             }}
                             className={cn('flex flex-row items-center py-3')}>
                             <Text
                               allowFontScaling={false}
                               className={cn(
                                 'flex-1 font-poppinsMedium',
-                                city === section.value ? 'text-primary' : ''
+                                city.includes(section.value) ? 'text-primary' : ''
                               )}>
                               {section.value}
                             </Text>
-                            {city === section.value ? (
+                            {city.includes(section.value) ? (
                               <Ionicons name="checkmark" color="#FF5722" size={20} />
                             ) : null}
                           </TouchableOpacity>
@@ -993,7 +1005,7 @@ const PostList = () => {
               onPress={async () => {
                 setSelectedFilters({});
                 setSortBy('');
-                setCity('');
+                setCity([]);
                 setPriceRange({ min: 0, max: 0 });
                 setIsPriceApplied(false);
                 setMileageRange({ min: 0, max: 0 });
@@ -1021,12 +1033,7 @@ const PostList = () => {
                 onPress={() => {
                   const newAppliedFilter = {
                     ...appliedFilter,
-                    properties: {
-                      ...selectedFilters,
-                      ...(yearApplied && {
-                        [yearId]: [yearRange?.min, yearRange?.max],
-                      }),
-                    },
+                    properties: { ...selectedFilters },
                     sortBy,
                     price:
                       isPriceApplied && (priceRange.min || priceRange.max)
@@ -1036,6 +1043,9 @@ const PostList = () => {
                       isMileageApplied && (mileageRange.min || mileageRange.max)
                         ? `${mileageRange.min || 0}-${mileageRange.max || ''}`
                         : undefined,
+                    yearRange: yearApplied
+                      ? [yearRange?.min, yearRange?.max]
+                      : undefined,
 
                     city,
                   };

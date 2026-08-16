@@ -85,20 +85,20 @@ const Render = ({ item }: any) => {
 
       {/* Details Section */}
       <View className="gap-2 p-4">
-        <View className="flex-row items-start justify-between">
-          <View className="flex-1">
-            <Text
-              className="font-poppinsMedium text-xl leading-snug text-gray-900"
-              numberOfLines={2}>
-              {item?.title}
-            </Text>
-            <Text className=" text-base font-bold text-orange-500">
+        <View>
+          <Text
+            className="font-poppinsMedium text-xl leading-snug text-gray-900"
+            numberOfLines={2}>
+            {item?.title}
+          </Text>
+          <View className="mt-1 flex-row items-center">
+            <Text className="text-base font-bold text-orange-500">
               {toCurrency(item?.price || 0)}
             </Text>
           </View>
 
           {(regionalSpec || mileage || (isVehicleCategory && year)) && (
-            <View className="ml-2 mt-1 flex-row items-center gap-1.5">
+            <View className="mt-2 flex-row flex-wrap items-center gap-1.5">
               {regionalSpec && (
                 <View className="flex-row items-center rounded-lg border border-[#e1f2e8] bg-[#f3faf6] px-2.5 py-1">
                   <Ionicons name="shield-checkmark" size={14} color="#16a34a" />

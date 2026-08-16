@@ -5,9 +5,11 @@ import { useEvent } from 'expo';
 
 type Props = {
   source: string;
+  onLongPress?: () => void;
+  delayLongPress?: number;
 };
 
-export default function VideoPlayer({ source }: Props) {
+export default function VideoPlayer({ source, onLongPress, delayLongPress }: Props) {
   const player = useVideoPlayer(source, (player) => {
     player.loop = false;
     player.play();
@@ -39,7 +41,9 @@ export default function VideoPlayer({ source }: Props) {
       onPress={() => {
         setControlsVisible(true);
         resetControlsTimeout();
-      }}>
+      }}
+      onLongPress={onLongPress}
+      delayLongPress={delayLongPress}>
       <VideoView
         player={player}
         nativeControls

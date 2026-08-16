@@ -26,7 +26,7 @@ import {
   verifyOtp,
   verifyToken,
 } from '~/utils/services/auth';
-import { unSeenCountService } from '~/utils/services/dashboard';
+import { getUnreadNotificationCountService } from '~/utils/services/notification';
 import {
   getCurrentUser,
   logoutService,
@@ -152,7 +152,7 @@ const AuthProvider = ({ children }: any) => {
     return false;
   };
 
-  const getUser = useCallback(async (cb?: any) => {
+  const getUser = useCallback(async (cb?: any, errorCb?: any) => {
     setLoading(true);
     getCurrentUser()
       .then(async (response: any) => {
@@ -171,11 +171,12 @@ const AuthProvider = ({ children }: any) => {
           setLoading(false);
         }, 2000);
       })
-      .catch(async () => {
+      .catch(async (err: any) => {
         // since animation of logo is 2 seconds, we are setting loading to false after 2 seconds
         setTimeout(() => {
           setLoading(false);
         }, 2000);
+        errorCb && errorCb(err);
       });
   }, []);
   useEffect(() => {
@@ -195,12 +196,24 @@ const AuthProvider = ({ children }: any) => {
         //   </Text>
         // );
         setCity('');
-        getUser(() => {
-          // queryClient.invalidateQueries({ queryKey: ['conversation'] });
-          router.replace(routes.tabs.home as any);
-          setSignInLoading(false);
-        });
-        cb && cb();
+        getUser(
+          () => {
+            console.log('user', user);
+            // queryClient.invalidateQueries({ queryKey: ['conversation'] });
+            router.replace(routes.tabs.home as any);
+            setSignInLoading(false);
+            cb && cb();
+          },
+          (err: any) => {
+            setSignInLoading(false);
+            if (errorCallback)
+              errorCallback(
+                err?.message
+                  ? err
+                  : { message: 'Unable to load your profile. Please try again.' }
+              );
+          }
+        );
       })
       .catch((err: any) => {
         // toast.error(err?.message || 'Something went wrong');
@@ -360,8 +373,12 @@ const AuthProvider = ({ children }: any) => {
   };
 
   const getUnSeenCount = async () => {
-    const res: any = await unSeenCountService();
-    setUnseenCount(res?.data);
+    try {
+      const res: any = await getUnreadNotificationCountService();
+      setUnseenCount(res?.data || 0);
+    } catch (error) {
+      // ignore — not logged in yet, or transient failure
+    }
   };
   useEffect(() => {
     getUnSeenCount();
