@@ -21,7 +21,7 @@ import Animated, {
 const { width, height } = Dimensions.get('screen');
 const itemSize = width / 3;
 
-export default function ImagePopup({ uri }: any) {
+export default function ImagePopup({ uri, onLongPress, delayLongPress }: any) {
   const layout: any = useSharedValue({});
   const transition = useSharedValue(0);
   const [active, setActive] = useState('' as any);
@@ -61,7 +61,12 @@ export default function ImagePopup({ uri }: any) {
   return (
     <>
       <View style={[styles.item]}>
-        <Item image={uri} onPress={onPress} />
+        <Item
+          image={uri}
+          onPress={onPress}
+          onLongPress={onLongPress}
+          delayLongPress={delayLongPress}
+        />
       </View>
       {active && (
         <Modal transparent onRequestClose={close}>
@@ -76,10 +81,13 @@ export default function ImagePopup({ uri }: any) {
     </>
   );
 }
-function Item({ image, onPress = () => {} }: any) {
+function Item({ image, onPress = () => {}, onLongPress, delayLongPress }: any) {
   const aRef = useAnimatedRef();
   return (
-    <TouchableWithoutFeedback onPress={() => onPress(image, aRef)}>
+    <TouchableWithoutFeedback
+      onPress={() => onPress(image, aRef)}
+      onLongPress={onLongPress}
+      delayLongPress={delayLongPress}>
       <Animated.View ref={aRef} style={{ flex: 1, backgroundColor: '#fff' }}>
         <Image source={{ uri: image }} className="h-full w-full rounded-lg" resizeMode="cover" />
       </Animated.View>

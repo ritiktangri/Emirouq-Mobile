@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TouchableOpacity, Image, FlatList } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
@@ -16,6 +16,20 @@ import { useAudioPlayer } from '~/context/AudioPlayerContext';
 import LottieFilesAnimation from '~/components/LottieFiles';
 import { uploadingFiles } from '~/image';
 import CustomMenu from '~/components/common/PopoverMenu';
+import Svg, { Circle } from 'react-native-svg';
+import Animated, {
+  useSharedValue,
+  useAnimatedProps,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
+
+const MIC_RING_SIZE = 44;
+const MIC_BUTTON_SIZE = 36;
+const MIC_STROKE_WIDTH = 3;
+const MIC_RADIUS = (MIC_RING_SIZE - MIC_STROKE_WIDTH) / 2;
+const MIC_CIRCUMFERENCE = 2 * Math.PI * MIC_RADIUS;
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 const suggestionsList = [
   'Hello 👋',
@@ -154,7 +168,35 @@ export default function Footer({
     'application/pdf': <FontAwesome name="file-pdf-o" size={24} color="#FF5733" />,
   };
 
-  const { play, stop, currentlyPlayingRef, currentAudio, setCurrentAudio } = useAudioPlayer();
+  const {
+    play,
+    stop,
+    currentlyPlayingRef,
+    currentAudio,
+    setCurrentAudio,
+    currentlyPlaying,
+    progress = 0,
+  } = useAudioPlayer();
+  const isPreviewPlaying = !!(currentlyPlaying && currentAudio?.uri === watch('audio')?.uri);
+
+  const micProgressValue = useSharedValue(MIC_CIRCUMFERENCE);
+  const micAnimatedProps = useAnimatedProps(() => ({
+    strokeDashoffset: micProgressValue.value,
+  }));
+
+  useEffect(() => {
+    if (isPreviewPlaying) {
+      micProgressValue.value = withTiming(MIC_CIRCUMFERENCE * (1 - progress / 100), {
+        duration: 100,
+        easing: Easing.inOut(Easing.ease),
+      });
+    } else {
+      micProgressValue.value = withTiming(MIC_CIRCUMFERENCE, {
+        duration: 100,
+        easing: Easing.inOut(Easing.ease),
+      });
+    }
+  }, [progress, isPreviewPlaying]);
   const isEditable = !!watch('audio')?.uri || !!(watch('attachments') || [])?.length;
   return (
     <View className=" mb-2 bg-white">
@@ -189,29 +231,71 @@ export default function Footer({
               );
             })
           ) : watch('audio')?.sound ? (
-            <View className="max-w-[80%] flex-row items-center space-x-3 self-end rounded-2xl bg-[#DCF8C6] p-3 shadow-sm">
-              {/* Left: Circular mic icon */}
-              <View className="flex h-9 w-9 items-center justify-center rounded-full bg-white">
-                <Ionicons name="mic" size={18} color="#128C7E" />
+            <View
+              className="max-w-[85%] flex-row items-center gap-3 self-end rounded-2xl bg-white px-3 py-2.5"
+              style={{
+                shadowColor: '#0F172A',
+                shadowOpacity: 0.08,
+                shadowRadius: 6,
+                shadowOffset: { width: 0, height: 2 },
+                elevation: 1,
+              }}>
+              {/* Left: Circular mic icon with playing progress ring */}
+              <View
+                style={{ width: MIC_RING_SIZE, height: MIC_RING_SIZE }}
+                className="items-center justify-center">
+                <Svg
+                  width={MIC_RING_SIZE}
+                  height={MIC_RING_SIZE}
+                  style={{ position: 'absolute', top: 0, left: 0 }}>
+                  {isPreviewPlaying && (
+                    <Circle
+                      stroke="#FFE0D3"
+                      fill="none"
+                      cx={MIC_RING_SIZE / 2}
+                      cy={MIC_RING_SIZE / 2}
+                      r={MIC_RADIUS}
+                      strokeWidth={MIC_STROKE_WIDTH}
+                    />
+                  )}
+                  {isPreviewPlaying && (
+                    <AnimatedCircle
+                      animatedProps={micAnimatedProps}
+                      stroke="#FF5722"
+                      fill="none"
+                      cx={MIC_RING_SIZE / 2}
+                      cy={MIC_RING_SIZE / 2}
+                      r={MIC_RADIUS}
+                      strokeWidth={MIC_STROKE_WIDTH}
+                      strokeLinecap="round"
+                      strokeDasharray={`${MIC_CIRCUMFERENCE} ${MIC_CIRCUMFERENCE}`}
+                    />
+                  )}
+                </Svg>
+                <View
+                  style={{ width: MIC_BUTTON_SIZE, height: MIC_BUTTON_SIZE }}
+                  className="items-center justify-center rounded-full bg-primary/10">
+                  <Ionicons name="mic" size={18} color="#FF5722" />
+                </View>
               </View>
 
-              {/* Center: Timer text */}
-              <Text className="text-sm font-semibold text-gray-800">
-                {watch('audio')?.duration || '0:00'}
-              </Text>
-
-              {/* Play/Pause Button */}
+              {/* Center: Play/Pause + timer */}
               <TouchableOpacity
                 onPress={async () => {
-                  setCurrentAudio(watch('audio').uri);
-                  play(watch('audio'));
+                  await play(watch('audio'));
+                  setCurrentAudio(watch('audio'));
                 }}
-                className="p-1">
-                <Ionicons
-                  name={currentAudio && currentAudio === watch('audio').uri ? 'pause' : 'play'}
-                  size={24}
-                  color="#128C7E"
-                />
+                className="flex-1 flex-row items-center gap-2">
+                <View className="h-9 w-9 items-center justify-center rounded-full bg-primary">
+                  <Ionicons
+                    name={isPreviewPlaying ? 'pause' : 'play'}
+                    size={16}
+                    color="#fff"
+                  />
+                </View>
+                <Text className="text-sm font-semibold text-gray-700">
+                  {watch('audio')?.duration || '0:00'}
+                </Text>
               </TouchableOpacity>
 
               {/* Delete Button */}
@@ -220,8 +304,9 @@ export default function Footer({
                   stop();
                   setValue('audio', { sound: '', duration: '', uri: '', type: '' });
                 }}
-                className="p-1">
-                <Ionicons name="close" size={22} color="#D32F2F" />
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                className="h-8 w-8 items-center justify-center rounded-full bg-gray-100">
+                <Ionicons name="close" size={18} color="#6B7280" />
               </TouchableOpacity>
             </View>
           ) : (

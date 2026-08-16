@@ -6,6 +6,7 @@ import { debounce, isEqual } from 'lodash';
 import * as React from 'react';
 import {
   Dimensions,
+  Keyboard,
   NativeSyntheticEvent,
   Platform,
   Pressable,
@@ -135,6 +136,7 @@ export default function Chat({
     <>
       <GestureDetector gesture={pan}>
         <View className="flex-1 bg-white">
+          <Pressable className="flex-1" onPress={() => Keyboard.dismiss()}>
           <FlashList
             inverted
             estimatedItemSize={100}
@@ -189,6 +191,7 @@ export default function Chat({
               );
             }}
           />
+          </Pressable>
 
           <Composer
             sendMessage={sendMessage}
@@ -239,20 +242,28 @@ function ChatBubble({
     const attachmentContent = ['image/jpeg', 'image/png', 'image/jpg'].includes(
       attachment?.type
     ) ? (
-      <ImagePopup uri={attachment.uri} />
+      <ImagePopup uri={attachment.uri} onLongPress={handleDeleteMessage} delayLongPress={250} />
     ) : ['application/pdf'].includes(attachment?.type) ? (
       <Pressable
         onPress={() => downloadAttachment(attachment)}
+        onLongPress={handleDeleteMessage}
+        delayLongPress={250}
         className="flex h-20 w-20 items-center justify-center rounded-xl bg-[#FFF5F2]">
         <FontAwesome name="file-pdf-o" size={28} color="#FF5733" />
       </Pressable>
     ) : ['video/mp4'].includes(attachment?.type) ? (
       <View className="overflow-hidden rounded-xl">
-        <VideoPlayer source={attachment?.uri} />
+        <VideoPlayer
+          source={attachment?.uri}
+          onLongPress={handleDeleteMessage}
+          delayLongPress={250}
+        />
       </View>
     ) : (
       <Pressable
         onPress={() => downloadAttachment(attachment)}
+        onLongPress={handleDeleteMessage}
+        delayLongPress={250}
         className="flex h-20 w-20 items-center justify-center rounded-xl bg-gray-100">
         <FontAwesome name="file-o" size={24} color="#FF5733" />
       </Pressable>
@@ -314,7 +325,7 @@ function ChatBubble({
           )}
           {item?.audio?.uri ? (
             <View className="mt-2">
-              <VoiceMessage audio={item?.audio} />
+              <VoiceMessage audio={item?.audio} isOwnMessage={isOwnMessage} />
             </View>
           ) : (
             <></>

@@ -34,11 +34,16 @@ const RenderProductCard = ({ item, user }: any) => {
         <Text className="text-sm font-semibold text-gray-900" numberOfLines={1}>
           {item.title}
         </Text>
-        <View className="mt-1 flex-row items-center justify-between">
-          <Text className="text-base font-semibold text-black">{toCurrency(item.price)}</Text>
+        <View className="mt-1">
+          <View className="flex-row items-center justify-between gap-2">
+            <Text className="text-base font-semibold text-black">{toCurrency(item.price)}</Text>
+            <View className="flex flex-row items-center self-start rounded-full bg-primary px-3">
+              <Text className="text-sm font-medium uppercase text-white">{item.condition}</Text>
+            </View>
+          </View>
 
           {(regionalSpec || mileage) && (
-            <View className="flex-row items-center gap-1.5">
+            <View className="mt-1.5 flex-row flex-wrap items-center justify-start gap-1.5">
               {regionalSpec && (
                 <View className="flex-row items-center rounded-lg border border-[#e1f2e8] bg-[#f3faf6] px-2 py-[3px]">
                   <Ionicons name="shield-checkmark" size={12} color="#16a34a" />
@@ -58,10 +63,7 @@ const RenderProductCard = ({ item, user }: any) => {
         <Text className="mt-1 flex-1 font-interMedium text-xs text-gray-500" numberOfLines={1}>
           {item.location.name}
         </Text>
-        <View className="mt-2 flex-row items-center justify-between">
-          <View className="flex flex-row items-center self-start rounded-full bg-primary px-3 ">
-            <Text className=" text-sm font-medium uppercase text-white">{item.condition}</Text>
-          </View>
+        <View className="mt-2 flex-row items-center justify-end">
           <View className="flex-row items-center gap-x-1">
             <Ionicons name="time-outline" size={14} color="#6b7280" />
             <Text className="text-[14px] font-medium text-gray-500">

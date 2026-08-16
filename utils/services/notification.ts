@@ -8,3 +8,16 @@ export const getMyNotificationsService = async ({ query }: any = {}) => {
     query,
   });
 };
+
+export const getUnreadNotificationCountService = async () => {
+  return callApi({
+    uriEndPoint: { ...notification.getUnreadCount.v1 } as ApiEndpoint,
+  });
+};
+
+export const markNotificationReadService = async ({ id }: { id: string }) => {
+  return callApi({
+    uriEndPoint: { ...notification.markAsRead.v1 } as ApiEndpoint,
+    pathParams: { id },
+  });
+};
