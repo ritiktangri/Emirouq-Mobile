@@ -8,12 +8,15 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import { Text } from '~/components/common/Text';
 import { View } from '~/components/common/View';
 import { useAuth } from '~/context/AuthContext';
+import { useGetUnreadNotificationCount } from '~/hooks/notification/query';
 import { cn, screenHeight } from '~/utils/helper';
 import { routes } from '~/utils/routes';
 
 export default function Header({ user }: any) {
   const { city, setCity } = useAuth();
   const refRBSheet = useRef<any>(null);
+  const { data: unreadCountResponse }: any = useGetUnreadNotificationCount(user?.uuid);
+  const unreadCount = unreadCountResponse?.data || 0;
 
   const cities = React.useMemo(
     () => [
@@ -62,8 +65,15 @@ export default function Header({ user }: any) {
             onPress={() => {
               router.push(routes.tabs.notification as Href);
             }}
-            className="rounded-lg border border-gray-200 p-2">
+            className="relative rounded-lg border border-gray-200 p-2">
             <Ionicons name="notifications-outline" size={20} color="black" />
+            {unreadCount > 0 && (
+              <View className="absolute -right-1.5 -top-1.5 h-[18px] min-w-[18px] items-center justify-center rounded-full border-2 border-white bg-primary px-1">
+                <Text className="text-[10px] font-bold text-white">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </Text>
+              </View>
+            )}
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {

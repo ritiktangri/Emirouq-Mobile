@@ -47,15 +47,22 @@ export default function OAuthCallback() {
         .mutateAsync({ body: payload })
         .then(async (res: any) => {
           await setStorageItemAsync('accessToken', res?.accessToken);
-          getUser(() => {
-            if (!res?.newUser) {
-              router.replace(routes.tabs.profile?.profile as any);
-            } else {
-              router.replace(routes.tabs.home as any);
+          getUser(
+            () => {
+              if (!res?.newUser) {
+                router.replace(routes.tabs.profile?.profile as any);
+              } else {
+                router.replace(routes.tabs.home as any);
+              }
+              showToast('Login successful', 'success');
+              setLoading(false);
+            },
+            (err: any) => {
+              setErrorMessage(err?.message || 'Unable to load your profile. Please try again.');
+              showToast(err?.message || 'Unable to load your profile. Please try again.', 'error');
+              setLoading(false);
             }
-            showToast('Login successful', 'success');
-            setLoading(false);
-          });
+          );
         })
         .catch((err) => {
           console.error('[Clerk OAuth callback] backend login failed', err);

@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Href, useGlobalSearchParams, useRouter } from 'expo-router';
 import { ScrollView, TouchableOpacity, Pressable, ActivityIndicator } from 'react-native';
 import { AntDesign, Feather, Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 import { routes } from '~/utils/routes';
-import { toCurrency } from '~/utils/helper';
+import { toCurrency, screenHeight } from '~/utils/helper';
 import { i18n } from '~/utils/i18n';
 import { View } from '~/components/common/View';
 import { Text } from '~/components/common/Text';
@@ -14,6 +15,8 @@ import { usePosts } from '~/context/PostContext';
 import { useTheme } from '~/context/ThemeContext';
 import theme from '~/utils/theme';
 import ImageCarousel from '../SinglePost/imageCarousel';
+import SubscriptionPlanList from '~/components/Stripe/subscriptionPlanList';
+import { useIsSubscribedForCategory } from '~/hooks/stripe/query';
 
 const PreviewPost = () => {
   const params: any = useGlobalSearchParams();
@@ -27,6 +30,8 @@ const PreviewPost = () => {
   const [expandedFeatures, setExpandedFeatures] = useState<Record<number, boolean>>({});
   const { locale } = useLocale();
   const insets = useSafeAreaInsets();
+  const refRBSheet: any = useRef(null);
+  const isSubscribed: any = useIsSubscribedForCategory(data?.category);
   if (!params?.data) {
     return;
   }
@@ -80,9 +85,18 @@ const PreviewPost = () => {
           setSaveLoading(false);
         },
         (err: any) => {
-          showToast(err?.message, 'error');
           setDraftLoading(false);
           setSaveLoading(false);
+
+          // limit reached / cooldown active for this category's plan —
+          // let the user pick & buy a plan right here instead of a dead-end error
+          if (!isDraft && err?.status === 403) {
+            isSubscribed?.refetch?.();
+            refRBSheet.current?.open();
+            return;
+          }
+
+          showToast(err?.message, 'error');
         }
       );
     }
@@ -358,6 +372,35 @@ const PreviewPost = () => {
           </View>
         </View>
       </ScrollView>
+
+      <RBSheet
+        ref={refRBSheet}
+        customStyles={{
+          wrapper: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          },
+          draggableIcon: {
+            backgroundColor: '#000',
+          },
+          container: {
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          },
+        }}
+        height={screenHeight * 0.6}
+        customModalProps={{
+          animationType: 'fade',
+        }}>
+        <SubscriptionPlanList
+          categoryId={data?.category}
+          cb={() => {
+            refRBSheet.current?.close();
+            showToast('Your subscription has been activated.', 'success', 1500);
+            onSubmit(false);
+          }}
+          list={isSubscribed?.data?.subscriptionPlan || []}
+        />
+      </RBSheet>
     </View>
   );
 };

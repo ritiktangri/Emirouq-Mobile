@@ -324,12 +324,12 @@ const AddPost = () => {
   }, []);
 
   const onConfirm = async (data: any) => {
+    console.log(user?._id,'isSubscribed?.data?.isSubscribed', isSubscribed?.data?.isSubscribed)
     if (!user?._id) {
       return router.push({
         pathname: routes.auth.auth,
       });
     }
-
     if (!isSubscribed?.data?.isSubscribed) {
       if (isSubscribed?.data?.subscriptionPlan?.length === 0) {
         return console.log('no subscription plan available');
